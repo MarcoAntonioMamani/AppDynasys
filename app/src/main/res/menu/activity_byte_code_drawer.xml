@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/item_navigation_drawer_clientes"
+            android:icon="@drawable/ic_client"
+            android:title="Clientes"
+            android:visible="false"/>
+        <item
+            android:id="@+id/item_navigation_drawer_pedidos"
+            android:title="Pedidos"
+            android:icon="@drawable/ic_order"
+            android:visible="false"/>
+        <item
+            android:checked="true"
+            android:id="@+id/item_navigation_drawer_sincronizar"
+            android:icon="@drawable/ic_sincroniza"
+            android:title="Sincronizar Datos"
+            android:visible="false"/>
+
+    </group>
+    <group
+        android:id="@+id/drawer_group_2"
+        android:checkableBehavior="none">
+
+        <item
+            android:id="@+id/item_navigation_drawer_help_and_feedback"
+            android:icon="@drawable/ic_setting"
+            android:title="Cerrar Sesión" />
+    </group>
+
+</menu>

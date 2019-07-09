@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tipo_de_compra">
+        <item>Dest. a actividades gravadas</item>
+        <item>Dest. a actividades no gravadas</item>
+        <item>Sujetas a proporcionalidad</item>
+        <item>Exportaciones</item>
+        <item>Mercado interno y exportaciones</item>
+    </string-array>
+
+    <string-array name="motor_entries">
+        <item>QR Droid (App Default)</item>
+        <item>Mobile Vision</item>
+        <item>BarCode Scanner</item>
+        <!--<item>Zxing</item>-->
+    </string-array>
+
+    <string-array name="motor_values">
+        <item>qrd</item>
+        <item>mvi</item>
+        <item>bcs</item>
+        <!--<item>zxing</item>-->
+    </string-array>
+
+    <string-array name="mes_array">
+        <item>Enero</item>
+        <item>Febrero</item>
+        <item>Marzo</item>
+        <item>Abril</item>
+        <item>Mayo</item>
+        <item>Junio</item>
+        <item>Julio</item>
+        <item>Agosto</item>
+        <item>Septiembre</item>
+        <item>Octubre</item>
+        <item>Noviembre</item>
+        <item>Diciembre</item>
+    </string-array>
+
+    <string-array name="tipolibro_array">
+        <item>Compras</item>
+        <item>RC IVA</item>
+    </string-array>
+
+    <string-array name="tipocliente_array">
+        <item>Persona Natural</item>
+        <item>Persona Juridica</item>
+    </string-array>
+    <string-array name="tipogenero_array">
+        <item>Masculino</item>
+        <item>Femenino</item>
+    </string-array>
+
+    <string-array name="tipoagenda_array">
+        <item>Entrega de Pedidos</item>
+    </string-array>
+</resources>

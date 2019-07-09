@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="colorPrimary">#303F9F</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#303F9F</color>
+    <color name="colorAccentAmarrillo">#FFC107</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#BDBDBD</color>
+
+    <!-- grayscale -->
+    <color name="white"     >#ffffff</color>
+    <color name="gray_light">#dbdbdb</color>
+    <color name="gray"      >#939393</color>
+    <color name="gray_dark" tools:keep="@color/gray_dark">#5F5F5F</color>
+    <color name="black"     >#323232</color>
+
+    <color name="state_draft">#5A4A3B</color>
+    <color name="state_paid">#008991</color>
+    <color name="state_sent">#0E79BF</color>
+    <color name="state_canceled">#EE3F22</color>
+
+    <color name="colorBackground">#333C46</color>
+    <color name="colorSplashText">#F0F0F0</color>
+    <color name="colorProgressBar">#FFCE511C</color>
+    <color name="colorTextView">#83898E</color>
+    <color name="color_light">#ffffff</color>
+    <color name="azulclaro">#FFAEE4E8</color>
+    <color name="navy">#47515f</color>
+
+    <color name="marfil">#efefee</color>
+    <color name="amarillo">#FFA000</color>
+    <color name="negro_semitransparente">#B2000000</color>
+    <color name="blanco">#fafafa</color>
+    <color name="accept">#F44336</color>
+    <color name="intro_slide_1_dark">#2980b9</color>
+    <color name="intro_slide_1_light">#3498db</color>
+    <color name="intro_slide_2_dark">#27ae60</color>
+    <color name="intro_slide_2_light">#2ecc71</color>
+    <color name="intro_slide_3_dark">#d35400</color>
+    <color name="intro_slide_3_light">#e67e22</color>
+    <color name="intro_slide_4_dark">#311B92</color>
+    <color name="intro_slide_4_light">#673AB7</color>
+    <color name="intro_slide_5_dark">#c0392b</color>
+    <color name="intro_slide_5_light">#e74c3c</color>
+    <color name="intro_slide_6_dark">#8e44ad</color>
+    <color name="intro_slide_6_light">#9b59b6</color>
+    <color name="AccentFondo">#F44336</color>
+</resources>
