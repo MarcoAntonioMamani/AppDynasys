@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     tools:context=".Clientes.ListClientesFragment">
 
@@ -30,10 +31,18 @@
             android:layout_height="0dp"
             android:layout_gravity="center"
             android:layout_weight="5"
-            android:background="@color/gray_light"
+            android:background="@color/colorSplashText"
 
             />
 
     </LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/view_btnadd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
 
+        app:srcCompat="@drawable/ic_add02" />
 </FrameLayout>

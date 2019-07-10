@@ -161,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
                 try{
                     FragmentManager fm = getSupportFragmentManager();
                     FragmentTransaction ft = fm.beginTransaction();
+                    if (tag!=Constantes.TAG_CLIENTES){
+                        ft.setCustomAnimations(R.transition.left_in,R.transition.left_out);
+                    }
                     ft.addToBackStack(tag)
                             .replace(R.id.fragment, frag,tag)
                             .commit();
@@ -265,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
         loadWelcomeFragment();
     }
     private void removeAllFragments() {
+
         if (getSupportFragmentManager().getFragments().size() > 0) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
