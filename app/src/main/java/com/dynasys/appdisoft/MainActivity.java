@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.UsersListViewModel;
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.item_navigation_drawer_clientes:
 
                         item.setChecked(true);
-                        //setFragment(2);
+                        setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
                     case R.id.item_navigation_drawer_pedidos:
@@ -120,6 +121,11 @@ public class MainActivity extends AppCompatActivity {
                 returnToMain();
                 frag = new SincronizarFragment();
                 tag = Constantes.TAG_SINCRONIZACION;
+                break;
+            case 2:
+                returnToMain();
+                frag = new ListClientesFragment();
+                tag = Constantes.TAG_CLIENTES;
                 break;
             case 21:
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);

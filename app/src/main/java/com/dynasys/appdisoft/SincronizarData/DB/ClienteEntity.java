@@ -3,11 +3,12 @@ package com.dynasys.appdisoft.SincronizarData.DB;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import java.util.Date;
 
 @Entity(tableName = "clientes")
-public class ClienteEntity {
+public class ClienteEntity  implements Comparable<ClienteEntity> {
     @PrimaryKey(autoGenerate = true)
     int id;
     @ColumnInfo(name = "numi")
@@ -18,6 +19,8 @@ public class ClienteEntity {
     String namecliente;
     @ColumnInfo(name = "direccion")
     String direccion;
+    @ColumnInfo(name = "telefono")
+    String telefono;
     @ColumnInfo(name = "latitud")
     Double latitud;
     @ColumnInfo(name = "longitud")
@@ -31,12 +34,14 @@ public class ClienteEntity {
     public ClienteEntity(){
 
     }
-    public ClienteEntity(int id, int numi, String codigo, String namecliente, String direccion, Double latitud, Double longitud, Date fechaingreso, boolean estado, String codigogenerado) {
+
+    public ClienteEntity(int id, int numi, String codigo, String namecliente, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, boolean estado, String codigogenerado) {
         this.id = id;
         this.numi = numi;
         this.codigo = codigo;
         this.namecliente = namecliente;
         this.direccion = direccion;
+        this.telefono = telefono;
         this.latitud = latitud;
         this.longitud = longitud;
         this.fechaingreso = fechaingreso;
@@ -84,6 +89,14 @@ public class ClienteEntity {
         this.direccion = direccion;
     }
 
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
     public Double getLatitud() {
         return latitud;
     }
@@ -122,5 +135,12 @@ public class ClienteEntity {
 
     public void setCodigogenerado(String codigogenerado) {
         this.codigogenerado = codigogenerado;
+    }
+
+    @Override
+    public int compareTo( ClienteEntity cliente) {
+        String a=new String(String.valueOf(this.getNamecliente()));
+        String b=new String(String.valueOf(cliente.getNamecliente()));
+        return a.compareTo(b);
     }
 }
