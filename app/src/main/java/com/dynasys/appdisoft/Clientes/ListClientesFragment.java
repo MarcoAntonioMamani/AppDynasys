@@ -5,23 +5,30 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.dynasys.appdisoft.Clientes.Adapter.AdapterClientes;
+import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
+import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.R;
+import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 
@@ -33,7 +40,7 @@ import butterknife.Unbinder;
 
 
 public class ListClientesFragment extends Fragment
-        implements SearchView.OnQueryTextListener {
+        implements SearchView.OnQueryTextListener,ClienteMvp.View {
 
 private List<ClienteEntity> lisClientes=new ArrayList<>();
     View view;
@@ -57,6 +64,8 @@ private List<ClienteEntity> lisClientes=new ArrayList<>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocationGeo.getInstance(getContext(),getActivity());
+        LocationGeo.PedirPermisoApp();
 
     }
 
@@ -73,41 +82,62 @@ private List<ClienteEntity> lisClientes=new ArrayList<>();
 
         _CargarCliente();
        // recList.requestFocus();
-
+        _OnClickBtnAddCliente();
         return view;
     }
-
+public void _OnClickBtnAddCliente(){
+    btnAddCliente.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Fragment frag = new CreateClienteFragment();
+            MainActivity fca = (MainActivity) getActivity();
+            fca.switchFragment(frag,"CREATE_CLIENTE");
+        }
+    });
+}
     public void _CargarCliente(){
 
         viewModel = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
         viewModel.getClientes().observe((LifecycleOwner) getActivity(), new Observer<List<ClienteEntity>>() {
             @Override
             public void onChanged(@Nullable List<ClienteEntity> notes) {
-                lisClientes=notes;
-                Collections.sort(lisClientes);
-                adapterPerfil = new AdapterClientes(context,lisClientes);
-                LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-                llm.setOrientation(LinearLayoutManager.VERTICAL);
-                final LayoutAnimationController controller =
-                        AnimationUtils.loadLayoutAnimation(getActivity().getApplicationContext(), R.anim.layout_animation_fall_down);
-                recList.setLayoutAnimation(controller);
-                recList.setLayoutManager(llm);
-                recList.setAdapter(adapterPerfil);
+                try{
+                    lisClientes=notes;
+                    Collections.sort(lisClientes);
+                    CargarRecycler(lisClientes);
+                }catch(Exception e){
 
-                recList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                        super.onScrolled(recyclerView, dx, dy);
-                        if (dy > 0 && btnAddCliente.getVisibility() == View.VISIBLE) {
-                            btnAddCliente.hide();
-                        } else if (dy < 0 && btnAddCliente.getVisibility() != View.VISIBLE) {
-                            btnAddCliente.show();
-                        }
-                    }
-                });
+                }
+
+
 
             }  });
         recList.requestFocus();
+    }
+    public void CargarRecycler(List<ClienteEntity> listCliente){
+        if (listCliente!=null){
+            adapterPerfil = new AdapterClientes(context,lisClientes,this);
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+            llm.setOrientation(LinearLayoutManager.VERTICAL);
+            final LayoutAnimationController controller =
+                    AnimationUtils.loadLayoutAnimation(getActivity().getApplicationContext(), R.anim.layout_animation_fall_down);
+            recList.setLayoutAnimation(controller);
+            recList.setLayoutManager(llm);
+            recList.setAdapter(adapterPerfil);
+
+            recList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (dy > 0 && btnAddCliente.getVisibility() == View.VISIBLE) {
+                        btnAddCliente.hide();
+                    } else if (dy < 0 && btnAddCliente.getVisibility() != View.VISIBLE) {
+                        btnAddCliente.show();
+                    }
+                }
+            });
+        }
+
     }
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -149,6 +179,26 @@ private List<ClienteEntity> lisClientes=new ArrayList<>();
     }
 
 
+    @Override
+    public void recyclerViewListClicked(View v,  ClienteEntity cliente) {
+        if (cliente!=null){
 
-
+          if (cliente.getLatitud()==0 || cliente.getLongitud()==0){
+              ShowMessageResult("El usuario seleccionado no tiene registrado una ubicación");
+            }else{
+              UtilShare.cliente=cliente;
+              MainActivity fca = ((MainActivity) getActivity());
+              fca.startActivity(new Intent(getActivity(), MapClientActivity .class));
+              fca.overridePendingTransition(R.transition.left_in, R.transition.left_out);
+          }
+        }
+    }
+    public void ShowMessageResult(String message) {
+        Snackbar snackbar= Snackbar.make(recList, message, Snackbar.LENGTH_LONG);
+        View snackbar_view=snackbar.getView();
+        TextView snackbar_text=(TextView)snackbar_view.findViewById(android.support.design.R.id.snackbar_text);
+        snackbar_text.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ic_iinfo,0);
+        snackbar_text.setGravity(Gravity.CENTER);
+        snackbar.show();
+    }
 }

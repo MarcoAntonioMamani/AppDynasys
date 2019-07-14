@@ -33,7 +33,12 @@ public class ClientesListViewModel extends AndroidViewModel {
     public ClienteEntity getCliente(int id) throws ExecutionException, InterruptedException {
         return mRepository.getCliente(id);
     }
-
+    public ClienteEntity getClientebycode(String code) throws ExecutionException, InterruptedException {
+        return mRepository.getClientebyCode(code);
+    }
+    public List<ClienteEntity> getMAllCliente(int code) throws ExecutionException, InterruptedException {
+        return mRepository.getMClienteAll(code);
+    }
     public void insertCliente(ClienteEntity user) {
         mRepository.insertCliente(user);
     }

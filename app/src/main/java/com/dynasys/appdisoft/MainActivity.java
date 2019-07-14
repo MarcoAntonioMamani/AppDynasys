@@ -29,6 +29,7 @@ import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.UsersListViewModel;
+import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.SincronizarData.SincronizarFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
+        LocationGeo.getInstance(getApplicationContext(),this);
+        LocationGeo.PedirPermisoApp();
         toolbar = (Toolbar) findViewById(R.id.id_main_toolbar);
         setSupportActionBar(toolbar);
         mContext = this;

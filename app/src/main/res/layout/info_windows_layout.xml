@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:padding="5dp" >
+
+    <ImageView
+        android:id="@+id/id_img_client"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/cliente" />
+
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:text="Marco Antonio Mamani Chura"
+        android:layout_toRightOf="@id/id_img_client"
+        android:paddingLeft="5dp"
+        android:id="@+id/view_cliente_nombre"
+        style="@style/TextAppearance.AppCompat.Menu"
+        android:textStyle="bold"
+        android:background="@drawable/line_drawable"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_text"
+        android:text="Barrio las americas entre 7 y 8 anillo"
+        android:id="@+id/view_cliente_direccion"
+        style="@style/TextAppearance.AppCompat.Small"
+        android:layout_below="@id/view_cliente_nombre"
+        android:layout_toRightOf="@id/id_img_client"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:paddingLeft="5dp"
+        />
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="3dp"
+        android:layout_toRightOf="@id/id_img_client"
+        android:layout_below="@id/view_cliente_direccion"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:textColor="@color/primary_text"
+            android:id="@+id/view_cliente_telefono"
+            android:text="Telf: 78140596"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+
+            />
+    </LinearLayout>
+
+</RelativeLayout>

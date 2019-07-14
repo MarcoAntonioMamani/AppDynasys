@@ -28,6 +28,12 @@ public class ClienteRepository {
     public ClienteEntity getCliente(int clienteId) throws ExecutionException, InterruptedException {
         return new getUserAsync(mClienteDao).execute(clienteId).get();
     }
+    public List<ClienteEntity> getMClienteAll(int clienteId) throws ExecutionException, InterruptedException {
+        return new getCustomerAllAsync(mClienteDao).execute(clienteId).get();
+    }
+    public ClienteEntity getClientebyCode(String code) throws ExecutionException, InterruptedException {
+        return new getUserCodeAsync(mClienteDao).execute(code).get();
+    }
 
     public void insertCliente(ClienteEntity user) {
         new insertClientesAsync(mClienteDao).execute(user);
@@ -65,6 +71,32 @@ public class ClienteRepository {
         }
     }
 
+    private static class getCustomerAllAsync extends AsyncTask<Integer, Void, List<ClienteEntity>> {
+
+        private ClientesDao mClienteDaoAsync;
+
+        getCustomerAllAsync(ClientesDao clienteDao) {
+            mClienteDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected List<ClienteEntity> doInBackground(Integer... ids) {
+            return mClienteDaoAsync.getClienteAll();
+        }
+    }
+    private static class getUserCodeAsync extends AsyncTask<String, Void, ClienteEntity> {
+
+        private ClientesDao mClienteDaoAsync;
+
+        getUserCodeAsync(ClientesDao clienteDao) {
+            mClienteDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected ClienteEntity doInBackground(String... code) {
+            return mClienteDaoAsync.getClienteByCode(code[0]);
+        }
+    }
     private static class insertClientesAsync extends AsyncTask<ClienteEntity, Void, Long> {
 
         private ClientesDao mClienteDaoAsync;

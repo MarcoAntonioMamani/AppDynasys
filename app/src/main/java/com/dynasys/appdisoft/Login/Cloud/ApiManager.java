@@ -1,5 +1,6 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
+import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 
 import java.util.List;
@@ -33,6 +34,10 @@ public class ApiManager {
 
     public void LoginUser(Bodylogin user, Callback<ResponseLogin> callback) {
         Call<ResponseLogin> userCall = service.LoginUser(user);
+        userCall.enqueue(callback);
+    }
+    public void InsertUser(ClienteEntity user, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.InsertUser(user);
         userCall.enqueue(callback);
     }
     public void ObtenerClientes( Callback<List<ClienteEntity>> callback) {

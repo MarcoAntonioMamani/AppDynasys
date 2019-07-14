@@ -56,6 +56,7 @@ public class LoginPresenter implements LoginMvp.Presenter {
                             }else{
                                 DataPreferences.putPrefLogin("isLogin",true,mContext);
                                 DataPreferences.putPref("repartidor",responseUser.getToken(),mContext);
+                                DataPreferences.putPrefInteger("idrepartidor",responseUser.getId(),mContext);
                                 mLoginView.LoginSuccesfull();
                             }
 

@@ -3,12 +3,14 @@ package com.dynasys.appdisoft.Login.Cloud;
 public class ResponseLogin {
    int code;
    String message;
-    String token;
+   String token;
+   int id;
 
-    public ResponseLogin(int code, String message, String token) {
+    public ResponseLogin(int code, String message, String token, int id) {
         this.code = code;
         this.message = message;
         this.token = token;
+        this.id = id;
     }
 
     public int getCode() {
@@ -33,5 +35,13 @@ public class ResponseLogin {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

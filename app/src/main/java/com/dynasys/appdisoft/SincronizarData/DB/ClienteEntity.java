@@ -17,6 +17,8 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
     String codigo;
     @ColumnInfo(name = "namecliente")
     String namecliente;
+    @ColumnInfo(name = "nit")
+    String nit;
     @ColumnInfo(name = "direccion")
     String direccion;
     @ColumnInfo(name = "telefono")
@@ -35,11 +37,12 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
 
     }
 
-    public ClienteEntity(int id, int numi, String codigo, String namecliente, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, boolean estado, String codigogenerado) {
+    public ClienteEntity(int id, int numi, String codigo, String namecliente, String nit, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, boolean estado, String codigogenerado) {
         this.id = id;
         this.numi = numi;
         this.codigo = codigo;
         this.namecliente = namecliente;
+        this.nit = nit;
         this.direccion = direccion;
         this.telefono = telefono;
         this.latitud = latitud;
@@ -79,6 +82,14 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
 
     public void setNamecliente(String namecliente) {
         this.namecliente = namecliente;
+    }
+
+    public String getNit() {
+        return nit;
+    }
+
+    public void setNit(String nit) {
+        this.nit = nit;
     }
 
     public String getDireccion() {

@@ -15,6 +15,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.android.gms.common.internal.Preconditions;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,22 +45,25 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                     return;
                 }
                 if (response.isSuccessful() && responseUser != null) {
-
-                    viewModel.getClientes().observe((LifecycleOwner) activity, new Observer<List<ClienteEntity>>() {
-                        @Override
-                        public void onChanged(@Nullable List<ClienteEntity> notes) {
-                            List<ClienteEntity> listCliente = notes;
-                            if (listCliente.size() <= 0) {
-                                for (int i = 0; i < responseUser.size(); i++) {
-                                    ClienteEntity cliente = responseUser.get(i);
-                                    viewModel.insertCliente(cliente);
-                                }
-
-                                mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Clientes");
-                            }else{
-                                mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Clientes");
+                    try {
+                        List<ClienteEntity> listCliente = viewModel.getMAllCliente(1);
+                        if (listCliente.size() <= 0) {
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                ClienteEntity cliente = responseUser.get(i);
+                                viewModel.insertCliente(cliente);
                             }
-                        }  });
+
+                            mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Clientes");
+                        }else{
+                            mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Clientes");
+                        }
+                    } catch (ExecutionException e) {
+                        //e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor : "+e.getMessage());
+                    } catch (InterruptedException e) {
+                     //   e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor : "+e.getMessage());
+                    }
 
 
 

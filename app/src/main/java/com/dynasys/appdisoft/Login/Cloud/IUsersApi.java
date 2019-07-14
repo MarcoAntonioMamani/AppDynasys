@@ -1,5 +1,6 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
+import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.strongloop.android.loopback.User;
 
@@ -13,6 +14,8 @@ import retrofit2.http.POST;
 public interface IUsersApi {
     @POST("/api/repartidor/login")
     Call<ResponseLogin> LoginUser(@Body Bodylogin user);
+    @POST("/api/repartidor/clients")
+    Call<ResponseLogin> InsertUser(@Body ClienteEntity user);
     @GET("/api/repartidor/clientes")
     Call<List<ClienteEntity>> ObtenerClientes();
 }

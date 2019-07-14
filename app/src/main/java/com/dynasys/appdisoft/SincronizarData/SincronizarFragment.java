@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.dynasys.appdisoft.Login.LoginMvp;
 import com.dynasys.appdisoft.R;
+import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.dynasys.appdisoft.SincronizarData.Presentacion.SincronizarMvp;
 import com.dynasys.appdisoft.SincronizarData.Presentacion.SincronizarPresenter;
@@ -51,6 +52,8 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        LocationGeo.getInstance(getContext(),getActivity());
+        LocationGeo.PedirPermisoApp();
 
     }
     @Override
