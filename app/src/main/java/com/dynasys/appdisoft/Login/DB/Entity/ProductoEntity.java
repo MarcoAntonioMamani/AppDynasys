@@ -9,7 +9,7 @@ import android.arch.persistence.room.PrimaryKey;
 public class ProductoEntity {
     @PrimaryKey()
     @ColumnInfo(name = "numi")
-    int cbnumi;
+    int numi;
     @ColumnInfo(name = "cod")
     String cod;
     @ColumnInfo(name = "producto")
@@ -21,8 +21,8 @@ public class ProductoEntity {
     @ColumnInfo(name = "categoria")
     String categoria;
 
-    public ProductoEntity(int cbnumi, String cod, String producto, String desccorta, int idcategoria, String categoria) {
-        this.cbnumi = cbnumi;
+    public ProductoEntity(int numi, String cod, String producto, String desccorta, int idcategoria, String categoria) {
+        this.numi = numi;
         this.cod = cod;
         this.producto = producto;
         this.desccorta = desccorta;
@@ -30,12 +30,12 @@ public class ProductoEntity {
         this.categoria = categoria;
     }
 
-    public int getCbnumi() {
-        return cbnumi;
+    public int getNumi() {
+        return numi;
     }
 
-    public void setCbnumi(int cbnumi) {
-        this.cbnumi = cbnumi;
+    public void setNumi(int numi) {
+        this.numi = numi;
     }
 
     public String getCod() {

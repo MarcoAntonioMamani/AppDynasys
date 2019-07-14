@@ -1,5 +1,7 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
+import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.strongloop.android.loopback.User;
@@ -18,4 +20,8 @@ public interface IUsersApi {
     Call<ResponseLogin> InsertUser(@Body ClienteEntity user);
     @GET("/api/repartidor/clientes")
     Call<List<ClienteEntity>> ObtenerClientes();
+    @GET("/api/repartidor/precios")
+    Call<List<PrecioEntity>> ObtenerPrecios();
+    @GET("/api/repartidor/productos")
+    Call<List<ProductoEntity>> ObtenerProductos();
 }

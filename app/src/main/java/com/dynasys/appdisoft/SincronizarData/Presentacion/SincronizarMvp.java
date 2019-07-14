@@ -11,6 +11,6 @@ public interface SincronizarMvp {
 
     }
     interface Presenter{
-        void GuadarDatos();
+        void GuadarDatos(boolean producto,boolean precio,boolean cliente);
     }
 }

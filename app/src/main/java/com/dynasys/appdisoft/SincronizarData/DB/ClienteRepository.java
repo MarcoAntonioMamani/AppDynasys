@@ -28,6 +28,9 @@ public class ClienteRepository {
     public ClienteEntity getCliente(int clienteId) throws ExecutionException, InterruptedException {
         return new getUserAsync(mClienteDao).execute(clienteId).get();
     }
+    public ClienteEntity getClienteNumi(int clienteId) throws ExecutionException, InterruptedException {
+        return new getUserNumiAsync(mClienteDao).execute(clienteId).get();
+    }
     public List<ClienteEntity> getMClienteAll(int clienteId) throws ExecutionException, InterruptedException {
         return new getCustomerAllAsync(mClienteDao).execute(clienteId).get();
     }
@@ -70,7 +73,19 @@ public class ClienteRepository {
             return mClienteDaoAsync.getClienteById(ids[0]);
         }
     }
+    private static class getUserNumiAsync extends AsyncTask<Integer, Void, ClienteEntity> {
 
+        private ClientesDao mClienteDaoAsync;
+
+        getUserNumiAsync(ClientesDao clienteDao) {
+            mClienteDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected ClienteEntity doInBackground(Integer... ids) {
+            return mClienteDaoAsync.getClienteByNumi(ids[0]);
+        }
+    }
     private static class getCustomerAllAsync extends AsyncTask<Integer, Void, List<ClienteEntity>> {
 
         private ClientesDao mClienteDaoAsync;

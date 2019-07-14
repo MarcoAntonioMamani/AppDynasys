@@ -24,7 +24,9 @@ import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.LoginMvp;
+import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
@@ -45,6 +47,8 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
     Button btnSincronizar;
     private SincronizarMvp.Presenter mSincronizarPresenter;
     private ClientesListViewModel viewModel;
+    private PreciosListViewModel viewModelPrecio;
+    private ProductosListViewModel viewModelProducto;
     private ProgressDialog progresdialog;
     public SincronizarFragment() {
         // Required empty public constructor
@@ -72,9 +76,11 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
         checkPrecio=rootView.findViewById(R.id.view_sinc_precio);
         btnSincronizar=rootView.findViewById(R.id.id_sync_btn_sync);
         viewModel = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
+        viewModelPrecio = ViewModelProviders.of(getActivity()).get(PreciosListViewModel.class);
+        viewModelProducto = ViewModelProviders.of(getActivity()).get(ProductosListViewModel.class);
       /*  NoteEntity note = new NoteEntity(inputNote.getText().toString());
         viewModel.insertNote(note);*/
-        new SincronizarPresenter(this,getContext(),viewModel,getActivity());
+        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto);
 checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -95,7 +101,8 @@ public void OnclickButton(){
                       return;
                   }else{
                       progresdialog.show();
-                      mSincronizarPresenter.GuadarDatos();
+
+                      mSincronizarPresenter.GuadarDatos(checkProducto.isChecked() ,checkPrecio.isChecked(),checkCliente.isChecked());
                   }
 
               }else{

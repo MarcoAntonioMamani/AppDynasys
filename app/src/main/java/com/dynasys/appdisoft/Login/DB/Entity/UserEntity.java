@@ -16,7 +16,8 @@ public class UserEntity {
     @ColumnInfo(name = "cbci")
     String ci;
 
-    public UserEntity( int cbnumi, String username, String ci) {
+    public UserEntity(int id, int cbnumi, String username, String ci) {
+        this.id = id;
         this.cbnumi = cbnumi;
         this.username = username;
         this.ci = ci;

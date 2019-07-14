@@ -19,6 +19,9 @@ public interface ClientesDao {
 
     @Query("SELECT * FROM clientes WHERE id=:id")
     ClienteEntity getClienteById(int id);
+
+    @Query("SELECT * FROM clientes WHERE numi=:id")
+    ClienteEntity getClienteByNumi(int id);
     @Query("SELECT * FROM clientes")
     List<ClienteEntity> getClienteAll();
     @Query("SELECT * FROM clientes WHERE codigogenerado=:code")
