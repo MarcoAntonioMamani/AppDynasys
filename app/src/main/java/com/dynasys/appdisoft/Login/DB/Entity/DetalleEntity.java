@@ -5,7 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "detalle")
-public class DetalleEntity {
+public class DetalleEntity  implements Cloneable{
     @PrimaryKey(autoGenerate = true)
     int id;
     @ColumnInfo(name = "obnumi")
@@ -23,6 +23,9 @@ public class DetalleEntity {
     @ColumnInfo(name = "estado")
     boolean estado;
 
+    public DetalleEntity(){
+
+    }
     public DetalleEntity( String obnumi, int obcprod, String cadesc, double obpcant, double obpbase, double obptot, boolean estado) {
 
         this.obnumi = obnumi;
@@ -96,6 +99,10 @@ public class DetalleEntity {
 
     public void setEstado(boolean estado) {
         this.estado = estado;
+    }
+
+    public DetalleEntity clone() throws CloneNotSupportedException {
+        return (DetalleEntity) super.clone();
     }
 }
 

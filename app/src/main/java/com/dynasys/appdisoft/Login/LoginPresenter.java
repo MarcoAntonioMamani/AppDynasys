@@ -37,7 +37,7 @@ public class LoginPresenter implements LoginMvp.Presenter {
           mLoginView.ShowMessageResult("Sin Conexión. Por favor conectarse a una red");
           return;
       }
-
+        mLoginView.showDialogs();
 
         Bodylogin blogin=new Bodylogin(codigo,nroDocumento);
      ApiManager apiManager=ApiManager.getInstance();

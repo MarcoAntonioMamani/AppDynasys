@@ -21,6 +21,8 @@ import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
+import com.dynasys.appdisoft.MainActivity;
+import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoFragment;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosPresenter;
 import com.dynasys.appdisoft.R;
@@ -42,11 +44,13 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
     private List<PedidoEntity> listPedidos=new ArrayList<>();
     View view;
     Context context;
+
     RecyclerView recList;
     public AdapterPedidos adapterPerfil;
     private ClientesListViewModel viewModelClientes;
     private PedidoListViewModel viewModelPedidos;
     private PedidosMvp.Presenter mPedidosPresenter;
+    private FloatingActionButton btnAddPedido;
     public ListPedidosFragment() {
         // Required empty public constructor
     }
@@ -62,12 +66,24 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_list_pedidos, container, false);
         recList = (RecyclerView) view.findViewById(R.id.Pedidos_CardList);
+        btnAddPedido=(FloatingActionButton)view.findViewById(R.id.view_btnaddPedidos) ;
         recList.setHasFixedSize(true);
         viewModelPedidos = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelClientes = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
         new PedidosPresenter(this,getContext(),viewModelPedidos,getActivity());
         cargarClientes();
+        _OnClickBtnAddPedidos();
         return view;
+    }
+    public void _OnClickBtnAddPedidos(){
+        btnAddPedido.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment frag = new CreatePedidoFragment();
+                MainActivity fca = (MainActivity) getActivity();
+                fca.switchFragment(frag,"CREATE_PEDIDOS");
+            }
+        });
     }
 public void cargarClientes(){
     try {

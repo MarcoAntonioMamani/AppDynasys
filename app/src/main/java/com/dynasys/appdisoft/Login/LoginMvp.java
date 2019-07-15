@@ -3,6 +3,7 @@ package com.dynasys.appdisoft.Login;
 public interface LoginMvp {
     interface View {
         void showEmailError();
+        void showDialogs();
         void showPasswordError();
         void LoginSuccesfull();
         void setPresenter(Presenter presenter);

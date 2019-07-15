@@ -33,11 +33,14 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
     boolean estado;
     @ColumnInfo(name = "codigogenerado")
     String codigogenerado;
+    @ColumnInfo(name = "cccat")
+    int cccat;
     public ClienteEntity(){
 
     }
 
-    public ClienteEntity(int numi, String codigo, String namecliente, String nit, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, boolean estado, String codigogenerado) {
+    public ClienteEntity(int id, int numi, String codigo, String namecliente, String nit, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, boolean estado, String codigogenerado, int cccat) {
+        this.id = id;
         this.numi = numi;
         this.codigo = codigo;
         this.namecliente = namecliente;
@@ -49,6 +52,15 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
         this.fechaingreso = fechaingreso;
         this.estado = estado;
         this.codigogenerado = codigogenerado;
+        this.cccat = cccat;
+    }
+
+    public int getCccat() {
+        return cccat;
+    }
+
+    public void setCccat(int cccat) {
+        this.cccat = cccat;
     }
 
     public int getId() {

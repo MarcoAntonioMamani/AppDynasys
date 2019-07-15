@@ -1,0 +1,27 @@
+package com.dynasys.appdisoft.Pedidos.CreatePedidos;
+
+import android.widget.TextView;
+
+import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
+import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+
+import java.util.List;
+
+public interface CreatePedidoMvp {
+
+    interface View {
+
+        void MostrarClientes(List<ClienteEntity> clientes);
+        void MostrarProductos(List<ProductoEntity> productos);
+        void setPresenter(Presenter presenter);
+        void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal);
+        void DeleteAndModifyDetailOrder(DetalleEntity item,int pos);
+    }
+    interface Presenter{
+        void CargarClientes();
+        void CargarProducto(int idCLiente);
+    }
+}

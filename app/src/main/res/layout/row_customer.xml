@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/row_cliente_img"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/cliente" />
+
+    <TextView
+        android:id="@+id/row_cliente_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+      android:paddingTop="6dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/row_cliente_img"
+        android:maxLength="65"
+
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textSize="12sp"
+        android:maxLines="1"
+        android:text="Roberto Saavedra" />
+
+    <TextView
+        android:id="@+id/row_cliente_direccion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/row_cliente_name"
+        android:layout_toEndOf="@+id/row_cliente_img"
+        android:maxLines="2"
+        android:text="Loading..."
+        android:textColor="@color/gray_dark"
+        android:textSize="10sp" />
+    <TextView
+        android:id="@+id/row_cliente_telefono"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/row_cliente_direccion"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/row_cliente_img"
+        android:text="Loading..."
+        android:textColor="@color/gray_dark"
+        android:textSize="10sp" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/row_cliente_img"
+
+        android:background="@color/colorAccent"></View>
+</RelativeLayout>

@@ -1,8 +1,12 @@
 package com.dynasys.appdisoft.Login;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,6 +15,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
@@ -27,6 +32,7 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
     private TextInputLayout textNroDocumento;
     private Button btnIngresar;
     private LoginMvp.Presenter mLoginPresenter;
+    private ProgressDialog progresdialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +48,11 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
         btnIngresar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                mLoginPresenter.ValidarLogin(mCodigo.getText().toString(),mNroDocumento.getText().toString());
             }
         });
+        ShowDialogSincronizando();
         new LoginPresenter(this,getApplicationContext());
 
     }
@@ -57,6 +65,11 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
     }
 
     @Override
+    public void showDialogs() {
+        progresdialog.show();
+    }
+
+    @Override
     public void showPasswordError() {
         mNroDocumento.setError("Numero de Documento Invalido");
         mNroDocumento.requestFocus();
@@ -65,7 +78,9 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
 
     @Override
     public void LoginSuccesfull() {
-
+if (progresdialog.isShowing()){
+    progresdialog.dismiss();
+}
         LoginActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -89,7 +104,18 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
         snackbar_text.setGravity(Gravity.CENTER);
         snackbar.show();
     }
+    private void ShowDialogSincronizando(){
+        progresdialog=new ProgressDialog(this);
+        progresdialog.setCancelable(false);
+        progresdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progresdialog.setIndeterminate(false);
+        Drawable drawable = new ProgressBar(this).getIndeterminateDrawable().mutate();
+        drawable.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent),
+                PorterDuff.Mode.SRC_IN);
+        progresdialog.setIndeterminateDrawable(drawable);
+        progresdialog.setMessage("Consultando Datos .....");
 
+    }
     class TextWatcherLabel implements TextWatcher {
 
         private final TextInputLayout mFloatingLabel;

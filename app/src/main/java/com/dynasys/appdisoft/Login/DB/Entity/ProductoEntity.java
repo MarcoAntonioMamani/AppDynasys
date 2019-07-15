@@ -6,7 +6,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "producto")
-public class ProductoEntity {
+public class ProductoEntity  implements Cloneable{
     @PrimaryKey()
     @ColumnInfo(name = "numi")
     int numi;
@@ -20,14 +20,25 @@ public class ProductoEntity {
     int idcategoria;
     @ColumnInfo(name = "categoria")
     String categoria;
+    @ColumnInfo(name = "precio")
+    double precio;
 
-    public ProductoEntity(int numi, String cod, String producto, String desccorta, int idcategoria, String categoria) {
+    public ProductoEntity(int numi, String cod, String producto, String desccorta, int idcategoria, String categoria, double precio) {
         this.numi = numi;
         this.cod = cod;
         this.producto = producto;
         this.desccorta = desccorta;
         this.idcategoria = idcategoria;
         this.categoria = categoria;
+        this.precio = precio;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
     }
 
     public int getNumi() {
@@ -76,5 +87,8 @@ public class ProductoEntity {
 
     public void setCategoria(String categoria) {
         this.categoria = categoria;
+    }
+    public ProductoEntity clone() throws CloneNotSupportedException {
+        return (ProductoEntity) super.clone();
     }
 }
