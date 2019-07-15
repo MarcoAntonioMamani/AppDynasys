@@ -45,6 +45,9 @@ public class PrecioRepository {
     public void updatePrecios(PrecioEntity user) {
         new updatePrecioAsync(mPrecioDao).execute(user);
     }
+    public void updateListPrecios(PrecioEntity[] user) {
+        new updateListPrecioAsync(mPrecioDao).execute(user);
+    }
 
     public void deletePrecios(PrecioEntity user) {
         new deletePrecioAsync(mPrecioDao).execute(user);
@@ -115,7 +118,20 @@ public class PrecioRepository {
             return null;
         }
     }
+    private static class updateListPrecioAsync extends AsyncTask<PrecioEntity, Void, Void> {
 
+        private PrecioDao mPrecioDaoAsync;
+
+        updateListPrecioAsync(PrecioDao userDao) {
+            mPrecioDaoAsync = userDao;
+        }
+
+        @Override
+        protected Void doInBackground(PrecioEntity[] notes) {
+            mPrecioDaoAsync.update(notes);
+            return null;
+        }
+    }
     private static class deletePrecioAsync extends AsyncTask<PrecioEntity, Void, Void> {
 
         private PrecioDao mPrecioDaoAsync;

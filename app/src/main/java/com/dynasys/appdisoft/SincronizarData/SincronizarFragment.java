@@ -24,6 +24,8 @@ import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.LoginMvp;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
@@ -42,13 +44,15 @@ import java.util.List;
 public class SincronizarFragment extends Fragment implements SincronizarMvp.View {
     CheckBox checkTodo;
     CheckBox checkCliente;
-    CheckBox checkProducto;
+    CheckBox checkProducto,checkPedidos;
     CheckBox checkPrecio;
     Button btnSincronizar;
     private SincronizarMvp.Presenter mSincronizarPresenter;
     private ClientesListViewModel viewModel;
     private PreciosListViewModel viewModelPrecio;
     private ProductosListViewModel viewModelProducto;
+    private PedidoListViewModel viewModelPedidos;
+    private DetalleListViewModel viewModelDetalle;
     private ProgressDialog progresdialog;
     public SincronizarFragment() {
         // Required empty public constructor
@@ -75,12 +79,15 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
         checkProducto=rootView.findViewById(R.id.view_sinc_producto);
         checkPrecio=rootView.findViewById(R.id.view_sinc_precio);
         btnSincronizar=rootView.findViewById(R.id.id_sync_btn_sync);
+        checkPedidos=rootView.findViewById(R.id.view_sinc_pedidos);
         viewModel = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
         viewModelPrecio = ViewModelProviders.of(getActivity()).get(PreciosListViewModel.class);
         viewModelProducto = ViewModelProviders.of(getActivity()).get(ProductosListViewModel.class);
+        viewModelPedidos = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
+        viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
       /*  NoteEntity note = new NoteEntity(inputNote.getText().toString());
         viewModel.insertNote(note);*/
-        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto);
+        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle);
 checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -102,7 +109,7 @@ public void OnclickButton(){
                   }else{
                       progresdialog.show();
 
-                      mSincronizarPresenter.GuadarDatos(checkProducto.isChecked() ,checkPrecio.isChecked(),checkCliente.isChecked());
+                      mSincronizarPresenter.GuadarDatos(checkProducto.isChecked() ,checkPrecio.isChecked(),checkCliente.isChecked(),checkPedidos.isChecked());
                   }
 
               }else{
@@ -112,7 +119,7 @@ public void OnclickButton(){
         });
 }
 public boolean ValidarcheckSeleccionado(){
-        return checkProducto.isChecked() ||checkPrecio.isChecked()||checkCliente.isChecked();
+        return checkProducto.isChecked() ||checkPrecio.isChecked()||checkCliente.isChecked()||checkPedidos.isChecked();
 }
 
     @Override
@@ -120,6 +127,7 @@ public boolean ValidarcheckSeleccionado(){
       checkCliente.setChecked(bandera);
       checkPrecio.setChecked(bandera);
       checkProducto.setChecked(bandera);
+      checkPedidos.setChecked(bandera);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
+import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
@@ -12,6 +14,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface IUsersApi {
     @POST("/api/repartidor/login")
@@ -24,4 +27,8 @@ public interface IUsersApi {
     Call<List<PrecioEntity>> ObtenerPrecios();
     @GET("/api/repartidor/productos")
     Call<List<ProductoEntity>> ObtenerProductos();
+    @GET("/api/repartidor/pedidos/{idrepartidor}")
+    Call<List<PedidoEntity>> ObtenerPedidos(@Path("idrepartidor") String idRepartidor);
+    @GET("/api/repartidor/detalles/{idrepartidor}")
+    Call<List<DetalleEntity>> ObtenerDetalles(@Path("idrepartidor") String idRepartidor);
 }

@@ -9,8 +9,12 @@ import android.support.annotation.Nullable;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.Bodylogin;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
+import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
@@ -18,6 +22,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.android.gms.common.internal.Preconditions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -31,17 +36,20 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
     private final ClientesListViewModel viewModel;
     private final PreciosListViewModel viewModelPrecios;
     private final ProductosListViewModel viewModelProductos;
+    private final PedidoListViewModel viewModelPedidos;
+    private final DetalleListViewModel viewModelDetalles;
     private final Activity activity;
      int cantidadCliente = 0;
     int cantidadProducto=0;
     int cantidadPrecio=0;
+    int cantidadPedidos=0;
     String Mensaje="";
     int CantidadPenticiones=0;
     int Contador=0;
 
 
     public SincronizarPresenter(SincronizarMvp.View sincronizarView, Context context, ClientesListViewModel viewModel, Activity activity, PreciosListViewModel
-                                viewModelPrecios, ProductosListViewModel viewModelProductos){
+                                viewModelPrecios, ProductosListViewModel viewModelProductos,PedidoListViewModel viewModelPedidos,DetalleListViewModel viewModelDetalles){
         mSincronizarview = Preconditions.checkNotNull(sincronizarView);
         mSincronizarview.setPresenter(this);
         this.viewModel=viewModel;
@@ -49,6 +57,8 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
         this.activity=activity;
         this.viewModelPrecios=viewModelPrecios;
         this.viewModelProductos=viewModelProductos;
+        this.viewModelPedidos=viewModelPedidos;
+        this.viewModelDetalles=viewModelDetalles;
          cantidadCliente = 0;
        cantidadProducto=0;
          cantidadPrecio=0;
@@ -56,11 +66,13 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
         Contador=0;
     }
     @Override
-    public void GuadarDatos(boolean producto,boolean precio,boolean cliente) {
+    public void GuadarDatos(boolean producto,boolean precio,boolean cliente,boolean pedidos) {
         CantidadPenticiones=0;
         Contador=0;
         Mensaje="";
-CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:0);
+        cantidadPedidos=0;
+        int idRepartidor=DataPreferences.getPrefInt("idrepartidor",mContext);
+        CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:0)+(pedidos==true? 1:0);
         String Mensaje="";
         if (cliente==true ){
             _DescargarClientes();
@@ -68,8 +80,11 @@ CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:
         if ( precio==true){
             _DecargarPrecios();
         }
-        if (producto&& true){
+        if (producto== true){
             _DecargarProductos();
+        }
+        if (pedidos== true){
+            _DecargarPedidos(""+idRepartidor);
         }
     }
 
@@ -94,11 +109,29 @@ CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:
                            cantidadPrecio+=responseUser.size();
                            // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }else{
-                            viewModelPrecios.deleteAllPrecios();
+
+                           List<PrecioEntity> listupdate=new ArrayList<>();
+                           List<PrecioEntity> listinsert=new ArrayList<>();
                             for (int i = 0; i < responseUser.size(); i++) {
                                 PrecioEntity precio = responseUser.get(i);
-                                viewModelPrecios.insertPrecio(precio);
+                                //viewModel.insertCliente(cliente);
+                                PrecioEntity dbprecio=viewModelPrecios.getPrecio(precio.getChnumi());
+                                if (dbprecio==null){
+                                    viewModelPrecios.insertPrecio(precio);
+                                }else{
+
+                                            listupdate.add(precio);
+                                    //viewModelPrecios.updatePrecio(precio);
+                                }
+
                             }
+                        if (listupdate.size()>0){
+                            PrecioEntity[]  listu=new PrecioEntity[listupdate.size()];
+                            for (int i = 0; i < listupdate.size(); i++) {
+                                listu[i]=listupdate.get(i);
+                            }
+                            viewModelPrecios.updateListPrecio(listu);
+                        }
                           //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }
 
@@ -151,19 +184,29 @@ CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:
                             cantidadCliente=responseUser.size();
                             //mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Clientes");
                         }else{
+
+                            List<ClienteEntity> listupdate=new ArrayList<>();
+
                             for (int i = 0; i < responseUser.size(); i++) {
                                 ClienteEntity cliente = responseUser.get(i);
                                 //viewModel.insertCliente(cliente);
-                               ClienteEntity dbcliente=viewModel.getClienteNumi(cliente.getNumi());
-                               if (dbcliente==null){
-                                   viewModel.insertCliente(cliente);
-                               }else{
-                                   viewModel.updateCliente(cliente);
-                               }
+                                ClienteEntity dbcliente=viewModel.getClienteNumi(cliente.getNumi());
+                                if (dbcliente==null){
+                                    viewModel.insertCliente(cliente);
+                                }else{
+
+                                    listupdate.add(cliente);
+                                    //viewModelPrecios.updatePrecio(precio);
+                                }
 
                             }
-                            cantidadCliente=responseUser.size();
-
+                            if (listupdate.size()>0){
+                                ClienteEntity[]  listu=new ClienteEntity[listupdate.size()];
+                                for (int i = 0; i < listupdate.size(); i++) {
+                                    listu[i]=listupdate.get(i);
+                                }
+                                viewModel.updateListCliente(listu);
+                            }
                            // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Clientes");
                         }
                         Contador+=1;
@@ -215,12 +258,22 @@ CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:
                             cantidadProducto+=responseUser.size();
                             // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }else{
-                            viewModelProductos.deleteAllProductos();
+                          /*  viewModelProductos.deleteAllProductos();
                             for (int i = 0; i < responseUser.size(); i++) {
                                 ProductoEntity producto = responseUser.get(i);
                                 viewModelProductos.insertProducto(producto);
+                            }*/
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                ProductoEntity producto = responseUser.get(i);
+                                //viewModel.insertCliente(cliente);
+                                ProductoEntity dbproducto=viewModelProductos.getProducto(producto.getNumi());
+                                if (dbproducto==null){
+                                    viewModelProductos.insertProducto(producto);
+                                }else{
+                                    viewModelProductos.updateProducto(producto);
+                                }
+
                             }
-                            cantidadProducto+=responseUser.size();
                             //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }
 
@@ -252,7 +305,135 @@ CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:
             }
         });
     }
+    public void _DecargarPedidos(final String idRepartidor){
+        ApiManager apiManager=ApiManager.getInstance();
+        apiManager.ObtenerPedidos( new Callback<List<PedidoEntity>>() {
+            @Override
+            public void onResponse(Call<List<PedidoEntity>> call, Response<List<PedidoEntity>> response) {
+                final List<PedidoEntity> responseUser = (List<PedidoEntity>) response.body();
+                if (response.code()==404){
+                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+                    try {
+                        List<PedidoEntity> listCliente = viewModelPedidos.getMAllPedido(1);
+                        if (listCliente.size() <= 0) {
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                PedidoEntity pedido = responseUser.get(i);
+                                viewModelPedidos.insertPedido(pedido);
+                            }
+                            cantidadProducto+=responseUser.size();
+                            // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                        }else{
+                          /*  viewModelProductos.deleteAllProductos();
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                ProductoEntity producto = responseUser.get(i);
+                                viewModelProductos.insertProducto(producto);
+                            }*/
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                PedidoEntity pedido = responseUser.get(i);
+                                //viewModel.insertCliente(cliente);
+                                PedidoEntity dbproducto=viewModelPedidos.getPedido(pedido.getOanumi());
+                                if (dbproducto==null){
+                                    viewModelPedidos.insertPedido(pedido);
+                                }else{
+                                    viewModelPedidos.updatePedido(pedido);
+                                }
 
+                            }
+
+                        }
+                        cantidadPedidos=listCliente.size();
+                        _DecargarDetalles(idRepartidor);
+                    } catch (ExecutionException e) {
+                        //e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos : "+e.getMessage());
+                    } catch (InterruptedException e) {
+                        //   e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos: "+e.getMessage());
+                    }
+
+
+
+                } else {
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PedidoEntity>> call, Throwable t) {
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el web services.");
+            }
+        },idRepartidor);
+    }
+
+    public void _DecargarDetalles(String idRepartidor){
+        ApiManager apiManager=ApiManager.getInstance();
+        apiManager.ObtenerDetalles( new Callback<List<DetalleEntity>>() {
+            @Override
+            public void onResponse(Call<List<DetalleEntity>> call, Response<List<DetalleEntity>> response) {
+                final List<DetalleEntity> responseUser = (List<DetalleEntity>) response.body();
+                if (response.code()==404){
+                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+                    try {
+                        List<DetalleEntity> listDetalle = viewModelDetalles.getMAllDetalle(1);
+                        if (listDetalle.size() <= 0) {
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                DetalleEntity pedido = responseUser.get(i);
+                                viewModelDetalles.insertDetalle(pedido);
+                            }
+                            // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                        }else{
+                          /*  viewModelProductos.deleteAllProductos();
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                ProductoEntity producto = responseUser.get(i);
+                                viewModelProductos.insertProducto(producto);
+                            }*/
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                DetalleEntity detalle = responseUser.get(i);
+
+                                if (!existeDetalle(listDetalle,detalle)){
+                                    viewModelDetalles.insertDetalle(detalle);
+                                }else{
+                                    viewModelDetalles.updateDetalle(detalle);
+                                }
+
+                            }
+
+                        }
+
+                        Contador+=1;
+                        if (Contador==CantidadPenticiones){
+                            Mensaje+=" "+cantidadPedidos+" Pedidos";
+                            mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + getMensaje());
+                        }else{
+                            Mensaje+=" "+cantidadPedidos+" Pedidos , ";
+                        }
+                    } catch (ExecutionException e) {
+                        //e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Detalles : "+e.getMessage());
+                    } catch (InterruptedException e) {
+                        //   e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Detalles: "+e.getMessage());
+                    }
+
+
+
+                } else {
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Detalles");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<DetalleEntity>> call, Throwable t) {
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el web services.");
+            }
+        },idRepartidor);
+    }
 
     public String getMensaje() {
         return Mensaje;
@@ -268,5 +449,15 @@ CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:
 
     public void setCantidadPenticiones(int cantidadPenticiones) {
         CantidadPenticiones = cantidadPenticiones;
+    }
+
+    public boolean existeDetalle(List<DetalleEntity> listDetalle,DetalleEntity detail){
+        for (int i = 0; i < listDetalle.size(); i++) {
+            DetalleEntity detalle=listDetalle.get(i);
+            if (detalle.getObnumi().toString().trim().equals(detail.getObnumi().toString().trim())&& detalle.getObcprod() ==detail.getObcprod()){
+                return true;
+            }
+        }
+        return false;
     }
 }

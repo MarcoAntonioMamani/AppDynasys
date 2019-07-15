@@ -30,8 +30,12 @@ public interface PrecioDao {
     @Insert
     long insert(PrecioEntity note);
 
+
     @Update
     void update(PrecioEntity note);
+
+    @Update
+    void update(PrecioEntity... note);
 
     @Delete
     void delete(PrecioEntity note);

@@ -72,6 +72,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
     private TextInputLayout tilNit;
     private  ClientesListViewModel viewModel;
     private ProgressDialog progresdialog;
+    private Context mContext;
     public CreateClienteFragment() {
         // Required empty public constructor
     }
@@ -83,8 +84,8 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LocationGeo.getInstance(getContext(),getActivity());
-        LocationGeo.iniciarGPS();
+        setHasOptionsMenu(true);
+        mContext = getContext();
 
     }
     @Override
@@ -117,6 +118,8 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
         onClickAtras();
         onClickGrabar();
         ShowDialogSincronizando();
+        LocationGeo.getInstance(mContext,getActivity());
+       LocationGeo.iniciarGPS();
         return view;
     }
 public void onClickAtras(){
@@ -175,7 +178,7 @@ public void onClickAtras(){
                 dialogs.show();
                 break;
             case 2:
-                dialogs= showCustomDialog("El Pedido #"+id+" ha sido guardado localmente con exito. Existen problemas" +
+                dialogs= showCustomDialog("El PedidoEntity #"+id+" ha sido guardado localmente con exito. Existen problemas" +
                         " en la exportacion:\n" + mensaje,true);
                 dialogs.setCancelable(false);
                 dialogs.show();

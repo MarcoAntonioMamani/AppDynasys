@@ -49,7 +49,9 @@ public class ClientesListViewModel extends AndroidViewModel {
     public void updateCliente(ClienteEntity user) {
         mRepository.updateCliente(user);
     }
-
+    public void updateListCliente(ClienteEntity[] user) {
+        mRepository.updateListCliente(user);
+    }
     public void deleteCliente(ClienteEntity user) {
         mRepository.deleteCliente(user);
     }

@@ -33,8 +33,11 @@ public interface ClientesDao {
     @Insert
     long insert(ClienteEntity note);
 
+
     @Update
     void update(ClienteEntity note);
+    @Update
+    void update(ClienteEntity[] note);
 
     @Delete
     void delete(ClienteEntity note);

@@ -67,7 +67,12 @@
                         android:layout_height="wrap_content"
                         android:text="Clientes"
                         />
-
+                    <CheckBox
+                        android:id="@+id/view_sinc_pedidos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pedidos"
+                        />
                     <CheckBox
                         android:id="@+id/view_sinc_producto"
                         android:layout_width="wrap_content"

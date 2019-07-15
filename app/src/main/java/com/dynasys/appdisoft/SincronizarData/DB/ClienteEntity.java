@@ -37,8 +37,7 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
 
     }
 
-    public ClienteEntity(int id, int numi, String codigo, String namecliente, String nit, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, boolean estado, String codigogenerado) {
-        this.id = id;
+    public ClienteEntity(int numi, String codigo, String namecliente, String nit, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, boolean estado, String codigogenerado) {
         this.numi = numi;
         this.codigo = codigo;
         this.namecliente = namecliente;

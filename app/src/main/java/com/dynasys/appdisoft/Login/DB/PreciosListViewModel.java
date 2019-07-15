@@ -41,10 +41,14 @@ public class PreciosListViewModel extends AndroidViewModel {
         mRepository.insertPrecios(user);
     }
 
+
+
     public void updatePrecio(PrecioEntity user) {
         mRepository.updatePrecios(user);
     }
-
+    public void updateListPrecio(PrecioEntity[] user) {
+        mRepository.updateListPrecios(user);
+    }
     public void deletePrecio(PrecioEntity user) {
         mRepository.deletePrecios(user);
     }

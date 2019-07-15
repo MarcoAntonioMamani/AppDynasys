@@ -1,5 +1,7 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
+import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
@@ -52,6 +54,14 @@ public class ApiManager {
     }
     public void ObtenerProductos( Callback<List<ProductoEntity>> callback) {
         Call<List<ProductoEntity>> userCall = service.ObtenerProductos();
+        userCall.enqueue(callback);
+    }
+    public void ObtenerPedidos( Callback<List<PedidoEntity>> callback,String idRepartidor) {
+        Call<List<PedidoEntity>> userCall = service.ObtenerPedidos(idRepartidor);
+        userCall.enqueue(callback);
+    }
+    public void ObtenerDetalles(Callback<List<DetalleEntity>> callback, String idRepartidor) {
+        Call<List<DetalleEntity>> userCall = service.ObtenerDetalles(idRepartidor);
         userCall.enqueue(callback);
     }
 }

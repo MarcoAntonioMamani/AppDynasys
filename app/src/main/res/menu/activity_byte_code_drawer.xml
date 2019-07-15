@@ -10,7 +10,7 @@
             android:visible="false"/>
         <item
             android:id="@+id/item_navigation_drawer_pedidos"
-            android:title="Pedidos"
+            android:title="Pedidos Pendientes"
             android:icon="@drawable/ic_order"
             android:visible="false"/>
         <item

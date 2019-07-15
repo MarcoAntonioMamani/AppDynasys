@@ -3,6 +3,7 @@ package com.dynasys.appdisoft.ShareUtil;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+
+
+import com.dynasys.appdisoft.MainActivity;
 
 import java.util.List;
 
@@ -136,8 +140,8 @@ public static void PedirPermisoApp(){
         }
     }
     static AlertDialog createDialogGps(final Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-
+         //android.support.v7.app.AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("Usuario:")
                 .setMessage("Su Gps esta desactivado \n Desea Activarlo? .....")
                 .setPositiveButton("OK",

@@ -29,6 +29,7 @@ import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.UsersListViewModel;
+import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.SincronizarData.SincronizarFragment;
 
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
                     case R.id.item_navigation_drawer_pedidos:
-
+                        setFragment(3);
                         item.setChecked(true);
                         //setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
@@ -129,6 +130,11 @@ public class MainActivity extends AppCompatActivity {
                 returnToMain();
                 frag = new ListClientesFragment();
                 tag = Constantes.TAG_CLIENTES;
+                break;
+            case 3:
+                returnToMain();
+                frag = new ListPedidosFragment();
+                tag = Constantes.TAG_PEDIDOS;
                 break;
             case 21:
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -164,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 try{
                     FragmentManager fm = getSupportFragmentManager();
                     FragmentTransaction ft = fm.beginTransaction();
-                    if (tag!=Constantes.TAG_CLIENTES){
+                    if (tag!=Constantes.TAG_CLIENTES  && tag!=Constantes.TAG_PEDIDOS ){
                         ft.setCustomAnimations(R.transition.left_in,R.transition.left_out);
                     }
                     ft.addToBackStack(tag)

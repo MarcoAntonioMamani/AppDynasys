@@ -42,8 +42,13 @@ public class ClienteRepository {
         new insertClientesAsync(mClienteDao).execute(user);
     }
 
+
     public void updateCliente(ClienteEntity user) {
         new updateClientesAsync(mClienteDao).execute(user);
+    }
+
+    public void updateListCliente(ClienteEntity[] user) {
+        new updateListClientesAsync(mClienteDao).execute(user);
     }
 
     public void deleteCliente(ClienteEntity user) {
@@ -126,6 +131,8 @@ public class ClienteRepository {
             return id;
         }
     }
+
+
     private static class updateClientesAsync extends AsyncTask<ClienteEntity, Void, Void> {
 
         private ClientesDao mClienteDaoAsync;
@@ -140,7 +147,20 @@ public class ClienteRepository {
             return null;
         }
     }
+    private static class updateListClientesAsync extends AsyncTask<ClienteEntity, Void, Void> {
 
+        private ClientesDao mClienteDaoAsync;
+
+        updateListClientesAsync(ClientesDao clienteDao) {
+            mClienteDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected Void doInBackground(ClienteEntity[] clientes) {
+            mClienteDaoAsync.update(clientes);
+            return null;
+        }
+    }
     private static class deleteClienteAsync extends AsyncTask<ClienteEntity, Void, Void> {
 
         private ClientesDao mClienteDaoAsync;

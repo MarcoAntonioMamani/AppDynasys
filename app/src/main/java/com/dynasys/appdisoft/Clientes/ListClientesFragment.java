@@ -64,6 +64,7 @@ private List<ClienteEntity> lisClientes=new ArrayList<>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         LocationGeo.getInstance(getContext(),getActivity());
         LocationGeo.PedirPermisoApp();
 
