@@ -30,7 +30,7 @@ public class DetalleListViewModel extends AndroidViewModel {
         return users;
     }
 
-    public DetalleEntity getDetalle(int id) throws ExecutionException, InterruptedException {
+    public List<DetalleEntity> getDetalle(String id) throws ExecutionException, InterruptedException {
         return mRepository.getDetalle(id);
     }
     public List<DetalleEntity> getMAllDetalle(int code) throws ExecutionException, InterruptedException {

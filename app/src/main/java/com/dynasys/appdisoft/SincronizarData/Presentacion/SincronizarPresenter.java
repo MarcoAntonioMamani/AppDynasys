@@ -89,7 +89,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
     }
 
     public void _DecargarPrecios(){
-        ApiManager apiManager=ApiManager.getInstance();
+        ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.ObtenerPrecios( new Callback<List<PrecioEntity>>() {
             @Override
             public void onResponse(Call<List<PrecioEntity>> call, Response<List<PrecioEntity>> response) {
@@ -164,7 +164,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
         });
     }
     public void _DescargarClientes(){
-        ApiManager apiManager=ApiManager.getInstance();
+        ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.ObtenerClientes( new Callback<List<ClienteEntity>>() {
             @Override
             public void onResponse(Call<List<ClienteEntity>> call, Response<List<ClienteEntity>> response) {
@@ -238,7 +238,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
         });
     }
     public void _DecargarProductos(){
-        ApiManager apiManager=ApiManager.getInstance();
+        ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.ObtenerProductos( new Callback<List<ProductoEntity>>() {
             @Override
             public void onResponse(Call<List<ProductoEntity>> call, Response<List<ProductoEntity>> response) {
@@ -306,7 +306,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
         });
     }
     public void _DecargarPedidos(final String idRepartidor){
-        ApiManager apiManager=ApiManager.getInstance();
+        ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.ObtenerPedidos( new Callback<List<PedidoEntity>>() {
             @Override
             public void onResponse(Call<List<PedidoEntity>> call, Response<List<PedidoEntity>> response) {
@@ -369,7 +369,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
     }
 
     public void _DecargarDetalles(String idRepartidor){
-        ApiManager apiManager=ApiManager.getInstance();
+        ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.ObtenerDetalles( new Callback<List<DetalleEntity>>() {
             @Override
             public void onResponse(Call<List<DetalleEntity>> call, Response<List<DetalleEntity>> response) {

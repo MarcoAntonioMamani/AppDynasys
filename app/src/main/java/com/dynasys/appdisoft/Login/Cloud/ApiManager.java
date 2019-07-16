@@ -1,10 +1,15 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
+import android.content.Context;
+import android.widget.EditText;
+
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
+import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
+import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 
 import java.util.List;
@@ -18,21 +23,28 @@ public class ApiManager {
 
     private static IUsersApi service;
     private static ApiManager apiManager;
-
-    private ApiManager() {
+private static Context mcontext;
+    private ApiManager(Context mcontext) {
+        String Url="";
+        if (DataPreferences.getPref("servicio",mcontext)==null){
+           Url="http://192.168.0.13:3050";
+        }else{
+            Url=DataPreferences.getPref("servicio",mcontext);
+        }
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.13:3050")
+                .baseUrl(Url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         service = retrofit.create(IUsersApi.class);
     }
 
-    public static ApiManager getInstance() {
-        if (apiManager == null) {
-            apiManager = new ApiManager();
-        }
+    public static ApiManager getInstance(Context context) {
+     //   if (apiManager == null) {
+            apiManager = new ApiManager( context);
+       // }
+        mcontext=context;
         return apiManager;
     }
 

@@ -21,7 +21,7 @@ public interface DetalleDao {
     List<DetalleEntity> getDetalleAll();
 
     @Query("SELECT * FROM detalle WHERE obnumi=:numi")
-    DetalleEntity getDetalleById(int numi);
+    List<DetalleEntity> getDetalleById(String numi);
 
     @Query("SELECT * FROM detalle WHERE obnumi=:numi and obcprod=:producto")
     DetalleEntity getDetalleByIdProducto(int numi,int producto);

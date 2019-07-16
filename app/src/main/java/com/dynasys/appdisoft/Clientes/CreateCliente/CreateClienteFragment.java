@@ -224,7 +224,7 @@ public void onClickAtras(){
         try {
              final String CodeGenerado=cliente.getCodigogenerado();
             viewModel.insertCliente(cliente);
-            ApiManager apiManager=ApiManager.getInstance();
+            ApiManager apiManager=ApiManager.getInstance(getContext());
             apiManager.InsertUser(cliente, new Callback<ResponseLogin>() {
                 @Override
                 public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {

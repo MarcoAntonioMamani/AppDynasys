@@ -40,7 +40,7 @@ public class LoginPresenter implements LoginMvp.Presenter {
         mLoginView.showDialogs();
 
         Bodylogin blogin=new Bodylogin(codigo,nroDocumento);
-     ApiManager apiManager=ApiManager.getInstance();
+     ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.LoginUser(blogin, new Callback<ResponseLogin>() {
                     @Override
                     public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {

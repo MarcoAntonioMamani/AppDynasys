@@ -30,7 +30,7 @@ public class DetalleRepository {
         return mAllDetalle;
     }
 
-    public DetalleEntity getDetalle(int noteId) throws ExecutionException, InterruptedException {
+    public List<DetalleEntity> getDetalle(String noteId) throws ExecutionException, InterruptedException {
         return new getDetallesAsync(mDetalleDao).execute(noteId).get();
     }
 
@@ -73,7 +73,7 @@ public class DetalleRepository {
             return mDetalleDaoAsync.getDetalleAll();
         }
     }
-    private static class getDetallesAsync extends AsyncTask<Integer, Void, DetalleEntity> {
+    private static class getDetallesAsync extends AsyncTask<String, Void, List<DetalleEntity>> {
 
         private DetalleDao mDetalleDaoAsync;
 
@@ -82,7 +82,7 @@ public class DetalleRepository {
         }
 
         @Override
-        protected DetalleEntity doInBackground(Integer... ids) {
+        protected List<DetalleEntity> doInBackground(String... ids) {
             return mDetalleDaoAsync.getDetalleById(ids[0]);
         }
     }

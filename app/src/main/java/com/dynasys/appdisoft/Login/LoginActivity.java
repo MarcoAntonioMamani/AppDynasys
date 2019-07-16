@@ -33,6 +33,8 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
     private Button btnIngresar;
     private LoginMvp.Presenter mLoginPresenter;
     private ProgressDialog progresdialog;
+
+    private TextView Servicio;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +44,7 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
         btnIngresar=(Button)findViewById(R.id.view_btn_ingresar);
         textCodigo=(TextInputLayout)findViewById(R.id.view_texti_codigo);
         textNroDocumento=(TextInputLayout)findViewById(R.id.view_texti_nrodocumento);
-
+        Servicio=(TextView)findViewById(R.id.id_login_lbl_Service);
         mCodigo.addTextChangedListener(new TextWatcherLabel(textCodigo));
         mNroDocumento.addTextChangedListener(new TextWatcherLabel(textNroDocumento));
         btnIngresar.setOnClickListener(new View.OnClickListener() {
@@ -54,9 +56,16 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
         });
         ShowDialogSincronizando();
         new LoginPresenter(this,getApplicationContext());
-
+        Servicio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CambiarActividad();
+            }
+        });
     }
-
+public void CambiarActividad(){
+    startActivity(new Intent(this, WebServicesActivity.class));
+}
     @Override
     public void showEmailError() {
         mCodigo.setError("Codigo Invalido");
@@ -97,6 +106,9 @@ if (progresdialog.isShowing()){
 
     @Override
     public void ShowMessageResult(String message) {
+        if (progresdialog.isShowing()){
+            progresdialog.dismiss();
+        }
         Snackbar snackbar= Snackbar.make(mNroDocumento, message, Snackbar.LENGTH_LONG);
         View snackbar_view=snackbar.getView();
         TextView snackbar_text=(TextView)snackbar_view.findViewById(android.support.design.R.id.snackbar_text);

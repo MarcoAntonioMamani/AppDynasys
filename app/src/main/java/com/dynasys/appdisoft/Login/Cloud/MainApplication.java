@@ -7,6 +7,6 @@ public class MainApplication {
 
 
     public void MainApplication() {
-        apiManager = ApiManager.getInstance();
+        //apiManager = ApiManager.getInstance();
     }
 }
