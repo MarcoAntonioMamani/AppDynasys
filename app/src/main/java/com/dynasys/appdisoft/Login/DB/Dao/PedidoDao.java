@@ -21,7 +21,7 @@ public interface PedidoDao {
     List<PedidoEntity> getPedidoAll();
 
     @Query("SELECT * FROM pedido WHERE oanumi=:numi")
-    PedidoEntity getPedidoById(int numi);
+    PedidoEntity getPedidoById(String numi);
 
     @Query("SELECT * FROM pedido WHERE oanumi=:numi")
     LiveData<PedidoEntity> getPedido(int numi);

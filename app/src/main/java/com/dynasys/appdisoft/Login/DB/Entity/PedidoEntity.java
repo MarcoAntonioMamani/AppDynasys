@@ -10,7 +10,7 @@ public class PedidoEntity {
     @PrimaryKey(autoGenerate = true)
     int id;
     @ColumnInfo(name = "oanumi")
-    int oanumi;
+    String oanumi;
     @ColumnInfo(name = "oafdoc")
     Date oafdoc;
     @ColumnInfo(name = "oahora")
@@ -37,8 +37,10 @@ public class PedidoEntity {
     boolean estado;
     @ColumnInfo(name = "codigogenerado")
     String codigogenerado;
+public PedidoEntity(){
 
-    public PedidoEntity(int oanumi, Date oafdoc, String oahora, int oaccli, String cliente, int oarepa, int oaest, String oaobs, Double latitud, Double longitud, Double total, int tipocobro, boolean estado, String codigogenerado) {
+}
+    public PedidoEntity(String oanumi, Date oafdoc, String oahora, int oaccli, String cliente, int oarepa, int oaest, String oaobs, Double latitud, Double longitud, Double total, int tipocobro, boolean estado, String codigogenerado) {
         this.oanumi = oanumi;
         this.oafdoc = oafdoc;
         this.oahora = oahora;
@@ -63,11 +65,11 @@ public class PedidoEntity {
         this.id = id;
     }
 
-    public int getOanumi() {
+    public String getOanumi() {
         return oanumi;
     }
 
-    public void setOanumi(int oanumi) {
+    public void setOanumi(String oanumi) {
         this.oanumi = oanumi;
     }
 

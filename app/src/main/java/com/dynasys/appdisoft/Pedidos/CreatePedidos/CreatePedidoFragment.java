@@ -2,16 +2,22 @@ package com.dynasys.appdisoft.Pedidos.CreatePedidos;
 
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,27 +25,37 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Adapter.ClientesAdapter;
 import com.dynasys.appdisoft.Adapter.DetalleAdaptader;
 import com.dynasys.appdisoft.Adapter.ProductAdapter;
 import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
+import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
+import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
+import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Preconditions;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,9 +74,12 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private AutoCompleteTextView aProducto;
     private AlertDialog dialogs,dialogQuestion;
     private Button mbutton_guardar,mbutton_cancelar;
+    private ProgressDialog progresdialog;
     private ImageButton ObFecha;
     private ClientesListViewModel viewModelCliente;
     private ProductosListViewModel viewModelProducto;
+    private PedidoListViewModel viewModelPedido;
+    private DetalleListViewModel viewModelDetalle;
     private List<DetalleEntity> mDetalleItem=new ArrayList<>();
     private CreatePedidoMvp.Presenter mCreatePedidoPresenter;
     private List<ClienteEntity> lisCliente;
@@ -71,6 +90,12 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     ProductAdapter productoAdapter;
 DetalleAdaptader mDetalleAdapter;
 TextView name_total,etFecha;
+EditText tvObservacion;
+Date mFecha;
+String Hora;
+Double mTotal=0.0;
+
+private PedidoEntity mPedido;
     private NestedScrollView mscroll;
     public CreatePedidoFragment() {
         // Required empty public constructor
@@ -101,28 +126,99 @@ TextView name_total,etFecha;
         name_total=view.findViewById(R.id.pedido_view_Total);
         etFecha=view.findViewById(R.id.et_mostrar_fecha_picker);
         ObFecha=(ImageButton)view.findViewById(R.id.ib_obtener_fecha);
+        tvObservacion=(EditText)view.findViewById(R.id.pedido_view_observacion) ;
         mbutton_guardar = (Button)view.findViewById(R.id.id_btn_guardarPedido);
         mbutton_cancelar=(Button)view.findViewById(R.id.id_btn_cancelarPedido);
         mscroll=view.findViewById(R.id.id_order_scroll);
         viewModelCliente = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
         viewModelProducto = ViewModelProviders.of(getActivity()).get(ProductosListViewModel.class);
-        new CreatePedidoPresenter(this,context,viewModelCliente,viewModelProducto,getActivity());
+        viewModelPedido = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
+        viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
+        new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle);
         mCreatePedidoPresenter.CargarClientes();
         iniciarRecyclerView();
         onclickObtenerFecha();
         onclickGuardar();
         onclickCancelar();
         etFecha.setText(FormatearFecha(dia,mes+1,anio));
+        mFecha=Calendar.getInstance().getTime();
+        LocationGeo.getInstance(context,getActivity());
+        LocationGeo.iniciarGPS();
+        ShowDialogSincronizando();
         return view;
     }
     public void onclickGuardar(){
         mbutton_guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //GuardarMovimiento();
+                //GuardarMovi();
+                GuardarPedido();
             }
         });
     }
+    public void GuardarPedido(){
+        if (mDetalleItem.size()>0){
+            /*this.oanumi = oanumi;
+            this.oafdoc = oafdoc;
+            this.oahora = oahora;
+            this.oaccli = oaccli;
+            this.cliente = cliente;
+            this.oarepa = oarepa;
+            this.oaest = oaest;
+            this.oaobs = oaobs;
+            this.latitud = latitud;
+            this.longitud = longitud;
+            this.total = total;
+            this.tipocobro = tipocobro;
+            this.estado = estado;
+            this.codigogenerado = codigogenerad*/
+            progresdialog.show();
+            Calendar c2 = Calendar.getInstance();
+            final int hora = c2.get(Calendar.HOUR);
+            final int minuto = c2.get(Calendar.MINUTE);
+            final int Segundo = c2.get(Calendar.SECOND);
+            mPedido=new PedidoEntity();
+            mPedido.setOafdoc(mFecha);
+            mPedido.setOahora(""+hora+":"+minuto);
+            mPedido.setOaccli(mCliente.getNumi());
+            mPedido.setCliente(mCliente.getNamecliente());
+            int idRepartidor= DataPreferences.getPrefInt("idrepartidor",getContext());
+            mPedido.setOarepa(idRepartidor);
+            mPedido.setOaest(2);
+            mPedido.setOaobs(tvObservacion.getText().toString());
+            mPedido.setLatitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLatitude());
+            mPedido.setLongitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLongitude());
+            mPedido.setTotal(_prObtenerTotal());
+            mPedido.setTipocobro(1);
+            mPedido.setEstado(false);
+            int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
+            //cliente.setCodigogenerado();
+            DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
+            String code = df.format(Calendar.getInstance().getTime());
+            code=""+codigoRepartidor+","+code;
+            mPedido.setCodigogenerado(code);
+            mPedido.setOanumi(code);
+            _prModificarNumi(code);
+
+            mCreatePedidoPresenter.GuardarDatos(mDetalleItem,mPedido);
+
+        }else{
+            ShowMessageResult("No Existen Productos Seleccionados");
+        }
+    }
+    public void _prModificarNumi(String Numi){
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            mDetalleItem.get(i).setObnumi(Numi);
+        }
+    }
+    public double _prObtenerTotal(){
+        double suma=0;
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+           suma=suma+( mDetalleItem.get(i).getObpcant()*mDetalleItem.get(i).getObpbase());
+        }
+        return suma;
+    }
+
     public void onclickCancelar(){
         mbutton_cancelar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,15 +302,22 @@ TextView name_total,etFecha;
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     if ((ProductoEntity) adapterView.getItemAtPosition(i)!=null){
                         ProductoEntity item = (ProductoEntity) adapterView.getItemAtPosition(i);
-
+                       /* this.obnumi = obnumi;
+                        this.obcprod = obcprod;
+                        this.cadesc = cadesc;
+                        this.obpcant = obpcant;
+                        this.obpbase = obpbase;
+                        this.obptot = obptot;
+                        this.estado = estado;*/
                             DetalleEntity detalle=new DetalleEntity();
-                            detalle.setEstado(false);
-                            detalle.setObpcant(1.0);
-                            detalle.setCadesc(item.getProducto());
+                            detalle.setObnumi("-1");
                             detalle.setObcprod(item.getNumi());
+                            detalle.setCadesc(item.getProducto());
+                            detalle.setObpcant(1.0);
                             detalle.setObpbase(item.getPrecio());
                             detalle.setObptot(item.getPrecio());
-                            detalle.setObnumi("-1");
+                            detalle.setEstado(false);
+
 
                             mDetalleItem.add(detalle);
 
@@ -254,6 +357,7 @@ TextView name_total,etFecha;
         if (posicion>=0){
             DetalleEntity detalle= mDetalleItem.get(posicion);
             detalle.setObpcant(cantidad);
+            detalle.setObptot(cantidad*detalle.getObpbase());
             tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
             calcularTotal();
         }
@@ -301,6 +405,7 @@ TextView name_total,etFecha;
             total=0.0;
         }
         name_total.setText(""+ ShareMethods.redondearDecimales(total,2)+" Bs");
+        mTotal=total;
     }
     public List<ProductoEntity> GetActualProducts()  {
         List <ProductoEntity> lista=new ArrayList<>();
@@ -344,6 +449,9 @@ TextView name_total,etFecha;
                 //Esta variable lo que realiza es aumentar en uno el mes ya que comienza desde 0 = enero
                 final int mesActual = month + 1;
                 etFecha.setText(FormatearFecha(dayOfMonth ,mesActual ,year));
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year, month, dayOfMonth);
+                mFecha=calendar.getTime();
             }
 
         },anio, mes, dia);
@@ -362,5 +470,90 @@ TextView name_total,etFecha;
                 }
             }
         });
+    }
+
+    @Override
+    public void ShowMessageResult(String message) {
+
+        Snackbar snackbar= Snackbar.make(ObFecha, message, Snackbar.LENGTH_LONG);
+        View snackbar_view=snackbar.getView();
+        TextView snackbar_text=(TextView)snackbar_view.findViewById(android.support.design.R.id.snackbar_text);
+        snackbar_text.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ic_iinfo,0);
+        snackbar_text.setGravity(Gravity.CENTER);
+        snackbar.show();
+    }
+
+    @Override
+    public void showSaveResultOption(int codigo, String id, String mensaje) {
+
+        if (progresdialog.isShowing()){
+            progresdialog.dismiss();
+        }
+
+        switch (codigo){
+            case 0:
+                dialogs= showCustomDialog("El Pedido ha sido guardado localmente con exito. Pero no pudo ser guardado en el servidor por problemas de red"
+                        ,true);
+                dialogs.setCancelable(false);
+                dialogs.show();
+                break;
+            case 1:
+                dialogs= showCustomDialog("El Pedido Nro:"+id+" ha sido guardado localmente y en el servidor" +
+                        " con exito.",true);
+                dialogs.setCancelable(false);
+                dialogs.show();
+                break;
+            case 2:
+                dialogs= showCustomDialog("El PedidoEntity #"+id+" ha sido guardado localmente con exito. Existen problemas" +
+                        " en la exportacion:\n" + mensaje,true);
+                dialogs.setCancelable(false);
+                dialogs.show();
+                break;
+            case 3:
+                dialogs= showCustomDialog("Existe un problema al guardar el pedido localmente:\n"  + mensaje,false);
+                dialogs.setCancelable(false);
+                dialogs.show();
+                break;
+        }
+    }
+    public AlertDialog showCustomDialog(String Contenido, Boolean flag) {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
+
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        View v = inflater.inflate(R.layout.dialog_succes, null);
+
+        builder.setView(v);
+        TextView Content = (TextView) v.findViewById(R.id.dialog_content);
+        Button aceptar = (Button) v.findViewById(R.id.dialog_ok);
+
+        Content.setText(Contenido);
+        aceptar.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        dialogs.dismiss();
+                        RetornarPrincipal();
+
+                        //  finish();
+                    }
+                }
+        );
+
+
+        return builder.create();
+    }
+    private void ShowDialogSincronizando(){
+        progresdialog=new ProgressDialog(getContext());
+        progresdialog.setCancelable(false);
+        progresdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progresdialog.setIndeterminate(false);
+        Drawable drawable = new ProgressBar(getActivity()).getIndeterminateDrawable().mutate();
+        drawable.setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent),
+                PorterDuff.Mode.SRC_IN);
+        progresdialog.setIndeterminateDrawable(drawable);
+        progresdialog.setMessage("Guardando Pedido .....");
+
     }
 }

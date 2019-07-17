@@ -30,7 +30,7 @@ public class PedidoListViewModel extends AndroidViewModel {
         return pedidos;
     }
 
-    public PedidoEntity getPedido(int id) throws ExecutionException, InterruptedException {
+    public PedidoEntity getPedido(String id) throws ExecutionException, InterruptedException {
         return mRepository.getPedido(id);
     }
     public List<PedidoEntity> getMAllPedido(int code) throws ExecutionException, InterruptedException {

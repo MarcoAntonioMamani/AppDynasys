@@ -65,7 +65,7 @@ private PedidosMvp.View mview;
         if (listaPedidos.get(i).isEstado()){
             clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_button));
         }else{
-            clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_bottoncancel));
+            clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_bottoncancelrojo));
         }
     }
 public String ObtenerDireccionCliente(int numi){

@@ -19,9 +19,13 @@ public interface CreatePedidoMvp {
         void setPresenter(Presenter presenter);
         void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal);
         void DeleteAndModifyDetailOrder(DetalleEntity item,int pos);
+        void ShowMessageResult(String message);
+        void showSaveResultOption(int codigo, String id, String mensaje);
+
     }
     interface Presenter{
         void CargarClientes();
         void CargarProducto(int idCLiente);
+        void GuardarDatos(List<DetalleEntity> list,PedidoEntity pedido);
     }
 }

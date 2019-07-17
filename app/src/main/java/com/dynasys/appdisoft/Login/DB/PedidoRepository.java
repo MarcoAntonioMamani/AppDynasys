@@ -30,7 +30,7 @@ public class PedidoRepository {
         return mAllPrecio;
     }
 
-    public PedidoEntity getPedido(int noteId) throws ExecutionException, InterruptedException {
+    public PedidoEntity getPedido(String noteId) throws ExecutionException, InterruptedException {
         return new getPedidosAsync(mPedidoDao).execute(noteId).get();
     }
 
@@ -71,7 +71,7 @@ public class PedidoRepository {
             return mPedidoDaoAsync.getPedidoAll();
         }
     }
-    private static class getPedidosAsync extends AsyncTask<Integer, Void, PedidoEntity> {
+    private static class getPedidosAsync extends AsyncTask<String, Void, PedidoEntity> {
 
         private PedidoDao mPedidoDaoAsync;
 
@@ -80,7 +80,7 @@ public class PedidoRepository {
         }
 
         @Override
-        protected PedidoEntity doInBackground(Integer... ids) {
+        protected PedidoEntity doInBackground(String... ids) {
             return mPedidoDaoAsync.getPedidoById(ids[0]);
         }
     }

@@ -31,4 +31,12 @@ public interface IUsersApi {
     Call<List<PedidoEntity>> ObtenerPedidos(@Path("idrepartidor") String idRepartidor);
     @GET("/api/repartidor/detalles/{idrepartidor}")
     Call<List<DetalleEntity>> ObtenerDetalles(@Path("idrepartidor") String idRepartidor);
+
+    @POST("/api/repartidor/pedido")
+    Call<ResponseLogin> InsertPedido(@Body PedidoEntity user);
+    @POST("/api/repartidor/detalle/{oanumi}")
+    Call<ResponseLogin> InsertDetalle(@Body List<DetalleEntity> listDetalle,@Path("oanumi") String oanumi);
+
+    @POST("/api/repartidor/tracking")
+    Call<ResponseLogin> InsertTracking(@Body BodyLocation user);
 }

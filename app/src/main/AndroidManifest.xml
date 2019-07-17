@@ -45,6 +45,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Clientes.MapClientActivity" />
+        <service android:name=".ShareUtil.ServicesLocation" />
     </application>
 
 </manifest>

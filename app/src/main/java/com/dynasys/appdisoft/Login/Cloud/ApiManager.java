@@ -22,14 +22,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiManager {
 
     private static IUsersApi service;
-    private static ApiManager apiManager;
+    public static ApiManager apiManager;
 private static Context mcontext;
-    private ApiManager(Context mcontext) {
+    private ApiManager(Context context) {
         String Url="";
-        if (DataPreferences.getPref("servicio",mcontext)==null){
+        if (DataPreferences.getPref("servicio",context)==null){
            Url="http://192.168.0.13:3050";
         }else{
-            Url=DataPreferences.getPref("servicio",mcontext);
+            Url=DataPreferences.getPref("servicio",context);
         }
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -41,9 +41,9 @@ private static Context mcontext;
     }
 
     public static ApiManager getInstance(Context context) {
-     //   if (apiManager == null) {
+       if (apiManager == null) {
             apiManager = new ApiManager( context);
-       // }
+        }
         mcontext=context;
         return apiManager;
     }
@@ -54,6 +54,20 @@ private static Context mcontext;
     }
     public void InsertUser(ClienteEntity user, Callback<ResponseLogin> callback) {
         Call<ResponseLogin> userCall = service.InsertUser(user);
+        userCall.enqueue(callback);
+    }
+
+    public void InsertTracking(BodyLocation user, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.InsertTracking(user);
+        userCall.enqueue(callback);
+    }
+
+    public void InsertPedido(PedidoEntity user, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.InsertPedido(user);
+        userCall.enqueue(callback);
+    }
+    public void InsertDetalle(List<DetalleEntity> user,String oanumi, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.InsertDetalle(user,oanumi);
         userCall.enqueue(callback);
     }
     public void ObtenerClientes( Callback<List<ClienteEntity>> callback) {
