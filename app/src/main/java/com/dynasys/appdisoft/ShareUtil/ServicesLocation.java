@@ -59,8 +59,8 @@ public class ServicesLocation  extends Service implements
                     .addApi(LocationServices.API)
                     .build();
 
-            mLocationRequest.setInterval(2 * 1000);
-            mLocationRequest.setFastestInterval(10 * 1000);
+            mLocationRequest.setInterval(60 * 1000);
+            mLocationRequest.setFastestInterval(60 * 1000);
 
 
             int priority = LocationRequest.PRIORITY_HIGH_ACCURACY; //by default
@@ -138,7 +138,7 @@ public class ServicesLocation  extends Service implements
                         }
                         try{
                             if (responseUser!=null){
-                                Log.d(TAG, "respuesta: "+responseUser.getMessage());
+                                Log.d(TAG, "respuesta: "+responseUser.getMessage()+Calendar.getInstance().HOUR+":"+Calendar.getInstance().MINUTE);
                             }
                         }catch (Exception e){
 

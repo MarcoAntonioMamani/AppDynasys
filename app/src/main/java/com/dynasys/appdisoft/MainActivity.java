@@ -29,12 +29,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dynasys.appdisoft.Clientes.ListClientesFragment;
+import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.UsersListViewModel;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
+import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
+import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.dynasys.appdisoft.SincronizarData.SincronizarFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,11 +50,13 @@ public class MainActivity extends AppCompatActivity {
     boolean doubleBackToExitPressedOnce = false;
     private Boolean bolBienvenida =true;
     private UsersListViewModel viewModel;
+    private ClientesListViewModel viewModelClientes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         viewModel = ViewModelProviders.of(this).get(UsersListViewModel.class);
+        viewModelClientes = ViewModelProviders.of(this).get(ClientesListViewModel.class);
         if(DataPreferences.getPrefLogin("isLogin",getApplicationContext())==null  ){
             startActivity(new Intent(this, LoginActivity.class));
             finish();
@@ -91,12 +96,16 @@ public class MainActivity extends AppCompatActivity {
          return;
 
         }else{
-            if (ServicesLocation.getInstance()==null){
+            /*if (ServicesLocation.getInstance()==null){
                 Intent intent = new Intent(this, ServicesLocation.class);
                 startService(intent);
-            }
+            }*/
         }
-
+        if (ServiceSincronizacion.getInstance()==null){
+            UtilShare.mActivity=this;
+            Intent intent = new Intent(this,new ServiceSincronizacion(viewModelClientes,this).getClass());
+            startService(intent);
+        }
 
     }
     private void setupNavigationDrawerContent(NavigationView navigationView) {

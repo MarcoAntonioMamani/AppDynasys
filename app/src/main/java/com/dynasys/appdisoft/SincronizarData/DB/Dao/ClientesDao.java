@@ -24,6 +24,12 @@ public interface ClientesDao {
     ClienteEntity getClienteByNumi(int id);
     @Query("SELECT * FROM clientes")
     List<ClienteEntity> getClienteAll();
+
+
+    @Query("SELECT * FROM clientes where estado=0")
+    List<ClienteEntity> getClienteAllState();
+
+
     @Query("SELECT * FROM clientes WHERE codigogenerado=:code")
     ClienteEntity getClienteByCode(String code);
 

@@ -46,6 +46,7 @@
         </activity>
         <activity android:name=".Clientes.MapClientActivity" />
         <service android:name=".ShareUtil.ServicesLocation" />
+        <service android:name=".ShareUtil.ServiceSincronizacion" />
     </application>
 
 </manifest>
