@@ -20,6 +20,7 @@
         android:label="Disoft"
         android:roundIcon="@mipmap/ic_disoft"
         android:supportsRtl="true"
+        android:largeHeap="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Login.WebServicesActivity"></activity>
         <activity android:name=".MainActivity" />

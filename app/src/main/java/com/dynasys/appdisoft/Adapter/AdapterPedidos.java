@@ -6,12 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
-import com.dynasys.appdisoft.Clientes.ClienteMvp;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
@@ -62,25 +59,32 @@ private PedidosMvp.View mview;
                 mview.recyclerViewListClicked(v, listaPedidos.get(i));
             }
         });
-        if (listaPedidos.get(i).isEstado()){
-            clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_button));
-        }else{
+        if (listaPedidos.get(i).getEstado()==0){
             clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_bottoncancelrojo));
+
+        }
+        if (listaPedidos.get(i).getEstado()==1){
+            clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_button));
+
+        }
+        if (listaPedidos.get(i).getEstado()==2){
+            clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_bottoncancelrojo));
+
         }
     }
-public String ObtenerDireccionCliente(int numi){
+public String ObtenerDireccionCliente(String numi){
     for (int i = 0; i < listClientes.size(); i++) {
         ClienteEntity cliente=listClientes.get(i);
-        if (cliente.getNumi()==numi){
+        if (cliente.getCodigogenerado().trim().equals(numi.trim())){
             return cliente.getDireccion();
         }
     }
     return "S/D";
 }
-    public String ObtenerTelefonoCliente(int numi){
+    public String ObtenerTelefonoCliente(String numi){
         for (int i = 0; i < listClientes.size(); i++) {
             ClienteEntity cliente=listClientes.get(i);
-            if (cliente.getNumi()==numi){
+            if (cliente.getCodigogenerado().trim().equals(numi.trim())){
                 return cliente.getTelefono();
             }
         }

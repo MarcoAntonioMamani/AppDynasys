@@ -5,12 +5,14 @@ public class ResponseLogin {
    String message;
    String token;
    int id;
+    int zona;
 
-    public ResponseLogin(int code, String message, String token, int id) {
+    public ResponseLogin(int code, String message, String token, int id, int zona) {
         this.code = code;
         this.message = message;
         this.token = token;
         this.id = id;
+        this.zona = zona;
     }
 
     public int getCode() {
@@ -43,5 +45,13 @@ public class ResponseLogin {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getZona() {
+        return zona;
+    }
+
+    public void setZona(int zona) {
+        this.zona = zona;
     }
 }

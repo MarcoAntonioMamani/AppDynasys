@@ -35,11 +35,13 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
     String codigogenerado;
     @ColumnInfo(name = "cccat")
     int cccat;
+    @ColumnInfo(name = "cczona")
+    int cczona;
     public ClienteEntity(){
 
     }
 
-    public ClienteEntity(int id, int numi, String codigo, String namecliente, String nit, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, boolean estado, String codigogenerado, int cccat) {
+    public ClienteEntity(int id, int numi, String codigo, String namecliente, String nit, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, boolean estado, String codigogenerado, int cccat, int cczona) {
         this.id = id;
         this.numi = numi;
         this.codigo = codigo;
@@ -53,6 +55,7 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
         this.estado = estado;
         this.codigogenerado = codigogenerado;
         this.cccat = cccat;
+        this.cczona = cczona;
     }
 
     public int getCccat() {
@@ -157,6 +160,14 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
 
     public void setCodigogenerado(String codigogenerado) {
         this.codigogenerado = codigogenerado;
+    }
+
+    public int getCczona() {
+        return cczona;
+    }
+
+    public void setCczona(int cczona) {
+        this.cczona = cczona;
     }
 
     @Override

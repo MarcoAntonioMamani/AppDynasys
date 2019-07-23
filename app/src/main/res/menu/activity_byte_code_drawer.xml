@@ -12,7 +12,12 @@
             android:id="@+id/item_navigation_drawer_pedidos"
             android:title="Pedidos Pendientes"
             android:icon="@drawable/ic_order"
-            android:visible="false"/>
+            android:visible="true"/>
+        <item
+            android:id="@+id/item_navigation_drawer_entregados"
+            android:title="Pedidos Entregados"
+            android:icon="@drawable/ic_entregados"
+            android:visible="true"/>
         <item
             android:checked="true"
             android:id="@+id/item_navigation_drawer_sincronizar"

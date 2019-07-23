@@ -1,6 +1,7 @@
 package com.dynasys.appdisoft.Clientes.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -60,6 +61,11 @@ private ClienteMvp.View mview;
                 mview.recyclerViewListClicked(v, listaCliente.get(i));
             }
         });
+        if (listaCliente.get(i).isEstado()){
+            clientesViewHolder.TvAdapterNombre.setTextColor(Color.BLACK);
+        }else{
+            clientesViewHolder.TvAdapterNombre.setTextColor(Color.RED);
+        }
 
     }
 

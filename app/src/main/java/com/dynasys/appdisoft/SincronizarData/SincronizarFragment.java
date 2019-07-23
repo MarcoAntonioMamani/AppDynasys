@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -24,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
@@ -31,6 +33,8 @@ import com.dynasys.appdisoft.Login.LoginMvp;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
+import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
+import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.dynasys.appdisoft.SincronizarData.Presentacion.SincronizarMvp;
 import com.dynasys.appdisoft.SincronizarData.Presentacion.SincronizarPresenter;
@@ -96,6 +100,16 @@ checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(
         });
         OnclickButton();
         ShowDialogSincronizando();
+        if (ServicesLocation.getInstance()==null){
+            Intent intent = new Intent(getContext(), ServicesLocation.class);
+            getContext().startService(intent);
+        }
+
+        if (ServiceSincronizacion.getInstance()==null){
+        UtilShare.mActivity=getActivity();
+        Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+        getContext().startService(intent);
+    }
         return rootView;
     }
 public void OnclickButton(){

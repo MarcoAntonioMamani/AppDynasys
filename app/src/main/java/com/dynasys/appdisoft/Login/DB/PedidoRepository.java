@@ -17,23 +17,36 @@ public class PedidoRepository {
 
     private PedidoDao mPedidoDao;
     private LiveData<List<PedidoEntity>> mAllPrecio;
+    private LiveData<List<PedidoEntity>> mAllPedidoEntregados;
 
     public PedidoRepository(Application application) {
         AppDatabase db = AppDatabase.getDatabase(application);
         mPedidoDao = db.pedidoDao();
         mAllPrecio = mPedidoDao.getAllPedidos();
+        mAllPedidoEntregados = mPedidoDao.getAllPedidosEntregados();
     }
     public List<PedidoEntity> getMPedidoAll(int clienteId) throws ExecutionException, InterruptedException {
         return new getMPedidoAllAsync(mPedidoDao).execute(clienteId).get();
     }
+    public List<PedidoEntity> getMPedidoAllState(int clienteId) throws ExecutionException, InterruptedException {
+        return new getMPedidoAllStateAsync(mPedidoDao).execute(clienteId).get();
+    }
+
+    public List<PedidoEntity> getMPedidoAllState02(int clienteId) throws ExecutionException, InterruptedException {
+        return new getMPedidoAllState02Async(mPedidoDao).execute(clienteId).get();
+    }
     public LiveData<List<PedidoEntity>> getAllPedido() {
         return mAllPrecio;
     }
-
+    public LiveData<List<PedidoEntity>> getAllPedidoEntregados() {
+        return mAllPedidoEntregados;
+    }
     public PedidoEntity getPedido(String noteId) throws ExecutionException, InterruptedException {
         return new getPedidosAsync(mPedidoDao).execute(noteId).get();
     }
-
+    public List<PedidoEntity> getPedidoByClients(String noteId) throws ExecutionException, InterruptedException {
+        return new getPedidosByClienteAsync(mPedidoDao).execute(noteId).get();
+    }
     public void insertPedidos(PedidoEntity user) {
         new insertPedidoAsync(mPedidoDao).execute(user);
     }
@@ -71,6 +84,34 @@ public class PedidoRepository {
             return mPedidoDaoAsync.getPedidoAll();
         }
     }
+
+    private static class getMPedidoAllStateAsync extends AsyncTask<Integer, Void, List<PedidoEntity>> {
+
+        private PedidoDao mPedidoDaoAsync;
+
+        getMPedidoAllStateAsync(PedidoDao clienteDao) {
+            mPedidoDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected List<PedidoEntity> doInBackground(Integer... ids) {
+            return mPedidoDaoAsync.getPedidoAllState();
+        }
+    }
+
+    private static class getMPedidoAllState02Async extends AsyncTask<Integer, Void, List<PedidoEntity>> {
+
+        private PedidoDao mPedidoDaoAsync;
+
+        getMPedidoAllState02Async(PedidoDao clienteDao) {
+            mPedidoDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected List<PedidoEntity> doInBackground(Integer... ids) {
+            return mPedidoDaoAsync.getPedidoAllState02();
+        }
+    }
     private static class getPedidosAsync extends AsyncTask<String, Void, PedidoEntity> {
 
         private PedidoDao mPedidoDaoAsync;
@@ -84,7 +125,19 @@ public class PedidoRepository {
             return mPedidoDaoAsync.getPedidoById(ids[0]);
         }
     }
+    private static class getPedidosByClienteAsync extends AsyncTask<String, Void, List<PedidoEntity>> {
 
+        private PedidoDao mPedidoDaoAsync;
+
+        getPedidosByClienteAsync(PedidoDao animalDao) {
+            mPedidoDaoAsync = animalDao;
+        }
+
+        @Override
+        protected List<PedidoEntity> doInBackground(String... ids) {
+            return mPedidoDaoAsync.getPedidoByIdCliente(ids[0]);
+        }
+    }
     private static class insertPedidoAsync extends AsyncTask<PedidoEntity, Void, Long> {
 
         private PedidoDao mPedidoDaoAsync;

@@ -66,12 +66,16 @@ private static Context mcontext;
         Call<ResponseLogin> userCall = service.InsertPedido(user);
         userCall.enqueue(callback);
     }
+    public void UpdatePedido(PedidoEntity user, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.UpdatePedido(user);
+        userCall.enqueue(callback);
+    }
     public void InsertDetalle(List<DetalleEntity> user,String oanumi, Callback<ResponseLogin> callback) {
         Call<ResponseLogin> userCall = service.InsertDetalle(user,oanumi);
         userCall.enqueue(callback);
     }
-    public void ObtenerClientes( Callback<List<ClienteEntity>> callback) {
-        Call<List<ClienteEntity>> userCall = service.ObtenerClientes();
+    public void ObtenerClientes( String idRepartidor,Callback<List<ClienteEntity>> callback) {
+        Call<List<ClienteEntity>> userCall = service.ObtenerClientes(idRepartidor);
         userCall.enqueue(callback);
     }
     public void ObtenerPrecios( Callback<List<PrecioEntity>> callback) {

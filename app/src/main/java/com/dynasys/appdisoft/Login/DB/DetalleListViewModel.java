@@ -36,6 +36,9 @@ public class DetalleListViewModel extends AndroidViewModel {
     public List<DetalleEntity> getMAllDetalle(int code) throws ExecutionException, InterruptedException {
         return mRepository.getMDetalleAll(code);
     }
+    public List<DetalleEntity> getMAllDetalleState(int code) throws ExecutionException, InterruptedException {
+        return mRepository.getMDetalleAllState(code);
+    }
     public void insertDetalle(DetalleEntity user) {
         mRepository.insertDetalles(user);
     }

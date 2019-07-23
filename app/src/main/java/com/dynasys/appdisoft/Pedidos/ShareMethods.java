@@ -1,5 +1,8 @@
 package com.dynasys.appdisoft.Pedidos;
 
+import android.app.ActivityManager;
+import android.content.Context;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -36,4 +39,14 @@ public class ShareMethods {
         String Segundos=(((fecha.getSeconds()) < 10)? "0" + String.valueOf(fecha.getSeconds()): String.valueOf(fecha.getSeconds()));
         return hora+":"+minutos+":"+Segundos;
     }
+    public static final boolean IsServiceRunning(Context ctx, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager)ctx.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

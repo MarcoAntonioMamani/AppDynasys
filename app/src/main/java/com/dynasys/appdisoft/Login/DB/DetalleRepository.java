@@ -26,6 +26,9 @@ public class DetalleRepository {
     public List<DetalleEntity> getMDetalleAll(int clienteId) throws ExecutionException, InterruptedException {
         return new getMDetalleAllAsync(mDetalleDao).execute(clienteId).get();
     }
+    public List<DetalleEntity> getMDetalleAllState(int clienteId) throws ExecutionException, InterruptedException {
+        return new getMDetalleAllStateAsync(mDetalleDao).execute(clienteId).get();
+    }
     public LiveData<List<DetalleEntity>> getAllDetalle() {
         return mAllDetalle;
     }
@@ -71,6 +74,20 @@ public class DetalleRepository {
         @Override
         protected List<DetalleEntity> doInBackground(Integer... ids) {
             return mDetalleDaoAsync.getDetalleAll();
+        }
+    }
+
+    private static class getMDetalleAllStateAsync extends AsyncTask<Integer, Void, List<DetalleEntity>> {
+
+        private DetalleDao mDetalleDaoAsync;
+
+        getMDetalleAllStateAsync(DetalleDao clienteDao) {
+            mDetalleDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected List<DetalleEntity> doInBackground(Integer... ids) {
+            return mDetalleDaoAsync.getDetalleAllState();
         }
     }
     private static class getDetallesAsync extends AsyncTask<String, Void, List<DetalleEntity>> {

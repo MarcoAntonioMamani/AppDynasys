@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -28,12 +29,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.MainActivity;
+import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
+import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
+import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -144,6 +149,7 @@ public void onClickAtras(){
                        String code = df.format(Calendar.getInstance().getTime());
                        code=""+codigoRepartidor+","+code;
                        cliente.setCodigogenerado(code);
+                       cliente.setNumi(0);
                        cliente.setFechaingreso(Calendar.getInstance().getTime());
                        cliente.setDireccion(tilDireccion.getEditText().getText().toString());
                        cliente.setNamecliente(tilNombre.getEditText().getText().toString());
@@ -151,7 +157,9 @@ public void onClickAtras(){
                        cliente.setTelefono(tilTelefono.getEditText().getText().toString());
                        cliente.setLatitud(mapa.getCameraPosition().target.latitude);
                        cliente.setLongitud(mapa.getCameraPosition().target.longitude);
-
+                       int idzona=DataPreferences.getPrefInt("zona",getContext());
+                       cliente.setCccat(1);
+                       cliente.setCczona(idzona);
                        cliente.setEstado(false);
                        GuardarCliente(cliente);
                    }
@@ -224,6 +232,13 @@ public void onClickAtras(){
         try {
              final String CodeGenerado=cliente.getCodigogenerado();
             viewModel.insertCliente(cliente);
+
+
+            if (ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
+                UtilShare.mActivity=getActivity();
+                Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                getContext().stopService(intent);
+            }
             ApiManager apiManager=ApiManager.getInstance(getContext());
             apiManager.InsertUser(cliente, new Callback<ResponseLogin>() {
                 @Override
@@ -231,6 +246,13 @@ public void onClickAtras(){
                     ResponseLogin responseUser = response.body();
                     if (response.code()==404){
                         showSaveResultOption(0,"","");
+
+
+                        if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
+                            UtilShare.mActivity=getActivity();
+                            Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                            getContext().startService(intent);
+                        }
                         return;
                     }
                     try{
@@ -244,12 +266,25 @@ public void onClickAtras(){
                                 if (progresdialog.isShowing()){
                                     progresdialog.dismiss();
                                 }
+
+
+                                if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
+                                    UtilShare.mActivity=getActivity();
+                                    Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                                    getContext().startService(intent);
+                                }
                                 showSaveResultOption(1,""+mcliente.getNumi(),"");
                                 return;
                             }
                             }
                         }
                     }catch (Exception e){
+
+                        if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
+                            UtilShare.mActivity=getActivity();
+                            Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                            getContext().startService(intent);
+                        }
                         if (progresdialog.isShowing()){
                             progresdialog.dismiss();
                         }
@@ -257,12 +292,24 @@ public void onClickAtras(){
                     if (progresdialog.isShowing()){
                         progresdialog.dismiss();
                     }
+
+                    if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
+                        UtilShare.mActivity=getActivity();
+                        Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                        getContext().startService(intent);
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseLogin> call, Throwable t) {
                     if (progresdialog.isShowing()){
                         progresdialog.dismiss();
+                    }
+
+                    if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
+                        UtilShare.mActivity=getActivity();
+                        Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                        getContext().startService(intent);
                     }
                     showSaveResultOption(0,"","");
                     //ShowMessageResult("Error al guardar el pedido");
@@ -273,6 +320,11 @@ public void onClickAtras(){
         }catch (Exception e){
             if (progresdialog.isShowing()){
                 progresdialog.dismiss();
+            }
+            if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
+                UtilShare.mActivity=getActivity();
+                Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                getContext().startService(intent);
             }
             ShowMessageResult("El Cliente no ha podido ser guardado: "+ e.getMessage());
         }

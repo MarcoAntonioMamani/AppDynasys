@@ -29,12 +29,27 @@ public class PedidoListViewModel extends AndroidViewModel {
 
         return pedidos;
     }
+    public LiveData<List<PedidoEntity>> getPedidosEntregados() {
+        if (pedidos == null) {
+            pedidos = mRepository.getAllPedidoEntregados();
+        }
 
+        return pedidos;
+    }
     public PedidoEntity getPedido(String id) throws ExecutionException, InterruptedException {
         return mRepository.getPedido(id);
     }
+    public List<PedidoEntity> getPedidobyCliente(String id) throws ExecutionException, InterruptedException {
+        return mRepository.getPedidoByClients(id);
+    }
     public List<PedidoEntity> getMAllPedido(int code) throws ExecutionException, InterruptedException {
         return mRepository.getMPedidoAll(code);
+    }
+    public List<PedidoEntity> getMAllPedidoState(int code) throws ExecutionException, InterruptedException {
+        return mRepository.getMPedidoAllState(code);
+    }
+    public List<PedidoEntity> getMAllPedidoState02(int code) throws ExecutionException, InterruptedException {
+        return mRepository.getMPedidoAllState02(code);
     }
     public void insertPedido(PedidoEntity user) {
         mRepository.insertPedidos(user);

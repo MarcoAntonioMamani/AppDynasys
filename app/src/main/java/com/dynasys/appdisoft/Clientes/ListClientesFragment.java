@@ -26,9 +26,12 @@ import android.widget.TextView;
 
 import com.dynasys.appdisoft.Clientes.Adapter.AdapterClientes;
 import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
+import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.MainActivity;
+import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
+import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 
@@ -84,6 +87,11 @@ private List<ClienteEntity> lisClientes=new ArrayList<>();
         _CargarCliente();
        // recList.requestFocus();
         _OnClickBtnAddCliente();
+        if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
+            UtilShare.mActivity=getActivity();
+            Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+            getContext().startService(intent);
+        }
         return view;
     }
 public void _OnClickBtnAddCliente(){
@@ -103,7 +111,8 @@ public void _OnClickBtnAddCliente(){
             @Override
             public void onChanged(@Nullable List<ClienteEntity> notes) {
                 try{
-                    lisClientes=notes;
+                    lisClientes=FiltarByZona(notes);
+
                     Collections.sort(lisClientes);
                     CargarRecycler(lisClientes);
                 }catch(Exception e){
@@ -114,6 +123,19 @@ public void _OnClickBtnAddCliente(){
 
             }  });
         recList.requestFocus();
+    }
+
+    public List<ClienteEntity> FiltarByZona(List<ClienteEntity> list){
+
+        int idzona= DataPreferences.getPrefInt("zona",getContext());
+        List<ClienteEntity> listClie=new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            ClienteEntity cliente=list.get(i);
+            if (cliente.getCczona() ==idzona){
+                listClie.add(cliente);
+            }
+        }
+        return listClie;
     }
     public void CargarRecycler(List<ClienteEntity> listCliente){
         if (listCliente!=null){

@@ -5,6 +5,7 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.Bodylogin;
@@ -75,7 +76,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
         CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:0)+(pedidos==true? 1:0);
         String Mensaje="";
         if (cliente==true ){
-            _DescargarClientes();
+            _DescargarClientes(""+idRepartidor);
         }
         if ( precio==true){
             _DecargarPrecios();
@@ -163,9 +164,9 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
             }
         });
     }
-    public void _DescargarClientes(){
+    public void _DescargarClientes(String idRepartidor){
         ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.ObtenerClientes( new Callback<List<ClienteEntity>>() {
+        apiManager.ObtenerClientes( idRepartidor,new Callback<List<ClienteEntity>>() {
             @Override
             public void onResponse(Call<List<ClienteEntity>> call, Response<List<ClienteEntity>> response) {
                 final List<ClienteEntity> responseUser = (List<ClienteEntity>) response.body();
@@ -321,7 +322,10 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                         if (listCliente.size() <= 0) {
                             for (int i = 0; i < responseUser.size(); i++) {
                                 PedidoEntity pedido = responseUser.get(i);
-                                viewModelPedidos.insertPedido(pedido);
+                                if (pedido.getOaest()!=3){
+                                    viewModelPedidos.insertPedido(pedido);
+                                }
+
                             }
                             cantidadProducto+=responseUser.size();
                             // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
@@ -460,4 +464,5 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
         }
         return false;
     }
+
 }

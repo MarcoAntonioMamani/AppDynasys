@@ -14,17 +14,22 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface IUsersApi {
     @POST("/api/repartidor/login")
     Call<ResponseLogin> LoginUser(@Body Bodylogin user);
+
     @POST("/api/repartidor/clients")
     Call<ResponseLogin> InsertUser(@Body ClienteEntity user);
-    @GET("/api/repartidor/clientes")
-    Call<List<ClienteEntity>> ObtenerClientes();
+
+    @GET("/api/repartidor/clientes/{idrepartidor}")
+    Call<List<ClienteEntity>> ObtenerClientes(@Path("idrepartidor") String idRepartidor);
+
     @GET("/api/repartidor/precios")
     Call<List<PrecioEntity>> ObtenerPrecios();
+
     @GET("/api/repartidor/productos")
     Call<List<ProductoEntity>> ObtenerProductos();
     @GET("/api/repartidor/pedidos/{idrepartidor}")
@@ -34,6 +39,10 @@ public interface IUsersApi {
 
     @POST("/api/repartidor/pedido")
     Call<ResponseLogin> InsertPedido(@Body PedidoEntity user);
+
+    @PUT("/api/repartidor/pedido")
+    Call<ResponseLogin> UpdatePedido(@Body PedidoEntity user);
+
     @POST("/api/repartidor/detalle/{oanumi}")
     Call<ResponseLogin> InsertDetalle(@Body List<DetalleEntity> listDetalle,@Path("oanumi") String oanumi);
 

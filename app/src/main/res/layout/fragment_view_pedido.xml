@@ -227,7 +227,7 @@
                     android:gravity="bottom"
                     android:background="@color/marfil"
                     android:orientation="vertical"
-                    android:paddingBottom="20dp"
+                    android:paddingBottom="10dp"
 
                     >
                     <LinearLayout
@@ -399,7 +399,31 @@
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="fill_parent"
-                                    android:layout_weight="1">
+                                    android:layout_weight="1"
+                                    android:padding="5dp"
+                                    >
+
+                                    <Button
+                                        android:id="@+id/pedido_viewdata_btnVerCliente"
+                                        android:background="@drawable/animation_riple_maps"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:textColor="@color/white"
+                                        android:gravity="center"
+                                        android:textStyle="bold"
+                                        android:paddingBottom="@dimen/keyline_1"
+                                        android:paddingTop="@dimen/keyline_1"
+                                        android:text="Ver Ubicación" />
+
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="fill_parent"
+                                  android:layout_weight="1"
+                                    android:padding="5dp"
+                                    android:id="@+id/btnState"
+                                    >
                                     <Button
                                         android:id="@+id/pedido_viewdata_btnEntregar"
                                         android:background="@drawable/animation_riple_button"

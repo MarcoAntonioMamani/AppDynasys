@@ -17,11 +17,24 @@ public interface PedidoDao {
 
     @Query("SELECT * FROM pedido ORDER BY oanumi DESC")
     LiveData<List<PedidoEntity>> getAllPedidos();
+
+    @Query("SELECT * FROM pedido where oaest=2 ORDER BY oanumi DESC")
+    LiveData<List<PedidoEntity>> getAllPedidosEntregados();
+
     @Query("SELECT * FROM pedido")
     List<PedidoEntity> getPedidoAll();
 
+    @Query("SELECT * FROM pedido where estado=0")
+    List<PedidoEntity> getPedidoAllState();
+
+    @Query("SELECT * FROM pedido where estado=2")
+    List<PedidoEntity> getPedidoAllState02();
+
     @Query("SELECT * FROM pedido WHERE oanumi=:numi")
     PedidoEntity getPedidoById(String numi);
+
+    @Query("SELECT * FROM pedido WHERE oaccli=:numi")
+    List<PedidoEntity> getPedidoByIdCliente(String numi);
 
     @Query("SELECT * FROM pedido WHERE oanumi=:numi")
     LiveData<PedidoEntity> getPedido(int numi);

@@ -1,6 +1,7 @@
 package com.dynasys.appdisoft.Pedidos;
 
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -52,14 +53,24 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
     private PedidoListViewModel viewModelPedidos;
     private PedidosMvp.Presenter mPedidosPresenter;
     private FloatingActionButton btnAddPedido;
+    int Tipo=0;  //1 = Pendientes   2 =Entregados
     public ListPedidosFragment() {
         // Required empty public constructor
+    }
+    public ListPedidosFragment(int Tip) {
+        // Required empty public constructor
+    this.Tipo=Tip;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().setTitle("Pedidos Pendientes");
+        if (Tipo==1){
+            getActivity().setTitle("Pedidos Pendientes");
+        }else{
+            getActivity().setTitle("Pedidos Entregados");
+        }
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,12 +82,16 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
         recList.setHasFixedSize(true);
         viewModelPedidos = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelClientes = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
-        new PedidosPresenter(this,getContext(),viewModelPedidos,getActivity());
+        new PedidosPresenter(this,getContext(),viewModelPedidos,getActivity(),Tipo);
         cargarClientes();
         _OnClickBtnAddPedidos();
         return view;
     }
+    @SuppressLint("RestrictedApi")
     public void _OnClickBtnAddPedidos(){
+        if (Tipo==3){
+            btnAddPedido.setVisibility(View.GONE);
+        }
         btnAddPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,13 +116,21 @@ public void cargarClientes(){
     @Override
     public void recyclerViewListClicked(View v, PedidoEntity pedido) {
         if (pedido!=null){
-            Fragment frag = new ViewPedidoFragment(pedido);
+            Fragment frag = new ViewPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
             MainActivity fca = (MainActivity) getActivity();
             fca.switchFragment(frag,"VIEW_PEDIDOS");
         }
 
     }
-
+public ClienteEntity obtenerCliente(PedidoEntity pedido){
+    for (int i = 0; i < lisClientes.size(); i++) {
+        ClienteEntity client=lisClientes.get(i);
+        if (pedido.getOaccli().trim().equals((""+client.getNumi()).trim())){
+            return client;
+        }
+    }
+    return null;
+}
     @Override
     public void MostrarPedidos(List<PedidoEntity> clientes) {
         listPedidos=clientes;

@@ -16,7 +16,7 @@ public class PedidoEntity {
     @ColumnInfo(name = "oahora")
     String oahora;
     @ColumnInfo(name = "oaccli")
-    int oaccli;
+    String oaccli;
     @ColumnInfo(name = "cliente")
     String cliente;
     @ColumnInfo(name = "oarepa")
@@ -34,13 +34,15 @@ public class PedidoEntity {
     @ColumnInfo(name = "tipocobro")
     int tipocobro;
     @ColumnInfo(name = "estado")
-    boolean estado;
+    int estado;
     @ColumnInfo(name = "codigogenerado")
     String codigogenerado;
 public PedidoEntity(){
 
 }
-    public PedidoEntity(String oanumi, Date oafdoc, String oahora, int oaccli, String cliente, int oarepa, int oaest, String oaobs, Double latitud, Double longitud, Double total, int tipocobro, boolean estado, String codigogenerado) {
+
+    public PedidoEntity(int id, String oanumi, Date oafdoc, String oahora, String oaccli, String cliente, int oarepa, int oaest, String oaobs, Double latitud, Double longitud, Double total, int tipocobro, int estado, String codigogenerado) {
+        this.id = id;
         this.oanumi = oanumi;
         this.oafdoc = oafdoc;
         this.oahora = oahora;
@@ -89,11 +91,11 @@ public PedidoEntity(){
         this.oahora = oahora;
     }
 
-    public int getOaccli() {
+    public String getOaccli() {
         return oaccli;
     }
 
-    public void setOaccli(int oaccli) {
+    public void setOaccli(String oaccli) {
         this.oaccli = oaccli;
     }
 
@@ -161,11 +163,11 @@ public PedidoEntity(){
         this.tipocobro = tipocobro;
     }
 
-    public boolean isEstado() {
+    public int getEstado() {
         return estado;
     }
 
-    public void setEstado(boolean estado) {
+    public void setEstado(int estado) {
         this.estado = estado;
     }
 

@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupNavigationDrawerContent(navigationView);
         //First start (Inbox Fragment)
-       // setFragment(0);
+        setFragment(0);
         setupUserBox();
         IniciarServicio();
     }
@@ -96,10 +96,10 @@ public class MainActivity extends AppCompatActivity {
          return;
 
         }else{
-            /*if (ServicesLocation.getInstance()==null){
+            if (ServicesLocation.getInstance()==null){
                 Intent intent = new Intent(this, ServicesLocation.class);
                 startService(intent);
-            }*/
+            }
         }
         if (ServiceSincronizacion.getInstance()==null){
             UtilShare.mActivity=this;
@@ -128,6 +128,12 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     case R.id.item_navigation_drawer_pedidos:
                         setFragment(3);
+                        item.setChecked(true);
+                        //setFragment(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
+                    case R.id.item_navigation_drawer_entregados:
+                        setFragment(4);
                         item.setChecked(true);
                         //setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
@@ -162,7 +168,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 3:
                 returnToMain();
-                frag = new ListPedidosFragment();
+                frag = new ListPedidosFragment(1);
+                tag = Constantes.TAG_PEDIDOS;
+                break;
+            case 4:
+                returnToMain();
+                frag = new ListPedidosFragment(3);
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 21:
@@ -225,10 +236,11 @@ public class MainActivity extends AppCompatActivity {
         MenuItem menulcv = navigationView.getMenu().findItem(R.id.item_navigation_drawer_sincronizar);
         MenuItem menucli = navigationView.getMenu().findItem(R.id.item_navigation_drawer_clientes);
         MenuItem menuped = navigationView.getMenu().findItem(R.id.item_navigation_drawer_pedidos);
-
+        MenuItem menupedEntregados = navigationView.getMenu().findItem(R.id.item_navigation_drawer_entregados);
             menulcv.setVisible(true);
             menucli.setVisible(true);
             menuped.setVisible(true);
+        menupedEntregados.setVisible(true);
     }
 
     @Override
@@ -288,16 +300,16 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     private void loadWelcomeFragment(){
-        /*switchHandler.post(new Runnable() {
+        switchHandler.post(new Runnable() {
             @Override
             public void run() {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .addToBackStack("WELCOMEFRAGMENT")
-                        .replace(R.id.fragment, new WelcomeFragment())
+                        .replace(R.id.fragment, new MainFragment())
                         .commit();
             }
-        });*/
+        });
     }
     public  void returnToMain(){
 

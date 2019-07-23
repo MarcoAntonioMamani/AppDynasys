@@ -1,8 +1,10 @@
 package com.dynasys.appdisoft.Pedidos.CreatePedidos;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 
+import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
@@ -12,6 +14,8 @@ import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
+import com.dynasys.appdisoft.Pedidos.ShareMethods;
+import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.android.gms.common.internal.Preconditions;
@@ -79,6 +83,12 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
             DetalleEntity item=list.get(i);
             viewModelDetalle.insertDetalle(item);
         }
+
+        if (ShareMethods.IsServiceRunning(mContext, ServiceSincronizacion.class)){
+            UtilShare.mActivity=activity;
+            Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
+            mContext.stopService(intent);
+        }
         ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.InsertPedido(pedido, new Callback<ResponseLogin>() {
             @Override
@@ -86,6 +96,11 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                 ResponseLogin responseUser = response.body();
                 if (response.code()==404){
                    mPedidoView.showSaveResultOption(0,"","");
+                    if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
+                        UtilShare.mActivity=activity;
+                        Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
+                        mContext.startService(intent);
+                    }
                     return;
                 }
                 try{
@@ -94,16 +109,26 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                             PedidoEntity mPedido= viewModelPedidos.getPedido(pedido.getOanumi());
                             if (mPedido!=null){
                                 mPedido.setOanumi(responseUser.getToken());
-                                mPedido.setEstado(true);
+                                mPedido.setEstado(1);
                                 mPedido.setCodigogenerado(responseUser.getToken());
                                 viewModelPedidos.updatePedido(mPedido);
                                 InsertarDetalleServicio(responseUser.getToken(),list,pedido);
+                                if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
+                                    UtilShare.mActivity=activity;
+                                    Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
+                                    mContext.startService(intent);
+                                }
                                 //showSaveResultOption(1,""+mcliente.getNumi(),"");
                                 return;
                             }
                         }
                     }
                 }catch (Exception e){
+                    if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
+                        UtilShare.mActivity=activity;
+                        Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
+                        mContext.startService(intent);
+                    }
                     mPedidoView.showSaveResultOption(0,"","");
                     return;
                 }
@@ -113,6 +138,11 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
             @Override
             public void onFailure(Call<ResponseLogin> call, Throwable t) {
                 mPedidoView.showSaveResultOption(0,"","");
+                if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
+                    UtilShare.mActivity=activity;
+                    Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
+                    mContext.startService(intent);
+                }
                 return;
                 //ShowMessageResult("Error al guardar el pedido");
             }

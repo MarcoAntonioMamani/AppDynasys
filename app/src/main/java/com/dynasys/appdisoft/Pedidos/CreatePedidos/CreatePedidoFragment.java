@@ -180,7 +180,12 @@ private PedidoEntity mPedido;
             mPedido=new PedidoEntity();
             mPedido.setOafdoc(mFecha);
             mPedido.setOahora(""+hora+":"+minuto);
-            mPedido.setOaccli(mCliente.getNumi());
+            if (mCliente.getNumi()==0) {
+                mPedido.setOaccli("" + mCliente.getCodigogenerado());
+            }else{
+                mPedido.setOaccli(""+mCliente.getNumi());
+            }
+
             mPedido.setCliente(mCliente.getNamecliente());
             int idRepartidor= DataPreferences.getPrefInt("idrepartidor",getContext());
             mPedido.setOarepa(idRepartidor);
@@ -190,7 +195,7 @@ private PedidoEntity mPedido;
             mPedido.setLongitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLongitude());
             mPedido.setTotal(_prObtenerTotal());
             mPedido.setTipocobro(1);
-            mPedido.setEstado(false);
+            mPedido.setEstado(0);
             int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
             //cliente.setCodigogenerado();
             DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");

@@ -20,6 +20,10 @@ public interface DetalleDao {
     @Query("SELECT * FROM detalle")
     List<DetalleEntity> getDetalleAll();
 
+
+    @Query("SELECT * FROM detalle where estado=0")
+    List<DetalleEntity> getDetalleAllState();
+
     @Query("SELECT * FROM detalle WHERE obnumi=:numi")
     List<DetalleEntity> getDetalleById(String numi);
 

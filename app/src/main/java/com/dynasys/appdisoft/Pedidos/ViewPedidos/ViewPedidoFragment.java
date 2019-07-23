@@ -4,25 +4,34 @@ package com.dynasys.appdisoft.Pedidos.ViewPedidos;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Adapter.viewOrdersAdaptader;
+import com.dynasys.appdisoft.Clientes.MapClientActivity;
+import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
+import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosPresenter;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
@@ -33,6 +42,7 @@ import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,19 +56,27 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
     private List<DetalleEntity> listDetalle=new ArrayList<>();
     private ClientesListViewModel viewModelClientes;
     private DetalleListViewModel viewModelDetalles;
+    private PedidoListViewModel viewModelPedidos;
     private ViewPedidoMvp.Presenter mPedidosPresenter;
+    private AlertDialog dialogs,dialogQuestion;
     private viewOrdersAdaptader mviewOrderAdapter;
     private EditText tvCliente,tvObservacion,tvTotalPago;
     private TextView tvFecha,tvMontoTotal;
+    private Button btnMapa,btnEntrega;
     RadioButton rEfectivo,rCredito;
     private PedidoEntity mPedido;
+    ClienteEntity mCliente;
+    LinearLayout LineaBtn;
+    int Tipo;
     public ViewPedidoFragment() {
         // Required empty public constructor
     }
     @SuppressLint("ValidFragment")
-    public ViewPedidoFragment(PedidoEntity pedido) {
+    public ViewPedidoFragment(PedidoEntity pedido,ClienteEntity mcliente,int tipo) {
         // Required empty public constructor
         this.mPedido=pedido;
+        this.mCliente=mcliente;
+        this.Tipo=tipo;
     }
     @Override
     public void onResume() {
@@ -80,13 +98,18 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
         rEfectivo=(RadioButton)view.findViewById(R.id.id_order_rbt_efectivo) ;
         rCredito=(RadioButton)view.findViewById(R.id.id_order_rbt_credito);
         tvFecha=(TextView)view.findViewById(R.id.pedido_viewdata_fecha);
+        LineaBtn=(LinearLayout)view.findViewById(R.id.btnState);
         tvMontoTotal=(TextView)view.findViewById(R.id.pedido_viewdata_MontoTotal);
+        btnMapa=(Button)view.findViewById(R.id.pedido_viewdata_btnVerCliente);
+        btnEntrega=(Button)view.findViewById(R.id.pedido_viewdata_btnEntregar);
         viewModelDetalles = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelClientes = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
+        viewModelPedidos=ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         new ViewPedidoPresenter(this,getContext(),viewModelDetalles,getActivity());
         iniciarRecyclerView();
         mPedidosPresenter.getDetailOrder(mPedido.getCodigogenerado());
-
+        OnclickMapa();
+        OnclickEntrega();
         rCredito.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -98,6 +121,106 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
             }
         });
         return view;
+    }
+
+    public void OnclickMapa(){
+        btnMapa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mCliente!=null){
+
+                    if (mCliente.getLatitud()==0 || mCliente.getLongitud()==0){
+                        ShowMessageResult("El Cliente seleccionado no tiene registrado una ubicación");
+                    }else{
+                        UtilShare.cliente=mCliente;
+                        MainActivity fca = ((MainActivity) getActivity());
+                        fca.startActivity(new Intent(getActivity(), MapClientActivity.class));
+                        fca.overridePendingTransition(R.transition.left_in, R.transition.left_out);
+                    }
+                }else{
+                    ShowMessageResult("El Cliente no Existe en la zona del repartidor");
+                }
+            }
+        });
+    }
+    public void OnclickEntrega(){
+        if (Tipo==3){
+            LineaBtn.setVisibility(View.GONE);
+        }
+        btnEntrega.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                try {
+                   PedidoEntity pedi= viewModelPedidos.getPedido(mPedido.getCodigogenerado());
+                   if (pedi!=null){
+                       pedi.setOaest(3);
+                       pedi.setEstado(2);
+                       viewModelPedidos.updatePedido(pedi);
+                   }
+                    showSaveResultOption(0,"","");
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+    }
+    public void showSaveResultOption(int codigo, String id, String mensaje) {
+
+
+
+        switch (codigo){
+            case 0:
+                dialogs= showCustomDialog("Pedido Actualizado Correctamente"
+                        ,true);
+                dialogs.setCancelable(false);
+                dialogs.show();
+                break;
+        }
+    }
+    public AlertDialog showCustomDialog(String Contenido, Boolean flag) {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
+
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        View v = inflater.inflate(R.layout.dialog_succes, null);
+
+        builder.setView(v);
+        TextView Content = (TextView) v.findViewById(R.id.dialog_content);
+        Button aceptar = (Button) v.findViewById(R.id.dialog_ok);
+
+        Content.setText(Contenido);
+        aceptar.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        dialogs.dismiss();
+                        RetornarPrincipal();
+
+                        //  finish();
+                    }
+                }
+        );
+
+
+        return builder.create();
+    }
+    public void RetornarPrincipal(){
+        MainActivity fca = ((MainActivity) getActivity());
+        fca.returnToMain();
+    }
+    public void ShowMessageResult(String message) {
+        Snackbar snackbar= Snackbar.make(tvTotalPago, message, Snackbar.LENGTH_LONG);
+        View snackbar_view=snackbar.getView();
+        TextView snackbar_text=(TextView)snackbar_view.findViewById(android.support.design.R.id.snackbar_text);
+        snackbar_text.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ic_iinfo,0);
+        snackbar_text.setGravity(Gravity.CENTER);
+        snackbar.show();
     }
 public void CargarDatos(){
         tvMontoTotal.setText(ShareMethods.ObtenerDecimalToString(mPedido.getTotal(),2));
