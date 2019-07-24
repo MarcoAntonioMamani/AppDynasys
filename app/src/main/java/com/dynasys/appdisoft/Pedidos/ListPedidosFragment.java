@@ -146,6 +146,7 @@ public ClienteEntity obtenerCliente(PedidoEntity pedido){
 
     public void CargarRecycler(List<PedidoEntity> listPedidos){
         if (listPedidos!=null){
+            Collections.sort(listPedidos);
             adapterPerfil = new AdapterPedidos(getContext(),listPedidos,this,lisClientes);
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);

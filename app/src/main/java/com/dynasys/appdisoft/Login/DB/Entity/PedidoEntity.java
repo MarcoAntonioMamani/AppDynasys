@@ -4,9 +4,11 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+
 import java.util.Date;
 @Entity(tableName = "pedido")
-public class PedidoEntity {
+public class PedidoEntity implements Comparable<PedidoEntity> {
     @PrimaryKey(autoGenerate = true)
     int id;
     @ColumnInfo(name = "oanumi")
@@ -177,5 +179,12 @@ public PedidoEntity(){
 
     public void setCodigogenerado(String codigogenerado) {
         this.codigogenerado = codigogenerado;
+    }
+
+    @Override
+    public int compareTo(PedidoEntity pedidoEntity) {
+        int thisVal = this.getId();
+        int anotherVal = pedidoEntity.getId();
+        return (thisVal>anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
     }
 }

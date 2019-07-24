@@ -222,18 +222,35 @@ if (UtilShare.mActivity!=null){
         }
     }
     public void _DecargarPedidos(final String idRepartidor){
-        ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.ObtenerPedidos( new Callback<List<PedidoEntity>>() {
-            @Override
-            public void onResponse(Call<List<PedidoEntity>> call, Response<List<PedidoEntity>> response) {
-                final List<PedidoEntity> responseUser = (List<PedidoEntity>) response.body();
-                if (response.code()==404){
-                   // mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
-                    return;
-                }
-                if (response.isSuccessful() && responseUser != null) {
-                    try {
-                        List<PedidoEntity> listCliente = viewModelPedidos.getMAllPedido(1);
+
+        List<ClienteEntity> listCliente = null;
+        try {
+            listCliente = viewModelClientes.getMAllStateCliente(1);
+        List<PedidoEntity> listPedidos=viewModelPedidos.getMAllPedidoState(1);
+        List<DetalleEntity>listDetalle=viewModelDetalle.getMAllDetalleState(1);
+        if (listCliente==null){
+            return;
+        }
+        if (listPedidos==null){
+            return;
+        }
+        if (listDetalle==null){
+            return;
+        }
+        if (listCliente.size()==0 && listPedidos.size()==0 && listDetalle.size()==0) {
+
+            ApiManager apiManager = ApiManager.getInstance(mContext);
+            apiManager.ObtenerPedidos(new Callback<List<PedidoEntity>>() {
+                @Override
+                public void onResponse(Call<List<PedidoEntity>> call, Response<List<PedidoEntity>> response) {
+                    final List<PedidoEntity> responseUser = (List<PedidoEntity>) response.body();
+                    if (response.code() == 404) {
+                        // mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                        return;
+                    }
+                    if (response.isSuccessful() && responseUser != null) {
+                        try {
+                            List<PedidoEntity> listCliente = viewModelPedidos.getMAllPedido(1);
 
                           /*  viewModelProductos.deleteAllProductos();
                             for (int i = 0; i < responseUser.size(); i++) {
@@ -243,55 +260,58 @@ if (UtilShare.mActivity!=null){
                             for (int i = 0; i < responseUser.size(); i++) {
                                 PedidoEntity pedido = responseUser.get(i);
                                 //viewModel.insertCliente(cliente);
-                                PedidoEntity dbproducto=viewModelPedidos.getPedido(pedido.getOanumi());
-                                if (dbproducto==null){
-                                    if (pedido.getOaest()==1){
+                                PedidoEntity dbproducto = viewModelPedidos.getPedido(pedido.getOanumi());
+                                if (dbproducto == null) {
+                                    if (pedido.getOaest() == 1) {
                                         pedido.setOaest(2);
                                         pedido.setEstado(2);
                                         viewModelPedidos.insertPedido(pedido);
 
-                                        Notificacion(""+pedido.getOanumi(),pedido.getCliente(),""+pedido.getTotal());
-                                    }else{
-                                       if (pedido.getOaest()==2){
-                                           viewModelPedidos.insertPedido(pedido);
-                                       }
+                                        Notificacion("" + pedido.getOanumi(), pedido.getCliente(), "" + pedido.getTotal());
+                                    } else {
+                                        if (pedido.getOaest() == 2) {
+                                            viewModelPedidos.insertPedido(pedido);
+                                        }
 
                                     }
 
 
-                                }else{
-                                    if (pedido.getOaest()!=dbproducto.getOaest()){
+                                } else {
+                                    if (pedido.getOaest() != dbproducto.getOaest()) {
                                         dbproducto.setOaest(pedido.getOaest());
                                         viewModelPedidos.updatePedido(dbproducto);
                                     }
                                 }
 
 
+                            }
 
-
+                            _DecargarDetalles(idRepartidor);
+                        } catch (ExecutionException e) {
+                            //e.printStackTrace();
+                            //  mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos : "+e.getMessage());
+                        } catch (InterruptedException e) {
+                            //   e.printStackTrace();
+                            //  mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos: "+e.getMessage());
                         }
 
-                        _DecargarDetalles(idRepartidor);
-                    } catch (ExecutionException e) {
-                        //e.printStackTrace();
-                      //  mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos : "+e.getMessage());
-                    } catch (InterruptedException e) {
-                        //   e.printStackTrace();
-                      //  mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos: "+e.getMessage());
+
+                    } else {
+                        // mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
                     }
-
-
-
-                } else {
-                   // mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<PedidoEntity>> call, Throwable t) {
-               // mSincronizarview.ShowMessageResult("No es posible conectarse con el web services.");
-            }
-        },idRepartidor);
+                @Override
+                public void onFailure(Call<List<PedidoEntity>> call, Throwable t) {
+                    // mSincronizarview.ShowMessageResult("No es posible conectarse con el web services.");
+                }
+            }, idRepartidor);
+
+        }   } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void Notificacion(String pedido,String Clie,String Total){

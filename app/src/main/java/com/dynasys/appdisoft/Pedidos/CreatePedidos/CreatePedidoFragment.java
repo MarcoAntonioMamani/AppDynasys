@@ -253,7 +253,7 @@ private PedidoEntity mPedido;
                         //
                         dialogQuestion.dismiss();
                         RetornarPrincipal();
-
+                        //getFragmentManager().popBackStack();
                         //  finish();
                     }
                 }
