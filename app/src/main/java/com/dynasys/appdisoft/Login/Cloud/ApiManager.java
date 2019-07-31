@@ -27,7 +27,7 @@ private static Context mcontext;
     private ApiManager(Context context) {
         String Url="";
         if (DataPreferences.getPref("servicio",context)==null){
-           Url="http://192.168.0.13:3050";
+           Url="http://173.249.42.116:3050";
         }else{
             Url=DataPreferences.getPref("servicio",context);
         }

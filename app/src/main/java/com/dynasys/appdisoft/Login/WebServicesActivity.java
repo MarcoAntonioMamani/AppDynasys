@@ -16,7 +16,7 @@ public class WebServicesActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_services);
         if (DataPreferences.getPref("servicio",getApplicationContext())==null){
-            ((EditText) findViewById(R.id.webservice_address)).setText("http://192.168.0.13:3050");
+            ((EditText) findViewById(R.id.webservice_address)).setText("http://173.249.42.116:3050");
         }else{
             ((EditText) findViewById(R.id.webservice_address)).setText(DataPreferences.getPref("servicio",getApplicationContext()));
         }

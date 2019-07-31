@@ -110,7 +110,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                            cantidadPrecio+=responseUser.size();
                            // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }else{
-
+                              viewModelPrecios.deleteAllPrecios();
                            List<PrecioEntity> listupdate=new ArrayList<>();
                            List<PrecioEntity> listinsert=new ArrayList<>();
                             for (int i = 0; i < responseUser.size(); i++) {
@@ -185,7 +185,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                             cantidadCliente=responseUser.size();
                             //mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Clientes");
                         }else{
-
+                            viewModel.deleteAllClientes();
                             List<ClienteEntity> listupdate=new ArrayList<>();
 
                             for (int i = 0; i < responseUser.size(); i++) {
@@ -264,6 +264,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                                 ProductoEntity producto = responseUser.get(i);
                                 viewModelProductos.insertProducto(producto);
                             }*/
+                          viewModelProductos.deleteAllProductos();
                             for (int i = 0; i < responseUser.size(); i++) {
                                 ProductoEntity producto = responseUser.get(i);
                                 //viewModel.insertCliente(cliente);
@@ -319,6 +320,8 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                 if (response.isSuccessful() && responseUser != null) {
                     try {
                         List<PedidoEntity> listCliente = viewModelPedidos.getMAllPedido(1);
+                        viewModelPedidos.deleteAllPedido();
+                        viewModelDetalles.deleteAllDetalles();
                         if (listCliente.size() <= 0) {
                             for (int i = 0; i < responseUser.size(); i++) {
                                 PedidoEntity pedido = responseUser.get(i);
