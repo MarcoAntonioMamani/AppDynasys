@@ -94,7 +94,7 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
             @Override
             public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                 ResponseLogin responseUser = response.body();
-                if (response.code()==404){
+                if (response.code()==404 || response.code()==500){
                    mPedidoView.showSaveResultOption(0,"","");
                     if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
                         UtilShare.mActivity=activity;
@@ -121,6 +121,16 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                                 //showSaveResultOption(1,""+mcliente.getNumi(),"");
                                 return;
                             }
+                        }else{
+
+                            mPedidoView.showSaveResultOption(0,"",responseUser.getMessage());
+                            if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
+                                UtilShare.mActivity=activity;
+                                Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
+                                mContext.startService(intent);
+                            }
+                            //showSaveResultOption(1,""+mcliente.getNumi(),"");
+                            return;
                         }
                     }
                 }catch (Exception e){
@@ -155,7 +165,7 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
             @Override
             public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                 ResponseLogin responseUser = response.body();
-                if (response.code()==404){
+                if (response.code()==404 || response.code()==500){
                     mPedidoView.showSaveResultOption(0,"","");
                     return;
                 }

@@ -276,6 +276,15 @@ public void onClickAtras(){
                                 showSaveResultOption(1,""+mcliente.getNumi(),"");
                                 return;
                             }
+                            }else{
+
+                                ShowMessageResult( responseUser.getMessage());
+
+                                if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
+                                    UtilShare.mActivity=getActivity();
+                                    Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                                    getContext().startService(intent);
+                                }
                             }
                         }
                     }catch (Exception e){

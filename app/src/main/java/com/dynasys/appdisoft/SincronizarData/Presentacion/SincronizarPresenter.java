@@ -326,7 +326,17 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                             for (int i = 0; i < responseUser.size(); i++) {
                                 PedidoEntity pedido = responseUser.get(i);
                                 if (pedido.getOaest()!=3){
-                                    viewModelPedidos.insertPedido(pedido);
+
+                                    if (pedido.getOaest() == 1) {
+                                        pedido.setOaest(2);
+                                        pedido.setEstado(2);
+                                        viewModelPedidos.insertPedido(pedido);
+
+                                    }else{
+                                        viewModelPedidos.insertPedido(pedido);
+                                    }
+
+
                                 }
 
                             }
