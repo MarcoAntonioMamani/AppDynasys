@@ -185,17 +185,7 @@ public void onClickAtras(){
                 dialogs.setCancelable(false);
                 dialogs.show();
                 break;
-            case 2:
-                dialogs= showCustomDialog("El PedidoEntity #"+id+" ha sido guardado localmente con exito. Existen problemas" +
-                        " en la exportacion:\n" + mensaje,true);
-                dialogs.setCancelable(false);
-                dialogs.show();
-                break;
-            case 3:
-                dialogs= showCustomDialog("Existe un problema al guardar el pedido localmente:\n"  + mensaje,false);
-                dialogs.setCancelable(false);
-                dialogs.show();
-                break;
+
         }
     }
 

@@ -521,6 +521,12 @@ private PedidoEntity mPedido;
                 break;
         }
     }
+
+    @Override
+    public void showDataDetail(List<DetalleEntity> listDetalle) {
+
+    }
+
     public AlertDialog showCustomDialog(String Contenido, Boolean flag) {
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
 

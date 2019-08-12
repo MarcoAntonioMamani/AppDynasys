@@ -13,7 +13,6 @@ import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
-import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
@@ -110,6 +109,7 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                             if (mPedido!=null){
                                 mPedido.setOanumi(responseUser.getToken());
                                 mPedido.setEstado(1);
+                                mPedido.setEstadoUpdate(1);
                                 mPedido.setCodigogenerado(responseUser.getToken());
                                 viewModelPedidos.updatePedido(mPedido);
                                 InsertarDetalleServicio(responseUser.getToken(),list,pedido);
@@ -159,6 +159,20 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
         });
     }
 
+    @Override
+    public void getDetailOrder(String numiOrder) {
+        try {
+            List<DetalleEntity> listDetalle= viewModelDetalle.getDetalle(numiOrder);
+            if (listDetalle.size()>0){
+                mPedidoView.showDataDetail(listDetalle);
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void InsertarDetalleServicio(final String Oanumi, List<DetalleEntity> list, final PedidoEntity pedido){
         ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.InsertDetalle(list,Oanumi, new Callback<ResponseLogin>() {
@@ -178,6 +192,7 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                                     DetalleEntity item=listDetalle.get(i);
                                     item.setObnumi(Oanumi);
                                     item.setEstado(true);
+                                    item.setObupdate(1);
                                     viewModelDetalle.updateDetalle(item);
                                 }
                                 mPedidoView.showSaveResultOption(1,""+Oanumi,"");

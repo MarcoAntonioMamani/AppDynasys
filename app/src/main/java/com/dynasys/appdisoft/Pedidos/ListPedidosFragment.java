@@ -24,6 +24,7 @@ import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoFragment;
+import com.dynasys.appdisoft.Pedidos.ModifyPedidos.ModifyPedidoFragment;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosPresenter;
 import com.dynasys.appdisoft.Pedidos.ViewPedidos.ViewPedidoFragment;
@@ -116,9 +117,16 @@ public void cargarClientes(){
     @Override
     public void recyclerViewListClicked(View v, PedidoEntity pedido) {
         if (pedido!=null){
-            Fragment frag = new ViewPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
-            MainActivity fca = (MainActivity) getActivity();
-            fca.switchFragment(frag,"VIEW_PEDIDOS");
+            if (Tipo==2 || Tipo==1){
+                Fragment frag = new ModifyPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
+                MainActivity fca = (MainActivity) getActivity();
+                fca.switchFragment(frag,"VIEW_PEDIDOS");
+            }else{
+                Fragment frag = new ViewPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
+                MainActivity fca = (MainActivity) getActivity();
+                fca.switchFragment(frag,"VIEW_PEDIDOS");
+            }
+
         }
 
     }

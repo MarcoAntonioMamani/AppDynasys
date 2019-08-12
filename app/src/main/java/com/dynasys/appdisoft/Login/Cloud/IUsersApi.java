@@ -46,6 +46,9 @@ public interface IUsersApi {
     @POST("/api/repartidor/detalle/{oanumi}")
     Call<ResponseLogin> InsertDetalle(@Body List<DetalleEntity> listDetalle,@Path("oanumi") String oanumi);
 
+    @PUT("/api/repartidor/detalle/{oanumi}")
+    Call<ResponseLogin> UpdateDetalle(@Body List<DetalleEntity> listDetalle,@Path("oanumi") String oanumi);
+
     @POST("/api/repartidor/tracking")
     Call<ResponseLogin> InsertTracking(@Body BodyLocation user);
 }

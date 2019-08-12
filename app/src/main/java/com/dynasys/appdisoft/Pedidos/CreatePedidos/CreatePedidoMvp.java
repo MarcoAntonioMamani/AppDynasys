@@ -21,11 +21,13 @@ public interface CreatePedidoMvp {
         void DeleteAndModifyDetailOrder(DetalleEntity item,int pos);
         void ShowMessageResult(String message);
         void showSaveResultOption(int codigo, String id, String mensaje);
+        void showDataDetail(List<DetalleEntity> listDetalle) ;
 
     }
     interface Presenter{
         void CargarClientes();
         void CargarProducto(int idCLiente);
         void GuardarDatos(List<DetalleEntity> list,PedidoEntity pedido);
+        void getDetailOrder(String numiOrder);
     }
 }

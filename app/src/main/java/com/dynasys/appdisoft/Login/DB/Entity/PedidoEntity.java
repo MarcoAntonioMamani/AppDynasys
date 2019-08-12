@@ -39,11 +39,13 @@ public class PedidoEntity implements Comparable<PedidoEntity> {
     int estado;
     @ColumnInfo(name = "codigogenerado")
     String codigogenerado;
+    @ColumnInfo(name = "estadoupdate")
+    int estadoUpdate;
 public PedidoEntity(){
 
 }
 
-    public PedidoEntity(int id, String oanumi, Date oafdoc, String oahora, String oaccli, String cliente, int oarepa, int oaest, String oaobs, Double latitud, Double longitud, Double total, int tipocobro, int estado, String codigogenerado) {
+    public PedidoEntity(int id, String oanumi, Date oafdoc, String oahora, String oaccli, String cliente, int oarepa, int oaest, String oaobs, Double latitud, Double longitud, Double total, int tipocobro, int estado, String codigogenerado, int estadoUpdate) {
         this.id = id;
         this.oanumi = oanumi;
         this.oafdoc = oafdoc;
@@ -59,6 +61,15 @@ public PedidoEntity(){
         this.tipocobro = tipocobro;
         this.estado = estado;
         this.codigogenerado = codigogenerado;
+        this.estadoUpdate = estadoUpdate;
+    }
+
+    public int getEstadoUpdate() {
+        return estadoUpdate;
+    }
+
+    public void setEstadoUpdate(int estadoUpdate) {
+        this.estadoUpdate = estadoUpdate;
     }
 
     public int getId() {
