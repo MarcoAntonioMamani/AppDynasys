@@ -35,7 +35,7 @@
         android:layout_below="@id/view_cliente_nombre"
         android:layout_toRightOf="@id/id_img_client"
         android:ellipsize="end"
-        android:maxLines="2"
+        android:maxLines="3"
         android:paddingLeft="5dp"
         />
 

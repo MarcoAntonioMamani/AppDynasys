@@ -19,6 +19,11 @@
             android:icon="@drawable/ic_entregados"
             android:visible="true"/>
         <item
+            android:id="@+id/item_navigation_drawer_mapa"
+            android:title="Ver Ubicación"
+            android:icon="@drawable/ic_map"
+            android:visible="true"/>
+        <item
             android:checked="true"
             android:id="@+id/item_navigation_drawer_sincronizar"
             android:icon="@drawable/ic_sincroniza"

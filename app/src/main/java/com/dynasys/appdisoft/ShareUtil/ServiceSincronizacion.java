@@ -215,7 +215,7 @@ if (UtilShare.mActivity!=null){
                     }
                     new ChecarNotificaciones().execute();
 }
-            }, 9*1000);
+            }, 15*1000);
             super.onPostExecute(result);
         }
     }
@@ -504,6 +504,7 @@ if (UtilShare.mActivity!=null){
                                     PedidoEntity mPedido= viewModelPedidos.getPedido(pedido.getOanumi());
                                     if (mPedido!=null){
                                         mPedido.setEstado(1);
+                                        mPedido.setEstadoUpdate(1);
                                         List<DetalleEntity> list=viewModelDetalle.getDetalle(CodeGenerado);
                                         UpdateDetalleServicio(responseUser.getToken(),list,mPedido,CodeGenerado);
                                         //showSaveResultOption(1,""+mcliente.getNumi(),"");

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Mapas.MapaActivity">
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/map_todos"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+
+        />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.1"
+        android:orientation="horizontal"
+
+        >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:paddingLeft="10dp"
+                >
+                 <LinearLayout
+                     android:layout_width="fill_parent"
+                     android:layout_height="fill_parent"
+                     android:gravity="center"
+
+android:orientation="vertical"
+                     >
+                     <Spinner
+                         android:id="@+id/id_lista_Tipos"
+                         android:layout_width="fill_parent"
+                         android:layout_height="wrap_content"
+                         android:layout_marginBottom="@dimen/keyline_1"
+                         android:entries="@array/tipocliente_array"
+                         android:background="@drawable/animation_riple_maps"
+                         android:layout_gravity="center"
+                         android:gravity="center"
+
+                         />
+                 </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.4"
+                android:padding="5dp"
+                >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+android:gravity="center"
+                    android:orientation="vertical"
+                    >
+                    <Button
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cargar"
+                        android:id="@+id/btnFindPathall"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:background="@drawable/animation_riple_button"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+</LinearLayout>

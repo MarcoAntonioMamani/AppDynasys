@@ -18,11 +18,12 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_disoft"
         android:label="Disoft"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_disoft"
         android:supportsRtl="true"
-        android:largeHeap="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Login.WebServicesActivity"></activity>
+        <activity android:name=".Mapas.MapaActivity"></activity>
+        <activity android:name=".Login.WebServicesActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".Login.LoginActivity" />
 
@@ -46,6 +47,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Clientes.MapClientActivity" />
+
         <service android:name=".ShareUtil.ServicesLocation" />
         <service android:name=".ShareUtil.ServiceSincronizacion" />
     </application>

@@ -235,14 +235,36 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                                 }
                                 j++;
                             }
+
+
+                        }
+
+                        for (int i = 0; i < mDetalleItem.size(); i++) {
+                            DetalleEntity NewValor=mDetalleItem.get(i);
+                            boolean bandera=false;
+                            int j=0;
+                            while (j < list.size() &&bandera==false) {
+                                DetalleEntity detalle=list.get(j);
+                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==2){
+                                    bandera=true;
+                                }
+                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
+                                    bandera=true;
+                                }
+                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-2){
+                                    bandera=true;
+                                }
+                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0){
+                                    bandera=true;
+                                }
+                                j++;
+                            }
                             if (bandera==false && NewValor.getObupdate() ==0){
                                 NewValor.setObnumi(pedi.getCodigogenerado());
                                 viewModelDetalle.insertDetalle(NewValor);
                             }
 
                         }
-
-
                         viewModelPedido.updatePedido(pedi);
 
                         if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
@@ -320,6 +342,29 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                                             detalle.setObptot(NewValor.getObptot());
                                             detalle.setObnumi(pedi.getCodigogenerado());
                                             viewModelDetalle.updateDetalle(NewValor);
+                                            bandera=true;
+                                        }
+                                        j++;
+                                    }
+
+
+                                }
+                                for (int i = 0; i < mDetalleItem.size(); i++) {
+                                    DetalleEntity NewValor=mDetalleItem.get(i);
+                                    boolean bandera=false;
+                                    int j=0;
+                                    while (j < list.size() &&bandera==false) {
+                                        DetalleEntity detalle=list.get(j);
+                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==2){
+                                            bandera=true;
+                                        }
+                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
+                                            bandera=true;
+                                        }
+                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-2){
+                                            bandera=true;
+                                        }
+                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0){
                                             bandera=true;
                                         }
                                         j++;
@@ -469,6 +514,7 @@ public void OnClickObtenerFecha(){
                         detalle.setObpbase(item.getPrecio());
                         detalle.setObptot(item.getPrecio());
                         detalle.setEstado(false);
+                        detalle.setObupdate(0);
 
 
                         mDetalleItem.add(detalle);
@@ -508,7 +554,7 @@ public void OnClickObtenerFecha(){
             detalle.setObptot(cantidad*detalle.getObpbase());
             tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
             calcularTotal();
-            if (mDetalleItem.get(posicion).getObupdate()==1){
+            if (mDetalleItem.get(posicion).getObupdate()>=1){
                 detalle.setObupdate(2);
             }
         }

@@ -2,6 +2,7 @@ package com.dynasys.appdisoft.Pedidos;
 
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -14,7 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.dynasys.appdisoft.Adapter.AdapterPedidos;
 import com.dynasys.appdisoft.Clientes.Adapter.AdapterClientes;
@@ -33,9 +38,15 @@ import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Preconditions;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -45,9 +56,17 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
 
     private List<ClienteEntity> lisClientes=new ArrayList<>();
     private List<PedidoEntity> listPedidos=new ArrayList<>();
+    TextView tvDesde,tvHasta;
+    ImageButton btnDesde,btnHasta;
+    Button btnCargar;
     View view;
+    public final Calendar c = Calendar.getInstance();
+    private static final String CERO = "0";
+    private static final String BARRA = "/";
     Context context;
-
+    final int mes = c.get(Calendar.MONTH);
+    final int dia = c.get(Calendar.DAY_OF_MONTH);
+    final int anio = c.get(Calendar.YEAR);
     RecyclerView recList;
     public AdapterPedidos adapterPerfil;
     private ClientesListViewModel viewModelClientes;
@@ -80,13 +99,116 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
         view = inflater.inflate(R.layout.fragment_list_pedidos, container, false);
         recList = (RecyclerView) view.findViewById(R.id.Pedidos_CardList);
         btnAddPedido=(FloatingActionButton)view.findViewById(R.id.view_btnaddPedidos) ;
+        tvDesde=(TextView)view.findViewById(R.id.id_tvfecha_desde);
+        tvHasta=(TextView)view.findViewById(R.id.id_tvfecha_hasta);
+        tvDesde.setEnabled(false);
+        tvHasta.setEnabled(false);
+        btnDesde=(ImageButton) view.findViewById(R.id.ib_btn_desde);
+        btnHasta=(ImageButton)view.findViewById(R.id.id_btn_hasta);
+        btnCargar=(Button)view.findViewById(R.id.id_btn_buscar) ;
+        tvDesde.setText(FormatearFecha(dia,mes+1,anio));
+        tvHasta.setText(FormatearFecha(dia,mes+1,anio));
         recList.setHasFixedSize(true);
         viewModelPedidos = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelClientes = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
         new PedidosPresenter(this,getContext(),viewModelPedidos,getActivity(),Tipo);
         cargarClientes();
         _OnClickBtnAddPedidos();
+        onclickObtenerFechaDesde();
+        onclickObtenerFechaHasta();
+        OnClickCargar();
         return view;
+    }
+    public void OnClickCargar(){
+        btnCargar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPedidosPresenter.CargarPedidos();
+            }
+        });
+    }
+    public static Long getFechaHastaFromStringtoLong(String date, String pattern) {
+        Long lngFecha =0L;
+        Date df =parseDate(date,pattern);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 59);
+        cal.set(Calendar.YEAR, df.getYear()+1900);
+        cal.set(Calendar.MONTH, df.getMonth());
+        cal.set(Calendar.DAY_OF_MONTH, df.getDate());
+        lngFecha = cal.getTimeInMillis();
+        return lngFecha;
+    }
+    public static Date parseDate(String dateString, String pattern) {
+        DateFormat df = new SimpleDateFormat(pattern, Locale.getDefault());
+        try {
+            return df.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static Long getFechaFromStringtoLong(String date, String pattern) {
+        Long lngFecha =0L;
+        Date df =parseDate(date,pattern);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.YEAR, df.getYear()+1900);
+        cal.set(Calendar.MONTH, df.getMonth());
+        cal.set(Calendar.DAY_OF_MONTH, df.getDate());
+        lngFecha = cal.getTimeInMillis();
+        return lngFecha;
+    }
+    private void obtenerFecha(final int tipo){  ///1 = desde    2=hasta
+        DatePickerDialog recogerFecha = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                //Esta variable lo que realiza es aumentar en uno el mes ya que comienza desde 0 = enero
+                final int mesActual = month + 1;
+                if (tipo==1){
+                    tvDesde.setText(FormatearFecha(dayOfMonth ,mesActual ,year));
+                }else{
+                    tvHasta.setText(FormatearFecha(dayOfMonth ,mesActual ,year));
+                }
+
+            }
+
+        },anio, mes, dia);
+        //Muestro el widget
+        recogerFecha.show();
+
+    }
+    public void onclickObtenerFechaDesde(){
+        btnDesde.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                obtenerFecha(1);
+
+            }
+        });
+    }
+    public void onclickObtenerFechaHasta(){
+        btnHasta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                obtenerFecha(2);
+
+            }
+        });
+    }
+    public String FormatearFecha (int dayOfMonth,int mesActual,int year){
+        //Formateo el día obtenido: antepone el 0 si son menores de 10
+        String diaFormateado = (dayOfMonth < 10)? CERO + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
+        //Formateo el mes obtenido: antepone el 0 si son menores de 10
+        String mesFormateado = (mesActual < 10)? CERO + String.valueOf(mesActual):String.valueOf(mesActual);
+        return diaFormateado + BARRA + mesFormateado + BARRA + year;
     }
     @SuppressLint("RestrictedApi")
     public void _OnClickBtnAddPedidos(){
@@ -153,6 +275,9 @@ public ClienteEntity obtenerCliente(PedidoEntity pedido){
 
 
     public void CargarRecycler(List<PedidoEntity> listPedidos){
+
+
+        listPedidos=ObtenerPedidosFiltrados(listPedidos);
         if (listPedidos!=null){
             Collections.sort(listPedidos);
             adapterPerfil = new AdapterPedidos(getContext(),listPedidos,this,lisClientes);
@@ -167,5 +292,21 @@ public ClienteEntity obtenerCliente(PedidoEntity pedido){
 
         }
 
+    }
+
+    public List<PedidoEntity> ObtenerPedidosFiltrados(List<PedidoEntity> listp){
+        List<PedidoEntity> ListPedi=new ArrayList<>();
+
+        Long fechaDesde = getFechaFromStringtoLong(tvDesde.getText().toString(), "dd/MM/yyyy");
+        Long fechaHasta = getFechaHastaFromStringtoLong(tvHasta.getText().toString(), "dd/MM/yyyy");
+
+        for (int i = 0; i < listp.size(); i++) {
+            PedidoEntity ped=listp.get(i);
+
+            if (ped.getOafdoc().getTime()>=fechaDesde && ped.getOafdoc().getTime()<=fechaHasta){
+                ListPedi.add(ped);
+            }
+        }
+        return ListPedi;
     }
 }

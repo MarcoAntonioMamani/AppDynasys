@@ -29,10 +29,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dynasys.appdisoft.Clientes.ListClientesFragment;
+import com.dynasys.appdisoft.Clientes.MapClientActivity;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.UsersListViewModel;
+import com.dynasys.appdisoft.Mapas.MapaActivity;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
@@ -138,6 +140,12 @@ public class MainActivity extends AppCompatActivity {
                         //setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
+                    case R.id.item_navigation_drawer_mapa:
+                        setFragment(5);
+                        item.setChecked(true);
+                        //setFragment(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
                     case R.id.item_navigation_drawer_help_and_feedback:
                         item.setChecked(true);
                         setFragment(21);
@@ -175,6 +183,12 @@ public class MainActivity extends AppCompatActivity {
                 returnToMain();
                 frag = new ListPedidosFragment(3);
                 tag = Constantes.TAG_PEDIDOS;
+                break;
+
+            case 5:
+                MainActivity fca = ((MainActivity)this);
+                fca.startActivity(new Intent(this, MapaActivity.class));
+                fca.overridePendingTransition(R.transition.left_in, R.transition.left_out);
                 break;
             case 21:
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -236,10 +250,12 @@ public class MainActivity extends AppCompatActivity {
         MenuItem menulcv = navigationView.getMenu().findItem(R.id.item_navigation_drawer_sincronizar);
         MenuItem menucli = navigationView.getMenu().findItem(R.id.item_navigation_drawer_clientes);
         MenuItem menuped = navigationView.getMenu().findItem(R.id.item_navigation_drawer_pedidos);
+        MenuItem menuMapa = navigationView.getMenu().findItem(R.id.item_navigation_drawer_mapa);
         MenuItem menupedEntregados = navigationView.getMenu().findItem(R.id.item_navigation_drawer_entregados);
             menulcv.setVisible(true);
             menucli.setVisible(true);
             menuped.setVisible(true);
+            menuMapa.setVisible(true);
         menupedEntregados.setVisible(true);
     }
 

@@ -29,6 +29,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter, Goo
     @Override
     public View getInfoContents(final Marker m) {
         //Carga layout personalizado.
+
         View v = inflater.inflate(R.layout.info_windows_layout, null);
         mclient=UtilShare.cliente;
 
