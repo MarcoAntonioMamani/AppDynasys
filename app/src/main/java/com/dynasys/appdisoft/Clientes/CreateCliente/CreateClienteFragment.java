@@ -226,8 +226,9 @@ public void onClickAtras(){
 
             if (ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
                 UtilShare.mActivity=getActivity();
-                Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
-                getContext().stopService(intent);
+                Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
+               // getContext().stopService(intent);
+                ServiceSincronizacion.getInstance().onDestroy();
             }
             ApiManager apiManager=ApiManager.getInstance(getContext());
             apiManager.InsertUser(cliente, new Callback<ResponseLogin>() {
@@ -240,7 +241,7 @@ public void onClickAtras(){
 
                         if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
                             UtilShare.mActivity=getActivity();
-                            Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                            Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
                             getContext().startService(intent);
                         }
                         return;
@@ -260,7 +261,7 @@ public void onClickAtras(){
 
                                 if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
                                     UtilShare.mActivity=getActivity();
-                                    Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                                    Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
                                     getContext().startService(intent);
                                 }
                                 showSaveResultOption(1,""+mcliente.getNumi(),"");
@@ -272,7 +273,7 @@ public void onClickAtras(){
 
                                 if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
                                     UtilShare.mActivity=getActivity();
-                                    Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                                    Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
                                     getContext().startService(intent);
                                 }
                             }
@@ -281,7 +282,7 @@ public void onClickAtras(){
 
                         if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
                             UtilShare.mActivity=getActivity();
-                            Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                            Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
                             getContext().startService(intent);
                         }
                         if (progresdialog.isShowing()){
@@ -294,7 +295,7 @@ public void onClickAtras(){
 
                     if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
                         UtilShare.mActivity=getActivity();
-                        Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                        Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
                         getContext().startService(intent);
                     }
                 }
@@ -307,7 +308,7 @@ public void onClickAtras(){
 
                     if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
                         UtilShare.mActivity=getActivity();
-                        Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                        Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
                         getContext().startService(intent);
                     }
                     showSaveResultOption(0,"","");
@@ -322,7 +323,7 @@ public void onClickAtras(){
             }
             if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
                 UtilShare.mActivity=getActivity();
-                Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+                Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
                 getContext().startService(intent);
             }
             ShowMessageResult("El Cliente no ha podido ser guardado: "+ e.getMessage());

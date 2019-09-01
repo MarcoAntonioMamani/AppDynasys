@@ -14,4 +14,14 @@ public class StringClusterItem implements ClusterItem {
     public LatLng getPosition() {
         return latLng;
     }
+
+    @Override
+    public String getTitle() {
+        return null;
+    }
+
+    @Override
+    public String getSnippet() {
+        return null;
+    }
 }

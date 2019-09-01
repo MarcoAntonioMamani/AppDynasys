@@ -35,6 +35,7 @@ import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.UsersListViewModel;
 import com.dynasys.appdisoft.Mapas.MapaActivity;
+import com.dynasys.appdisoft.Mapas.TestActivity;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 startService(intent);
             }
         }
-        if (ServiceSincronizacion.getInstance()==null){
+        if (ServiceSincronizacion.getInstance2()==null){
             UtilShare.mActivity=this;
             Intent intent = new Intent(this,new ServiceSincronizacion(viewModelClientes,this).getClass());
             startService(intent);
@@ -188,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
             case 5:
                 MainActivity fca = ((MainActivity)this);
                 fca.startActivity(new Intent(this, MapaActivity.class));
+                //fca.startActivity(new Intent(this, TestActivity.class));
                 fca.overridePendingTransition(R.transition.left_in, R.transition.left_out);
                 break;
             case 21:

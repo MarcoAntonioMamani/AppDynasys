@@ -22,7 +22,8 @@
         android:roundIcon="@mipmap/ic_disoft"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Mapas.MapaActivity"></activity>
+        <activity android:name=".Mapas.TestActivity"></activity>
+        <activity android:name=".Mapas.MapaActivity" />
         <activity android:name=".Login.WebServicesActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".Login.LoginActivity" />

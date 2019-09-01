@@ -24,6 +24,8 @@ public class ShareMethods {
         String monthName = new SimpleDateFormat("MMMM").format(fecha);
         return dia+" "+monthName+" "+ano;
     }
+
+
     public static String ObtenerFecha02(Date fecha) {
         String dia = new SimpleDateFormat("dd").format(fecha);
         String ano = new SimpleDateFormat("yyyy").format(fecha);

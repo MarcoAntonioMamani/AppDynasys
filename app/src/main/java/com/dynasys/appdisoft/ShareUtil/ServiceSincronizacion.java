@@ -64,7 +64,19 @@ public class ServiceSincronizacion extends Service {
 
     }
     public static ServiceSincronizacion getInstance() {
-        return mInstance;
+        if (mInstance==null){
+            mInstance =new ServiceSincronizacion();
+            return mInstance;
+        }else{
+            return mInstance;
+        }
+
+    }
+    public static ServiceSincronizacion getInstance2() {
+
+            return mInstance;
+
+
     }
     @Nullable
     @Override
@@ -215,7 +227,7 @@ if (UtilShare.mActivity!=null){
                     }
                     new ChecarNotificaciones().execute();
 }
-            }, 15*1000);
+            }, 6*1000);
             super.onPostExecute(result);
         }
     }
@@ -226,16 +238,20 @@ if (UtilShare.mActivity!=null){
             listCliente = viewModelClientes.getMAllStateCliente(1);
         List<PedidoEntity> listPedidos=viewModelPedidos.getMAllPedidoState(1);
         List<DetalleEntity>listDetalle=viewModelDetalle.getMAllDetalleState(1);
+        List<PedidoEntity> listPedidoModificados=viewModelPedidos.getMAllPedidoState02(2);
         if (listCliente==null){
             return;
         }
         if (listPedidos==null){
             return;
         }
+            if (listPedidoModificados==null){
+                return;
+            }
         if (listDetalle==null){
             return;
         }
-        if (listCliente.size()==0 && listPedidos.size()==0 && listDetalle.size()==0) {
+        if (listCliente.size()==0 && listPedidos.size()==0 && listPedidoModificados.size()==0&& listDetalle.size()==0) {
 
             ApiManager apiManager = ApiManager.getInstance(mContext);
             apiManager.ObtenerPedidos(new Callback<List<PedidoEntity>>() {

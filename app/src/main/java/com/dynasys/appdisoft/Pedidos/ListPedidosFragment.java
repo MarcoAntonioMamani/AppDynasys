@@ -74,12 +74,15 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
     private PedidosMvp.Presenter mPedidosPresenter;
     private FloatingActionButton btnAddPedido;
     int Tipo=0;  //1 = Pendientes   2 =Entregados
+    Boolean FisrtData=false;
     public ListPedidosFragment() {
         // Required empty public constructor
+        FisrtData=false;
     }
     public ListPedidosFragment(int Tip) {
         // Required empty public constructor
     this.Tipo=Tip;
+        FisrtData=false;
     }
 
     @Override
@@ -111,12 +114,14 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
         recList.setHasFixedSize(true);
         viewModelPedidos = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelClientes = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
+        FisrtData=false;
         new PedidosPresenter(this,getContext(),viewModelPedidos,getActivity(),Tipo);
         cargarClientes();
         _OnClickBtnAddPedidos();
         onclickObtenerFechaDesde();
         onclickObtenerFechaHasta();
         OnClickCargar();
+
         return view;
     }
     public void OnClickCargar(){
@@ -295,18 +300,45 @@ public ClienteEntity obtenerCliente(PedidoEntity pedido){
     }
 
     public List<PedidoEntity> ObtenerPedidosFiltrados(List<PedidoEntity> listp){
-        List<PedidoEntity> ListPedi=new ArrayList<>();
+        if (FisrtData==false){
+            tvDesde.setText(ObtenerFechaMinima(listp));
+            FisrtData=true;
+            return listp;
 
-        Long fechaDesde = getFechaFromStringtoLong(tvDesde.getText().toString(), "dd/MM/yyyy");
-        Long fechaHasta = getFechaHastaFromStringtoLong(tvHasta.getText().toString(), "dd/MM/yyyy");
+        }else{
+            List<PedidoEntity> ListPedi=new ArrayList<>();
 
-        for (int i = 0; i < listp.size(); i++) {
-            PedidoEntity ped=listp.get(i);
+            Long fechaDesde = getFechaFromStringtoLong(tvDesde.getText().toString(), "dd/MM/yyyy");
+            Long fechaHasta = getFechaHastaFromStringtoLong(tvHasta.getText().toString(), "dd/MM/yyyy");
 
-            if (ped.getOafdoc().getTime()>=fechaDesde && ped.getOafdoc().getTime()<=fechaHasta){
-                ListPedi.add(ped);
+            for (int i = 0; i < listp.size(); i++) {
+                PedidoEntity ped=listp.get(i);
+
+                if (ped.getOafdoc().getTime()>=fechaDesde && ped.getOafdoc().getTime()<=fechaHasta){
+                    ListPedi.add(ped);
+                }
             }
+            return ListPedi;
         }
-        return ListPedi;
+
+    }
+
+    public String ObtenerFechaMinima(List<PedidoEntity> list){
+        if (list.size()>0){
+
+            PedidoEntity menor=list.get(0);
+
+            for (int i = 1; i < list.size(); i++) {
+                PedidoEntity data=list.get(i);
+
+                if (data.getOafdoc().getTime()<menor.getOafdoc().getTime()){
+                    menor=data;
+                }
+
+            }
+            return ShareMethods.ObtenerFecha02(menor.getOafdoc());
+
+        }
+        return FormatearFecha(dia,mes+1,anio);
     }
 }

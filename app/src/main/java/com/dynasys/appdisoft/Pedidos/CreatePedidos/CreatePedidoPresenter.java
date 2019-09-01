@@ -12,6 +12,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
@@ -19,6 +20,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.android.gms.common.internal.Preconditions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -49,7 +51,7 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
     @Override
     public void CargarClientes() {
         try {
-            List<ClienteEntity> listCliente=viewModelClientes.getMAllCliente(1);
+            List<ClienteEntity> listCliente=FiltarByZona(viewModelClientes.getMAllCliente(1));
             if (listCliente.size()>0){
                 mPedidoView.MostrarClientes(listCliente);
             }
@@ -60,7 +62,18 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
         }
 
     }
+    public List<ClienteEntity> FiltarByZona(List<ClienteEntity> list){
 
+        int idzona= DataPreferences.getPrefInt("zona",mContext);
+        List<ClienteEntity> listClie=new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            ClienteEntity cliente=list.get(i);
+            if (cliente.getCczona() ==idzona){
+                listClie.add(cliente);
+            }
+        }
+        return listClie;
+    }
     @Override
     public void CargarProducto(int idCLiente) {
         try {
@@ -85,8 +98,9 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
 
         if (ShareMethods.IsServiceRunning(mContext, ServiceSincronizacion.class)){
             UtilShare.mActivity=activity;
-            Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
-            mContext.stopService(intent);
+            Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
+            //mContext.stopService(intent);
+            ServiceSincronizacion.getInstance().onDestroy();
         }
         ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.InsertPedido(pedido, new Callback<ResponseLogin>() {
@@ -97,7 +111,8 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                    mPedidoView.showSaveResultOption(0,"","");
                     if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
                         UtilShare.mActivity=activity;
-                        Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
+                        Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
+
                         mContext.startService(intent);
                     }
                     return;
@@ -115,7 +130,7 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                                 InsertarDetalleServicio(responseUser.getToken(),list,pedido);
                                 if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
                                     UtilShare.mActivity=activity;
-                                    Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
+                                    Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
                                     mContext.startService(intent);
                                 }
                                 //showSaveResultOption(1,""+mcliente.getNumi(),"");
@@ -126,7 +141,7 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                             mPedidoView.showSaveResultOption(0,"",responseUser.getMessage());
                             if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
                                 UtilShare.mActivity=activity;
-                                Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
+                                Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
                                 mContext.startService(intent);
                             }
                             //showSaveResultOption(1,""+mcliente.getNumi(),"");
@@ -136,7 +151,7 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                 }catch (Exception e){
                     if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
                         UtilShare.mActivity=activity;
-                        Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
+                        Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
                         mContext.startService(intent);
                     }
                     mPedidoView.showSaveResultOption(0,"","");
@@ -150,7 +165,7 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                 mPedidoView.showSaveResultOption(0,"","");
                 if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
                     UtilShare.mActivity=activity;
-                    Intent intent = new Intent(mContext,new ServiceSincronizacion(viewModelClientes,activity).getClass());
+                    Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
                     mContext.startService(intent);
                 }
                 return;
