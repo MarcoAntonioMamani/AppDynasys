@@ -29,6 +29,9 @@ public interface ClientesDao {
     @Query("SELECT * FROM clientes where estado=0")
     List<ClienteEntity> getClienteAllState();
 
+    @Query("SELECT * FROM clientes where estado=2")
+    List<ClienteEntity> getClienteAllStateUpdate();
+
 
     @Query("SELECT * FROM clientes WHERE codigogenerado=:code")
     ClienteEntity getClienteByCode(String code);

@@ -24,6 +24,9 @@ public interface IUsersApi {
     @POST("/api/repartidor/clients")
     Call<ResponseLogin> InsertUser(@Body ClienteEntity user);
 
+    @PUT("/api/repartidor/clients")
+    Call<ResponseLogin> UpdateUser(@Body ClienteEntity user);
+
     @GET("/api/repartidor/clientes/{idrepartidor}")
     Call<List<ClienteEntity>> ObtenerClientes(@Path("idrepartidor") String idRepartidor);
 

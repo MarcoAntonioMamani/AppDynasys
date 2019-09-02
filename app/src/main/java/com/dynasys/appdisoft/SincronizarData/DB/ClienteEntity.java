@@ -30,7 +30,7 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
     @ColumnInfo(name = "fechaingreso")
     Date fechaingreso;
     @ColumnInfo(name = "estado")
-    boolean estado;
+    int estado;
     @ColumnInfo(name = "codigogenerado")
     String codigogenerado;
     @ColumnInfo(name = "cccat")
@@ -41,7 +41,7 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
 
     }
 
-    public ClienteEntity(int id, int numi, String codigo, String namecliente, String nit, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, boolean estado, String codigogenerado, int cccat, int cczona) {
+    public ClienteEntity(int id, int numi, String codigo, String namecliente, String nit, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, int estado, String codigogenerado, int cccat, int cczona) {
         this.id = id;
         this.numi = numi;
         this.codigo = codigo;
@@ -56,14 +56,6 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
         this.codigogenerado = codigogenerado;
         this.cccat = cccat;
         this.cczona = cczona;
-    }
-
-    public int getCccat() {
-        return cccat;
-    }
-
-    public void setCccat(int cccat) {
-        this.cccat = cccat;
     }
 
     public int getId() {
@@ -146,11 +138,11 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
         this.fechaingreso = fechaingreso;
     }
 
-    public boolean isEstado() {
+    public int getEstado() {
         return estado;
     }
 
-    public void setEstado(boolean estado) {
+    public void setEstado(int estado) {
         this.estado = estado;
     }
 
@@ -160,6 +152,14 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
 
     public void setCodigogenerado(String codigogenerado) {
         this.codigogenerado = codigogenerado;
+    }
+
+    public int getCccat() {
+        return cccat;
+    }
+
+    public void setCccat(int cccat) {
+        this.cccat = cccat;
     }
 
     public int getCczona() {

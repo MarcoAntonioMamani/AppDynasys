@@ -28,6 +28,7 @@ import com.dynasys.appdisoft.Clientes.Adapter.AdapterClientes;
 import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.MainActivity;
+import com.dynasys.appdisoft.Pedidos.ModifyPedidos.ModifyPedidoFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
@@ -210,9 +211,13 @@ public void _OnClickBtnAddCliente(){
               ShowMessageResult("El usuario seleccionado no tiene registrado una ubicación");
             }else{
               UtilShare.cliente=cliente;
-              MainActivity fca = ((MainActivity) getActivity());
+             /* MainActivity fca = ((MainActivity) getActivity());
               fca.startActivity(new Intent(getActivity(), MapClientActivity .class));
-              fca.overridePendingTransition(R.transition.left_in, R.transition.left_out);
+              fca.overridePendingTransition(R.transition.left_in, R.transition.left_out);*/
+
+              Fragment frag = new CreateClienteFragment(1,cliente);
+              MainActivity fca = (MainActivity) getActivity();
+              fca.switchFragment(frag,"UpdateClientes");
           }
         }
     }

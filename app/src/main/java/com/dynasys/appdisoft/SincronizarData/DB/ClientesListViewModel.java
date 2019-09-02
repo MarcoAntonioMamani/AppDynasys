@@ -45,6 +45,9 @@ public class ClientesListViewModel extends AndroidViewModel {
     public List<ClienteEntity> getMAllStateCliente(int code) throws ExecutionException, InterruptedException {
         return mRepository.getMClienteAllState(code);
     }
+    public List<ClienteEntity> getMAllStateClienteUpdate(int code) throws ExecutionException, InterruptedException {
+        return mRepository.getMClienteAllStateUpdate(code);
+    }
     public void insertCliente(ClienteEntity user) {
         mRepository.insertCliente(user);
     }

@@ -61,7 +61,7 @@ private ClienteMvp.View mview;
                 mview.recyclerViewListClicked(v, listaCliente.get(i));
             }
         });
-        if (listaCliente.get(i).isEstado()){
+        if (listaCliente.get(i).getEstado()==1){
             clientesViewHolder.TvAdapterNombre.setTextColor(Color.BLACK);
         }else{
             clientesViewHolder.TvAdapterNombre.setTextColor(Color.RED);

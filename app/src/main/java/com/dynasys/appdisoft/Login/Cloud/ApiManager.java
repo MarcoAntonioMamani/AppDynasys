@@ -56,7 +56,10 @@ private static Context mcontext;
         Call<ResponseLogin> userCall = service.InsertUser(user);
         userCall.enqueue(callback);
     }
-
+    public void UpdateUser(ClienteEntity user, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.UpdateUser(user);
+        userCall.enqueue(callback);
+    }
     public void InsertTracking(BodyLocation user, Callback<ResponseLogin> callback) {
         Call<ResponseLogin> userCall = service.InsertTracking(user);
         userCall.enqueue(callback);
