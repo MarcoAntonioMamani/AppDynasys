@@ -1,6 +1,7 @@
 package com.dynasys.appdisoft.Login;
 
 import android.app.ProgressDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -18,9 +19,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.R;
+import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Preconditions;
 
 
@@ -35,6 +40,14 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
     private ProgressDialog progresdialog;
 
     private TextView Servicio;
+
+
+    ///////Eliminar bd
+    private ClientesListViewModel viewModel;
+    private PreciosListViewModel viewModelPrecio;
+    private ProductosListViewModel viewModelProducto;
+    private PedidoListViewModel viewModelPedidos;
+    private DetalleListViewModel viewModelDetalle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +58,11 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
         textCodigo=(TextInputLayout)findViewById(R.id.view_texti_codigo);
         textNroDocumento=(TextInputLayout)findViewById(R.id.view_texti_nrodocumento);
         Servicio=(TextView)findViewById(R.id.id_login_lbl_Service);
+        viewModel = ViewModelProviders.of(this).get(ClientesListViewModel.class);
+        viewModelPrecio = ViewModelProviders.of(this).get(PreciosListViewModel.class);
+        viewModelProducto = ViewModelProviders.of(this).get(ProductosListViewModel.class);
+        viewModelPedidos = ViewModelProviders.of(this).get(PedidoListViewModel.class);
+        viewModelDetalle = ViewModelProviders.of(this).get(DetalleListViewModel.class);
         mCodigo.addTextChangedListener(new TextWatcherLabel(textCodigo));
         mNroDocumento.addTextChangedListener(new TextWatcherLabel(textNroDocumento));
         btnIngresar.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +111,10 @@ if (progresdialog.isShowing()){
         LoginActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                viewModel.deleteAllClientes();
+                viewModelDetalle.deleteAllDetalles();
+                viewModelPedidos.deleteAllPedido();
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
             }

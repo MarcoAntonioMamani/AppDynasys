@@ -1,20 +1,30 @@
 package com.dynasys.appdisoft.Mapas;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 
 import com.akexorcist.googledirection.DirectionCallback;
@@ -69,7 +79,9 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ClusterManager<StringClusterItem> mClusterManager;
     private Spinner listaTipos;
     private Button btnCargar;
-
+    private Location Dlocation=null;
+    private ProgressDialog progresdialog;
+    public boolean BanderGps =false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,12 +109,53 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View view) {
               // CargarClientes(listaTipos.getSelectedItemPosition());
-                requestDirection();
+                if(_prCheckstatus()){
+                    requestDirection();
+                }else{
+                    createSimpleDialog().show();
+
+
+                }
+
             }
         });
-
+        _prGpsObtener();
+        ValidarButtonVisible();
     }
+    public AlertDialog createSimpleDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
+        builder.setTitle("Usuario:")
+                .setMessage("Su Gps esta desactivado \n Desea Activarlo? .....")
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                startActivity (intent);
+                            }
+                        })
+                .setNegativeButton("CANCELAR",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+        return builder.create();
+    }
+void ValidarButtonVisible(){
+        try {
+            int ViewMapa= DataPreferences.getPrefInt("ViewRuta",this);
+            if (ViewMapa==0){
+                btnCargar.setVisibility(View.GONE);
+            }
+        }catch (Exception e){
+
+        }
+
+}
     public void _CargarTipos(){
         List<TipoMapa> list=new ArrayList<>();
         list.add(new TipoMapa(1,"Ver Clientes"));
@@ -130,7 +183,8 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (tipo==0){
             try {
-                lisClientes=FiltarByZona(viewModelCliente.getMAllCliente(0));
+                //lisClientes=FiltarByZona(viewModelCliente.getMAllCliente(0));
+                lisClientes=viewModelCliente.getMAllCliente(0);
                 UtilShare.ListClientes=lisClientes;
                 dibujarClientes();
             } catch (ExecutionException e) {
@@ -306,53 +360,78 @@ public LatLng ObtenerUbicacion(){
         }
         return false;
     }
+    public boolean _prCheckstatus(){
+        boolean GpsStatus=false;
+
+        LocationManager locationManager = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if(GpsStatus == true)
+        {
+
+            Toast.makeText(this, "Activado GPS", Toast.LENGTH_SHORT);
+            return true;
+        }else {
+
+            Toast.makeText(this, "DesActivado GPS", Toast.LENGTH_SHORT);
+            return false;
+        }}
     public void requestDirection() {
 
 
         List<LatLng> listFinal=new ArrayList<>();
         //////
-        Location puntoA=new Location("loca001");
-        puntoA.setLatitude(-16.50149190546621);
-        puntoA.setLongitude(-68.20147946476936);
 
-        List<LatLng> ListaPuntos=ConvertirListLatng(lisClientes);
-        LatLng puntoInicial=new LatLng(-16.50149190546621,-68.20147946476936);
-        originMarkers.add(mapa.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient01 ))
-                .title("Punto Inicial")
-                .position(new LatLng(puntoInicial.latitude,puntoInicial.longitude))));
-        while (listFinal.size()<ListaPuntos.size()){
-            Location puntoMenor=new Location("Test");
-            float distanciamenor=Float.MAX_VALUE;
-            for (int j = 0; j < ListaPuntos.size(); j++) {
-                Location puntoB =new Location("loca002");
-                puntoB.setLatitude(ListaPuntos.get(j).latitude);
-                puntoB.setLongitude(ListaPuntos.get(j).longitude);
-                if (!verificar(listFinal,puntoB)&& ListaPuntos.get(j).latitude!=0){
-                    float distancia=puntoA.distanceTo(puntoB);
-                    if (distanciamenor>=distancia){
-                        distanciamenor=distancia;
-                        puntoMenor=puntoB;
+        if(Dlocation==null){
+            BanderGps=true;
+            progresdialog.show();
+            // Toast.makeText(this,"Ubicacion no capturada.. \n Por favor Vuelva a intentarlo",Toast.LENGTH_LONG).show();
+        }else{
+            Location puntoA=new Location("loca001");
+            puntoA.setLatitude(Dlocation.getLatitude());
+            puntoA.setLongitude(Dlocation.getLongitude());
+
+            List<LatLng> ListaPuntos=ConvertirListLatng(lisClientes);
+            LatLng puntoInicial=new LatLng(Dlocation.getLatitude(),Dlocation.getLongitude());
+            originMarkers.add(mapa.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient01 ))
+                    .title("Punto Inicial")
+                    .position(new LatLng(puntoInicial.latitude,puntoInicial.longitude))));
+            while (listFinal.size()<ListaPuntos.size()){
+                Location puntoMenor=new Location("Test");
+                float distanciamenor=Float.MAX_VALUE;
+                for (int j = 0; j < ListaPuntos.size(); j++) {
+                    Location puntoB =new Location("loca002");
+                    puntoB.setLatitude(ListaPuntos.get(j).latitude);
+                    puntoB.setLongitude(ListaPuntos.get(j).longitude);
+                    if (!verificar(listFinal,puntoB)&& ListaPuntos.get(j).latitude!=0){
+                        float distancia=puntoA.distanceTo(puntoB);
+                        if (distanciamenor>=distancia){
+                            distanciamenor=distancia;
+                            puntoMenor=puntoB;
+                        }
                     }
-                }
 
-            }
+                }
 
                 listFinal.add(new LatLng(puntoMenor.getLatitude(),puntoMenor.getLongitude()));
                 puntoA=puntoMenor;
 
 
+            }
+            LatLng FinalPoint=listFinal.get(listFinal.size()-1);
+            listFinal.remove(listFinal.size()-1);
+            Snackbar.make(btnCargar, "Obteniendo Dirección...", Snackbar.LENGTH_SHORT).show();
+            GoogleDirectionConfiguration.getInstance().setLogEnabled(true);
+            GoogleDirection.withServerKey(serverKey)
+                    .from(puntoInicial)
+                    .and(listFinal)
+                    .to(FinalPoint)
+                    .transportMode(TransportMode.DRIVING)
+                    .execute(this);
         }
-        LatLng FinalPoint=listFinal.get(listFinal.size()-1);
-        listFinal.remove(listFinal.size()-1);
-        Snackbar.make(btnCargar, "Obteniendo Dirección...", Snackbar.LENGTH_SHORT).show();
-        GoogleDirectionConfiguration.getInstance().setLogEnabled(true);
-        GoogleDirection.withServerKey(serverKey)
-                .from(puntoInicial)
-                .and(listFinal)
-                .to(FinalPoint)
-                .transportMode(TransportMode.DRIVING)
-                .execute(this);
+
     }
     public boolean verificar(List<LatLng> listPuntos, Location a){
 
@@ -400,5 +479,96 @@ public LatLng ObtenerUbicacion(){
         LatLng northeast = route.getBound().getNortheastCoordination().getCoordination();
         LatLngBounds bounds = new LatLngBounds(southwest, northeast);
         mapa.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+    }
+
+    public void _prGpsObtener() {
+        try {
+            LocationManager locManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            Location loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (loc != null) {
+                Log.i("location", String.valueOf(loc.getLongitude()));
+                Log.i("location", String.valueOf(loc.getLatitude()));
+                Dlocation=loc;
+            }
+            LocationListener locListener = new LocationListener() {
+                public void onLocationChanged(Location location) {
+                   /* Log.i("location", String.valueOf(location.getLongitude()));
+                    Log.i("location", String.valueOf(location.getLatitude()));
+*/                    Dlocation=location;
+                    if(BanderGps==true){
+                        try
+                        {
+                            progresdialog.dismiss();
+                            BanderGps=false;
+                            requestDirection();
+                        }catch (Exception e){
+
+                        }
+
+
+                    }
+
+                }
+
+                public void onProviderDisabled(String provider) {
+                    // Log.i("info", "Provider OFF");
+                }
+
+                public void onProviderEnabled(String provider) {
+                    //   Log.i("info", "Provider ON");
+                    _prObtenerUbicacion();
+
+                }
+
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                   /* Log.i("LocAndroid", "Provider Status: " + status);
+                    Log.i("info", "Provider Status: " + status);*/
+                }
+            };
+            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0, locListener);
+            locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 0, locListener);
+        }
+        catch(Exception e) {
+            Log.e("ERROR", "Error: " + e);
+        }
+        finally {
+            Log.i("INFO", "Salimos de onCreate");
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            _prGpsObtener();
+        }
+    }
+    public void _prObtenerUbicacion(){
+        LocationManager locManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (loc != null) {
+            Dlocation=loc;
+        }
+
     }
 }

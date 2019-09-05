@@ -112,8 +112,8 @@ public void _OnClickBtnAddCliente(){
             @Override
             public void onChanged(@Nullable List<ClienteEntity> notes) {
                 try{
-                    lisClientes=FiltarByZona(notes);
-
+                   // lisClientes=FiltarByZona(notes)
+                    lisClientes=notes;
                     Collections.sort(lisClientes);
                     CargarRecycler(lisClientes);
                 }catch(Exception e){
@@ -206,19 +206,13 @@ public void _OnClickBtnAddCliente(){
     @Override
     public void recyclerViewListClicked(View v,  ClienteEntity cliente) {
         if (cliente!=null){
-
-          if (cliente.getLatitud()==0 || cliente.getLongitud()==0){
-              ShowMessageResult("El usuario seleccionado no tiene registrado una ubicación");
-            }else{
               UtilShare.cliente=cliente;
              /* MainActivity fca = ((MainActivity) getActivity());
               fca.startActivity(new Intent(getActivity(), MapClientActivity .class));
               fca.overridePendingTransition(R.transition.left_in, R.transition.left_out);*/
-
               Fragment frag = new CreateClienteFragment(1,cliente);
               MainActivity fca = (MainActivity) getActivity();
               fca.switchFragment(frag,"UpdateClientes");
-          }
         }
     }
     public void ShowMessageResult(String message) {

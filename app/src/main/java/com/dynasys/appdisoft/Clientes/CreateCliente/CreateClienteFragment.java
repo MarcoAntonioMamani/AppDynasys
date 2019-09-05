@@ -33,6 +33,8 @@ import android.widget.Toast;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
@@ -55,7 +57,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import retrofit2.Call;
@@ -77,6 +81,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
     private TextInputLayout tilDireccion;
     private TextInputLayout tilNit;
     private  ClientesListViewModel viewModel;
+    private PedidoListViewModel viewModelPedidos;
     private ProgressDialog progresdialog;
     private Context mContext;
     ClienteEntity mCliente;
@@ -121,6 +126,8 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
         tilDireccion = (TextInputLayout) view.findViewById(R.id.til_direccion);
         tilNit = (TextInputLayout) view.findViewById(R.id.til_nit);
         viewModel = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
+        viewModelPedidos=ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
+
         mSupportMapFragment = (MySupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if(mSupportMapFragment != null)
             mSupportMapFragment.setListener(new MySupportMapFragment.OnTouchListener() {
@@ -196,6 +203,29 @@ public void onClickAtras(){
                            mCliente.setLongitud(mapa.getCameraPosition().target.longitude);
                            mCliente.setEstado(2);
                            viewModel.updateCliente(mCliente);
+                           try {
+                               List<PedidoEntity> listPedido=viewModelPedidos.getPedidobyCliente(mCliente.getCodigogenerado());
+                               for (int i = 0; i < listPedido.size(); i++) {
+                                   PedidoEntity pedido=listPedido.get(i);
+                                   pedido.setCliente(mCliente.getNamecliente());
+                                   viewModelPedidos.updatePedido(pedido);
+                               }
+
+                           } catch (ExecutionException e) {
+                              // e.printStackTrace();
+                               showSaveResultOption(2,""+mCliente.getNumi(),"");
+                               if (progresdialog.isShowing()){
+                                   progresdialog.dismiss();
+                               }
+                           } catch (InterruptedException e) {
+                               //e.printStackTrace();
+                               showSaveResultOption(2,""+mCliente.getNumi(),"");
+                               if (progresdialog.isShowing()){
+                                   progresdialog.dismiss();
+                               }
+                           }
+
+
                            showSaveResultOption(2,""+mCliente.getNumi(),"");
                            if (progresdialog.isShowing()){
                                progresdialog.dismiss();
@@ -393,8 +423,9 @@ public void OnClickGps(){
 }
 
     private boolean esNombreValido(String nombre) {
-        Pattern patron = Pattern.compile("^[a-zA-Z ]+$");
-        if (!patron.matcher(nombre).matches() || nombre.length() > 30) {
+       // Pattern patron = Pattern.compile("^[a-zA-Z ]+$");
+       // if (!patron.matcher(nombre).matches() || nombre.length() > 30) {
+        if (nombre.length()<2){
             tilNombre.setError("Nombre inválido");
             return false;
         } else {
@@ -417,7 +448,7 @@ public void OnClickGps(){
     }
     private boolean esNitValido(String nombre) {
 
-        if (tilNit.getEditText().getText().length() <= 2) {
+        if (tilNit.getEditText().getText().length() <= 0) {
             tilNit.setError("Nit inválido");
             return false;
         } else {
@@ -427,7 +458,8 @@ public void OnClickGps(){
         return true;
     }
     private boolean esTelefonoValido(String telefono) {
-        if (!Patterns.PHONE.matcher(telefono).matches()) {
+       // if (!Patterns.PHONE.matcher(telefono).matches()) {
+         if (telefono.length()==0){
             tilTelefono.setError("Teléfono inválido");
             return false;
         } else {

@@ -6,14 +6,8 @@ public class ResponseLogin {
    String token;
    int id;
     int zona;
-
-    public ResponseLogin(int code, String message, String token, int id, int zona) {
-        this.code = code;
-        this.message = message;
-        this.token = token;
-        this.id = id;
-        this.zona = zona;
-    }
+    int mapa;
+    int pedido;
 
     public int getCode() {
         return code;
@@ -53,5 +47,21 @@ public class ResponseLogin {
 
     public void setZona(int zona) {
         this.zona = zona;
+    }
+
+    public int getMapa() {
+        return mapa;
+    }
+
+    public void setMapa(int mapa) {
+        this.mapa = mapa;
+    }
+
+    public int getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(int pedido) {
+        this.pedido = pedido;
     }
 }

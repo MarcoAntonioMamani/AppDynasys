@@ -26,6 +26,7 @@ import com.dynasys.appdisoft.Clientes.Adapter.AdapterClientes;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
+import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoFragment;
@@ -245,9 +246,24 @@ public void cargarClientes(){
     public void recyclerViewListClicked(View v, PedidoEntity pedido) {
         if (pedido!=null){
             if (Tipo==2 || Tipo==1){
-                Fragment frag = new ModifyPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
-                MainActivity fca = (MainActivity) getActivity();
-                fca.switchFragment(frag,"VIEW_PEDIDOS");
+                try {
+                    int EditPedido= DataPreferences.getPrefInt("EditarPedidos",getContext());
+                    if (EditPedido==1){
+                        Fragment frag = new ModifyPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
+                        MainActivity fca = (MainActivity) getActivity();
+                        fca.switchFragment(frag,"VIEW_PEDIDOS");
+                    }else{
+                        Fragment frag = new ViewPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
+                        MainActivity fca = (MainActivity) getActivity();
+                        fca.switchFragment(frag,"VIEW_PEDIDOS");
+                    }
+                }catch (Exception e){
+                    Fragment frag = new ModifyPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
+                    MainActivity fca = (MainActivity) getActivity();
+                    fca.switchFragment(frag,"VIEW_PEDIDOS");
+                }
+
+
             }else{
                 Fragment frag = new ViewPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
                 MainActivity fca = (MainActivity) getActivity();

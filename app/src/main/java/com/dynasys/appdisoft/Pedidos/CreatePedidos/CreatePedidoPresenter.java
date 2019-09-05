@@ -51,7 +51,8 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
     @Override
     public void CargarClientes() {
         try {
-            List<ClienteEntity> listCliente=FiltarByZona(viewModelClientes.getMAllCliente(1));
+            //List<ClienteEntity> listCliente=FiltarByZona(viewModelClientes.getMAllCliente(1));
+            List<ClienteEntity> listCliente=viewModelClientes.getMAllCliente(1);
             if (listCliente.size()>0){
                 mPedidoView.MostrarClientes(listCliente);
             }
