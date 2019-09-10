@@ -329,13 +329,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void CambiarFragment(final Fragment fragmento, final String tag){
+        switchHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    FragmentManager fm = getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+
+                    ft.addToBackStack(tag)
+                            .replace(R.id.fragment, fragmento,tag)
+                            .commit();
+                }catch(Exception e){}
+            }
+        }, 100);
+    }
     public  void returnToMain(){
 
         //getSupportFragmentManager().popBackStack("WELCOMEFRAGMENT",0);
         removeAllFragments();
         loadWelcomeFragment();
     }
-    private void removeAllFragments() {
+
+    public void removeAllFragments() {
 
         if (getSupportFragmentManager().getFragments().size() > 0) {
             FragmentManager fragmentManager = getSupportFragmentManager();

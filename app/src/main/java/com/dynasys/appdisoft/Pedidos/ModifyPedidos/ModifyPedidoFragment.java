@@ -36,6 +36,7 @@ import com.dynasys.appdisoft.Adapter.DetalleAdaptader;
 import com.dynasys.appdisoft.Adapter.ProductAdapter;
 import com.dynasys.appdisoft.Clientes.MapClientActivity;
 import com.dynasys.appdisoft.Clientes.UtilShare;
+import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
@@ -45,6 +46,7 @@ import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoMvp;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoPresenter;
+import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
@@ -589,7 +591,11 @@ public void OnClickObtenerFecha(){
     }
     public void RetornarPrincipal(){
         MainActivity fca = ((MainActivity) getActivity());
-        fca.returnToMain();
+        fca.removeAllFragments();
+
+        Fragment frag = new ListPedidosFragment(1);
+        //fca.switchFragment(frag,"LISTAR_PEDIDOS");
+        fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
     }
     @Override
     public void showSaveResultOption(int codigo, String id, String mensaje) {

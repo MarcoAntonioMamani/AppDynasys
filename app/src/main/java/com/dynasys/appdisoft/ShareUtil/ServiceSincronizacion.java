@@ -1,16 +1,21 @@
 package com.dynasys.appdisoft.ShareUtil;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -26,6 +31,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
+import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Stopwatch;
@@ -37,6 +43,9 @@ import java.util.concurrent.ExecutionException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.app.Notification.VISIBILITY_PRIVATE;
+import static android.app.Notification.VISIBILITY_PUBLIC;
 
 public class ServiceSincronizacion extends Service {
     int counter = 0;
@@ -402,7 +411,7 @@ if (UtilShare.mActivity!=null){
         }
     }
 
-    public void Notificacion(String pedido,String Clie,String Total){
+    public void Notificacion(String pedido,String Clie,String Total) {
         NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
@@ -410,13 +419,54 @@ if (UtilShare.mActivity!=null){
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentTitle("Pedido # "+pedido)
                 .setContentText("Cliente: "+Clie +" Total: "+Total)
-                .setWhen(System.currentTimeMillis());
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        builder.setDefaults(Notification.DEFAULT_SOUND);
-        builder.setSound(alarmSound);
+                .setWhen(System.currentTimeMillis())
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setVisibility(VISIBILITY_PRIVATE);
+        //Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
         long[] vibrate = { 0, 100, 200, 300 };
         builder.setVibrate(vibrate);
         nManager.notify(Integer.parseInt(pedido), builder.build());
+
+
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            r.play();
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+
+/*
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String NOTIFICATION_CHANNEL_ID = "my_channel_id_01";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            @SuppressLint("WrongConstant") NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_MAX);
+
+            // Configure the notification channel.
+            notificationChannel.setDescription("Channel description");
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+            notificationChannel.enableVibration(true);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+
+        notificationBuilder.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setTicker("Hearty365")
+                //     .setPriority(Notification.PRIORITY_MAX)
+                .setContentTitle("Default notification")
+                .setContentText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                .setContentInfo("Info");
+
+        notificationManager.notify(1, notificationBuilder.build());*/
     }
     public void _DecargarDetalles(String idRepartidor){
         ApiManager apiManager=ApiManager.getInstance(mContext);

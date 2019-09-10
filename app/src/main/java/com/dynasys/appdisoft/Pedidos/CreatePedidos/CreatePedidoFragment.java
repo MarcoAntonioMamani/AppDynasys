@@ -34,6 +34,8 @@ import com.dynasys.appdisoft.Adapter.ClientesAdapter;
 import com.dynasys.appdisoft.Adapter.DetalleAdaptader;
 import com.dynasys.appdisoft.Adapter.ProductAdapter;
 import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
+import com.dynasys.appdisoft.Clientes.ListClientesFragment;
+import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
@@ -43,6 +45,7 @@ import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
+import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
@@ -270,7 +273,12 @@ private PedidoEntity mPedido;
     }
     public void RetornarPrincipal(){
         MainActivity fca = ((MainActivity) getActivity());
-        fca.returnToMain();
+        fca.removeAllFragments();
+        Fragment frag = new  ListPedidosFragment(1);
+        //fca.switchFragment(frag,"LISTAR_PEDIDOS");
+        fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
+
+
     }
     @Override
     public void MostrarClientes(List<ClienteEntity> clientes) {

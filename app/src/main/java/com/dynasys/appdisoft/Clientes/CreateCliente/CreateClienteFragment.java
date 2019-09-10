@@ -30,7 +30,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
+import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
@@ -85,6 +87,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
     private ProgressDialog progresdialog;
     private Context mContext;
     ClienteEntity mCliente;
+    private String M_Uii="";
     private int tipo=0; //// TIpo=0 = Nuevo Cliente ------------------  Tipo = 1 Modificacion Cliente
     public CreateClienteFragment() {
         // Required empty public constructor
@@ -147,6 +150,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
         LocationGeo.getInstance(mContext,getActivity());
        LocationGeo.iniciarGPS();
         _prCargarDatos();
+        M_Uii="";
         return view;
     }
 
@@ -171,68 +175,75 @@ public void onClickAtras(){
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                   if (validarDatos()){
-                       progresdialog.show();
-                       if (tipo==0){
-                           ClienteEntity cliente=new ClienteEntity();
-                           int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
-                           //cliente.setCodigogenerado();
-                           DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
-                           String code = df.format(Calendar.getInstance().getTime());
-                           code=""+codigoRepartidor+","+code;
-                           cliente.setCodigogenerado(code);
-                           cliente.setNumi(0);
-                           cliente.setFechaingreso(Calendar.getInstance().getTime());
-                           cliente.setDireccion(tilDireccion.getEditText().getText().toString());
-                           cliente.setNamecliente(tilNombre.getEditText().getText().toString());
-                           cliente.setNit(tilNit.getEditText().getText().toString());
-                           cliente.setTelefono(tilTelefono.getEditText().getText().toString());
-                           cliente.setLatitud(mapa.getCameraPosition().target.latitude);
-                           cliente.setLongitud(mapa.getCameraPosition().target.longitude);
-                           int idzona=DataPreferences.getPrefInt("zona",getContext());
-                           cliente.setCccat(1);
-                           cliente.setCczona(idzona);
-                           cliente.setEstado(0);
-                           GuardarCliente(cliente);
-                       }else{
-                           mCliente.setDireccion(tilDireccion.getEditText().getText().toString());
-                           mCliente.setNamecliente(tilNombre.getEditText().getText().toString());
-                           mCliente.setNit(tilNit.getEditText().getText().toString());
-                           mCliente.setTelefono(tilTelefono.getEditText().getText().toString());
-                           mCliente.setLatitud(mapa.getCameraPosition().target.latitude);
-                           mCliente.setLongitud(mapa.getCameraPosition().target.longitude);
-                           mCliente.setEstado(2);
-                           viewModel.updateCliente(mCliente);
-                           try {
-                               List<PedidoEntity> listPedido=viewModelPedidos.getPedidobyCliente(mCliente.getCodigogenerado());
-                               for (int i = 0; i < listPedido.size(); i++) {
-                                   PedidoEntity pedido=listPedido.get(i);
-                                   pedido.setCliente(mCliente.getNamecliente());
-                                   viewModelPedidos.updatePedido(pedido);
-                               }
 
-                           } catch (ExecutionException e) {
-                              // e.printStackTrace();
-                               showSaveResultOption(2,""+mCliente.getNumi(),"");
-                               if (progresdialog.isShowing()){
-                                   progresdialog.dismiss();
-                               }
-                           } catch (InterruptedException e) {
-                               //e.printStackTrace();
-                               showSaveResultOption(2,""+mCliente.getNumi(),"");
-                               if (progresdialog.isShowing()){
-                                   progresdialog.dismiss();
-                               }
-                           }
+                if (M_Uii.trim().equals("")){
+                    M_Uii= UUID.randomUUID().toString();
+
+                    if (validarDatos()){
+                        progresdialog.show();
+                        if (tipo==0){
+                            ClienteEntity cliente=new ClienteEntity();
+                            int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
+                            //cliente.setCodigogenerado();
+                            DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
+                            String code = df.format(Calendar.getInstance().getTime());
+                            code=""+codigoRepartidor+","+code;
+                            cliente.setCodigogenerado(code);
+                            cliente.setNumi(0);
+                            cliente.setFechaingreso(Calendar.getInstance().getTime());
+                            cliente.setDireccion(tilDireccion.getEditText().getText().toString());
+                            cliente.setNamecliente(tilNombre.getEditText().getText().toString());
+                            cliente.setNit(tilNit.getEditText().getText().toString());
+                            cliente.setTelefono(tilTelefono.getEditText().getText().toString());
+                            cliente.setLatitud(mapa.getCameraPosition().target.latitude);
+                            cliente.setLongitud(mapa.getCameraPosition().target.longitude);
+                            int idzona=DataPreferences.getPrefInt("zona",getContext());
+                            cliente.setCccat(2);
+                            cliente.setCczona(idzona);
+                            cliente.setEstado(0);
+                            GuardarCliente(cliente);
+                        }else{
+                            mCliente.setDireccion(tilDireccion.getEditText().getText().toString());
+                            mCliente.setNamecliente(tilNombre.getEditText().getText().toString());
+                            mCliente.setNit(tilNit.getEditText().getText().toString());
+                            mCliente.setTelefono(tilTelefono.getEditText().getText().toString());
+                            mCliente.setLatitud(mapa.getCameraPosition().target.latitude);
+                            mCliente.setLongitud(mapa.getCameraPosition().target.longitude);
+                            mCliente.setEstado(2);
+                            viewModel.updateCliente(mCliente);
+                            try {
+                                List<PedidoEntity> listPedido=viewModelPedidos.getPedidobyCliente(mCliente.getCodigogenerado());
+                                for (int i = 0; i < listPedido.size(); i++) {
+                                    PedidoEntity pedido=listPedido.get(i);
+                                    pedido.setCliente(mCliente.getNamecliente());
+                                    viewModelPedidos.updatePedido(pedido);
+                                }
+
+                            } catch (ExecutionException e) {
+                                // e.printStackTrace();
+                                showSaveResultOption(2,""+mCliente.getNumi(),"");
+                                if (progresdialog.isShowing()){
+                                    progresdialog.dismiss();
+                                }
+                            } catch (InterruptedException e) {
+                                //e.printStackTrace();
+                                showSaveResultOption(2,""+mCliente.getNumi(),"");
+                                if (progresdialog.isShowing()){
+                                    progresdialog.dismiss();
+                                }
+                            }
 
 
-                           showSaveResultOption(2,""+mCliente.getNumi(),"");
-                           if (progresdialog.isShowing()){
-                               progresdialog.dismiss();
-                           }
-                       }
+                            showSaveResultOption(2,""+mCliente.getNumi(),"");
+                            if (progresdialog.isShowing()){
+                                progresdialog.dismiss();
+                            }
+                        }
 
-                   }
+                    }
+                }
+
+
             }
         });
     }
@@ -329,6 +340,7 @@ public void onClickAtras(){
                             if (mcliente!=null){
                                 mcliente.setNumi(Integer.parseInt(responseUser.getToken()));
                                 mcliente.setEstado(1);
+                                mcliente.setCodigogenerado(responseUser.getToken());
                                 viewModel.updateCliente(mcliente);
                                 if (progresdialog.isShowing()){
                                     progresdialog.dismiss();
@@ -564,7 +576,11 @@ return false;
     }
     private void RetornarPrincipal(){
         MainActivity fca = ((MainActivity) getActivity());
-        fca.returnToMain();
+        fca.removeAllFragments();
+
+        Fragment frag = new ListClientesFragment();
+        //fca.switchFragment(frag,"LISTAR_CLIENTE");
+        fca.CambiarFragment(frag, Constantes.TAG_CLIENTES);
     }
     private void ShowDialogSincronizando(){
         progresdialog=new ProgressDialog(getContext());
