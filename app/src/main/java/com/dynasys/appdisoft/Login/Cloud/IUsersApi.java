@@ -21,8 +21,8 @@ public interface IUsersApi {
     @POST("/api/repartidor/login")
     Call<ResponseLogin> LoginUser(@Body Bodylogin user);
 
-    @POST("/api/repartidor/clients")
-    Call<ResponseLogin> InsertUser(@Body ClienteEntity user);
+    @POST("/api/repartidor/clients/{idrepartidor}")
+    Call<ResponseLogin> InsertUser(@Body ClienteEntity user,@Path("idrepartidor") String idRepartidor);
 
     @PUT("/api/repartidor/clients")
     Call<ResponseLogin> UpdateUser(@Body ClienteEntity user);

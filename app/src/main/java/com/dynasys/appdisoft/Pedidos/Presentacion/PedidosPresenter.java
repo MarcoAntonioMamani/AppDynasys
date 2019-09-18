@@ -58,14 +58,14 @@ public class PedidosPresenter implements PedidosMvp.Presenter {
     }
     public List<PedidoEntity> FiltarByZona(List<PedidoEntity> list){
 
-        int idRepartidor= DataPreferences.getPrefInt("idrepartidor",mContext);
+       // int idRepartidor= DataPreferences.getPrefInt("idrepartidor",mContext);
         List<PedidoEntity> listClie=new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             PedidoEntity cliente=list.get(i);
-            if (cliente.getOarepa() ==idRepartidor && cliente.getOaest()==Estado && Estado==3){
+            if ( cliente.getOaest()==Estado && Estado==3){
                 listClie.add(cliente);
             }else{
-                if ( (cliente.getOarepa() ==idRepartidor && cliente.getOaest()!=3 && Estado!=3)){
+                if ( (cliente.getOaest()!=3 && Estado!=3)){
                     listClie.add(cliente);
                 }
 

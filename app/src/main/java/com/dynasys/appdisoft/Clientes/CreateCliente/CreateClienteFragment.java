@@ -148,7 +148,9 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
         onClickGrabar();
         ShowDialogSincronizando();
         LocationGeo.getInstance(mContext,getActivity());
-       LocationGeo.iniciarGPS();
+        LocationGeo.iniciarGPS();
+
+
         _prCargarDatos();
         M_Uii="";
         return view;
@@ -317,8 +319,9 @@ public void onClickAtras(){
                // getContext().stopService(intent);
                 ServiceSincronizacion.getInstance().onDestroy();
             }
+            int idRepartidor=DataPreferences.getPrefInt("idrepartidor",mContext);
             ApiManager apiManager=ApiManager.getInstance(getContext());
-            apiManager.InsertUser(cliente, new Callback<ResponseLogin>() {
+            apiManager.InsertUser(cliente,String.valueOf(idRepartidor).trim(), new Callback<ResponseLogin>() {
                 @Override
                 public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                     ResponseLogin responseUser = response.body();

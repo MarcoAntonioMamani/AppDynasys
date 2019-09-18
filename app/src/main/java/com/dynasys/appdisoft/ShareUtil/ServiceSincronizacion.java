@@ -221,8 +221,9 @@ if (UtilShare.mActivity!=null){
 
                     ClienteEntity cliente=listCliente.get(i);
                     final String CodeGenerado=cliente.getCodigogenerado();
+                    int idRepartidor=DataPreferences.getPrefInt("idrepartidor",getApplicationContext());
                     ApiManager apiManager=ApiManager.getInstance(this);
-                    apiManager.InsertUser(cliente, new Callback<ResponseLogin>() {
+                    apiManager.InsertUser(cliente,String.valueOf(idRepartidor).trim(), new Callback<ResponseLogin>() {
                         @Override
                         public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                             ResponseLogin responseUser = response.body();

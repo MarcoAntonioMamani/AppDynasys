@@ -52,8 +52,8 @@ private static Context mcontext;
         Call<ResponseLogin> userCall = service.LoginUser(user);
         userCall.enqueue(callback);
     }
-    public void InsertUser(ClienteEntity user, Callback<ResponseLogin> callback) {
-        Call<ResponseLogin> userCall = service.InsertUser(user);
+    public void InsertUser(ClienteEntity user,String idRepartidor, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.InsertUser(user,idRepartidor);
         userCall.enqueue(callback);
     }
     public void UpdateUser(ClienteEntity user, Callback<ResponseLogin> callback) {

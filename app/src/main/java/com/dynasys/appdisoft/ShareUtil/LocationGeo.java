@@ -136,11 +136,16 @@ public static void PedirPermisoApp(){
 
     public static void mostrarOpcionesPGS(Context context) {
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            createDialogGps(context).show();
+            try {
+                createDialogGps(context).show();
+            }catch (Exception e){
+
+            }
+
         }
     }
     static AlertDialog createDialogGps(final Context context) {
-         //android.support.v7.app.AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        //AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("Usuario:")
                 .setMessage("Su Gps esta desactivado \n Desea Activarlo? .....")
