@@ -11,3 +11,7 @@
 /build
 /captures
 .externalNativeBuild
+
+*.rar
+
+app/release/Disoft06102019.apk
