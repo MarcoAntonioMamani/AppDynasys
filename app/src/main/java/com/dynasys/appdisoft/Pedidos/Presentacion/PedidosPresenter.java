@@ -33,10 +33,12 @@ public class PedidosPresenter implements PedidosMvp.Presenter {
         this.Estado=Estado;
         this.viewModel=viewModel;
         this.activity=activity;
+        viewModel = ViewModelProviders.of(activity).get(PedidoListViewModel.class);
     }
     @Override
     public void CargarPedidos() {
-        viewModel = ViewModelProviders.of(activity).get(PedidoListViewModel.class);
+
+
 
             viewModel.getPedidos().observe((LifecycleOwner) activity, new Observer<List<PedidoEntity>>() {
                 @Override

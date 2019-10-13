@@ -37,6 +37,7 @@ import com.dynasys.appdisoft.Login.UsersListViewModel;
 import com.dynasys.appdisoft.Mapas.MapaActivity;
 import com.dynasys.appdisoft.Mapas.TestActivity;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
+import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
@@ -193,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
                 fca.overridePendingTransition(R.transition.left_in, R.transition.left_out);
                 break;
             case 21:
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder
                         .setTitle("Disoft")
@@ -200,7 +202,15 @@ public class MainActivity extends AppCompatActivity {
                         .setIcon(R.drawable.ic_iinfo)
                         .setPositiveButton(mContext.getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
+
+                                if (ShareMethods.IsServiceRunning(mContext, ServiceSincronizacion.class)){
+                                     Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
+                                    //mContext.stopService(intent);
+                                    ServiceSincronizacion.getInstance().onDestroy();
+                                }
                                DataPreferences.putPrefLogin("isLogin",false,getApplicationContext());
+
+                                DataPreferences.putPrefInteger("idrepartidor",0,mContext);
                               MainActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {

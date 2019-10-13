@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.dynasys.appdisoft.Login.DB.AppDatabase;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
@@ -80,6 +81,12 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
                 CambiarActividad();
             }
         });
+
+        viewModelPedidos.deleteAllPedido();
+        viewModelDetalle.deleteAllDetalles();
+        viewModel.deleteAllClientes();
+
+
     }
 public void CambiarActividad(){
     startActivity(new Intent(this, WebServicesActivity.class));
@@ -105,6 +112,11 @@ public void CambiarActividad(){
 
     @Override
     public void LoginSuccesfull() {
+
+
+
+
+
 if (progresdialog.isShowing()){
     progresdialog.dismiss();
 }
@@ -112,9 +124,7 @@ if (progresdialog.isShowing()){
             @Override
             public void run() {
 
-                viewModel.deleteAllClientes();
-                viewModelDetalle.deleteAllDetalles();
-                viewModelPedidos.deleteAllPedido();
+
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
             }

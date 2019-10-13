@@ -294,6 +294,7 @@ if (UtilShare.mActivity!=null){
                 public void run() {
                     if (isOnline()) {
                         try{
+                            idRepartidor= DataPreferences.getPrefInt("idrepartidor",mContext);
                             _DecargarPedidos(""+idRepartidor);
                             exportarClientes();
                             UpdateClientes();
@@ -335,6 +336,13 @@ if (UtilShare.mActivity!=null){
         if (listDetalle==null){
             return;
         }
+        Boolean IsLogeado=DataPreferences.getPrefLogin("isLogin",getApplicationContext());
+
+        if (IsLogeado==false){
+            onDestroy();
+            return ;
+        }
+
         if (listCliente.size()==0 &&listClienteUpdate.size()==0 && listPedidos.size()==0 && listPedidoModificados.size()==0&& listDetalle.size()==0) {
 
             ApiManager apiManager = ApiManager.getInstance(mContext);

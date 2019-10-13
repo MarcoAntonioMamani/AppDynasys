@@ -35,7 +35,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ProductoDao productoDao();
     public abstract PedidoDao pedidoDao();
     public abstract DetalleDao detalleDao();
-    private static AppDatabase INSTANCE;
+    public static AppDatabase INSTANCE;
 
    public  static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
@@ -49,5 +49,10 @@ public abstract class AppDatabase extends RoomDatabase {
             }
         }
         return INSTANCE;
+    }
+
+    public static void destroyInstance() {
+       INSTANCE.clearAllTables();
+        INSTANCE = null;
     }
 }

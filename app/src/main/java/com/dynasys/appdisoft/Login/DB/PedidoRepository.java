@@ -63,7 +63,13 @@ public class PedidoRepository {
     }
 
     public void deleteAllPedidos() {
-        new deleteAllPedidoAsync(mPedidoDao).execute();
+       // new deleteAllPedidoAsync(mPedidoDao).execute();
+try {
+    new deleteAllPedidoAsync(mPedidoDao).execute();
+}catch (Exception e){
+    Object obj=e;
+}
+
     }
 
     /**

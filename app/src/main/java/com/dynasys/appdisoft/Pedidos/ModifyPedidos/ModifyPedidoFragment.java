@@ -512,34 +512,71 @@ public void OnClickObtenerFecha(){
                         this.obpbase = obpbase;
                         this.obptot = obptot;
                         this.estado = estado;*/
-                        DetalleEntity detalle=new DetalleEntity();
-                        detalle.setObnumi(mPedido.getCodigogenerado());
-                        detalle.setObcprod(item.getNumi());
-                        detalle.setCadesc(item.getProducto());
-                        detalle.setObpcant(1.0);
-                        detalle.setObpbase(item.getPrecio());
-                        detalle.setObptot(item.getPrecio());
-                        detalle.setEstado(false);
-                        detalle.setObupdate(0);
+                       DetalleEntity ItemDetalle=ObtenerDetalle(item);
+                       if (ItemDetalle==null){
+                           DetalleEntity detalle=new DetalleEntity();
+                           detalle.setObnumi(mPedido.getCodigogenerado());
+                           detalle.setObcprod(item.getNumi());
+                           detalle.setCadesc(item.getProducto());
+                           detalle.setObpcant(1.0);
+                           detalle.setObpbase(item.getPrecio());
+                           detalle.setObptot(item.getPrecio());
+                           detalle.setEstado(false);
+                           detalle.setObupdate(0);
+                           mDetalleItem.add(detalle);
+                           //mDetalleAdapter.setFilter(mDetalleItem);
+                           Reconstruir();
+                           calcularTotal();
+                           aProducto .setText("");
+                           aProducto.clearFocus();
+                           mscroll.fullScroll(View.FOCUS_DOWN);
+                           productoAdapter.setLista(GetActualProducts());
+                           productoAdapter.notifyDataSetChanged();
+                       }else{
+                           try {
 
+                               DetalleEntity  detalle = ItemDetalle.clone();
+                               mDetalleItem.remove(ItemDetalle);
+                               detalle.setObpcant(1.0);
+                               mDetalleItem.add(detalle);
+                             if (detalle.getObupdate()==-1){
+                                 detalle.setObupdate(2);
+                             }else{
+                                 detalle.setObupdate(0);
+                             }
 
-                        mDetalleItem.add(detalle);
+                               //mDetalleAdapter.setFilter(mDetalleItem);
+                               Reconstruir();
+                               calcularTotal();
+                               aProducto .setText("");
+                               aProducto.clearFocus();
+                               mscroll.fullScroll(View.FOCUS_DOWN);
+                               productoAdapter.setLista(GetActualProducts());
+                               productoAdapter.notifyDataSetChanged();
 
+                           } catch (CloneNotSupportedException e) {
 
-                        //mDetalleAdapter.setFilter(mDetalleItem);
-                        Reconstruir();
-                        calcularTotal();
-                        aProducto .setText("");
-                        aProducto.clearFocus();
-                        mscroll.fullScroll(View.FOCUS_DOWN);
-                        productoAdapter.setLista(GetActualProducts());
-                        productoAdapter.notifyDataSetChanged();
+                           }
+
+                       }
+
                     }
 
 
                 }
             });
         }
+    }
+
+    public DetalleEntity ObtenerDetalle(ProductoEntity producto){
+
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            DetalleEntity detalle=mDetalleItem.get(i);
+            if(detalle.getObcprod()==producto.getNumi()){
+                return detalle;
+            }
+        }
+        return null;
     }
 
     @Override
