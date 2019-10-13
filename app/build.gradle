@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'
 android {
+    signingConfigs {
+        marco {
+            storeFile file('dfsfs')
+            storePassword 'fsdsdf'
+            keyAlias = 'sfdsd'
+            keyPassword 'dsfsdf'
+        }
+    }
     compileSdkVersion 28
     lintOptions {
         disable "ResourceType"

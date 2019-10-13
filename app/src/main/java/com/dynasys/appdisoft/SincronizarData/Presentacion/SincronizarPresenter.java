@@ -340,7 +340,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                                 }
 
                             }
-                            cantidadProducto+=responseUser.size();
+
                             // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }else{
                           /*  viewModelProductos.deleteAllProductos();
@@ -361,7 +361,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                             }
 
                         }
-                        cantidadPedidos=listCliente.size();
+                        cantidadPedidos=responseUser.size();
                         _DecargarDetalles(idRepartidor);
                     } catch (ExecutionException e) {
                         //e.printStackTrace();

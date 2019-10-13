@@ -179,9 +179,10 @@ public void onClickAtras(){
             public void onClick(View view) {
 
                 if (M_Uii.trim().equals("")){
-                    M_Uii= UUID.randomUUID().toString();
+
 
                     if (validarDatos()){
+                        M_Uii= UUID.randomUUID().toString();
                         progresdialog.show();
                         if (tipo==0){
                             ClienteEntity cliente=new ClienteEntity();
@@ -242,6 +243,8 @@ public void onClickAtras(){
                             }
                         }
 
+                    }else{
+                        M_Uii="";
                     }
                 }
 

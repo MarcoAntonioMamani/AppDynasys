@@ -49,6 +49,16 @@
                         android:textColor="@color/white"
                         android:textStyle="bold"
                         />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/id_btn_buscar"
+                        android:paddingRight="10dp"
+                        android:text="Cantidad: 0"
+                        android:id="@+id/list_tvcantidad"
+                        style="@style/TextAppearance.AppCompat.Small"
+                        android:textColor="@color/colorAccent" />
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

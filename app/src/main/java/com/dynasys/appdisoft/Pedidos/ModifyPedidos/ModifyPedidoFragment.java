@@ -183,15 +183,18 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     }
     public void onClickModificar(){
         // private Button mbutton_update,mbutton_entrega,mbutton_viewcliente;
-        if (ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
-            UtilShare.mActivity=getActivity();
-            Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
-            getContext().stopService(intent);
-        }
+
         mbutton_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
+
+                    if (ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
+                        UtilShare.mActivity=getActivity();
+                        Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
+                        //mContext.stopService(intent);
+                        ServiceSincronizacion.getInstance().onDestroy();
+                    }
                     PedidoEntity pedi= viewModelPedido.getPedido(mPedido.getCodigogenerado());
                     if (pedi!=null){
                         if (mPedido.getEstado()==1){
@@ -298,8 +301,9 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
             public void onClick(View view) {
                 if (ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
                     UtilShare.mActivity=getActivity();
-                    Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
-                    getContext().stopService(intent);
+                    Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
+                    //mContext.stopService(intent);
+                    ServiceSincronizacion.getInstance().onDestroy();
                 }
 
                         try {

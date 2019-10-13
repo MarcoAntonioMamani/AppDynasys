@@ -57,7 +57,7 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
 
     private List<ClienteEntity> lisClientes=new ArrayList<>();
     private List<PedidoEntity> listPedidos=new ArrayList<>();
-    TextView tvDesde,tvHasta;
+    TextView tvDesde,tvHasta,tvCantidad;
     ImageButton btnDesde,btnHasta;
     Button btnCargar;
     View view;
@@ -105,6 +105,7 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
         btnAddPedido=(FloatingActionButton)view.findViewById(R.id.view_btnaddPedidos) ;
         tvDesde=(TextView)view.findViewById(R.id.id_tvfecha_desde);
         tvHasta=(TextView)view.findViewById(R.id.id_tvfecha_hasta);
+        tvCantidad=(TextView)view.findViewById(R.id.list_tvcantidad);
         tvDesde.setEnabled(false);
         tvHasta.setEnabled(false);
         btnDesde=(ImageButton) view.findViewById(R.id.ib_btn_desde);
@@ -285,6 +286,7 @@ public ClienteEntity obtenerCliente(PedidoEntity pedido){
     @Override
     public void MostrarPedidos(List<PedidoEntity> clientes) {
         listPedidos=clientes;
+        tvCantidad.setText("Cantidad: "+clientes.size());
         CargarRecycler(listPedidos);
     }
 
