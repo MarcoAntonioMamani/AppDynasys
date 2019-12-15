@@ -3,6 +3,7 @@ package com.dynasys.appdisoft.Mapas;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Clientes.UtilShare;
@@ -21,6 +22,7 @@ public class CustomInfoWindowAdapterMapa implements GoogleMap.InfoWindowAdapter,
     private LayoutInflater inflater;
     private ClienteEntity mclient;
     ImageView img ;
+    RelativeLayout panel;
     public CustomInfoWindowAdapterMapa(LayoutInflater inflater){
         this.inflater = inflater;
     }
@@ -31,10 +33,16 @@ public class CustomInfoWindowAdapterMapa implements GoogleMap.InfoWindowAdapter,
         String posicion =m.getSnippet();
         View v = inflater.inflate(R.layout.info_windows_layout, null);
         mclient=UtilShare.ListClientes.get(Integer.parseInt(posicion));
-
+        panel=(RelativeLayout)v.findViewById(R.id.info_cliente);
         img=(ImageView) v.findViewById(R.id.id_img_client);
 
-
+        panel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                 int i=0;
+            }
+        });
+        m.setTag(mclient);
        /* Glide.with(v.getContext())
                 .load(url)
                 .crossFade()
@@ -59,6 +67,7 @@ public class CustomInfoWindowAdapterMapa implements GoogleMap.InfoWindowAdapter,
 
     @Override
     public void onInfoWindowClick(Marker marker){
+        Object obj=marker;
     }
 
 }

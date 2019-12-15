@@ -12,4 +12,6 @@ public class UtilShare {
     public static ClienteEntity cliente=null;
     public static List<ClienteEntity> ListClientes=new ArrayList<>();
     public static FragmentActivity mActivity=null;
+    public static ClienteEntity clienteMapa=null;
+    public static int tipoAccion=0;
 }

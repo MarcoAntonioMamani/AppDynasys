@@ -36,6 +36,9 @@ public interface PedidoDao {
     @Query("SELECT * FROM pedido WHERE oaccli=:numi")
     List<PedidoEntity> getPedidoByIdCliente(String numi);
 
+    @Query("SELECT * FROM pedido WHERE oaccli=:numi and oaest in (1,2)")
+    List<PedidoEntity> getPedidoByCodeClienteForstate(String numi);
+
     @Query("SELECT * FROM pedido WHERE oanumi=:numi")
     LiveData<PedidoEntity> getPedido(int numi);
 

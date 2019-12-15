@@ -11,9 +11,13 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,9 +42,13 @@ import com.akexorcist.googledirection.model.Step;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.dynasys.appdisoft.Clientes.TipoMapa;
 import com.dynasys.appdisoft.Clientes.UtilShare;
+import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
+import com.dynasys.appdisoft.Login.LoginActivity;
+import com.dynasys.appdisoft.MainActivity;
+import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoFragment;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
@@ -81,6 +89,8 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button btnCargar;
     private Location Dlocation=null;
     private ProgressDialog progresdialog;
+    private int tipoAccion=0;
+    private Handler switchHandler = new Handler();
     public boolean BanderGps =false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,22 +177,12 @@ void ValidarButtonVisible(){
         listaTipos.setAdapter(adapter);
 
     }
-    public List<ClienteEntity> FiltarByZona(List<ClienteEntity> list){
 
-        int idzona= DataPreferences.getPrefInt("zona",this);
-        List<ClienteEntity> listClie=new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            ClienteEntity cliente=list.get(i);
-            if (cliente.getCczona() ==idzona){
-                listClie.add(cliente);
-            }
-        }
-        return listClie;
-    }
     public void CargarClientes(int tipo){
 
         if (tipo==0){
             try {
+                tipoAccion=0;
                 //lisClientes=FiltarByZona(viewModelCliente.getMAllCliente(0));
                 lisClientes=viewModelCliente.getMAllCliente(0);
                 UtilShare.ListClientes=lisClientes;
@@ -195,6 +195,7 @@ void ValidarButtonVisible(){
         }
         if (tipo==1){
             try {
+                tipoAccion=1;
                 lisClientesBackup=viewModelCliente.getMAllCliente(0);
                 lisClientes=new ArrayList<>();
                 listPedidos=viewModelPedido.getMAllPedido(0);
@@ -218,6 +219,7 @@ void ValidarButtonVisible(){
 
         if (tipo==2){
             try {
+                tipoAccion=2;
                 lisClientesBackup=viewModelCliente.getMAllCliente(0);
                 lisClientes=new ArrayList<>();
                 listPedidos=viewModelPedido.getMAllPedido(0);
@@ -310,7 +312,52 @@ void ValidarButtonVisible(){
                 .setOnInfoWindowAdapter(new CustomInfoWindowAdapterMapa(LayoutInflater.from(this)));
 
         mapa.setInfoWindowAdapter(mClusterManager.getMarkerManager());
+        mapa.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener()
+        {
+            @Override
+            public void onInfoWindowClick(Marker arg0) {
 
+                ClienteEntity obj=(ClienteEntity) arg0.getTag();
+                UtilShare.clienteMapa=obj;
+                UtilShare.tipoAccion=tipoAccion;
+                DataPreferences.putPrefInteger("Accion",1,getApplicationContext());
+                DataPreferences.putPref("idCliente",obj.getCodigogenerado() ,getApplicationContext());
+                if (tipoAccion==0){
+                    DataPreferences.putPrefInteger("Accion",1,getApplicationContext());
+                    DataPreferences.putPref("idCliente",obj.getCodigogenerado() ,getApplicationContext());
+                           /* Fragment frag = new CreatePedidoFragment(1);
+                            switchFragment(frag,"CREATE_PEDIDOS");*/
+                  onBackPressed();
+                }
+                if (tipoAccion==1){
+                    DataPreferences.putPrefInteger("Accion",2,getApplicationContext());
+                    DataPreferences.putPref("idCliente",obj.getCodigogenerado() ,getApplicationContext());
+                           /* Fragment frag = new CreatePedidoFragment(1);
+                            switchFragment(frag,"CREATE_PEDIDOS");*/
+                    onBackPressed();
+                }
+            }
+
+        } );
+
+    }
+
+    public void switchFragment(final Fragment frag, final String tag){
+        switchHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    FragmentManager fm = getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    if (tag!= Constantes.TAG_CLIENTES  && tag!=Constantes.TAG_PEDIDOS ){
+                        ft.setCustomAnimations(R.transition.left_in,R.transition.left_out);
+                    }
+                    ft.addToBackStack(tag)
+                            .replace(R.id.fragment, frag,tag)
+                            .commit();
+                }catch(Exception e){}
+            }
+        }, 100);
     }
 public LatLng ObtenerUbicacion(){
 

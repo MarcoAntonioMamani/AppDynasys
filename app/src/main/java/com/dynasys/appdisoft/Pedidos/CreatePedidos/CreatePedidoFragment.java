@@ -35,6 +35,7 @@ import com.dynasys.appdisoft.Adapter.DetalleAdaptader;
 import com.dynasys.appdisoft.Adapter.ProductAdapter;
 import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
 import com.dynasys.appdisoft.Clientes.ListClientesFragment;
+import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
@@ -97,11 +98,16 @@ EditText tvObservacion;
 Date mFecha;
 String Hora;
 Double mTotal=0.0;
-
+   int tipoActividad=0;
 private PedidoEntity mPedido;
     private NestedScrollView mscroll;
     public CreatePedidoFragment() {
         // Required empty public constructor
+    }
+
+    public CreatePedidoFragment(int tipo) {
+        // Required empty public constructor
+        this.tipoActividad=tipo;
     }
     @Override
     public void onResume() {
@@ -148,7 +154,15 @@ private PedidoEntity mPedido;
         LocationGeo.getInstance(context,getActivity());
         LocationGeo.iniciarGPS();
         ShowDialogSincronizando();
+        CargarDatosclienteMapa();
         return view;
+    }
+    public void CargarDatosclienteMapa(){
+        if (tipoActividad==1){
+            mCliente = UtilShare .clienteMapa;
+            acliente.setText(mCliente.getNamecliente());
+            mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
+        }
     }
     public void onclickGuardar(){
         mbutton_guardar.setOnClickListener(new View.OnClickListener() {

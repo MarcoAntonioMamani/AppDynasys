@@ -39,6 +39,9 @@ public class PedidoListViewModel extends AndroidViewModel {
     public PedidoEntity getPedido(String id) throws ExecutionException, InterruptedException {
         return mRepository.getPedido(id);
     }
+    public List<PedidoEntity> getPedidoState(String id) throws ExecutionException, InterruptedException {
+        return mRepository.getPedidoState(id);
+    }
     public List<PedidoEntity> getPedidobyCliente(String id) throws ExecutionException, InterruptedException {
         return mRepository.getPedidoByClients(id);
     }

@@ -31,18 +31,27 @@ import android.widget.Toast;
 import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.MapClientActivity;
 import com.dynasys.appdisoft.Clientes.UtilShare;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.UsersListViewModel;
 import com.dynasys.appdisoft.Mapas.MapaActivity;
 import com.dynasys.appdisoft.Mapas.TestActivity;
+import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoFragment;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
+import com.dynasys.appdisoft.Pedidos.ModifyPedidos.ModifyPedidoFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
+import com.dynasys.appdisoft.Pedidos.ViewPedidos.ViewPedidoFragment;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
+import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.dynasys.appdisoft.SincronizarData.SincronizarFragment;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
@@ -55,12 +64,71 @@ public class MainActivity extends AppCompatActivity {
     private Boolean bolBienvenida =true;
     private UsersListViewModel viewModel;
     private ClientesListViewModel viewModelClientes;
+    private PedidoListViewModel viewModelPedidos;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+       int i=0;
+      int accion=  DataPreferences.getPrefInt("Accion",getApplicationContext());
+        if (accion==1){
+            DataPreferences.putPrefInteger("Accion",0,getApplicationContext());
+            String CodeCliente=DataPreferences.getPref("idCliente" ,getApplicationContext()) ;
+            try {
+               UtilShare.clienteMapa= viewModelClientes.getClientebycode(CodeCliente);
+                Fragment frag = new CreatePedidoFragment(1);
+                MainActivity fca = (MainActivity) this;
+                fca.switchFragment(frag,"CREATE_PEDIDOS");
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+        if (accion==2){
+            DataPreferences.putPrefInteger("Accion",0,getApplicationContext());
+            String CodeCliente=DataPreferences.getPref("idCliente" ,getApplicationContext()) ;
+            try {
+                ClienteEntity cliente=viewModelClientes.getClientebycode(CodeCliente);
+                int EditPedido= DataPreferences.getPrefInt("EditarPedidos",getApplicationContext());
+                List<PedidoEntity> pedido= viewModelPedidos.getPedidoState(cliente.getCodigogenerado());
+                if (EditPedido==1){
+
+                    if (pedido.size()>0){
+                        Fragment frag = new ModifyPedidoFragment(pedido.get(0),cliente,1);
+                        MainActivity fca = (MainActivity) this;
+                        fca.switchFragment(frag,"VIEW_PEDIDOS");
+                    }
+                   
+                }else{
+                    if (pedido.size()>0){
+                        Fragment frag = new ViewPedidoFragment(pedido.get(0),cliente,1);
+                        MainActivity fca = (MainActivity) this;
+                        fca.switchFragment(frag,"VIEW_PEDIDOS");
+                    }
+
+                }
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         viewModel = ViewModelProviders.of(this).get(UsersListViewModel.class);
         viewModelClientes = ViewModelProviders.of(this).get(ClientesListViewModel.class);
+        viewModelPedidos=ViewModelProviders.of(this).get(PedidoListViewModel.class);
         if(DataPreferences.getPrefLogin("isLogin",getApplicationContext())==null  ){
             startActivity(new Intent(this, LoginActivity.class));
             finish();
@@ -89,7 +157,15 @@ public class MainActivity extends AppCompatActivity {
 
         setupNavigationDrawerContent(navigationView);
         //First start (Inbox Fragment)
-        setFragment(0);
+
+        if (UtilShare.tipoAccion==1){
+            UtilShare.tipoAccion=0;
+            Fragment frag = new CreatePedidoFragment(1);
+            MainActivity fca = (MainActivity) this;
+            fca.switchFragment(frag,"CREATE_PEDIDOS");
+        }else{
+            setFragment(0);
+        }
         setupUserBox();
         IniciarServicio();
     }
