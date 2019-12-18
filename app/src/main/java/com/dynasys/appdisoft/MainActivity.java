@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity fca = (MainActivity) this;
                         fca.switchFragment(frag,"VIEW_PEDIDOS");
                     }
-                   
+
                 }else{
                     if (pedido.size()>0){
                         Fragment frag = new ViewPedidoFragment(pedido.get(0),cliente,1);

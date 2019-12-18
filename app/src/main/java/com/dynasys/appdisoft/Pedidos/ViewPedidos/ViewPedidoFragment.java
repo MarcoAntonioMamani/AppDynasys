@@ -32,6 +32,7 @@ import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
@@ -111,6 +112,10 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
         iniciarRecyclerView();
         mPedidosPresenter.getDetailOrder(mPedido.getCodigogenerado());
         OnclickMapa();
+        int categoria = DataPreferences.getPrefInt("CategoriaRepartidor",getContext());
+        if (categoria==3){
+            btnEntrega.setVisibility(View.GONE);
+        }
         OnclickEntrega();
         rCredito.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

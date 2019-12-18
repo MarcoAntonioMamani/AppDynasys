@@ -210,7 +210,9 @@ public void _OnClickBtnAddCliente(){
              /* MainActivity fca = ((MainActivity) getActivity());
               fca.startActivity(new Intent(getActivity(), MapClientActivity .class));
               fca.overridePendingTransition(R.transition.left_in, R.transition.left_out);*/
-              Fragment frag = new CreateClienteFragment(1,cliente);
+             int isUpdate=DataPreferences.getPrefInt("UpdateCliente",getContext());
+
+              Fragment frag = new CreateClienteFragment(1,cliente,isUpdate);
               MainActivity fca = (MainActivity) getActivity();
               fca.switchFragment(frag,"UpdateClientes");
         }

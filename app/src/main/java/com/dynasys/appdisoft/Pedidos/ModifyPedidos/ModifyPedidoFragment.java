@@ -42,6 +42,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoMvp;
@@ -158,6 +159,10 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         acliente.setEnabled(false);
         onclickObtenerFecha();
         onClickModificar();
+        int categoria =DataPreferences.getPrefInt("CategoriaRepartidor",getContext());
+        if (categoria==3){
+            mbutton_entrega.setVisibility(View.GONE);
+        }
         onClickEtregar();
         onClickVerCliente();
         OnClickObtenerFecha();

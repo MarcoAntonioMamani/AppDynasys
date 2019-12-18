@@ -89,14 +89,16 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
     ClienteEntity mCliente;
     private String M_Uii="";
     private int tipo=0; //// TIpo=0 = Nuevo Cliente ------------------  Tipo = 1 Modificacion Cliente
+    private int  isUpdate=0;
     public CreateClienteFragment() {
         // Required empty public constructor
     }
     @SuppressLint("ValidFragment")
-    public CreateClienteFragment(int tipo, ClienteEntity cliente) {
+    public CreateClienteFragment(int tipo, ClienteEntity cliente,int isUpdate) {
         // Required empty public constructor
         this.tipo=tipo;
         this.mCliente=cliente;
+        this.isUpdate=isUpdate;
     }
     @Override
     public void onResume() {
@@ -153,6 +155,14 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
 
         _prCargarDatos();
         M_Uii="";
+        if (tipo!=0 && isUpdate==0){
+            btngps.setVisibility(View.GONE);
+            btnGuardar.setVisibility(View.GONE);
+            tilNombre.getEditText().setEnabled(false);
+            tilDireccion.getEditText().setEnabled(false);
+            tilNit.getEditText().setEnabled(false);
+            tilTelefono.getEditText().setEnabled(false);
+        }
         return view;
     }
 
