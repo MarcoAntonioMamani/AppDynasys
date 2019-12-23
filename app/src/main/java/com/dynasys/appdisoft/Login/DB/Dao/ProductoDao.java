@@ -20,7 +20,9 @@ public interface ProductoDao {
     @Query("SELECT * FROM producto ORDER BY numi DESC")
     List<ProductoEntity> getAllMProductos();
 
-    @Query("SELECT p.numi,p.cod,p.producto,p.desccorta,p.idcategoria,p.categoria,precio.chprecio as precio FROM producto as p inner join precio on precio.chcprod =p.numi  WHERE precio.chcatcl=:numi")
+    @Query("SELECT p.numi,p.cod,p.producto,p.desccorta,p.idcategoria,p.categoria,precio.chprecio as precio, st.cantidad as stock " +
+            "FROM producto as p inner join precio on precio.chcprod =p.numi " +
+            "inner join stock as st on st.codigoProducto=p.numi WHERE precio.chcatcl=:numi")
     List<ProductoEntity> getProductoByCliente(int numi);
 
     @Query("SELECT * FROM producto WHERE numi=:numi")

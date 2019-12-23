@@ -10,8 +10,9 @@ public class ResponseLogin {
     int pedido;
     int update_cliente;
     int categoria;
+    int stock;
 
-    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria) {
+    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria, int stock) {
         this.code = code;
         this.message = message;
         this.token = token;
@@ -21,6 +22,7 @@ public class ResponseLogin {
         this.pedido = pedido;
         this.update_cliente = update_cliente;
         this.categoria = categoria;
+        this.stock = stock;
     }
 
     public int getCode() {
@@ -93,5 +95,13 @@ public class ResponseLogin {
 
     public void setCategoria(int categoria) {
         this.categoria = categoria;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 }

@@ -7,6 +7,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.R;
@@ -100,6 +101,11 @@ private static Context mcontext;
     }
     public void ObtenerDetalles(Callback<List<DetalleEntity>> callback, String idRepartidor) {
         Call<List<DetalleEntity>> userCall = service.ObtenerDetalles(idRepartidor);
+        userCall.enqueue(callback);
+    }
+
+    public void ObtenerStock(Callback<List<StockEntity>> callback, String idRepartidor) {
+        Call<List<StockEntity>> userCall = service.ObtenerStocks(idRepartidor);
         userCall.enqueue(callback);
     }
 }

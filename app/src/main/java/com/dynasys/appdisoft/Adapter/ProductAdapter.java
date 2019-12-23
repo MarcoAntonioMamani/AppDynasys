@@ -12,6 +12,7 @@ import android.widget.Filter;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.R;
 
 import java.util.ArrayList;
@@ -48,11 +49,20 @@ public void setLista(List<ProductoEntity> items){
             TextView product_name = (TextView) view.findViewById(R.id.product_name);
             TextView product_price=(TextView) view.findViewById(R.id.product_price);
             TextView producto_code=(TextView) view.findViewById(R.id.product_code);
+            TextView producto_stock=(TextView) view.findViewById(R.id.id_Stock);
 
             //imageView.setImageResource(client.getImageUrl());
             product_name.setText(item.getProducto());
             product_price .setText(""+item.getPrecio()+" Bs" );
-            producto_code.setText(""+item.getCod());
+            producto_code.setText(""+item.getNumi());
+            producto_stock.setText("Stock = "+item.getStock());
+
+            int stock= DataPreferences.getPrefInt("stock",context);
+            if (stock==0){
+                producto_stock.setVisibility(View.GONE);
+            }else{
+                producto_stock.setVisibility(View.VISIBLE);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,7 +97,7 @@ public void setLista(List<ProductoEntity> items){
         protected FilterResults performFiltering(CharSequence charSequence) {
             if (charSequence != null) {
                 suggestions.clear();
-                int cantidad=3;
+                int cantidad=4;
                 int contador=0;
                 for (ProductoEntity item: tempItems) {
                     String word=charSequence.toString().toUpperCase();

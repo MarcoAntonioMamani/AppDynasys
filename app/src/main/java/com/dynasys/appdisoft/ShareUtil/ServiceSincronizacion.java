@@ -26,10 +26,13 @@ import android.util.Log;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
+import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.StockListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
@@ -58,6 +61,7 @@ public class ServiceSincronizacion extends Service {
     private Context mContext;
     private  ClientesListViewModel viewModelClientes;
     private PedidoListViewModel viewModelPedidos;
+    private StockListViewModel viewModelStock;
     private DetalleListViewModel viewModelDetalle;
     public static ServiceSincronizacion mInstance;
     public Runnable runnable = null;
@@ -105,6 +109,7 @@ if (UtilShare.mActivity!=null){
 
     viewModelClientes = ViewModelProviders.of(UtilShare.mActivity).get(ClientesListViewModel.class);
     viewModelPedidos= ViewModelProviders.of(UtilShare.mActivity).get(PedidoListViewModel.class);
+    viewModelStock= ViewModelProviders.of(UtilShare.mActivity).get(StockListViewModel.class);
     viewModelDetalle=ViewModelProviders.of(UtilShare.mActivity).get(DetalleListViewModel.class);
 }
 
@@ -296,6 +301,7 @@ if (UtilShare.mActivity!=null){
                         try{
                             idRepartidor= DataPreferences.getPrefInt("idrepartidor",mContext);
                             _DecargarPedidos(""+idRepartidor);
+                            _DecargarStocks(""+idRepartidor);
                             exportarClientes();
                             UpdateClientes();
                             exportarPedidos();
@@ -420,6 +426,93 @@ if (UtilShare.mActivity!=null){
         }
     }
 
+
+    public void _DecargarStocks(final String idRepartidor){
+
+        List<ClienteEntity> listCliente = null;
+        try {
+            listCliente = viewModelClientes.getMAllStateCliente(1);
+            List<ClienteEntity>   listClienteUpdate = viewModelClientes.getMAllStateClienteUpdate(1);
+            List<PedidoEntity> listPedidos=viewModelPedidos.getMAllPedidoState(1);
+            List<DetalleEntity>listDetalle=viewModelDetalle.getMAllDetalleState(1);
+            List<PedidoEntity> listPedidoModificados=viewModelPedidos.getMAllPedidoState02(2);
+            if (listCliente==null){
+                return;
+            }
+            if (listPedidos==null){
+                return;
+            }
+            if (listClienteUpdate==null){
+                return;
+            }
+            if (listPedidoModificados==null){
+                return;
+            }
+            if (listDetalle==null){
+                return;
+            }
+            Boolean IsLogeado=DataPreferences.getPrefLogin("isLogin",getApplicationContext());
+
+            if (IsLogeado==false){
+                onDestroy();
+                return ;
+            }
+
+            if (listCliente.size()==0 &&listClienteUpdate.size()==0 && listPedidos.size()==0 && listPedidoModificados.size()==0&& listDetalle.size()==0) {
+
+                ApiManager apiManager = ApiManager.getInstance(mContext);
+                apiManager.ObtenerStock(new Callback<List<StockEntity>>() {
+                    @Override
+                    public void onResponse(Call<List<StockEntity>> call, Response<List<StockEntity>> response) {
+                        final List<StockEntity> responseUser = (List<StockEntity>) response.body();
+                        if (response.code() == 404) {
+                            // mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                            return;
+                        }
+                        if (response.isSuccessful() && responseUser != null) {
+                            try {
+                                List<StockEntity> listStock = viewModelStock.getAllStock();
+
+                                for (int i = 0; i < responseUser.size(); i++) {
+                                    StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
+                                    //viewModel.insertCliente(cliente);
+                                    StockEntity dbStock = viewModelStock.getStock(stock.getCodigoProducto());
+                                    if (dbStock == null) {
+                                        viewModelStock.insertStock(stock);
+                                    } else {
+                                        for (int j = 0; j < listStock.size(); j++) {
+                                            StockEntity dbStock02=listStock.get(j);
+
+                                            if (stock.getCodigoProducto()==dbStock02.getCodigoProducto()&&stock.getCantidad()!=dbStock02.getCantidad()){
+                                                viewModelStock.updateStock(stock);
+                                            }
+
+                                        }
+                                    }
+
+
+                                }
+
+                            } catch (ExecutionException e) {
+                            } catch (InterruptedException e) {
+                           }
+
+                        } else {
+                            // mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<StockEntity>> call, Throwable t) {
+                    }
+                }, idRepartidor);
+
+            }   } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     public void Notificacion(String pedido,String Clie,String Total) {
         NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 

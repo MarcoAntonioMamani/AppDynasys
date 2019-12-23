@@ -336,27 +336,32 @@ private PedidoEntity mPedido;
                         this.obpbase = obpbase;
                         this.obptot = obptot;
                         this.estado = estado;*/
-                            DetalleEntity detalle=new DetalleEntity();
-                            detalle.setObnumi("-1");
-                            detalle.setObcprod(item.getNumi());
-                            detalle.setCadesc(item.getProducto());
-                            detalle.setObpcant(1.0);
-                            detalle.setObpbase(item.getPrecio());
-                            detalle.setObptot(item.getPrecio());
-                            detalle.setEstado(false);
+                       if (item.getStock()>0){
+                           DetalleEntity detalle=new DetalleEntity();
+                           detalle.setObnumi("-1");
+                           detalle.setObcprod(item.getNumi());
+                           detalle.setCadesc(item.getProducto());
+                           detalle.setObpcant(1.0);
+                           detalle.setObpbase(item.getPrecio());
+                           detalle.setObptot(item.getPrecio());
+                           detalle.setEstado(false);
 
 
-                            mDetalleItem.add(detalle);
+                           mDetalleItem.add(detalle);
 
 
-                        //mDetalleAdapter.setFilter(mDetalleItem);
-                        Reconstruir();
-                        calcularTotal();
-                        aProducto .setText("");
-                        aProducto.clearFocus();
-                        mscroll.fullScroll(View.FOCUS_DOWN);
-                        productoAdapter.setLista(GetActualProducts());
-                        productoAdapter.notifyDataSetChanged();
+                           //mDetalleAdapter.setFilter(mDetalleItem);
+                           Reconstruir();
+                           calcularTotal();
+                           aProducto .setText("");
+                           aProducto.clearFocus();
+                           mscroll.fullScroll(View.FOCUS_DOWN);
+                           productoAdapter.setLista(GetActualProducts());
+                           productoAdapter.notifyDataSetChanged();
+                       }else{
+                           ShowMessageResult("No Existe Stock para seleccionar el producto");
+                       }
+
                     }
 
 
@@ -364,6 +369,7 @@ private PedidoEntity mPedido;
             });
         }
     }
+
     public void Reconstruir(){
         mDetalleAdapter=null;
         mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this);

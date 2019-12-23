@@ -4,6 +4,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.strongloop.android.loopback.User;
@@ -39,6 +40,9 @@ public interface IUsersApi {
     Call<List<PedidoEntity>> ObtenerPedidos(@Path("idrepartidor") String idRepartidor);
     @GET("/api/repartidor/detalles/{idrepartidor}")
     Call<List<DetalleEntity>> ObtenerDetalles(@Path("idrepartidor") String idRepartidor);
+
+    @GET("/api/stock/{idrepartidor}")
+    Call<List<StockEntity>> ObtenerStocks(@Path("idrepartidor") String idRepartidor);
 
     @POST("/api/repartidor/pedido")
     Call<ResponseLogin> InsertPedido(@Body PedidoEntity user);

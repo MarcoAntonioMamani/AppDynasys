@@ -22,8 +22,10 @@ public class ProductoEntity  implements Cloneable{
     String categoria;
     @ColumnInfo(name = "precio")
     double precio;
+    @ColumnInfo(name = "stock")
+    double stock;
 
-    public ProductoEntity(int numi, String cod, String producto, String desccorta, int idcategoria, String categoria, double precio) {
+    public ProductoEntity(int numi, String cod, String producto, String desccorta, int idcategoria, String categoria, double precio, double stock) {
         this.numi = numi;
         this.cod = cod;
         this.producto = producto;
@@ -31,14 +33,7 @@ public class ProductoEntity  implements Cloneable{
         this.idcategoria = idcategoria;
         this.categoria = categoria;
         this.precio = precio;
-    }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
+        this.stock = stock;
     }
 
     public int getNumi() {
@@ -88,6 +83,23 @@ public class ProductoEntity  implements Cloneable{
     public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public double getStock() {
+        return stock;
+    }
+
+    public void setStock(double stock) {
+        this.stock = stock;
+    }
+
     public ProductoEntity clone() throws CloneNotSupportedException {
         return (ProductoEntity) super.clone();
     }

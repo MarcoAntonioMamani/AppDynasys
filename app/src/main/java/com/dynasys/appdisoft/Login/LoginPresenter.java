@@ -63,6 +63,7 @@ public class LoginPresenter implements LoginMvp.Presenter {
                                 DataPreferences.putPrefInteger("ViewRuta",responseUser.getMapa(),mContext);
                                 DataPreferences.putPrefInteger("UpdateCliente",responseUser.getUpdate_cliente(),mContext);
                                 DataPreferences.putPrefInteger("CategoriaRepartidor",responseUser.getCategoria(),mContext);
+                                DataPreferences.putPrefInteger("stock",responseUser.getStock(),mContext);
                                 mLoginView.LoginSuccesfull();
                             }
 
