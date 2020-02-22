@@ -55,6 +55,8 @@ import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Preconditions;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -79,7 +81,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     private AutoCompleteTextView aProducto;
     private AlertDialog dialogs,dialogQuestion;
     private Button mbutton_update,mbutton_entrega,mbutton_viewcliente;
-    private ProgressDialog progresdialog;
+
     private ImageButton ObFecha;
     private ClientesListViewModel viewModelCliente;
     private ProductosListViewModel viewModelProducto;
@@ -102,6 +104,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     Double mTotal=0.0;
     private PedidoEntity mPedido;
     private NestedScrollView mscroll;
+    LottieAlertDialog alertDialog;
     @Override
     public void onResume() {
         super.onResume();
@@ -146,7 +149,6 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         mbutton_update = (Button)view.findViewById(R.id.edit_viewdata_btnUpdatePedido);
         mbutton_entrega=(Button)view.findViewById(R.id.edit_viewdata_btnEntregar);
         mbutton_viewcliente=(Button)view.findViewById(R.id.edit_viewdata_btnVerCliente);
-
         mscroll=view.findViewById(R.id.edit_order_scroll);
         tvTotalPago=(EditText)view.findViewById(R.id.edit_view_totalpago);
         viewModelCliente = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
@@ -170,8 +172,11 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         mFecha=Calendar.getInstance().getTime();
         LocationGeo.getInstance(context,getActivity());
         LocationGeo.iniciarGPS();
-        ShowDialogSincronizando();
 
+        if(mPedido.getTipocobro()==2){
+            rCredito.setChecked(true);
+            tvTotalPago.setText(ShareMethods.ObtenerDecimalToString(mPedido.getTotalcredito(),2));
+        }
         rCredito.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -209,6 +214,14 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                         pedi.setOaobs(tvObservacion.getText().toString());
                         pedi.setOafdoc(mFecha);
                         pedi.setTotal(ObtenerTotal());
+
+                        if (rCredito.isChecked()==true){
+                            pedi.setTipocobro(2);
+                            pedi.setTotalcredito(Double.parseDouble(tvTotalPago.getText().toString()));
+                        }else{
+                            pedi.setTipocobro(1);
+                            pedi.setTotalcredito(0.0);
+                        }
                         List<DetalleEntity> list=viewModelDetalle.getDetalle(pedi.getCodigogenerado());
                         for (int i = 0; i < mDetalleItem.size(); i++) {
                               DetalleEntity NewValor=mDetalleItem.get(i);
@@ -321,6 +334,15 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                                 pedi.setOaobs(tvObservacion.getText().toString());
                                 pedi.setOafdoc(mFecha);
                                 pedi.setTotal(ObtenerTotal());
+                                if (rCredito.isChecked()==true){
+                                    pedi.setTipocobro(2);
+                                    pedi.setTotalcredito(Double.parseDouble(tvTotalPago.getText().toString()));
+                                }else{
+                                    pedi.setTipocobro(1);
+                                    pedi.setTotalcredito(0.0);
+                                }
+
+
                                 List<DetalleEntity> list=viewModelDetalle.getDetalle(pedi.getCodigogenerado());
                                 for (int i = 0; i < mDetalleItem.size(); i++) {
                                     DetalleEntity NewValor=mDetalleItem.get(i);
@@ -444,7 +466,7 @@ public void OnClickObtenerFecha(){
         });
     }
     private void ShowDialogSincronizando(){
-        progresdialog=new ProgressDialog(getContext());
+        /*progresdialog=new ProgressDialog(getContext());
         progresdialog.setCancelable(false);
         progresdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progresdialog.setIndeterminate(false);
@@ -452,7 +474,21 @@ public void OnClickObtenerFecha(){
         drawable.setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent),
                 PorterDuff.Mode.SRC_IN);
         progresdialog.setIndeterminateDrawable(drawable);
-        progresdialog.setMessage("Actualizando Pedido .....");
+        progresdialog.setMessage("Actualizando Pedido .....");*/
+
+        try
+        {
+
+            alertDialog = new LottieAlertDialog.Builder(getContext(), DialogTypes.TYPE_LOADING).setTitle("Pedido")
+                    .setDescription("Actualizando Pedido ...")
+                    .build();
+
+            alertDialog.setCancelable(false);
+        }catch (Error e){
+
+            String d=e.getMessage();
+
+        }
 
     }
 
@@ -590,7 +626,7 @@ public void OnClickObtenerFecha(){
     }
 
     @Override
-    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal) {
+    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad) {
         double cantidad=0.0;
         if (isDouble(value)){
             cantidad=Double.parseDouble(value);
@@ -607,6 +643,35 @@ public void OnClickObtenerFecha(){
             }
         }
     }
+
+    @Override
+    public void ModifyItemPrecio(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText ePrecio) {
+        double precio=0.0;
+        if (isDouble(value)){
+            precio=Double.parseDouble(value);
+        }
+        int posicion =obtenerPosicionItem(item);
+        int stock= DataPreferences.getPrefInt("stock",context);
+        DetalleEntity detalle= mDetalleItem.get(posicion);
+        if (posicion>=0 && precio>0){
+
+            detalle.setObpbase(precio);
+            detalle.setObptot(precio*detalle.getObpcant());
+            tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));
+            calcularTotal();
+
+        }else{
+
+            detalle.setObpbase(precio);
+            detalle.setObptot(0);
+            tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));
+            calcularTotal();
+        }
+        if (mDetalleItem.get(posicion).getObupdate()>=1){
+            detalle.setObupdate(2);
+        }
+    }
+
 
     @Override
     public void DeleteAndModifyDetailOrder(DetalleEntity item, int pos) {

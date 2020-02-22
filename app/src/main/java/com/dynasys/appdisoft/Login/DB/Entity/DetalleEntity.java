@@ -25,11 +25,14 @@ public class DetalleEntity  implements Cloneable{
 
     @ColumnInfo(name = "obupdate")
     int obupdate;
+
+    @ColumnInfo(name = "stock")
+    double stock;
     public DetalleEntity(){
 
     }
 
-    public DetalleEntity(int id, String obnumi, int obcprod, String cadesc, double obpcant, double obpbase, double obptot, boolean estado, int obupdate) {
+    public DetalleEntity(int id, String obnumi, int obcprod, String cadesc, double obpcant, double obpbase, double obptot, boolean estado, int obupdate, double stock) {
         this.id = id;
         this.obnumi = obnumi;
         this.obcprod = obcprod;
@@ -39,6 +42,7 @@ public class DetalleEntity  implements Cloneable{
         this.obptot = obptot;
         this.estado = estado;
         this.obupdate = obupdate;
+        this.stock = stock;
     }
 
     public int getId() {
@@ -111,6 +115,14 @@ public class DetalleEntity  implements Cloneable{
 
     public void setObupdate(int obupdate) {
         this.obupdate = obupdate;
+    }
+
+    public double getStock() {
+        return stock;
+    }
+
+    public void setStock(double stock) {
+        this.stock = stock;
     }
 
     public DetalleEntity clone() throws CloneNotSupportedException {

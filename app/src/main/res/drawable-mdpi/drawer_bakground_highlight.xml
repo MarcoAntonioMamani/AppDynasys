@@ -1,0 +1,17 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<item
+    android:left="4dp"
+    android:right="8dp"
+    android:top="6dp"
+    android:bottom="6dp">
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/PrimariLight"  />
+
+
+    <!-- Aquí indicamos el radio a aplicar a las esquinas -->
+    <corners
+        android:radius="8dp" />
+</shape>
+</item>
+</layer-list>

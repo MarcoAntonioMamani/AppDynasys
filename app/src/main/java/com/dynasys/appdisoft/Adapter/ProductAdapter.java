@@ -2,6 +2,7 @@ package com.dynasys.appdisoft.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -57,11 +58,13 @@ public void setLista(List<ProductoEntity> items){
             producto_code.setText(""+item.getNumi());
             producto_stock.setText("Stock = "+item.getStock());
 
+
             int stock= DataPreferences.getPrefInt("stock",context);
             if (stock==0){
                 producto_stock.setVisibility(View.GONE);
             }else{
                 producto_stock.setVisibility(View.VISIBLE);
+                producto_stock.setTextColor(context.getResources().getColor(R.color.intro_slide_5_dark));
             }
 
         } catch (Exception e) {
@@ -97,7 +100,7 @@ public void setLista(List<ProductoEntity> items){
         protected FilterResults performFiltering(CharSequence charSequence) {
             if (charSequence != null) {
                 suggestions.clear();
-                int cantidad=4;
+                int cantidad=7;
                 int contador=0;
                 for (ProductoEntity item: tempItems) {
                     String word=charSequence.toString().toUpperCase();

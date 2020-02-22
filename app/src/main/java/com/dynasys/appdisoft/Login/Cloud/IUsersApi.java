@@ -6,6 +6,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.strongloop.android.loopback.User;
 
@@ -30,6 +31,9 @@ public interface IUsersApi {
 
     @GET("/api/repartidor/clientes/{idrepartidor}")
     Call<List<ClienteEntity>> ObtenerClientes(@Path("idrepartidor") String idRepartidor);
+
+    @GET("/api/repartidor/zonas/{idrepartidor}")
+    Call<List<ZonasEntity>> ObtenerZonas(@Path("idrepartidor") String idRepartidor);
 
     @GET("/api/repartidor/precios")
     Call<List<PrecioEntity>> ObtenerPrecios();

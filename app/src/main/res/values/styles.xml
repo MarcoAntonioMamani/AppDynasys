@@ -42,7 +42,12 @@
         <item name="colorAccent">@color/colorProgressBar</item>
     </style>
 
-
+    <style name="my_custom_style" parent="Widget.Design.TextInputLayout">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 
     <style name="SearchBar">
         <item name="android:orientation">vertical</item>

@@ -25,10 +25,12 @@
     <color name="colorSplashText">#F0F0F0</color>
     <color name="colorProgressBar">#FFCE511C</color>
     <color name="colorTextView">#83898E</color>
+    <color name="colordark">#161f53</color>
     <color name="color_light">#ffffff</color>
     <color name="azulclaro">#FFAEE4E8</color>
     <color name="navy">#47515f</color>
-
+    <color name="PrimariLight">#FFC107</color>
+    <color name="color_navi">#47515f</color>
     <color name="marfil">#efefee</color>
     <color name="amarillo">#FFA000</color>
     <color name="negro_semitransparente">#B2000000</color>

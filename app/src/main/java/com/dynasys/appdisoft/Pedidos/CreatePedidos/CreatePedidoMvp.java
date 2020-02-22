@@ -1,5 +1,6 @@
 package com.dynasys.appdisoft.Pedidos.CreatePedidos;
 
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
@@ -17,7 +18,8 @@ public interface CreatePedidoMvp {
         void MostrarClientes(List<ClienteEntity> clientes);
         void MostrarProductos(List<ProductoEntity> productos);
         void setPresenter(Presenter presenter);
-        void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal);
+        void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad);
+        void ModifyItemPrecio(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText ePrecio);
         void DeleteAndModifyDetailOrder(DetalleEntity item,int pos);
         void ShowMessageResult(String message);
         void showSaveResultOption(int codigo, String id, String mensaje);

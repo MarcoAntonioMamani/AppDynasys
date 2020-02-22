@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/colorPrimary"
+    android:background="@drawable/login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Login.LoginActivity"
@@ -12,7 +12,6 @@
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
 >
     <ImageView
         android:id="@+id/id_login_logo"
@@ -22,20 +21,21 @@
         android:layout_centerInParent="false"
         android:layout_centerHorizontal="true"
         android:src="@drawable/ic_login"
-        android:layout_marginTop="40dp" />
+        android:layout_marginTop="50dp" />
 
     <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/id_login_form_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/id_login_logo"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
+        card_view:cardBackgroundColor="@android:color/transparent"
         android:layout_marginStart="0dp"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="60dp"
         app:cardElevation="10dp"
-        android:background="@color/blanco"
         app:cardUseCompatPadding="true"
 
         app:contentPadding="16dp">
@@ -53,6 +53,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="8dp"
+                app:theme="@style/my_custom_style"
+                android:textColorHint="@color/white"
+                android:outlineAmbientShadowColor="@color/white"
+                android:outlineSpotShadowColor="@color/white"
+                card_view:boxBackgroundColor="@color/white"
+                card_view:boxStrokeColor="@color/white"
                 android:gravity="center">
 
                 <android.support.design.widget.TextInputEditText
@@ -63,6 +69,14 @@
                     android:imeOptions="actionNext"
                     android:inputType="number"
                     android:textSize="@dimen/font_size_buttons_body"
+                    app:theme="@style/my_custom_style"
+                    android:outlineSpotShadowColor="@color/white"
+                    android:outlineAmbientShadowColor="@color/white"
+                    android:textColor="@color/white"
+                    android:shadowColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:textColorLink="@color/white"
+                    android:textColorHighlight="@color/white"
                     android:fontFamily="sans-serif"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -71,6 +85,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:id="@+id/view_texti_nrodocumento"
+               android:textColorHint="@color/white"
+                android:outlineAmbientShadowColor="@color/white"
+                android:outlineSpotShadowColor="@color/white"
+                card_view:boxBackgroundColor="@color/white"
+                card_view:boxStrokeColor="@color/white"
+                app:theme="@style/my_custom_style"
                 android:layout_marginBottom="8dp">
 
                 <android.support.design.widget.TextInputEditText
@@ -79,8 +99,17 @@
                     android:layout_height="wrap_content"
                     android:hint="Numero de Carnet"
                     android:imeOptions="actionNext"
+                    app:theme="@style/my_custom_style"
                     android:inputType="number"
                     android:textSize="@dimen/font_size_buttons_body"
+                    android:outlineSpotShadowColor="@color/white"
+                    android:outlineAmbientShadowColor="@color/white"
+                    android:textColor="@color/white"
+                    android:shadowColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:textColorLink="@color/white"
+                    android:textColorHighlight="@color/white"
+
                     android:fontFamily="sans-serif"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -98,7 +127,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Ingresar"
-                android:background="@drawable/animation_riple_button"
+                android:background="@drawable/animation_riple_maps"
                 android:layout_marginTop="@dimen/margin"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_size_buttons_body"
@@ -122,8 +151,7 @@
                 android:text="Servicio Web"
                 android:textAlignment="textEnd"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="#3F51B5"
-
+                android:textColor="@color/white"
                 android:textSize="14sp" />
         </LinearLayout>
     </android.support.v7.widget.CardView>

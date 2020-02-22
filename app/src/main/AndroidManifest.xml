@@ -39,7 +39,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDRwwdFpU2VpMvsfw6igVL61iZj7eP5NJQ" />
+            android:value="AIzaSyBFpZIpn5DQ1qkv6v07Vu03kMctXZ-vcHs" />
 
         <activity
             android:name=".SplashActivity"

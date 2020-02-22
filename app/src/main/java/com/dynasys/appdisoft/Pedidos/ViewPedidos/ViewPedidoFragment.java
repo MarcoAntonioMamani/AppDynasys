@@ -117,6 +117,10 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
             btnEntrega.setVisibility(View.GONE);
         }
         OnclickEntrega();
+        if(mPedido.getTipocobro()==2){
+            rCredito.setChecked(true);
+            tvTotalPago.setText(ShareMethods.ObtenerDecimalToString(mPedido.getTotalcredito(),2));
+        }
         rCredito.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -161,6 +165,12 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
                 try {
                    PedidoEntity pedi= viewModelPedidos.getPedido(mPedido.getCodigogenerado());
                    if (pedi!=null){
+                       if (rCredito.isChecked()==true){
+                           pedi.setTipocobro(2);
+                           pedi.setTotalcredito(Double.parseDouble(tvTotalPago.getText().toString()));
+                       }else{
+                           pedi.setTipocobro(1);
+                       }
                        pedi.setOaest(3);
                        pedi.setEstado(2);
                        viewModelPedidos.updatePedido(pedi);

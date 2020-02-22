@@ -85,6 +85,7 @@
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     android:background="@drawable/animation_riple_button"
+                    android:visibility="gone"
                     />
             </LinearLayout>
         </LinearLayout>

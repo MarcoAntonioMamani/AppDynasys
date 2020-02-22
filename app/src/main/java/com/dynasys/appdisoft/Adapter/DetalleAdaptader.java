@@ -36,7 +36,7 @@ ViewGroup viewgroup;
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView nombre;
-        public TextView price;
+        public EditText price;
         public TextView subtotal;
         public EditText cantidad;
         public ImageView img_delete;
@@ -44,7 +44,7 @@ ViewGroup viewgroup;
             super(v);
 
             nombre = (TextView) v.findViewById(R.id.id_detalle_name);
-              price = (TextView) v.findViewById(R.id.id_detalle_price);
+              price = (EditText) v.findViewById(R.id.id_detalle_price);
               subtotal=(TextView)v.findViewById(R.id.id_detalle_subtotal);
               cantidad=(EditText)v.findViewById(R.id.id_detalle_cantidad);
               img_delete=(ImageView)v.findViewById(R.id.id_detalle_remove);
@@ -78,6 +78,8 @@ ViewGroup viewgroup;
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
         final DetalleEntity item;
         final TextView tvsubtotal;
+        final EditText tvCantidad;
+        final EditText tvPrecio;
             item = items.get(i);
             viewHolder.nombre.setText(item.getCadesc());
             viewHolder.img_delete.setTag(item);
@@ -86,6 +88,8 @@ ViewGroup viewgroup;
             viewHolder.cantidad.setText(""+item.getObpcant());
             viewHolder.cantidad.setTag(item);
              tvsubtotal=viewHolder.subtotal;
+        tvCantidad=viewHolder.cantidad;
+        tvPrecio=viewHolder.price;
             if (i== items.size()-1){
                 viewHolder.cantidad.requestFocus();
             }
@@ -99,7 +103,7 @@ ViewGroup viewgroup;
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     int pos =ObtenerPosicionElemento(item);
                     if (pos>=0){
-                        mView.ModifyItem(pos,s.toString(),item,tvsubtotal);
+                        mView.ModifyItem(pos,s.toString(),item,tvsubtotal,tvCantidad);
                     }
 
 
@@ -110,6 +114,27 @@ ViewGroup viewgroup;
                  int i=0;
                 }
             });
+
+            viewHolder.price.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    int pos =ObtenerPosicionElemento(item);
+                    if (pos>=0){
+                        mView.ModifyItemPrecio(pos,charSequence.toString(),item,tvsubtotal,tvPrecio);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
             viewHolder.img_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

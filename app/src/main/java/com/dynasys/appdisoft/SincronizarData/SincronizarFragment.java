@@ -6,11 +6,14 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -29,6 +32,8 @@ import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
+import com.dynasys.appdisoft.Login.DB.StockListViewModel;
+import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.LoginMvp;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.R;
@@ -39,6 +44,11 @@ import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.dynasys.appdisoft.SincronizarData.Presentacion.SincronizarMvp;
 import com.dynasys.appdisoft.SincronizarData.Presentacion.SincronizarPresenter;
 import com.google.common.base.Preconditions;
+import com.labters.lottiealertdialoglibrary.ClickListener;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -57,7 +67,8 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
     private ProductosListViewModel viewModelProducto;
     private PedidoListViewModel viewModelPedidos;
     private DetalleListViewModel viewModelDetalle;
-    private ProgressDialog progresdialog;
+    private StockListViewModel viewModelStock;
+    LottieAlertDialog alertDialog;
     public SincronizarFragment() {
         // Required empty public constructor
     }
@@ -89,9 +100,10 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
         viewModelProducto = ViewModelProviders.of(getActivity()).get(ProductosListViewModel.class);
         viewModelPedidos = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
+        viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
       /*  NoteEntity note = new NoteEntity(inputNote.getText().toString());
         viewModel.insertNote(note);*/
-        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle);
+        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle,viewModelStock);
 checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -112,7 +124,13 @@ checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(
     }
         return rootView;
     }
-public void OnclickButton(){
+
+    public void showDialogs() {
+        ShowDialogSincronizando();
+        alertDialog.show();
+    }
+
+    public void OnclickButton(){
         btnSincronizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,9 +139,9 @@ public void OnclickButton(){
                       ShowMessageResult("Sin Conexión. Por favor conectarse a una red");
                       return;
                   }else{
-                      progresdialog.show();
+                      showDialogs();
+                      new ChecarNotificaciones().execute();
 
-                      mSincronizarPresenter.GuadarDatos(checkProducto.isChecked() ,checkPrecio.isChecked(),checkCliente.isChecked(),checkPedidos.isChecked());
                   }
 
               }else{
@@ -151,21 +169,28 @@ public boolean ValidarcheckSeleccionado(){
 
     @Override
     public void ShowMessageResult(String message) {
-        if (progresdialog.isShowing()){
-            progresdialog.dismiss();
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
         }
-        Snackbar snackbar= Snackbar.make(checkPrecio, message, Snackbar.LENGTH_LONG);
-        View snackbar_view=snackbar.getView();
-        TextView snackbar_text=(TextView)snackbar_view.findViewById(android.support.design.R.id.snackbar_text);
-        snackbar_text.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ic_iinfo,0);
-        snackbar_text.setGravity(Gravity.CENTER);
-        snackbar.show();
+        alertDialog=new LottieAlertDialog.Builder(getContext(),DialogTypes.TYPE_WARNING)
+                .setTitle("Advertencia")
+                .setDescription(message)
+                .setPositiveText("Aceptar")
+                .setPositiveButtonColor(Color.parseColor("#008ebe"))
+                .setPositiveTextColor(Color.parseColor("#ffffff"))
+                .setPositiveListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        lottieAlertDialog.dismiss();
+                    }
+                }).build();
+        alertDialog.show();
     }
 
     @Override
     public void ShowSyncroMgs(String message) {
-        if (progresdialog.isShowing()){
-            progresdialog.dismiss();
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
         }
         Snackbar snackbar= Snackbar.make(checkPrecio, message, Snackbar.LENGTH_LONG);
         View snackbar_view=snackbar.getView();
@@ -176,7 +201,7 @@ public boolean ValidarcheckSeleccionado(){
 
     }
     private void ShowDialogSincronizando(){
-        progresdialog=new ProgressDialog(getContext());
+       /* progresdialog=new ProgressDialog(getContext());
         progresdialog.setCancelable(false);
         progresdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progresdialog.setIndeterminate(false);
@@ -184,7 +209,21 @@ public boolean ValidarcheckSeleccionado(){
         drawable.setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent),
                 PorterDuff.Mode.SRC_IN);
         progresdialog.setIndeterminateDrawable(drawable);
-        progresdialog.setMessage("Obteniendo Datos .....");
+        progresdialog.setMessage("Obteniendo Datos .....");*/
+
+        try
+        {
+
+            alertDialog = new LottieAlertDialog.Builder(getContext(), DialogTypes.TYPE_LOADING).setTitle("Sincronizacion")
+                    .setDescription("Obteniendo Datos .....")
+                    .build();
+
+            alertDialog.setCancelable(false);
+        }catch (Error e){
+
+            String d=e.getMessage();
+
+        }
 
     }
     private boolean isOnline() {
@@ -193,5 +232,24 @@ public boolean ValidarcheckSeleccionado(){
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
+    }
+
+    private class ChecarNotificaciones extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //NUESTRO CODIGO
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    mSincronizarPresenter.GuadarDatos(checkProducto.isChecked() ,checkPrecio.isChecked(),checkCliente.isChecked(),checkPedidos.isChecked());
+                }
+            }, 1 * 2000);
+            super.onPostExecute(result);
+        }
     }
 }

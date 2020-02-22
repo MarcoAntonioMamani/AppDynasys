@@ -1,13 +1,17 @@
 package com.dynasys.appdisoft.Pedidos.CreatePedidos;
 
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -21,6 +25,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -44,6 +49,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
+import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
@@ -54,6 +60,11 @@ import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Preconditions;
+import com.labters.lottiealertdialoglibrary.ClickListener;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -78,7 +89,6 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private AutoCompleteTextView aProducto;
     private AlertDialog dialogs,dialogQuestion;
     private Button mbutton_guardar,mbutton_cancelar;
-    private ProgressDialog progresdialog;
     private ImageButton ObFecha;
     private ClientesListViewModel viewModelCliente;
     private ProductosListViewModel viewModelProducto;
@@ -99,6 +109,8 @@ Date mFecha;
 String Hora;
 Double mTotal=0.0;
    int tipoActividad=0;
+
+    LottieAlertDialog alertDialog;
 private PedidoEntity mPedido;
     private NestedScrollView mscroll;
     public CreatePedidoFragment() {
@@ -173,56 +185,15 @@ private PedidoEntity mPedido;
             }
         });
     }
+    public void showDialogs() {
+        ShowDialogSincronizando();
+        alertDialog.show();
+    }
     public void GuardarPedido(){
         if (mDetalleItem.size()>0){
-            /*this.oanumi = oanumi;
-            this.oafdoc = oafdoc;
-            this.oahora = oahora;
-            this.oaccli = oaccli;
-            this.cliente = cliente;
-            this.oarepa = oarepa;
-            this.oaest = oaest;
-            this.oaobs = oaobs;
-            this.latitud = latitud;
-            this.longitud = longitud;
-            this.total = total;
-            this.tipocobro = tipocobro;
-            this.estado = estado;
-            this.codigogenerado = codigogenerad*/
-            progresdialog.show();
-            Calendar c2 = Calendar.getInstance();
-            final int hora = c2.get(Calendar.HOUR);
-            final int minuto = c2.get(Calendar.MINUTE);
-            final int Segundo = c2.get(Calendar.SECOND);
-            mPedido=new PedidoEntity();
-            mPedido.setOafdoc(mFecha);
-            mPedido.setOahora(""+hora+":"+minuto);
-            if (mCliente.getNumi()==0) {
-                mPedido.setOaccli("" + mCliente.getCodigogenerado());
-            }else{
-                mPedido.setOaccli(""+mCliente.getNumi());
-            }
+            showDialogs();
+            new ChecarNotificaciones().execute();
 
-            mPedido.setCliente(mCliente.getNamecliente());
-            int idRepartidor= DataPreferences.getPrefInt("idrepartidor",getContext());
-            mPedido.setOarepa(idRepartidor);
-            mPedido.setOaest(2);
-            mPedido.setOaobs(tvObservacion.getText().toString());
-            mPedido.setLatitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLatitude());
-            mPedido.setLongitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLongitude());
-            mPedido.setTotal(_prObtenerTotal());
-            mPedido.setTipocobro(1);
-            mPedido.setEstado(0);
-            int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
-            //cliente.setCodigogenerado();
-            DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
-            String code = df.format(Calendar.getInstance().getTime());
-            code=""+codigoRepartidor+","+code;
-            mPedido.setCodigogenerado(code);
-            mPedido.setOanumi(code);
-            _prModificarNumi(code);
-
-            mCreatePedidoPresenter.GuardarDatos(mDetalleItem,mPedido);
 
         }else{
             ShowMessageResult("No Existen Productos Seleccionados");
@@ -336,31 +307,60 @@ private PedidoEntity mPedido;
                         this.obpbase = obpbase;
                         this.obptot = obptot;
                         this.estado = estado;*/
-                       if (item.getStock()>0){
-                           DetalleEntity detalle=new DetalleEntity();
-                           detalle.setObnumi("-1");
-                           detalle.setObcprod(item.getNumi());
-                           detalle.setCadesc(item.getProducto());
-                           detalle.setObpcant(1.0);
-                           detalle.setObpbase(item.getPrecio());
-                           detalle.setObptot(item.getPrecio());
-                           detalle.setEstado(false);
+                        int stock= DataPreferences.getPrefInt("stock",context);
+                        if (stock>0){
+                            if (item.getStock()>0){
+                                DetalleEntity detalle=new DetalleEntity();
+                                detalle.setObnumi("-1");
+                                detalle.setObcprod(item.getNumi());
+                                detalle.setCadesc(item.getProducto());
+                                detalle.setObpcant(1.0);
+                                detalle.setObpbase(item.getPrecio());
+                                detalle.setObptot(item.getPrecio());
+                                detalle.setEstado(false);
+                                detalle.setStock(item.getStock());
+
+                                mDetalleItem.add(detalle);
 
 
-                           mDetalleItem.add(detalle);
+                                //mDetalleAdapter.setFilter(mDetalleItem);
+                                Reconstruir();
+                                calcularTotal();
+                                aProducto .setText("");
+                                aProducto.clearFocus();
+                                mscroll.fullScroll(View.FOCUS_DOWN);
+                                productoAdapter.setLista(GetActualProducts());
+                                productoAdapter.notifyDataSetChanged();
+                            }else{
+                                hideKeyboard();
+
+                                aProducto.setText("");
+                                ShowMessageResult("No Existe Stock para seleccionar el producto");
+                            }
+                        }else{
+                            DetalleEntity detalle=new DetalleEntity();
+                            detalle.setObnumi("-1");
+                            detalle.setObcprod(item.getNumi());
+                            detalle.setCadesc(item.getProducto());
+                            detalle.setObpcant(1.0);
+                            detalle.setObpbase(item.getPrecio());
+                            detalle.setObptot(item.getPrecio());
+                            detalle.setEstado(false);
+                            detalle.setStock(0);
+
+                            mDetalleItem.add(detalle);
 
 
-                           //mDetalleAdapter.setFilter(mDetalleItem);
-                           Reconstruir();
-                           calcularTotal();
-                           aProducto .setText("");
-                           aProducto.clearFocus();
-                           mscroll.fullScroll(View.FOCUS_DOWN);
-                           productoAdapter.setLista(GetActualProducts());
-                           productoAdapter.notifyDataSetChanged();
-                       }else{
-                           ShowMessageResult("No Existe Stock para seleccionar el producto");
-                       }
+                            //mDetalleAdapter.setFilter(mDetalleItem);
+                            Reconstruir();
+                            calcularTotal();
+                            aProducto .setText("");
+                            aProducto.clearFocus();
+                            mscroll.fullScroll(View.FOCUS_DOWN);
+                            productoAdapter.setLista(GetActualProducts());
+                            productoAdapter.notifyDataSetChanged();
+                        }
+
 
                     }
 
@@ -369,7 +369,12 @@ private PedidoEntity mPedido;
             });
         }
     }
-
+    private  void hideKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
+        }
+    }
     public void Reconstruir(){
         mDetalleAdapter=null;
         mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this);
@@ -381,19 +386,71 @@ private PedidoEntity mPedido;
     }
 
     @Override
-    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal) {
+    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad) {
         double cantidad=0.0;
         if (isDouble(value)){
             cantidad=Double.parseDouble(value);
         }
         int posicion =obtenerPosicionItem(item);
-        if (posicion>=0){
-            DetalleEntity detalle= mDetalleItem.get(posicion);
-            detalle.setObpcant(cantidad);
-            detalle.setObptot(cantidad*detalle.getObpbase());
-            tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
-            calcularTotal();
+        int stock= DataPreferences.getPrefInt("stock",context);
+        if (stock>0){
+            if (posicion>=0){
+                if(cantidad> item.getStock()){
+                    hideKeyboard();
+                   // getActivity().onBackPressed();
+                    ShowMessageResult("La cantidad es Superior al Stock Disponible = "+item.getStock());
+                    cantidad=1;
+                    eCantidad.setText("1");
+                    DetalleEntity detalle= mDetalleItem.get(posicion);
+                    detalle.setObpcant(cantidad);
+                    detalle.setObptot(cantidad*detalle.getObpbase());
+                    tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                    calcularTotal();
+                }else{
+                    DetalleEntity detalle= mDetalleItem.get(posicion);
+                    detalle.setObpcant(cantidad);
+                    detalle.setObptot(cantidad*detalle.getObpbase());
+                    tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                    calcularTotal();
+                }
+
+            }
+        }else{
+            if (posicion>=0){
+                DetalleEntity detalle= mDetalleItem.get(posicion);
+                detalle.setObpcant(cantidad);
+                detalle.setObptot(cantidad*detalle.getObpbase());
+                tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                calcularTotal();
+            }
         }
+
+    }
+
+    @Override
+    public void ModifyItemPrecio(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText ePrecio) {
+        double precio=0.0;
+        if (isDouble(value)){
+            precio=Double.parseDouble(value);
+        }
+        int posicion =obtenerPosicionItem(item);
+        int stock= DataPreferences.getPrefInt("stock",context);
+
+            if (posicion>=0 && precio>0){
+                DetalleEntity detalle= mDetalleItem.get(posicion);
+                detalle.setObpbase(precio);
+                detalle.setObptot(precio*detalle.getObpcant());
+                tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));
+                calcularTotal();
+
+            }else{
+                DetalleEntity detalle= mDetalleItem.get(posicion);
+                detalle.setObpbase(precio);
+                detalle.setObptot(0);
+                tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));
+                calcularTotal();
+            }
+
     }
 
     @Override
@@ -507,20 +564,29 @@ private PedidoEntity mPedido;
 
     @Override
     public void ShowMessageResult(String message) {
-
-        Snackbar snackbar= Snackbar.make(ObFecha, message, Snackbar.LENGTH_LONG);
-        View snackbar_view=snackbar.getView();
-        TextView snackbar_text=(TextView)snackbar_view.findViewById(android.support.design.R.id.snackbar_text);
-        snackbar_text.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ic_iinfo,0);
-        snackbar_text.setGravity(Gravity.CENTER);
-        snackbar.show();
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
+        }
+        alertDialog=new LottieAlertDialog.Builder(getContext(),DialogTypes.TYPE_WARNING)
+                .setTitle("Advertencia")
+                .setDescription(message)
+                .setPositiveText("Aceptar")
+                .setPositiveButtonColor(Color.parseColor("#008ebe"))
+                .setPositiveTextColor(Color.parseColor("#ffffff"))
+                .setPositiveListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        lottieAlertDialog.dismiss();
+                    }
+                }).build();
+        alertDialog.show();
     }
 
     @Override
     public void showSaveResultOption(int codigo, String id, String mensaje) {
 
-        if (progresdialog.isShowing()){
-            progresdialog.dismiss();
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
         }
 
         switch (codigo){
@@ -584,7 +650,7 @@ private PedidoEntity mPedido;
         return builder.create();
     }
     private void ShowDialogSincronizando(){
-        progresdialog=new ProgressDialog(getContext());
+      /*  progresdialog=new ProgressDialog(getContext());
         progresdialog.setCancelable(false);
         progresdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progresdialog.setIndeterminate(false);
@@ -592,7 +658,70 @@ private PedidoEntity mPedido;
         drawable.setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent),
                 PorterDuff.Mode.SRC_IN);
         progresdialog.setIndeterminateDrawable(drawable);
-        progresdialog.setMessage("Guardando Pedido .....");
+        progresdialog.setMessage("Guardando Pedido .....");*/
+        try
+        {
 
+            alertDialog = new LottieAlertDialog.Builder(getContext(), DialogTypes.TYPE_LOADING).setTitle("Pedidos")
+                    .setDescription("Guardando Pedido ...")
+                    .build();
+
+            alertDialog.setCancelable(false);
+        }catch (Error e){
+
+            String d=e.getMessage();
+
+        }
+    }
+    private class ChecarNotificaciones extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //NUESTRO CODIGO
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    Calendar c2 = Calendar.getInstance();
+                    final int hora = c2.get(Calendar.HOUR);
+                    final int minuto = c2.get(Calendar.MINUTE);
+                    final int Segundo = c2.get(Calendar.SECOND);
+                    mPedido=new PedidoEntity();
+                    mPedido.setOafdoc(mFecha);
+                    mPedido.setOahora(""+hora+":"+minuto);
+                    if (mCliente.getNumi()==0) {
+                        mPedido.setOaccli("" + mCliente.getCodigogenerado());
+                    }else{
+                        mPedido.setOaccli(""+mCliente.getNumi());
+                    }
+
+                    mPedido.setCliente(mCliente.getNamecliente());
+                    int idRepartidor= DataPreferences.getPrefInt("idrepartidor",getContext());
+                    mPedido.setOarepa(idRepartidor);
+                    mPedido.setOaest(2);
+                    mPedido.setOaobs(tvObservacion.getText().toString());
+                    mPedido.setLatitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLatitude());
+                    mPedido.setLongitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLongitude());
+                    mPedido.setTotal(_prObtenerTotal());
+                    mPedido.setTipocobro(1);
+                    mPedido.setTotalcredito(0.0);
+                    mPedido.setEstado(0);
+                    int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
+                    //cliente.setCodigogenerado();
+                    DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
+                    String code = df.format(Calendar.getInstance().getTime());
+                    code=""+codigoRepartidor+","+code+"V2.2";
+                    mPedido.setCodigogenerado(code);
+                    mPedido.setOanumi(code);
+                    _prModificarNumi(code);
+
+                    mCreatePedidoPresenter.GuardarDatos(mDetalleItem,mPedido);
+                }
+            }, 1 * 2000);
+            super.onPostExecute(result);
+        }
     }
 }

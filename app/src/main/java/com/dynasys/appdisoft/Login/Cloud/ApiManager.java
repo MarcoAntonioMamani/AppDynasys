@@ -9,6 +9,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
@@ -85,6 +86,11 @@ private static Context mcontext;
     }
     public void ObtenerClientes( String idRepartidor,Callback<List<ClienteEntity>> callback) {
         Call<List<ClienteEntity>> userCall = service.ObtenerClientes(idRepartidor);
+        userCall.enqueue(callback);
+    }
+
+    public void ObtenerZonas( String idRepartidor,Callback<List<ZonasEntity>> callback) {
+        Call<List<ZonasEntity>> userCall = service.ObtenerZonas(idRepartidor);
         userCall.enqueue(callback);
     }
     public void ObtenerPrecios( Callback<List<PrecioEntity>> callback) {

@@ -34,42 +34,18 @@ public class PedidoEntity implements Comparable<PedidoEntity> {
     Double total;
     @ColumnInfo(name = "tipocobro")
     int tipocobro;
+    @ColumnInfo(name = "totalcredito")
+    Double totalcredito;
     @ColumnInfo(name = "estado")
     int estado;
     @ColumnInfo(name = "codigogenerado")
     String codigogenerado;
     @ColumnInfo(name = "estadoupdate")
     int estadoUpdate;
+    
 public PedidoEntity(){
 
 }
-
-    public PedidoEntity(int id, String oanumi, Date oafdoc, String oahora, String oaccli, String cliente, int oarepa, int oaest, String oaobs, Double latitud, Double longitud, Double total, int tipocobro, int estado, String codigogenerado, int estadoUpdate) {
-        this.id = id;
-        this.oanumi = oanumi;
-        this.oafdoc = oafdoc;
-        this.oahora = oahora;
-        this.oaccli = oaccli;
-        this.cliente = cliente;
-        this.oarepa = oarepa;
-        this.oaest = oaest;
-        this.oaobs = oaobs;
-        this.latitud = latitud;
-        this.longitud = longitud;
-        this.total = total;
-        this.tipocobro = tipocobro;
-        this.estado = estado;
-        this.codigogenerado = codigogenerado;
-        this.estadoUpdate = estadoUpdate;
-    }
-
-    public int getEstadoUpdate() {
-        return estadoUpdate;
-    }
-
-    public void setEstadoUpdate(int estadoUpdate) {
-        this.estadoUpdate = estadoUpdate;
-    }
 
     public int getId() {
         return id;
@@ -175,6 +151,14 @@ public PedidoEntity(){
         this.tipocobro = tipocobro;
     }
 
+    public Double getTotalcredito() {
+        return totalcredito;
+    }
+
+    public void setTotalcredito(Double totalcredito) {
+        this.totalcredito = totalcredito;
+    }
+
     public int getEstado() {
         return estado;
     }
@@ -189,6 +173,14 @@ public PedidoEntity(){
 
     public void setCodigogenerado(String codigogenerado) {
         this.codigogenerado = codigogenerado;
+    }
+
+    public int getEstadoUpdate() {
+        return estadoUpdate;
+    }
+
+    public void setEstadoUpdate(int estadoUpdate) {
+        this.estadoUpdate = estadoUpdate;
     }
 
     @Override

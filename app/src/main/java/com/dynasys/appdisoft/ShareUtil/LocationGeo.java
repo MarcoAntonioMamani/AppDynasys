@@ -123,9 +123,15 @@ public static void PedirPermisoApp(){
                 // for ActivityCompat#requestPermissions for more details.
                 return;
             }
-           locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTimeMillis,
-                    minDistanceMeters, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTimeMillis, minDistanceMeters,  locationListener);
+            try{
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTimeMillis,
+                        minDistanceMeters, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTimeMillis, minDistanceMeters,  locationListener);
+            }catch (Exception e){
+
+            }
+
+
 
     }
 

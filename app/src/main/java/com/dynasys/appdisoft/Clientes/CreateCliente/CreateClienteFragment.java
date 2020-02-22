@@ -7,11 +7,14 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
@@ -25,8 +28,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,8 +42,11 @@ import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.ZonaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
+import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
@@ -55,6 +64,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.labters.lottiealertdialoglibrary.ClickListener;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -83,13 +97,17 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
     private TextInputLayout tilDireccion;
     private TextInputLayout tilNit;
     private  ClientesListViewModel viewModel;
+    private ZonaListViewModel viewModelZona;
     private PedidoListViewModel viewModelPedidos;
-    private ProgressDialog progresdialog;
+    private ZonasEntity zonaSelected;
+    private List<ZonasEntity> listZonas;
     private Context mContext;
     ClienteEntity mCliente;
+    private Spinner listaSpinnerZona;
     private String M_Uii="";
     private int tipo=0; //// TIpo=0 = Nuevo Cliente ------------------  Tipo = 1 Modificacion Cliente
     private int  isUpdate=0;
+    LottieAlertDialog alertDialog;
     public CreateClienteFragment() {
         // Required empty public constructor
     }
@@ -126,13 +144,14 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
        btngps=(Button)view.findViewById(R.id.id_btn_ObtenerGps);
         btnAtras=(Button)view.findViewById(R.id.id_btn_cancelar);
         btnGuardar=(Button)view.findViewById(R.id.id_btn_guardar);
+        listaSpinnerZona=(Spinner)view.findViewById(R.id.id_zona);
         tilNombre = (TextInputLayout) view.findViewById(R.id.til_nombre);
         tilTelefono = (TextInputLayout) view.findViewById(R.id.til_telefono);
         tilDireccion = (TextInputLayout) view.findViewById(R.id.til_direccion);
         tilNit = (TextInputLayout) view.findViewById(R.id.til_nit);
         viewModel = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
         viewModelPedidos=ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
-
+        viewModelZona =ViewModelProviders.of(getActivity()).get(ZonaListViewModel.class);
         mSupportMapFragment = (MySupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if(mSupportMapFragment != null)
             mSupportMapFragment.setListener(new MySupportMapFragment.OnTouchListener() {
@@ -148,7 +167,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
         OnClickGps();
         onClickAtras();
         onClickGrabar();
-        ShowDialogSincronizando();
+
         LocationGeo.getInstance(mContext,getActivity());
         LocationGeo.iniciarGPS();
 
@@ -163,16 +182,49 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
             tilNit.getEditText().setEnabled(false);
             tilTelefono.getEditText().setEnabled(false);
         }
+
+        listaSpinnerZona.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if (pos>=0 && listZonas.size()>0){
+                    zonaSelected = listZonas.get(pos);
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         return view;
     }
 
     public void _prCargarDatos(){
-        if (tipo!=0 && mCliente!=null){
-            tilNombre.getEditText().setText(mCliente.getNamecliente());
-            tilNit.getEditText().setText(mCliente.getNit());
-            tilDireccion.getEditText().setText(mCliente.getDireccion());
-            tilTelefono.getEditText().setText(mCliente.getTelefono());
+
+        int idRepartidor=DataPreferences.getPrefInt("idrepartidor",mContext);
+        try {
+            listZonas=viewModelZona.getZonaByRepartidor(idRepartidor);
+            ArrayAdapter<ZonasEntity> adapter =new ArrayAdapter<ZonasEntity>(getContext(), android.R.layout.simple_spinner_item, listZonas);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            listaSpinnerZona.setAdapter(adapter);
+
+            if (tipo!=0 && mCliente!=null){
+                tilNombre.getEditText().setText(mCliente.getNamecliente());
+                tilNit.getEditText().setText(mCliente.getNit());
+                tilDireccion.getEditText().setText(mCliente.getDireccion());
+                tilTelefono.getEditText().setText(mCliente.getTelefono());
+                listaSpinnerZona.setSelection(ObtenerPosicionListaZona(mCliente.getCczona()));
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+    }
+    public int ObtenerPosicionListaZona(int idZona){
+
+        for (int i = 0; i < listZonas.size(); i++) {
+            if (listZonas.get(i).getLanumi()==idZona){
+                return i;
+            }
+        }
+        return -1;
     }
 public void onClickAtras(){
     btnAtras.setOnClickListener(new View.OnClickListener() {
@@ -192,67 +244,9 @@ public void onClickAtras(){
 
 
                     if (validarDatos()){
-                        M_Uii= UUID.randomUUID().toString();
-                        progresdialog.show();
-                        if (tipo==0){
-                            ClienteEntity cliente=new ClienteEntity();
-                            int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
-                            //cliente.setCodigogenerado();
-                            DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
-                            String code = df.format(Calendar.getInstance().getTime());
-                            code=""+codigoRepartidor+","+code;
-                            cliente.setCodigogenerado(code);
-                            cliente.setNumi(0);
-                            cliente.setFechaingreso(Calendar.getInstance().getTime());
-                            cliente.setDireccion(tilDireccion.getEditText().getText().toString());
-                            cliente.setNamecliente(tilNombre.getEditText().getText().toString());
-                            cliente.setNit(tilNit.getEditText().getText().toString());
-                            cliente.setTelefono(tilTelefono.getEditText().getText().toString());
-                            cliente.setLatitud(mapa.getCameraPosition().target.latitude);
-                            cliente.setLongitud(mapa.getCameraPosition().target.longitude);
-                            int idzona=DataPreferences.getPrefInt("zona",getContext());
-                            cliente.setCccat(2);
-                            cliente.setCczona(idzona);
-                            cliente.setEstado(0);
-                            GuardarCliente(cliente);
-                        }else{
-                            mCliente.setDireccion(tilDireccion.getEditText().getText().toString());
-                            mCliente.setNamecliente(tilNombre.getEditText().getText().toString());
-                            mCliente.setNit(tilNit.getEditText().getText().toString());
-                            mCliente.setTelefono(tilTelefono.getEditText().getText().toString());
-                            mCliente.setLatitud(mapa.getCameraPosition().target.latitude);
-                            mCliente.setLongitud(mapa.getCameraPosition().target.longitude);
-                            mCliente.setEstado(2);
-                            viewModel.updateCliente(mCliente);
-                            try {
-                                List<PedidoEntity> listPedido=viewModelPedidos.getPedidobyCliente(mCliente.getCodigogenerado());
-                                for (int i = 0; i < listPedido.size(); i++) {
-                                    PedidoEntity pedido=listPedido.get(i);
-                                    pedido.setCliente(mCliente.getNamecliente());
-                                    viewModelPedidos.updatePedido(pedido);
-                                }
 
-                            } catch (ExecutionException e) {
-                                // e.printStackTrace();
-                                showSaveResultOption(2,""+mCliente.getNumi(),"");
-                                if (progresdialog.isShowing()){
-                                    progresdialog.dismiss();
-                                }
-                            } catch (InterruptedException e) {
-                                //e.printStackTrace();
-                                showSaveResultOption(2,""+mCliente.getNumi(),"");
-                                if (progresdialog.isShowing()){
-                                    progresdialog.dismiss();
-                                }
-                            }
-
-
-                            showSaveResultOption(2,""+mCliente.getNumi(),"");
-                            if (progresdialog.isShowing()){
-                                progresdialog.dismiss();
-                            }
-                        }
-
+                        showDialogs();
+                        new ChecarNotificaciones().execute();
                     }else{
                         M_Uii="";
                     }
@@ -262,10 +256,15 @@ public void onClickAtras(){
             }
         });
     }
+
+    public void showDialogs() {
+        ShowDialogSincronizando();
+        alertDialog.show();
+    }
     public void showSaveResultOption(int codigo, String id, String mensaje) {
 
-        if (progresdialog.isShowing()){
-            progresdialog.dismiss();
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
         }
 
         switch (codigo){
@@ -292,6 +291,10 @@ public void onClickAtras(){
     }
 
     public AlertDialog showCustomDialog(String Contenido, Boolean flag) {
+
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
+        }
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
 
         LayoutInflater inflater = this.getLayoutInflater();
@@ -358,8 +361,8 @@ public void onClickAtras(){
                                 mcliente.setEstado(1);
                                 mcliente.setCodigogenerado(responseUser.getToken());
                                 viewModel.updateCliente(mcliente);
-                                if (progresdialog.isShowing()){
-                                    progresdialog.dismiss();
+                                if (alertDialog.isShowing()){
+                                    alertDialog.dismiss();
                                 }
 
 
@@ -389,12 +392,12 @@ public void onClickAtras(){
                             Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
                             getContext().startService(intent);
                         }
-                        if (progresdialog.isShowing()){
-                            progresdialog.dismiss();
+                        if (alertDialog.isShowing()){
+                            alertDialog.dismiss();
                         }
                     }
-                    if (progresdialog.isShowing()){
-                        progresdialog.dismiss();
+                    if (alertDialog.isShowing()){
+                        alertDialog.dismiss();
                     }
 
                     if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
@@ -406,8 +409,8 @@ public void onClickAtras(){
 
                 @Override
                 public void onFailure(Call<ResponseLogin> call, Throwable t) {
-                    if (progresdialog.isShowing()){
-                        progresdialog.dismiss();
+                    if (alertDialog.isShowing()){
+                        alertDialog.dismiss();
                     }
 
                     if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
@@ -422,8 +425,8 @@ public void onClickAtras(){
 
 
         }catch (Exception e){
-            if (progresdialog.isShowing()){
-                progresdialog.dismiss();
+            if (alertDialog.isShowing()){
+                alertDialog.dismiss();
             }
             if (!ShareMethods.IsServiceRunning(getContext(),ServiceSincronizacion.class)){
                 UtilShare.mActivity=getActivity();
@@ -591,15 +594,20 @@ return false;
         return builder.create();
     }
     private void RetornarPrincipal(){
-        MainActivity fca = ((MainActivity) getActivity());
-        fca.removeAllFragments();
+        try{
+            MainActivity fca = ((MainActivity) getActivity());
+            fca.removeAllFragments();
 
-        Fragment frag = new ListClientesFragment();
-        //fca.switchFragment(frag,"LISTAR_CLIENTE");
-        fca.CambiarFragment(frag, Constantes.TAG_CLIENTES);
+            Fragment frag = new ListClientesFragment();
+            //fca.switchFragment(frag,"LISTAR_CLIENTE");
+            fca.CambiarFragment(frag, Constantes.TAG_CLIENTES);
+        }catch(Exception e){
+
+        }
+
     }
     private void ShowDialogSincronizando(){
-        progresdialog=new ProgressDialog(getContext());
+       /* progresdialog=new ProgressDialog(getContext());
         progresdialog.setCancelable(false);
         progresdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progresdialog.setIndeterminate(false);
@@ -607,15 +615,123 @@ return false;
         drawable.setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent),
                 PorterDuff.Mode.SRC_IN);
         progresdialog.setIndeterminateDrawable(drawable);
-        progresdialog.setMessage("Guardando Cliente .....");
+        progresdialog.setMessage("Guardando Cliente .....");*/
+
+        try
+        {
+
+            alertDialog = new LottieAlertDialog.Builder(getContext(), DialogTypes.TYPE_LOADING).setTitle("Cliente")
+                    .setDescription("Guardando Cliente .....")
+                    .build();
+
+            alertDialog.setCancelable(false);
+        }catch (Error e){
+
+            String d=e.getMessage();
+
+        }
 
     }
     public void ShowMessageResult(String message) {
-        Snackbar snackbar= Snackbar.make(btnGuardar, message, Snackbar.LENGTH_LONG);
-        View snackbar_view=snackbar.getView();
-        TextView snackbar_text=(TextView)snackbar_view.findViewById(android.support.design.R.id.snackbar_text);
-        snackbar_text.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ic_iinfo,0);
-        snackbar_text.setGravity(Gravity.CENTER);
-        snackbar.show();
+
+
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
+        }
+        alertDialog=new LottieAlertDialog.Builder(getContext(),DialogTypes.TYPE_WARNING)
+                .setTitle("Advertencia")
+                .setDescription(message)
+                .setPositiveText("Aceptar")
+                .setPositiveButtonColor(Color.parseColor("#008ebe"))
+                .setPositiveTextColor(Color.parseColor("#ffffff"))
+                .setPositiveListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        lottieAlertDialog.dismiss();
+                    }
+                }).build();
+        alertDialog.show();
+    }
+
+    private class ChecarNotificaciones extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //NUESTRO CODIGO
+            new Handler().postDelayed(new Runnable() {
+                public void run()
+
+                {
+                    M_Uii= UUID.randomUUID().toString();
+
+                    if (tipo==0){
+                        ClienteEntity cliente=new ClienteEntity();
+                        int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
+                        //cliente.setCodigogenerado();
+                        DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
+                        String code = df.format(Calendar.getInstance().getTime());
+                        code=""+codigoRepartidor+","+code;
+                        cliente.setCodigogenerado(code+"V2.2");
+                        cliente.setNumi(0);
+                        cliente.setFechaingreso(Calendar.getInstance().getTime());
+                        cliente.setDireccion(tilDireccion.getEditText().getText().toString());
+                        cliente.setNamecliente(tilNombre.getEditText().getText().toString());
+                        cliente.setNit(tilNit.getEditText().getText().toString());
+                        cliente.setTelefono(tilTelefono.getEditText().getText().toString());
+                        cliente.setLatitud(mapa.getCameraPosition().target.latitude);
+                        cliente.setLongitud(mapa.getCameraPosition().target.longitude);
+                        int idzona=DataPreferences.getPrefInt("zona",getContext());
+                        cliente.setCccat(2);
+                        cliente.setCczona(zonaSelected.getLanumi());
+                        cliente.setEstado(0);
+                        GuardarCliente(cliente);
+                    }else{
+                        mCliente.setDireccion(tilDireccion.getEditText().getText().toString());
+                        mCliente.setNamecliente(tilNombre.getEditText().getText().toString());
+                        mCliente.setNit(tilNit.getEditText().getText().toString());
+                        mCliente.setTelefono(tilTelefono.getEditText().getText().toString());
+                        mCliente.setLatitud(mapa.getCameraPosition().target.latitude);
+                        mCliente.setLongitud(mapa.getCameraPosition().target.longitude);
+                        mCliente.setEstado(2);
+                        mCliente.setCczona(zonaSelected.getLanumi());
+                        viewModel.updateCliente(mCliente);
+                        try {
+                            List<PedidoEntity> listPedido=viewModelPedidos.getPedidobyCliente(mCliente.getCodigogenerado());
+                            for (int i = 0; i < listPedido.size(); i++) {
+                                PedidoEntity pedido=listPedido.get(i);
+                                pedido.setCliente(mCliente.getNamecliente());
+                                viewModelPedidos.updatePedido(pedido);
+                            }
+
+                        } catch (ExecutionException e) {
+                            // e.printStackTrace();
+                            showSaveResultOption(2,""+mCliente.getNumi(),"");
+                            if (alertDialog.isShowing()){
+                                alertDialog.dismiss();
+                            }
+                        } catch (InterruptedException e) {
+                            //e.printStackTrace();
+                            showSaveResultOption(2,""+mCliente.getNumi(),"");
+                            if (alertDialog.isShowing()){
+                                alertDialog.dismiss();
+                            }
+                        }
+
+
+                        showSaveResultOption(2,""+mCliente.getNumi(),"");
+                        if (alertDialog.isShowing()){
+                            alertDialog.dismiss();
+                        }
+                    }
+
+                }
+            }, 1 * 2000);
+            super.onPostExecute(result);
+        }
     }
 }

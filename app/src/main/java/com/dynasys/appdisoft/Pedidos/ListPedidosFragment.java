@@ -7,9 +7,11 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -250,29 +252,67 @@ public void cargarClientes(){
                 try {
                     int EditPedido= DataPreferences.getPrefInt("EditarPedidos",getContext());
                     if (EditPedido==1){
+                        ClienteEntity cliente=obtenerCliente(pedido);
+
+                        if (cliente!=null){
+                            Fragment frag = new ModifyPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
+                            MainActivity fca = (MainActivity) getActivity();
+                            fca.switchFragment(frag,"VIEW_PEDIDOS");
+                        }else{
+                            ShowMessageResult("No Existe el Cliente en la zona del usuario");
+                        }
+
+                    }else{
+                        ClienteEntity cliente=obtenerCliente(pedido);
+
+                        if (cliente!=null){
+                            Fragment frag = new ViewPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
+                            MainActivity fca = (MainActivity) getActivity();
+                            fca.switchFragment(frag,"VIEW_PEDIDOS");
+                        }else{
+                            ShowMessageResult("No Existe el Cliente en la zona del usuario");
+                        }
+
+                    }
+                }catch (Exception e){
+                    ClienteEntity cliente=obtenerCliente(pedido);
+
+                    if (cliente!=null){
                         Fragment frag = new ModifyPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
                         MainActivity fca = (MainActivity) getActivity();
                         fca.switchFragment(frag,"VIEW_PEDIDOS");
                     }else{
-                        Fragment frag = new ViewPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
-                        MainActivity fca = (MainActivity) getActivity();
-                        fca.switchFragment(frag,"VIEW_PEDIDOS");
+                        ShowMessageResult("No Existe el Cliente en la zona del usuario");
                     }
-                }catch (Exception e){
-                    Fragment frag = new ModifyPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
-                    MainActivity fca = (MainActivity) getActivity();
-                    fca.switchFragment(frag,"VIEW_PEDIDOS");
+
                 }
 
 
             }else{
-                Fragment frag = new ViewPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
-                MainActivity fca = (MainActivity) getActivity();
-                fca.switchFragment(frag,"VIEW_PEDIDOS");
+                ClienteEntity cliente=obtenerCliente(pedido);
+
+                if (cliente!=null){
+                    Fragment frag = new ViewPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
+                    MainActivity fca = (MainActivity) getActivity();
+                    fca.switchFragment(frag,"VIEW_PEDIDOS");
+                }else{
+                    ShowMessageResult("No Existe el Cliente en la zona del usuario");
+                }
+
             }
 
         }
 
+    }
+
+    public void ShowMessageResult(String message) {
+
+        Snackbar snackbar= Snackbar.make(tvDesde, message, Snackbar.LENGTH_LONG);
+        View snackbar_view=snackbar.getView();
+        TextView snackbar_text=(TextView)snackbar_view.findViewById(android.support.design.R.id.snackbar_text);
+        snackbar_text.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ic_iinfo,0);
+        snackbar_text.setGravity(Gravity.CENTER);
+        snackbar.show();
     }
 public ClienteEntity obtenerCliente(PedidoEntity pedido){
     for (int i = 0; i < lisClientes.size(); i++) {
