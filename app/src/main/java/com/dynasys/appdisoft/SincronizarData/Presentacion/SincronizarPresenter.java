@@ -10,7 +10,9 @@ import android.support.v4.app.NotificationCompat;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.Bodylogin;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
+import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
@@ -39,6 +41,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
     private final ClientesListViewModel viewModel;
     private final PreciosListViewModel viewModelPrecios;
     private final ProductosListViewModel viewModelProductos;
+    private final DescuentosListViewModel viewModelDescuentos;
     private final PedidoListViewModel viewModelPedidos;
     private final DetalleListViewModel viewModelDetalles;
     private final StockListViewModel viewModelStock;
@@ -54,7 +57,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
 
     public SincronizarPresenter(SincronizarMvp.View sincronizarView, Context context, ClientesListViewModel viewModel, Activity activity, PreciosListViewModel
                                 viewModelPrecios, ProductosListViewModel viewModelProductos,PedidoListViewModel viewModelPedidos,
-                                DetalleListViewModel viewModelDetalles,StockListViewModel stock){
+                                DetalleListViewModel viewModelDetalles,StockListViewModel stock,DescuentosListViewModel descuento){
         mSincronizarview = Preconditions.checkNotNull(sincronizarView);
         mSincronizarview.setPresenter(this);
         this.viewModel=viewModel;
@@ -65,6 +68,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
         this.viewModelPedidos=viewModelPedidos;
         this.viewModelDetalles=viewModelDetalles;
         this.viewModelStock=stock;
+        this.viewModelDescuentos =descuento;
          cantidadCliente = 0;
        cantidadProducto=0;
          cantidadPrecio=0;
@@ -80,6 +84,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
         int idRepartidor=DataPreferences.getPrefInt("idrepartidor",mContext);
         CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:0)+(pedidos==true? 1:0);
         String Mensaje="";
+
         if (cliente==true ){
             _DescargarClientes(""+idRepartidor);
         }
@@ -256,6 +261,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                 }
                 if (response.isSuccessful() && responseUser != null) {
                     _DescargarStock(idRepartidor);
+                    _DecargarDescuentos();
                     try {
                         List<ProductoEntity> listCliente = viewModelProductos.getMAllProducto(1);
                         if (listCliente.size() <= 0) {
@@ -315,6 +321,56 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
         });
     }
 
+    public void _DecargarDescuentos(){
+
+        ApiManager apiManager=ApiManager.getInstance(mContext);
+        apiManager.ObtenerDescuentos( new Callback<List<DescuentosEntity>>() {
+            @Override
+            public void onResponse(Call<List<DescuentosEntity>> call, Response<List<DescuentosEntity>> response) {
+                final List<DescuentosEntity> responseUser = (List<DescuentosEntity>) response.body();
+                if (response.code()==404){
+                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+
+                    try {
+
+                            viewModelDescuentos.deleteAllDescuentos();
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                DescuentosEntity descuento = responseUser.get(i);
+                                //viewModel.insertCliente(cliente);
+                                DescuentosEntity dbproducto=viewModelDescuentos.getDescuentos(descuento.getId());
+                                if (dbproducto==null){
+                                    viewModelDescuentos.insertDescuentos(descuento);
+                                }else{
+                                    viewModelDescuentos.updateDescuentos(descuento);
+                                }
+
+                            }
+
+
+                    } catch (ExecutionException e) {
+                        //e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Descuentos : "+e.getMessage());
+                    } catch (InterruptedException e) {
+                        //   e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Descuentos: "+e.getMessage());
+                    }
+
+
+
+                } else {
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<DescuentosEntity>> call, Throwable t) {
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el web services.");
+            }
+        });
+    }
     public void _DescargarStock(final String idRepartidor){
         ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.ObtenerStock(new Callback<List<StockEntity>>() {
@@ -327,6 +383,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                 }
                 if (response.isSuccessful() && responseUser != null) {
                     try {
+                        viewModelStock.deleteAllStocks();
                         List<StockEntity> listStock = viewModelStock.getAllStock();
 
                         for (int i = 0; i < responseUser.size(); i++) {

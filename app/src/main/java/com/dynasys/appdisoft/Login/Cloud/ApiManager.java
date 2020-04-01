@@ -3,6 +3,7 @@ package com.dynasys.appdisoft.Login.Cloud;
 import android.content.Context;
 import android.widget.EditText;
 
+import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
@@ -99,6 +100,11 @@ private static Context mcontext;
     }
     public void ObtenerProductos( Callback<List<ProductoEntity>> callback) {
         Call<List<ProductoEntity>> userCall = service.ObtenerProductos();
+        userCall.enqueue(callback);
+    }
+
+    public void ObtenerDescuentos( Callback<List<DescuentosEntity>> callback) {
+        Call<List<DescuentosEntity>> userCall = service.ObtenerDescuentos();
         userCall.enqueue(callback);
     }
     public void ObtenerPedidos( Callback<List<PedidoEntity>> callback,String idRepartidor) {

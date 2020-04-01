@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoMvp;
+import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 
 import java.util.ArrayList;
@@ -84,7 +85,8 @@ ViewGroup viewgroup;
             viewHolder.nombre.setText(item.getCadesc());
             viewHolder.img_delete.setTag(item);
             viewHolder.price.setText(""+item.getObpbase());
-            viewHolder.subtotal.setText(""+(item.getObpcant()*item.getObpbase()));
+        double total=item.getObpcant()*item.getObpbase();
+        viewHolder.subtotal.setText(""+(""+ ShareMethods.redondearDecimales(total,2)));
             viewHolder.cantidad.setText(""+item.getObpcant());
             viewHolder.cantidad.setTag(item);
              tvsubtotal=viewHolder.subtotal;

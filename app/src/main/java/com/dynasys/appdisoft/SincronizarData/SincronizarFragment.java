@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Clientes.UtilShare;
+import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
@@ -68,6 +69,7 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
     private PedidoListViewModel viewModelPedidos;
     private DetalleListViewModel viewModelDetalle;
     private StockListViewModel viewModelStock;
+    private DescuentosListViewModel viewModelDescuento;
     LottieAlertDialog alertDialog;
     public SincronizarFragment() {
         // Required empty public constructor
@@ -101,9 +103,10 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
         viewModelPedidos = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
+        viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
       /*  NoteEntity note = new NoteEntity(inputNote.getText().toString());
         viewModel.insertNote(note);*/
-        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle,viewModelStock);
+        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle,viewModelStock,viewModelDescuento);
 checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

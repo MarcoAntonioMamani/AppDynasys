@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Login.DB.AppDatabase;
+import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
@@ -67,6 +68,7 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
     private DetalleListViewModel viewModelDetalle;
     private StockListViewModel viewModelStock;
     private ZonaListViewModel viewModelZona;
+    private DescuentosListViewModel viewModelDescuentos;
     LottieAlertDialog alertDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,7 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
         viewModelDetalle = ViewModelProviders.of(this).get(DetalleListViewModel.class);
         viewModelStock = ViewModelProviders.of(this).get(StockListViewModel.class);
         viewModelZona= ViewModelProviders.of(this).get(ZonaListViewModel.class);
+        viewModelDescuentos=ViewModelProviders.of(this).get(DescuentosListViewModel.class);
         mCodigo.addTextChangedListener(new TextWatcherLabel(textCodigo));
         mNroDocumento.addTextChangedListener(new TextWatcherLabel(textNroDocumento));
         btnIngresar.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +116,7 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
             viewModel.deleteAllClientes();
             viewModelStock.deleteAllStocks();
             viewModelZona.deleteAllZonas();
+            viewModelDescuentos.deleteAllDescuentos();
         }catch(Exception e){
 
         }

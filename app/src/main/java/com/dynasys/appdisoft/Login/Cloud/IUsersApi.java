@@ -1,5 +1,6 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
+import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
@@ -40,6 +41,10 @@ public interface IUsersApi {
 
     @GET("/api/repartidor/productos")
     Call<List<ProductoEntity>> ObtenerProductos();
+
+    @GET("/api/repartidor/descuentos")
+    Call<List<DescuentosEntity>> ObtenerDescuentos();
+
     @GET("/api/repartidor/pedidos/{idrepartidor}")
     Call<List<PedidoEntity>> ObtenerPedidos(@Path("idrepartidor") String idRepartidor);
     @GET("/api/repartidor/detalles/{idrepartidor}")

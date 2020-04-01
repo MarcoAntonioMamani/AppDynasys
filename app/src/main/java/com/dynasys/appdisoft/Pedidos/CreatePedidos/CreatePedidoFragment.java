@@ -42,7 +42,9 @@ import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
 import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
+import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
@@ -67,11 +69,13 @@ import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -93,6 +97,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private ClientesListViewModel viewModelCliente;
     private ProductosListViewModel viewModelProducto;
     private PedidoListViewModel viewModelPedido;
+    private DescuentosListViewModel viewModelDescuento;
     private DetalleListViewModel viewModelDetalle;
     private List<DetalleEntity> mDetalleItem=new ArrayList<>();
     private CreatePedidoMvp.Presenter mCreatePedidoPresenter;
@@ -103,7 +108,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     ClientesAdapter clientAdapter;
     ProductAdapter productoAdapter;
 DetalleAdaptader mDetalleAdapter;
-TextView name_total,etFecha;
+TextView name_total,etFecha,name_descuento,name_descuentoTotal;
 EditText tvObservacion;
 Date mFecha;
 String Hora;
@@ -145,6 +150,9 @@ private PedidoEntity mPedido;
         aProducto=view.findViewById(R.id.pedido_buscar_producto);
         detalle_List=view.findViewById(R.id.id_detalle_listPedido);
         name_total=view.findViewById(R.id.pedido_view_Total);
+        name_descuento=view.findViewById(R.id.pedido_view_Descuento);
+        name_descuentoTotal=view.findViewById(R.id.pedido_view_TotalDescuento);
+
         etFecha=view.findViewById(R.id.et_mostrar_fecha_picker);
         ObFecha=(ImageButton)view.findViewById(R.id.ib_obtener_fecha);
         tvObservacion=(EditText)view.findViewById(R.id.pedido_view_observacion) ;
@@ -155,6 +163,7 @@ private PedidoEntity mPedido;
         viewModelProducto = ViewModelProviders.of(getActivity()).get(ProductosListViewModel.class);
         viewModelPedido = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
+        viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
         new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle);
         mCreatePedidoPresenter.CargarClientes();
         iniciarRecyclerView();
@@ -207,7 +216,7 @@ private PedidoEntity mPedido;
     public double _prObtenerTotal(){
         double suma=0;
         for (int i = 0; i < mDetalleItem.size(); i++) {
-           suma=suma+( mDetalleItem.get(i).getObpcant()*mDetalleItem.get(i).getObpbase());
+           suma=suma+( mDetalleItem.get(i).getTotal());
         }
         return suma;
     }
@@ -319,7 +328,7 @@ private PedidoEntity mPedido;
                                 detalle.setObptot(item.getPrecio());
                                 detalle.setEstado(false);
                                 detalle.setStock(item.getStock());
-
+                                detalle.setFamilia(item.getFamilia());
                                 mDetalleItem.add(detalle);
 
 
@@ -347,7 +356,7 @@ private PedidoEntity mPedido;
                             detalle.setObptot(item.getPrecio());
                             detalle.setEstado(false);
                             detalle.setStock(0);
-
+                            detalle.setFamilia(item.getFamilia());
                             mDetalleItem.add(detalle);
 
 
@@ -404,13 +413,19 @@ private PedidoEntity mPedido;
                     DetalleEntity detalle= mDetalleItem.get(posicion);
                     detalle.setObpcant(cantidad);
                     detalle.setObptot(cantidad*detalle.getObpbase());
-                    tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+
+                    double total=cantidad*mDetalleItem.get(posicion).getObpbase();
+                    tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
+
+                   // tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
                     calcularTotal();
                 }else{
                     DetalleEntity detalle= mDetalleItem.get(posicion);
                     detalle.setObpcant(cantidad);
                     detalle.setObptot(cantidad*detalle.getObpbase());
-                    tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                    double total=cantidad*mDetalleItem.get(posicion).getObpbase();
+                    tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
+                    //tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
                     calcularTotal();
                 }
 
@@ -420,7 +435,10 @@ private PedidoEntity mPedido;
                 DetalleEntity detalle= mDetalleItem.get(posicion);
                 detalle.setObpcant(cantidad);
                 detalle.setObptot(cantidad*detalle.getObpbase());
-                tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                double total=cantidad*mDetalleItem.get(posicion).getObpbase();
+                tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
+
+               // tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
                 calcularTotal();
             }
         }
@@ -440,14 +458,18 @@ private PedidoEntity mPedido;
                 DetalleEntity detalle= mDetalleItem.get(posicion);
                 detalle.setObpbase(precio);
                 detalle.setObptot(precio*detalle.getObpcant());
-                tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));
+               // tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));
+                double total=precio*mDetalleItem.get(posicion).getObpcant();
+                tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
                 calcularTotal();
 
             }else{
                 DetalleEntity detalle= mDetalleItem.get(posicion);
                 detalle.setObpbase(precio);
                 detalle.setObptot(0);
-                tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));
+                double total=precio*mDetalleItem.get(posicion).getObpcant();
+                tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
+              //  tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));
                 calcularTotal();
             }
 
@@ -496,6 +518,136 @@ private PedidoEntity mPedido;
         }
         name_total.setText(""+ ShareMethods.redondearDecimales(total,2)+" Bs");
         mTotal=total;
+        CalcularDescuentos();
+
+        double descuentoTotal=0.0;
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            descuentoTotal+=(mDetalleItem.get(i).getDescuento());
+        }
+        name_descuento.setText(""+ ShareMethods.redondearDecimales(descuentoTotal,2)+" Bs");
+        double TotalGeneral=0.0;
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            TotalGeneral+=(mDetalleItem.get(i).getTotal());
+        }
+        name_descuentoTotal.setText(""+ ShareMethods.redondearDecimales(TotalGeneral,2)+" Bs");
+
+
+    }
+
+    public void CalcularDescuentos(){
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date dateWithoutTime = null;
+        try {
+            dateWithoutTime = sdf.parse(sdf.format(new Date()));
+        } catch (ParseException e) {
+
+        }
+
+// Method 2
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        dateWithoutTime = cal.getTime();
+
+
+        Long FechaActual=dateWithoutTime.getTime();
+
+        double cant,preciod,total2,descuentoTotal=0;
+
+
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            total2=0;
+            DetalleEntity detalle=mDetalleItem.get(i);
+            int codigoProducto=detalle.getObcprod();
+            double total=detalle.getObptot();
+            try {
+                List<DescuentosEntity> list=viewModelDescuento.getDescuentosByProducto(codigoProducto);
+                cant=detalle.getObpcant();
+                if (detalle.getFamilia()==1){  //Aqui buscamos los que no tienen familia que es el id =1
+
+                    for (DescuentosEntity descuento:list ) {
+
+                       Date fechaInicio= descuento.getFechaInicio();
+                       Date fechaFin=descuento.getFechaFin();
+
+                       fechaFin.setSeconds(0);
+                       fechaFin.setMinutes(0);
+                       fechaFin.setHours(0);
+                       fechaInicio.setSeconds(0);
+                       fechaInicio.setMinutes(0);
+                       fechaInicio.setHours(0);
+
+                        if (cant>=descuento.getCantidad1()&& cant<=descuento.getCantidad2()&& FechaActual>=fechaInicio.getTime()
+                                && FechaActual<=fechaFin.getTime() ){
+                        preciod=descuento.getPrecio();
+                        total2=cant*preciod;
+                        }
+                    }
+                    if (total2>0){
+                        descuentoTotal=total-total2;
+                    }else{
+                        descuentoTotal=0;
+                    }
+                    mDetalleItem.get(i).setDescuento(descuentoTotal);
+                    mDetalleItem.get(i).setTotal(total-descuentoTotal);
+
+                    descuentoTotal=0;
+                    total2=0;
+                }else{
+                    //Cálculo de descuentos por familia
+                    int familia = detalle.getFamilia();
+                    double cantnormal =detalle.getObpcant();
+                    double cantf =0;
+                    for (int j = 0; j < mDetalleItem.size(); j++) {
+                        if(familia==mDetalleItem.get(j).getFamilia()){
+                            cantf+=mDetalleItem.get(i).getObpcant();
+                        }
+                    }
+
+                    for (DescuentosEntity descuento:list ) {
+                        Date fechaInicio= descuento.getFechaInicio();
+                        Date fechaFin=descuento.getFechaFin();
+
+                        fechaFin.setSeconds(0);
+                        fechaFin.setMinutes(0);
+                        fechaFin.setHours(0);
+                        fechaInicio.setSeconds(0);
+                        fechaInicio.setMinutes(0);
+                        fechaInicio.setHours(0);
+                        if (cantf>=descuento.getCantidad1()&& cantf<=descuento.getCantidad2()&& FechaActual>=fechaInicio.getTime()
+                                && FechaActual<=fechaFin.getTime() ){
+                            preciod=descuento.getPrecio();
+                            total2=cantnormal*preciod;
+                        }
+                    }
+                    if (total2>0){
+                        descuentoTotal=total-total2;
+                    }else{
+                        descuentoTotal=0;
+                    }
+                    mDetalleItem.get(i).setDescuento(descuentoTotal);
+                    mDetalleItem.get(i).setTotal(total-descuentoTotal);
+
+                    descuentoTotal=0;
+                    total2=0;
+
+
+
+                }
+
+
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+        
     }
     public List<ProductoEntity> GetActualProducts()  {
         List <ProductoEntity> lista=new ArrayList<>();

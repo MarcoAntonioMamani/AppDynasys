@@ -20,6 +20,12 @@ public class DetalleEntity  implements Cloneable{
     double obpbase;
     @ColumnInfo(name = "obptot")
     double obptot;
+    @ColumnInfo(name = "descuento")
+    double descuento;
+    @ColumnInfo(name = "total")
+    double total;
+    @ColumnInfo(name = "familia")
+    int familia;
     @ColumnInfo(name = "estado")
     boolean estado;
 
@@ -32,7 +38,7 @@ public class DetalleEntity  implements Cloneable{
 
     }
 
-    public DetalleEntity(int id, String obnumi, int obcprod, String cadesc, double obpcant, double obpbase, double obptot, boolean estado, int obupdate, double stock) {
+    public DetalleEntity(int id, String obnumi, int obcprod, String cadesc, double obpcant, double obpbase, double obptot, double descuento, double total, int familia, boolean estado, int obupdate, double stock) {
         this.id = id;
         this.obnumi = obnumi;
         this.obcprod = obcprod;
@@ -40,6 +46,9 @@ public class DetalleEntity  implements Cloneable{
         this.obpcant = obpcant;
         this.obpbase = obpbase;
         this.obptot = obptot;
+        this.descuento = descuento;
+        this.total = total;
+        this.familia = familia;
         this.estado = estado;
         this.obupdate = obupdate;
         this.stock = stock;
@@ -99,6 +108,30 @@ public class DetalleEntity  implements Cloneable{
 
     public void setObptot(double obptot) {
         this.obptot = obptot;
+    }
+
+    public double getDescuento() {
+        return descuento;
+    }
+
+    public void setDescuento(double descuento) {
+        this.descuento = descuento;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public int getFamilia() {
+        return familia;
+    }
+
+    public void setFamilia(int familia) {
+        this.familia = familia;
     }
 
     public boolean isEstado() {

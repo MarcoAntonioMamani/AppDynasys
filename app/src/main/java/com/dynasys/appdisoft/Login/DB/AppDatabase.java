@@ -7,6 +7,7 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
 import com.dynasys.appdisoft.Login.DB.Converter.DateConverter;
+import com.dynasys.appdisoft.Login.DB.Dao.DescuentosDao;
 import com.dynasys.appdisoft.Login.DB.Dao.DetalleDao;
 import com.dynasys.appdisoft.Login.DB.Dao.PedidoDao;
 import com.dynasys.appdisoft.Login.DB.Dao.PrecioDao;
@@ -14,6 +15,7 @@ import com.dynasys.appdisoft.Login.DB.Dao.ProductoDao;
 import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.Dao.UserDao;
 import com.dynasys.appdisoft.Login.DB.Dao.zonasDao;
+import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
@@ -29,7 +31,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
  * Created by ravi on 05/02/18.
  */
 
-@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, ProductoEntity.class, PedidoEntity.class, DetalleEntity.class, StockEntity.class, ZonasEntity.class}, version = 1)
+@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, ProductoEntity.class, PedidoEntity.class, DetalleEntity.class, StockEntity.class, ZonasEntity.class, DescuentosEntity.class}, version = 1)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -41,6 +43,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract DetalleDao detalleDao();
     public abstract StockDao stockDao();
     public abstract zonasDao ZonasDao();
+    public abstract DescuentosDao DescuentoDao();
     public static AppDatabase INSTANCE;
 
    public  static AppDatabase getDatabase(final Context context) {
