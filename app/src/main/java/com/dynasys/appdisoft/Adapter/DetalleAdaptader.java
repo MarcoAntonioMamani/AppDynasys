@@ -37,7 +37,7 @@ ViewGroup viewgroup;
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView nombre;
-        public EditText price;
+        public TextView price;
         public TextView subtotal;
         public EditText cantidad;
         public ImageView img_delete;
@@ -45,7 +45,7 @@ ViewGroup viewgroup;
             super(v);
 
             nombre = (TextView) v.findViewById(R.id.id_detalle_name);
-              price = (EditText) v.findViewById(R.id.id_detalle_price);
+              price = (TextView) v.findViewById(R.id.id_detalle_price);
               subtotal=(TextView)v.findViewById(R.id.id_detalle_subtotal);
               cantidad=(EditText)v.findViewById(R.id.id_detalle_cantidad);
               img_delete=(ImageView)v.findViewById(R.id.id_detalle_remove);
@@ -80,7 +80,7 @@ ViewGroup viewgroup;
         final DetalleEntity item;
         final TextView tvsubtotal;
         final EditText tvCantidad;
-        final EditText tvPrecio;
+        final TextView  tvPrecio;
             item = items.get(i);
             viewHolder.nombre.setText(item.getCadesc());
             viewHolder.img_delete.setTag(item);
@@ -117,25 +117,6 @@ ViewGroup viewgroup;
                 }
             });
 
-            viewHolder.price.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    int pos =ObtenerPosicionElemento(item);
-                    if (pos>=0){
-                        mView.ModifyItemPrecio(pos,charSequence.toString(),item,tvsubtotal,tvPrecio);
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
 
             viewHolder.img_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
