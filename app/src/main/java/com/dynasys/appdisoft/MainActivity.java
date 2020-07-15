@@ -32,7 +32,9 @@ import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.MapClientActivity;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.ZonaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.UsersListViewModel;
@@ -50,6 +52,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.dynasys.appdisoft.SincronizarData.SincronizarFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private UsersListViewModel viewModel;
     private ClientesListViewModel viewModelClientes;
     private PedidoListViewModel viewModelPedidos;
-
+    private ZonaListViewModel viewModelZona;
     @Override
     public void onResume() {
         super.onResume();
@@ -129,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(UsersListViewModel.class);
         viewModelClientes = ViewModelProviders.of(this).get(ClientesListViewModel.class);
         viewModelPedidos=ViewModelProviders.of(this).get(PedidoListViewModel.class);
+        viewModelZona =ViewModelProviders.of(this).get(ZonaListViewModel.class);
         if(DataPreferences.getPrefLogin("isLogin",getApplicationContext())==null  ){
             startActivity(new Intent(this, LoginActivity.class));
             finish();
@@ -224,6 +228,12 @@ public class MainActivity extends AppCompatActivity {
                         //setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
+                    case R.id.item_navigation_drawer_nuevo_pedido:
+                            setFragment(6);
+                            item.setChecked(true);
+                            //setFragment(2);
+                            drawerLayout.closeDrawer(GravityCompat.START);
+                            return true;
                     case R.id.item_navigation_drawer_help_and_feedback:
                         item.setChecked(true);
                         setFragment(21);
@@ -268,6 +278,11 @@ public class MainActivity extends AppCompatActivity {
                 fca.startActivity(new Intent(this, MapaActivity.class));
                 //fca.startActivity(new Intent(this, TestActivity.class));
                 fca.overridePendingTransition(R.transition.left_in, R.transition.left_out);
+                break;
+            case 6:
+                returnToMain();
+                frag = new CreatePedidoFragment();
+                tag = Constantes.TAG_PEDIDOS;
                 break;
             case 21:
 
@@ -324,18 +339,49 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupUserBox() {
-        // TODO: Poblar más views, agregar más acciones
 
+        // TODO: Poblar más views, agregar más acciones
+        int idRepartidor= DataPreferences.getPrefInt("idrepartidor",mContext);
+        List<ZonasEntity> listZonas=new ArrayList<>();
+        try {
+            listZonas=viewModelZona.getZonaByRepartidor(idRepartidor);
+
+        } catch (ExecutionException e) {
+
+        } catch (InterruptedException e) {
+
+        }
         // Poner email
         TextView userNameView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.id_nh_user);
         TextView userEmailView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.id_nh_email);
        /* String userName = UserPrefs.getInstance(mContext).getUserName();
         String userEmail = UserPrefs.getInstance(mContext).getUserEmail();*/
        String nameRepartidor=DataPreferences.getPref("repartidor",getApplicationContext());
-        userNameView.setText("Repartidor: ");
-        userEmailView.setText(nameRepartidor);
+        UtilShare .tvZona =userNameView;
+        int idZonas= DataPreferences.getPrefInt("Zonas",mContext);
+        if (idZonas==-1){
+            userNameView.setText("Todas Zonas");
+            userEmailView.setText(nameRepartidor);
+        }else{
+            ZonasEntity zona=null;
+            for (int i = 0; i < listZonas.size(); i++) {
+                if (listZonas.get(i).getLanumi()==idZonas){
+                    zona=listZonas.get(i);
+                }
+            }
+            if (zona!=null){
+                userNameView.setText(zona.getZona());
+                userEmailView.setText(nameRepartidor);
+            }else{
+                userNameView.setText("No tiene Zonas");
+                userEmailView.setText(nameRepartidor);
+            }
+
+        }
+
 
         MenuItem menulcv = navigationView.getMenu().findItem(R.id.item_navigation_drawer_sincronizar);
+        MenuItem menuAddPedido = navigationView.getMenu().findItem(R.id.item_navigation_drawer_nuevo_pedido );
         MenuItem menucli = navigationView.getMenu().findItem(R.id.item_navigation_drawer_clientes);
         MenuItem menuped = navigationView.getMenu().findItem(R.id.item_navigation_drawer_pedidos);
         MenuItem menuMapa = navigationView.getMenu().findItem(R.id.item_navigation_drawer_mapa);
@@ -344,6 +390,7 @@ public class MainActivity extends AppCompatActivity {
             menucli.setVisible(true);
             menuped.setVisible(true);
             menuMapa.setVisible(true);
+        menuAddPedido.setVisible(true);
         menupedEntregados.setVisible(true);
     }
 

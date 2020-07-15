@@ -53,7 +53,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
     String Mensaje="";
     int CantidadPenticiones=0;
     int Contador=0;
-
+int ZonaSelected=0;
 
     public SincronizarPresenter(SincronizarMvp.View sincronizarView, Context context, ClientesListViewModel viewModel, Activity activity, PreciosListViewModel
                                 viewModelPrecios, ProductosListViewModel viewModelProductos,PedidoListViewModel viewModelPedidos,
@@ -76,11 +76,20 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
         Contador=0;
     }
     @Override
-    public void GuadarDatos(boolean producto,boolean precio,boolean cliente,boolean pedidos) {
+    public void GuadarDatos(boolean producto,boolean precio,boolean cliente,boolean pedidos,boolean chkZonas,int ZonaSelected) {
         CantidadPenticiones=0;
         Contador=0;
         Mensaje="";
         cantidadPedidos=0;
+        if(chkZonas==true){
+            DataPreferences.putPrefInteger("Zonas",-1,mContext);
+            this.ZonaSelected=-1;
+        }else{
+            DataPreferences.putPrefInteger("Zonas",ZonaSelected,mContext);
+            this.ZonaSelected=ZonaSelected;
+        }
+
+
         int idRepartidor=DataPreferences.getPrefInt("idrepartidor",mContext);
         CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:0)+(pedidos==true? 1:0);
         String Mensaje="";
@@ -442,10 +451,9 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
                                 if (pedido.getOaest()!=3){
 
                                     if (pedido.getOaest() == 1) {
-                                        pedido.setOaest(2);
-                                        pedido.setEstado(2);
-                                        viewModelPedidos.insertPedido(pedido);
-
+                                            pedido.setOaest(2);
+                                            pedido.setEstado(2);
+                                            viewModelPedidos.insertPedido(pedido);
                                     }else{
                                         viewModelPedidos.insertPedido(pedido);
                                     }
@@ -496,7 +504,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
             public void onFailure(Call<List<PedidoEntity>> call, Throwable t) {
                 mSincronizarview.ShowMessageResult("No es posible conectarse con el web services.");
             }
-        },idRepartidor);
+        },idRepartidor,ZonaSelected);
     }
 
     public void _DecargarDetalles(String idRepartidor){

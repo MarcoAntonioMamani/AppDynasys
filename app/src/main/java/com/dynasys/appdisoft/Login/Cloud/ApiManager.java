@@ -107,8 +107,8 @@ private static Context mcontext;
         Call<List<DescuentosEntity>> userCall = service.ObtenerDescuentos();
         userCall.enqueue(callback);
     }
-    public void ObtenerPedidos( Callback<List<PedidoEntity>> callback,String idRepartidor) {
-        Call<List<PedidoEntity>> userCall = service.ObtenerPedidos(idRepartidor);
+    public void ObtenerPedidos( Callback<List<PedidoEntity>> callback,String idRepartidor,int idZona) {
+        Call<List<PedidoEntity>> userCall = service.ObtenerPedidos(idRepartidor,idZona);
         userCall.enqueue(callback);
     }
     public void ObtenerDetalles(Callback<List<DetalleEntity>> callback, String idRepartidor) {

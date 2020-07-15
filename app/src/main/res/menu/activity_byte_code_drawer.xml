@@ -9,6 +9,11 @@
             android:title="Clientes"
             android:visible="false"/>
         <item
+            android:id="@+id/item_navigation_drawer_nuevo_pedido"
+            android:title="Nuevo Pedido"
+            android:icon="@drawable/ic_add02"
+            android:visible="true"/>
+        <item
             android:id="@+id/item_navigation_drawer_pedidos"
             android:title="Pedidos Pendientes"
             android:icon="@drawable/ic_order"

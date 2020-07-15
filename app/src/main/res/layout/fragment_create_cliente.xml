@@ -62,7 +62,20 @@
                             android:inputType="phone|number"
                             android:hint="Telefono / celular" />
                     </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/til_razonSocial"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/keyline_1">
 
+                        <EditText
+                            android:id="@+id/idcliente_txt_RazonSocial"
+                            style="@style/Widget.AppCompat.EditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:hint="Razón Social" />
+                    </android.support.design.widget.TextInputLayout>
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/til_nit"
                         android:layout_width="match_parent"

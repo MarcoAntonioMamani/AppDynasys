@@ -73,6 +73,8 @@ public class LoginPresenter implements LoginMvp.Presenter {
                                 DataPreferences.putPrefInteger("UpdateCliente",responseUser.getUpdate_cliente(),mContext);
                                 DataPreferences.putPrefInteger("CategoriaRepartidor",responseUser.getCategoria(),mContext);
                                 DataPreferences.putPrefInteger("stock",responseUser.getStock(),mContext);
+                                DataPreferences.putPrefInteger("ViewCredito",responseUser.getView_credito() ,mContext);
+                                DataPreferences.putPrefInteger("CantidadProducto",responseUser.getCantidad_producto(),mContext);
 
                                 _DescargarZonas(""+responseUser.getId());
                                 mLoginView.LoginSuccesfull();
@@ -93,6 +95,7 @@ public class LoginPresenter implements LoginMvp.Presenter {
     }
 
     public void _DescargarZonas(String idRepartidor){
+        DataPreferences.putPrefInteger("Zonas",-1,mContext);
         ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.ObtenerZonas( idRepartidor.trim(),new Callback<List<ZonasEntity>>() {
             @Override

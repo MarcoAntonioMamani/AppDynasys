@@ -2,11 +2,13 @@ package com.dynasys.appdisoft.Pedidos.ModifyPedidos;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -27,6 +30,7 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -47,6 +51,7 @@ import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
+import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoFragment;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoMvp;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoPresenter;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
@@ -57,8 +62,11 @@ import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Preconditions;
+import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -111,6 +119,8 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     private PedidoEntity mPedido;
     private NestedScrollView mscroll;
     LottieAlertDialog alertDialog;
+    LinearLayout linearViewCredito;
+    EditText EtReclamo;
     @Override
     public void onResume() {
         super.onResume();
@@ -150,7 +160,9 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         name_descuento=view.findViewById(R.id.edit_view_Descuento);
         name_totalDescuento=view.findViewById(R.id.edit_view_TotalDescuento);
         etFecha=view.findViewById(R.id.edit_viewdata_fecha);
+        EtReclamo=view.findViewById(R.id.edit_update_Reclamo);
         ObFecha=(ImageButton)view.findViewById(R.id.edit_obtener_fecha);
+        linearViewCredito=view.findViewById(R.id.modify_viewCredito);
         tvObservacion=(EditText)view.findViewById(R.id.edit_view_observacion) ;
         rEfectivo=(RadioButton)view.findViewById(R.id.edit_order_rbt_efectivo) ;
         rCredito=(RadioButton)view.findViewById(R.id.edit_order_rbt_credito);
@@ -170,22 +182,27 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         acliente.setEnabled(false);
         onclickObtenerFecha();
         onClickModificar();
-        int categoria =DataPreferences.getPrefInt("CategoriaRepartidor",getContext());
-        if (categoria==3){
-            mbutton_entrega.setVisibility(View.GONE);
-        }
+        InterpretarDatos();
         onClickEtregar();
         onClickVerCliente();
         OnClickObtenerFecha();
-        //etFecha.setText(FormatearFecha(dia,mes+1,anio));
         mFecha=Calendar.getInstance().getTime();
         LocationGeo.getInstance(context,getActivity());
         LocationGeo.iniciarGPS();
 
+
+        return view;
+    }
+    public void InterpretarDatos(){
+        int categoria =DataPreferences.getPrefInt("CategoriaRepartidor",getContext());
+        if (categoria==3){
+            mbutton_entrega.setVisibility(View.GONE);
+        }
         if(mPedido.getTipocobro()==2){
             rCredito.setChecked(true);
             tvTotalPago.setText(ShareMethods.ObtenerDecimalToString(mPedido.getTotalcredito(),2));
         }
+        EtReclamo.setText(mPedido.getReclamo());
         rCredito.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -198,7 +215,13 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         });
         mCreatePedidoPresenter.getDetailOrder(mPedido.getCodigogenerado());
         mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
-        return view;
+        ////Para Visualiza la seccion de credito o contado
+        int ViewCreditos=DataPreferences.getPrefInt("ViewCredito",getContext());
+        if (ViewCreditos ==0){
+            linearViewCredito.setVisibility(View.GONE);
+        }else{
+            linearViewCredito.setVisibility(View.VISIBLE);
+        }
     }
     public void onClickModificar(){
         // private Button mbutton_update,mbutton_entrega,mbutton_viewcliente;
@@ -219,7 +242,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                         if (mPedido.getEstado()==1){
                             pedi.setEstado(2);
                         }
-
+                        pedi.setReclamo(EtReclamo.getText().toString());
                         pedi.setOaobs(tvObservacion.getText().toString());
                         pedi.setOafdoc(mFecha);
                         pedi.setTotal(ObtenerTotal());
@@ -339,6 +362,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                                 if (mPedido.getEstado()==1){
                                     pedi.setEstado(2);
                                 }
+                                pedi.setReclamo(EtReclamo.getText().toString());
                                 pedi.setOaest(3);
                                 pedi.setOaobs(tvObservacion.getText().toString());
                                 pedi.setOafdoc(mFecha);
@@ -529,60 +553,67 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     if ((ProductoEntity) adapterView.getItemAtPosition(i)!=null){
                         ProductoEntity item = (ProductoEntity) adapterView.getItemAtPosition(i);
-                       /* this.obnumi = obnumi;
-                        this.obcprod = obcprod;
-                        this.cadesc = cadesc;
-                        this.obpcant = obpcant;
-                        this.obpbase = obpbase;
-                        this.obptot = obptot;
-                        this.estado = estado;*/
-                       DetalleEntity ItemDetalle=ObtenerDetalle(item);
-                       if (ItemDetalle==null){
-                           DetalleEntity detalle=new DetalleEntity();
-                           detalle.setObnumi(mPedido.getCodigogenerado());
-                           detalle.setObcprod(item.getNumi());
-                           detalle.setCadesc(item.getProducto());
-                           detalle.setObpcant(1.0);
-                           detalle.setObpbase(item.getPrecio());
-                           detalle.setObptot(item.getPrecio());
-                           detalle.setEstado(false);
-                           detalle.setObupdate(0);
-                           mDetalleItem.add(detalle);
-                           //mDetalleAdapter.setFilter(mDetalleItem);
-                           Reconstruir();
-                           calcularTotal();
-                           aProducto .setText("");
-                           aProducto.clearFocus();
-                           mscroll.fullScroll(View.FOCUS_DOWN);
-                           productoAdapter.setLista(GetActualProducts());
-                           productoAdapter.notifyDataSetChanged();
-                       }else{
-                           try {
+                        int CantidadSeleccionada=CantidadDeProductosAgregados();
+                        int MaximaCantidadProductos=DataPreferences.getPrefInt("CantidadProducto",context);
 
-                               DetalleEntity  detalle = ItemDetalle.clone();
-                               mDetalleItem.remove(ItemDetalle);
-                               detalle.setObpcant(1.0);
-                               mDetalleItem.add(detalle);
-                             if (detalle.getObupdate()==-1){
-                                 detalle.setObupdate(2);
-                             }else{
-                                 detalle.setObupdate(0);
-                             }
+                        if(CantidadSeleccionada<MaximaCantidadProductos){
+                            DetalleEntity ItemDetalle=ObtenerDetalle(item);
+                            if (ItemDetalle==null){
+                                DetalleEntity detalle=new DetalleEntity();
+                                detalle.setObnumi(mPedido.getCodigogenerado());
+                                detalle.setObcprod(item.getNumi());
+                                detalle.setCadesc(item.getProducto());
+                                detalle.setObpcant(1.0);
+                                detalle.setObpbase(item.getPrecio());
+                                detalle.setObptot(item.getPrecio());
+                                detalle.setEstado(false);
+                                detalle.setObupdate(0);
+                                mDetalleItem.add(detalle);
+                                //mDetalleAdapter.setFilter(mDetalleItem);
+                                Reconstruir();
+                                calcularTotal();
+                                aProducto .setText("");
+                                aProducto.clearFocus();
+                                mscroll.fullScroll(View.FOCUS_DOWN);
+                                productoAdapter.setLista(GetActualProducts());
+                                productoAdapter.notifyDataSetChanged();
+                            }else{
+                                try {
 
-                               //mDetalleAdapter.setFilter(mDetalleItem);
-                               Reconstruir();
-                               calcularTotal();
-                               aProducto .setText("");
-                               aProducto.clearFocus();
-                               mscroll.fullScroll(View.FOCUS_DOWN);
-                               productoAdapter.setLista(GetActualProducts());
-                               productoAdapter.notifyDataSetChanged();
+                                    DetalleEntity  detalle = ItemDetalle.clone();
+                                    mDetalleItem.remove(ItemDetalle);
+                                    detalle.setObpcant(1.0);
+                                    mDetalleItem.add(detalle);
+                                    if (detalle.getObupdate()==-1){
+                                        detalle.setObupdate(2);
+                                    }else{
+                                        detalle.setObupdate(0);
+                                    }
 
-                           } catch (CloneNotSupportedException e) {
+                                    //mDetalleAdapter.setFilter(mDetalleItem);
+                                    Reconstruir();
+                                    calcularTotal();
+                                    aProducto .setText("");
+                                    aProducto.clearFocus();
+                                    mscroll.fullScroll(View.FOCUS_DOWN);
+                                    productoAdapter.setLista(GetActualProducts());
+                                    productoAdapter.notifyDataSetChanged();
 
-                           }
+                                } catch (CloneNotSupportedException e) {
 
-                       }
+                                }
+
+                            }
+                        }else{
+                            hideKeyboard();
+
+                            aProducto.setText("");
+                            ShowMessageResult("La cantidad Maxima de Productos es "+MaximaCantidadProductos+" Por favor Realize otro Pedido");
+
+                        }
+
+
+
 
                     }
 
@@ -591,7 +622,20 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
             });
         }
     }
-
+    private  void hideKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
+        }
+    }
+    public int CantidadDeProductosAgregados(){
+        int suma =0;
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            if(mDetalleItem.get(i).getObupdate() >=0)
+                suma+=1;
+        }
+        return suma;
+    }
     public DetalleEntity ObtenerDetalle(ProductoEntity producto){
 
         for (int i = 0; i < mDetalleItem.size(); i++) {
@@ -702,6 +746,39 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                 break;
         }
     }
+    public void PreguntarNuevoPedido(String message) {
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
+        }
+        alertDialog=new LottieAlertDialog.Builder(getContext(),DialogTypes.TYPE_WARNING)
+                .setTitle("Advertencia")
+                .setDescription(message)
+                .setPositiveText("Aceptar")
+                .setNegativeText("Cancelar")
+                .setNegativeTextColor(Color.parseColor("#ffffff"))
+                .setPositiveButtonColor(Color.parseColor("#008ebe"))
+                .setPositiveTextColor(Color.parseColor("#ffffff"))
+                .setNegativeListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        lottieAlertDialog.dismiss();
+                        RetornarPrincipal();
+                    }
+                })
+                .setPositiveListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        lottieAlertDialog.dismiss();
+                        RetornarPrincipal();
+                        UtilShare.clienteMapa =mCliente;
+                        Fragment frag = new CreatePedidoFragment(1);
+                        MainActivity fca = (MainActivity) getActivity();
+                        fca.switchFragment(frag,"CREATE_PEDIDOS");
+                    }
+                }).build();
+
+        alertDialog.show();
+    }
     public AlertDialog showCustomDialog(String Contenido, Boolean flag) {
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
 
@@ -720,7 +797,14 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                     public void onClick(View v) {
 
                         dialogs.dismiss();
-                        RetornarPrincipal();
+
+                        int MaximaCantidadProductos=DataPreferences.getPrefInt("CantidadProducto",context);
+                        if(CantidadDeProductosAgregados()==MaximaCantidadProductos){
+
+                            PreguntarNuevoPedido("Desea Crea un Nuevo Pedido Para El cliente "+ mCliente.getNamecliente() );
+                        }else{
+                            RetornarPrincipal();
+                        }
 
                         //  finish();
                     }

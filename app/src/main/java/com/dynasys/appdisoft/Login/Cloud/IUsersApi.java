@@ -45,8 +45,8 @@ public interface IUsersApi {
     @GET("/api/repartidor/descuentos")
     Call<List<DescuentosEntity>> ObtenerDescuentos();
 
-    @GET("/api/repartidor/pedidos/{idrepartidor}")
-    Call<List<PedidoEntity>> ObtenerPedidos(@Path("idrepartidor") String idRepartidor);
+    @GET("/api/repartidor/pedidos/{idrepartidor}/{idZona}")
+    Call<List<PedidoEntity>> ObtenerPedidos(@Path("idrepartidor") String idRepartidor,@Path("idZona") int idZona);
     @GET("/api/repartidor/detalles/{idrepartidor}")
     Call<List<DetalleEntity>> ObtenerDetalles(@Path("idrepartidor") String idRepartidor);
 

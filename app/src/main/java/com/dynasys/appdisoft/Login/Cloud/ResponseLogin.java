@@ -11,8 +11,10 @@ public class ResponseLogin {
     int update_cliente;
     int categoria;
     int stock;
+    int view_credito;
+    int cantidad_producto;
 
-    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria, int stock) {
+    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria, int stock, int view_credito, int cantidad_producto) {
         this.code = code;
         this.message = message;
         this.token = token;
@@ -23,6 +25,8 @@ public class ResponseLogin {
         this.update_cliente = update_cliente;
         this.categoria = categoria;
         this.stock = stock;
+        this.view_credito = view_credito;
+        this.cantidad_producto = cantidad_producto;
     }
 
     public int getCode() {
@@ -103,5 +107,21 @@ public class ResponseLogin {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public int getView_credito() {
+        return view_credito;
+    }
+
+    public void setView_credito(int view_credito) {
+        this.view_credito = view_credito;
+    }
+
+    public int getCantidad_producto() {
+        return cantidad_producto;
+    }
+
+    public void setCantidad_producto(int cantidad_producto) {
+        this.cantidad_producto = cantidad_producto;
     }
 }

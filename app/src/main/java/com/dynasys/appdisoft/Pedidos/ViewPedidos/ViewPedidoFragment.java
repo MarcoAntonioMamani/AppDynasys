@@ -69,7 +69,8 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
     RadioButton rEfectivo,rCredito;
     private PedidoEntity mPedido;
     ClienteEntity mCliente;
-    LinearLayout LineaBtn;
+    LinearLayout LineaBtn,LinearViewCredito;
+    EditText EtReclamo;
     int Tipo;
     public ViewPedidoFragment() {
         // Required empty public constructor
@@ -102,7 +103,9 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
         rCredito=(RadioButton)view.findViewById(R.id.id_order_rbt_credito);
         tvFecha=(TextView)view.findViewById(R.id.pedido_viewdata_fecha);
         LineaBtn=(LinearLayout)view.findViewById(R.id.btnState);
+        EtReclamo=(EditText)view.findViewById(R.id.edit_view_Reclamo);
         tvMontoTotal=(TextView)view.findViewById(R.id.pedido_viewdata_MontoTotal);
+        LinearViewCredito =(LinearLayout)view.findViewById(R.id.view_CreditoContado);
         btnMapa=(Button)view.findViewById(R.id.pedido_viewdata_btnVerCliente);
         btnEntrega=(Button)view.findViewById(R.id.pedido_viewdata_btnEntregar);
         viewModelDetalles = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
@@ -112,28 +115,38 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
         iniciarRecyclerView();
         mPedidosPresenter.getDetailOrder(mPedido.getCodigogenerado());
         OnclickMapa();
-        int categoria = DataPreferences.getPrefInt("CategoriaRepartidor",getContext());
-        if (categoria==3){
-            btnEntrega.setVisibility(View.GONE);
-        }
-        OnclickEntrega();
-        if(mPedido.getTipocobro()==2){
-            rCredito.setChecked(true);
-            tvTotalPago.setText(ShareMethods.ObtenerDecimalToString(mPedido.getTotalcredito(),2));
-        }
-        rCredito.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-               if (b==true){
-                   tvTotalPago.setText(ShareMethods.ObtenerDecimalToString(mPedido.getTotal(),2));
-               }else{
-                   tvTotalPago.setText(ShareMethods.ObtenerDecimalToString(0,2));
-               }
-            }
-        });
+        IniciarParametros();
         return view;
     }
-
+public void IniciarParametros(){
+    int categoria = DataPreferences.getPrefInt("CategoriaRepartidor",getContext());
+    if (categoria==3){
+        btnEntrega.setVisibility(View.GONE);
+    }
+    EtReclamo.setText(mPedido.getReclamo());
+    OnclickEntrega();
+    if(mPedido.getTipocobro()==2){
+        rCredito.setChecked(true);
+        tvTotalPago.setText(ShareMethods.ObtenerDecimalToString(mPedido.getTotalcredito(),2));
+    }
+    rCredito.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            if (b==true){
+                tvTotalPago.setText(ShareMethods.ObtenerDecimalToString(mPedido.getTotal(),2));
+            }else{
+                tvTotalPago.setText(ShareMethods.ObtenerDecimalToString(0,2));
+            }
+        }
+    });
+    ////Para Visualiza la seccion de credito o contado
+    int ViewCreditos=DataPreferences.getPrefInt("ViewCredito",getContext());
+    if (ViewCreditos ==0){
+        LinearViewCredito.setVisibility(View.GONE);
+    }else{
+        LinearViewCredito.setVisibility(View.VISIBLE);
+    }
+}
     public void OnclickMapa(){
         btnMapa.setOnClickListener(new View.OnClickListener() {
             @Override

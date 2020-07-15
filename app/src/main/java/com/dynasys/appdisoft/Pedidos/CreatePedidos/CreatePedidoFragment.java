@@ -114,7 +114,7 @@ Date mFecha;
 String Hora;
 Double mTotal=0.0;
    int tipoActividad=0;
-
+EditText EtReclamo;
     LottieAlertDialog alertDialog;
 private PedidoEntity mPedido;
     private NestedScrollView mscroll;
@@ -152,7 +152,7 @@ private PedidoEntity mPedido;
         name_total=view.findViewById(R.id.pedido_view_Total);
         name_descuento=view.findViewById(R.id.pedido_view_Descuento);
         name_descuentoTotal=view.findViewById(R.id.pedido_view_TotalDescuento);
-
+        EtReclamo=view.findViewById(R.id.edit_Reclamo);
         etFecha=view.findViewById(R.id.et_mostrar_fecha_picker);
         ObFecha=(ImageButton)view.findViewById(R.id.ib_obtener_fecha);
         tvObservacion=(EditText)view.findViewById(R.id.pedido_view_observacion) ;
@@ -316,59 +316,74 @@ private PedidoEntity mPedido;
                         this.obpbase = obpbase;
                         this.obptot = obptot;
                         this.estado = estado;*/
-                        int stock= DataPreferences.getPrefInt("stock",context);
-                        if (stock>0){
-                            if (item.getStock()>0){
-                                DetalleEntity detalle=new DetalleEntity();
-                                detalle.setObnumi("-1");
-                                detalle.setObcprod(item.getNumi());
-                                detalle.setCadesc(item.getProducto());
-                                detalle.setObpcant(1.0);
-                                detalle.setObpbase(item.getPrecio());
-                                detalle.setObptot(item.getPrecio());
-                                detalle.setEstado(false);
-                                detalle.setStock(item.getStock());
-                                detalle.setFamilia(item.getFamilia());
-                                mDetalleItem.add(detalle);
+                       int CantidadSeleccionada=CantidadDeProductosAgregados();
+                       int MaximaCantidadProductos=DataPreferences.getPrefInt("CantidadProducto",context);
+                       if(CantidadSeleccionada<MaximaCantidadProductos){
+                           int stock= DataPreferences.getPrefInt("stock",context);
 
 
-                                //mDetalleAdapter.setFilter(mDetalleItem);
-                                Reconstruir();
-                                calcularTotal();
-                                aProducto .setText("");
-                                aProducto.clearFocus();
-                                mscroll.fullScroll(View.FOCUS_DOWN);
-                                productoAdapter.setLista(GetActualProducts());
-                                productoAdapter.notifyDataSetChanged();
-                            }else{
-                                hideKeyboard();
-
-                                aProducto.setText("");
-                                ShowMessageResult("No Existe Stock para seleccionar el producto");
-                            }
-                        }else{
-                            DetalleEntity detalle=new DetalleEntity();
-                            detalle.setObnumi("-1");
-                            detalle.setObcprod(item.getNumi());
-                            detalle.setCadesc(item.getProducto());
-                            detalle.setObpcant(1.0);
-                            detalle.setObpbase(item.getPrecio());
-                            detalle.setObptot(item.getPrecio());
-                            detalle.setEstado(false);
-                            detalle.setStock(0);
-                            detalle.setFamilia(item.getFamilia());
-                            mDetalleItem.add(detalle);
+                           if (stock>0){
+                               if (item.getStock()>0){
+                                   DetalleEntity detalle=new DetalleEntity();
+                                   detalle.setObnumi("-1");
+                                   detalle.setObcprod(item.getNumi());
+                                   detalle.setCadesc(item.getProducto());
+                                   detalle.setObpcant(1.0);
+                                   detalle.setObpbase(item.getPrecio());
+                                   detalle.setObptot(item.getPrecio());
+                                   detalle.setEstado(false);
+                                   detalle.setStock(item.getStock());
+                                   detalle.setFamilia(item.getFamilia());
+                                   detalle.setObupdate(0);
+                                   mDetalleItem.add(detalle);
 
 
-                            //mDetalleAdapter.setFilter(mDetalleItem);
-                            Reconstruir();
-                            calcularTotal();
-                            aProducto .setText("");
-                            aProducto.clearFocus();
-                            mscroll.fullScroll(View.FOCUS_DOWN);
-                            productoAdapter.setLista(GetActualProducts());
-                            productoAdapter.notifyDataSetChanged();
-                        }
+                                   //mDetalleAdapter.setFilter(mDetalleItem);
+                                   Reconstruir();
+                                   calcularTotal();
+                                   aProducto .setText("");
+                                   aProducto.clearFocus();
+                                   mscroll.fullScroll(View.FOCUS_DOWN);
+                                   productoAdapter.setLista(GetActualProducts());
+                                   productoAdapter.notifyDataSetChanged();
+                               }else{
+                                   hideKeyboard();
+
+                                   aProducto.setText("");
+                                   ShowMessageResult("No Existe Stock para seleccionar el producto");
+                               }
+                           }else{
+                               DetalleEntity detalle=new DetalleEntity();
+                               detalle.setObnumi("-1");
+                               detalle.setObcprod(item.getNumi());
+                               detalle.setCadesc(item.getProducto());
+                               detalle.setObpcant(1.0);
+                               detalle.setObpbase(item.getPrecio());
+                               detalle.setObptot(item.getPrecio());
+                               detalle.setEstado(false);
+                               detalle.setStock(0);
+                               detalle.setObupdate(0);
+                               detalle.setFamilia(item.getFamilia());
+                               mDetalleItem.add(detalle);
+
+
+                               //mDetalleAdapter.setFilter(mDetalleItem);
+                               Reconstruir();
+                               calcularTotal();
+                               aProducto .setText("");
+                               aProducto.clearFocus();
+                               mscroll.fullScroll(View.FOCUS_DOWN);
+                               productoAdapter.setLista(GetActualProducts());
+                               productoAdapter.notifyDataSetChanged();
+                           }
+                       }else{
+                           hideKeyboard();
+
+                           aProducto.setText("");
+                           ShowMessageResult("La cantidad Maxima de Productos es "+MaximaCantidadProductos+" Por favor Realize otro Pedido");
+                       }
+
+
 
 
                     }
@@ -377,6 +392,15 @@ private PedidoEntity mPedido;
                 }
             });
         }
+    }
+
+    public int CantidadDeProductosAgregados(){
+        int suma =0;
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            if(mDetalleItem.get(i).getObupdate() >=0)
+                suma+=1;
+        }
+        return suma;
     }
     private  void hideKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -733,7 +757,39 @@ private PedidoEntity mPedido;
                 }).build();
         alertDialog.show();
     }
+    public void PreguntarNuevoPedido(String message) {
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
+        }
+        alertDialog=new LottieAlertDialog.Builder(getContext(),DialogTypes.TYPE_WARNING)
+                .setTitle("Advertencia")
+                .setDescription(message)
+                .setPositiveText("Aceptar")
+                .setNegativeText("Cancelar")
+                .setNegativeTextColor(Color.parseColor("#ffffff"))
+                .setPositiveButtonColor(Color.parseColor("#008ebe"))
+                .setPositiveTextColor(Color.parseColor("#ffffff"))
+                .setNegativeListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        lottieAlertDialog.dismiss();
+                        RetornarPrincipal();
+                    }
+                })
+                .setPositiveListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        lottieAlertDialog.dismiss();
+                        MainActivity fca = ((MainActivity) getActivity());
+                        fca.removeAllFragments();
+                        UtilShare.clienteMapa =mCliente;
+                        Fragment frag = new CreatePedidoFragment(1);
+                        fca.switchFragment(frag,"CREATE_PEDIDOS");
+                    }
+                }).build();
 
+        alertDialog.show();
+    }
     @Override
     public void showSaveResultOption(int codigo, String id, String mensaje) {
 
@@ -791,7 +847,15 @@ private PedidoEntity mPedido;
                     public void onClick(View v) {
 
                         dialogs.dismiss();
-                        RetornarPrincipal();
+                        int MaximaCantidadProductos=DataPreferences.getPrefInt("CantidadProducto",context);
+                        if(CantidadDeProductosAgregados()==MaximaCantidadProductos){
+
+                            PreguntarNuevoPedido("Desea Crea un Nuevo Pedido Para El cliente "+ mCliente.getNamecliente() );
+                        }else{
+                            RetornarPrincipal();
+                        }
+
+
 
                         //  finish();
                     }
@@ -861,6 +925,7 @@ private PedidoEntity mPedido;
                     mPedido.setTipocobro(1);
                     mPedido.setTotalcredito(0.0);
                     mPedido.setEstado(0);
+                    mPedido.setReclamo(EtReclamo.getText().toString());
                     int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
                     //cliente.setCodigogenerado();
                     DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");

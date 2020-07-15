@@ -96,6 +96,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
     private TextInputLayout tilTelefono;
     private TextInputLayout tilDireccion;
     private TextInputLayout tilNit;
+    private TextInputLayout tilRazonSocial;
     private  ClientesListViewModel viewModel;
     private ZonaListViewModel viewModelZona;
     private PedidoListViewModel viewModelPedidos;
@@ -148,6 +149,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
         tilNombre = (TextInputLayout) view.findViewById(R.id.til_nombre);
         tilTelefono = (TextInputLayout) view.findViewById(R.id.til_telefono);
         tilDireccion = (TextInputLayout) view.findViewById(R.id.til_direccion);
+        tilRazonSocial=(TextInputLayout)view.findViewById(R.id.til_razonSocial);
         tilNit = (TextInputLayout) view.findViewById(R.id.til_nit);
         viewModel = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
         viewModelPedidos=ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
@@ -465,7 +467,18 @@ public void OnClickGps(){
 
         return true;
     }
+    private boolean esRazonSocialValido(String nombre) {
+        // Pattern patron = Pattern.compile("^[a-zA-Z ]+$");
+        // if (!patron.matcher(nombre).matches() || nombre.length() > 30) {
+        if (nombre.length()<2){
+            tilRazonSocial.setError("Razon Social inválido");
+            return false;
+        } else {
+            tilRazonSocial.setError(null);
+        }
 
+        return true;
+    }
     private boolean esDireccionValido(String nombre) {
 
         if (tilDireccion.getEditText().getText().length() <= 2) {
@@ -490,7 +503,7 @@ public void OnClickGps(){
     }
     private boolean esTelefonoValido(String telefono) {
        // if (!Patterns.PHONE.matcher(telefono).matches()) {
-         if (telefono.length()==0){
+         if (telefono.length()<=7){
             tilTelefono.setError("Teléfono inválido");
             return false;
         } else {
@@ -509,8 +522,9 @@ public void OnClickGps(){
         boolean b = esTelefonoValido(telefono);
         boolean c = esDireccionValido(direccion);
         boolean d = esNitValido(nit);
+        boolean e=esRazonSocialValido(tilRazonSocial.getEditText().getText().toString());
 
-        if (a && b && c && d) {
+        if (a && b && c && d && e) {
             return true;
         }
 return false;
@@ -683,6 +697,7 @@ return false;
                         cliente.setNamecliente(tilNombre.getEditText().getText().toString());
                         cliente.setNit(tilNit.getEditText().getText().toString());
                         cliente.setTelefono(tilTelefono.getEditText().getText().toString());
+                        cliente.setRazon_social(tilRazonSocial.getEditText().getText().toString());
                         cliente.setLatitud(mapa.getCameraPosition().target.latitude);
                         cliente.setLongitud(mapa.getCameraPosition().target.longitude);
                         int idzona=DataPreferences.getPrefInt("zona",getContext());
@@ -695,6 +710,7 @@ return false;
                         mCliente.setNamecliente(tilNombre.getEditText().getText().toString());
                         mCliente.setNit(tilNit.getEditText().getText().toString());
                         mCliente.setTelefono(tilTelefono.getEditText().getText().toString());
+                        mCliente.setRazon_social(tilRazonSocial.getEditText().getText().toString());
                         mCliente.setLatitud(mapa.getCameraPosition().target.latitude);
                         mCliente.setLongitud(mapa.getCameraPosition().target.longitude);
                         mCliente.setEstado(2);

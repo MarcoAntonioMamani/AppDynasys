@@ -22,18 +22,24 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.DB.StockListViewModel;
+import com.dynasys.appdisoft.Login.DB.ZonaListViewModel;
+import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.LoginMvp;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
@@ -52,6 +58,7 @@ import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,7 +68,9 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
     CheckBox checkCliente;
     CheckBox checkProducto,checkPedidos;
     CheckBox checkPrecio;
+    CheckBox checkTodasZonas;
     Button btnSincronizar;
+    Spinner SpinnerZona;
     private SincronizarMvp.Presenter mSincronizarPresenter;
     private ClientesListViewModel viewModel;
     private PreciosListViewModel viewModelPrecio;
@@ -71,6 +80,9 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
     private StockListViewModel viewModelStock;
     private DescuentosListViewModel viewModelDescuento;
     LottieAlertDialog alertDialog;
+    List<ZonasEntity> listZonas;
+    ZonasEntity mZonaSelected;
+    private ZonaListViewModel viewModelZona;
     public SincronizarFragment() {
         // Required empty public constructor
     }
@@ -95,8 +107,10 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
         checkCliente=rootView.findViewById(R.id.view_sinc_cliente);
         checkProducto=rootView.findViewById(R.id.view_sinc_producto);
         checkPrecio=rootView.findViewById(R.id.view_sinc_precio);
+        checkTodasZonas=rootView.findViewById(R.id.view_sinc_zonas );
         btnSincronizar=rootView.findViewById(R.id.id_sync_btn_sync);
         checkPedidos=rootView.findViewById(R.id.view_sinc_pedidos);
+        SpinnerZona=rootView.findViewById(R.id.id_spinner_zona);
         viewModel = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
         viewModelPrecio = ViewModelProviders.of(getActivity()).get(PreciosListViewModel.class);
         viewModelProducto = ViewModelProviders.of(getActivity()).get(ProductosListViewModel.class);
@@ -104,6 +118,7 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
+        viewModelZona =ViewModelProviders.of(getActivity()).get(ZonaListViewModel.class);
       /*  NoteEntity note = new NoteEntity(inputNote.getText().toString());
         viewModel.insertNote(note);*/
         new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle,viewModelStock,viewModelDescuento);
@@ -112,6 +127,18 @@ checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             MarcarDesmarcarTodos(b);
         }
+        });
+        CargarZonas();
+
+        checkTodasZonas.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b==true){
+                    SpinnerZona.setVisibility(View.GONE);
+                }else{
+                    SpinnerZona.setVisibility(View.VISIBLE);
+                }
+            }
         });
         OnclickButton();
         ShowDialogSincronizando();
@@ -132,7 +159,50 @@ checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(
         ShowDialogSincronizando();
         alertDialog.show();
     }
+public void CargarZonas(){
+    SpinnerZona.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            if (pos>=0 && listZonas.size()>0){
+                mZonaSelected = listZonas.get(pos);
+            }
+        }
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    });
+    int idRepartidor= DataPreferences.getPrefInt("idrepartidor",getContext());
+    int idZonas= DataPreferences.getPrefInt("Zonas",getContext());
+    try {
+        listZonas=viewModelZona.getZonaByRepartidor(idRepartidor);
+        ArrayAdapter<ZonasEntity> adapter =new ArrayAdapter<ZonasEntity>(getContext(), android.R.layout.simple_spinner_item, listZonas);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        SpinnerZona.setAdapter(adapter);
+        if (idZonas!=-1){
+            SpinnerZona.setSelection(ObtenerPosicionListaZona(idZonas));
+            checkTodasZonas .setChecked(false);
+            SpinnerZona.setVisibility(View.VISIBLE);
+        }else{
+            checkTodasZonas .setChecked(true);
+            SpinnerZona.setVisibility(View.GONE);
+        }
 
+
+    } catch (ExecutionException e) {
+        e.printStackTrace();
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+
+
+}
+    public int ObtenerPosicionListaZona(int idZona){
+
+        for (int i = 0; i < listZonas.size(); i++) {
+            if (listZonas.get(i).getLanumi()==idZona){
+                return i;
+            }
+        }
+        return -1;
+    }
     public void OnclickButton(){
         btnSincronizar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -249,7 +319,17 @@ public boolean ValidarcheckSeleccionado(){
             //NUESTRO CODIGO
             new Handler().postDelayed(new Runnable() {
                 public void run() {
-                    mSincronizarPresenter.GuadarDatos(checkProducto.isChecked() ,checkPrecio.isChecked(),checkCliente.isChecked(),checkPedidos.isChecked());
+                    if (mZonaSelected==null){
+                        UtilShare .tvZona.setText("Todas Las Zonas");
+                        mSincronizarPresenter.GuadarDatos(checkProducto.isChecked() ,checkPrecio.isChecked(),
+                                checkCliente.isChecked(),checkPedidos.isChecked(),checkTodasZonas .isChecked(),-1);
+                    }else{
+                        UtilShare .tvZona.setText(mZonaSelected.getZona());
+                        mSincronizarPresenter.GuadarDatos(checkProducto.isChecked() ,checkPrecio.isChecked(),
+                                checkCliente.isChecked(),checkPedidos.isChecked(),checkTodasZonas .isChecked(),mZonaSelected.getLanumi());
+                    }
+
+
                 }
             }, 1 * 2000);
             super.onPostExecute(result);

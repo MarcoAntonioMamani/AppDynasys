@@ -37,7 +37,7 @@
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="Marco Antonio Mamani"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="@color/white" />
 
         <TextView

@@ -323,7 +323,7 @@ if (UtilShare.mActivity!=null){
         }
     }
     public void _DecargarPedidos(final String idRepartidor){
-
+        int idZonas= DataPreferences.getPrefInt("Zonas",mContext);
         List<ClienteEntity> listCliente = null;
         try {
             listCliente = viewModelClientes.getMAllStateCliente(1);
@@ -421,7 +421,7 @@ if (UtilShare.mActivity!=null){
                 public void onFailure(Call<List<PedidoEntity>> call, Throwable t) {
                     // mSincronizarview.ShowMessageResult("No es posible conectarse con el web services.");
                 }
-            }, idRepartidor);
+            }, idRepartidor,idZonas);
 
         }   } catch (ExecutionException e) {
             e.printStackTrace();

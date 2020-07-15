@@ -42,6 +42,8 @@ public class PedidoEntity implements Comparable<PedidoEntity> {
     String codigogenerado;
     @ColumnInfo(name = "estadoupdate")
     int estadoUpdate;
+    @ColumnInfo(name = "reclamo")
+    String reclamo;
     
 public PedidoEntity(){
 
@@ -181,6 +183,14 @@ public PedidoEntity(){
 
     public void setEstadoUpdate(int estadoUpdate) {
         this.estadoUpdate = estadoUpdate;
+    }
+
+    public String getReclamo() {
+        return reclamo;
+    }
+
+    public void setReclamo(String reclamo) {
+        this.reclamo = reclamo;
     }
 
     @Override
