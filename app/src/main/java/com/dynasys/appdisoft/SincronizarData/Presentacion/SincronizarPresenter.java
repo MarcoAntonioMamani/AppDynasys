@@ -185,7 +185,7 @@ int ZonaSelected=0;
     }
     public void _DescargarClientes(String idRepartidor){
         ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.ObtenerClientes( idRepartidor,new Callback<List<ClienteEntity>>() {
+        apiManager.ObtenerClientes( idRepartidor,ZonaSelected,new Callback<List<ClienteEntity>>() {
             @Override
             public void onResponse(Call<List<ClienteEntity>> call, Response<List<ClienteEntity>> response) {
                 final List<ClienteEntity> responseUser = (List<ClienteEntity>) response.body();

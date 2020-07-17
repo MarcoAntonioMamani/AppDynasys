@@ -30,8 +30,8 @@ public interface IUsersApi {
     @PUT("/api/repartidor/clients")
     Call<ResponseLogin> UpdateUser(@Body ClienteEntity user);
 
-    @GET("/api/repartidor/clientes/{idrepartidor}")
-    Call<List<ClienteEntity>> ObtenerClientes(@Path("idrepartidor") String idRepartidor);
+    @GET("/api/repartidor/clientes/{idrepartidor}/{idZona}")
+    Call<List<ClienteEntity>> ObtenerClientes(@Path("idrepartidor") String idRepartidor,@Path("idZona") int idZona);
 
     @GET("/api/repartidor/zonas/{idrepartidor}")
     Call<List<ZonasEntity>> ObtenerZonas(@Path("idrepartidor") String idRepartidor);

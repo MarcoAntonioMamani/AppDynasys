@@ -199,6 +199,15 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
 
     public void _prCargarDatos(){
 
+
+
+        int idZonas= DataPreferences.getPrefInt("Zonas",mContext);
+        if (idZonas==-1){
+            listaSpinnerZona.setVisibility(View.VISIBLE);
+        }else{
+            listaSpinnerZona.setVisibility(View.GONE);
+        }
+
         int idRepartidor=DataPreferences.getPrefInt("idrepartidor",mContext);
         try {
             listZonas=viewModelZona.getZonaByRepartidor(idRepartidor);
@@ -702,7 +711,14 @@ return false;
                         cliente.setLongitud(mapa.getCameraPosition().target.longitude);
                         int idzona=DataPreferences.getPrefInt("zona",getContext());
                         cliente.setCccat(2);
-                        cliente.setCczona(zonaSelected.getLanumi());
+                        int idZonas= DataPreferences.getPrefInt("Zonas",mContext);
+                        if (idZonas==-1){
+                            cliente.setCczona(zonaSelected.getLanumi());
+                        }else{
+                            cliente.setCczona(idZonas);
+                        }
+
+
                         cliente.setEstado(0);
                         GuardarCliente(cliente);
                     }else{
@@ -714,7 +730,13 @@ return false;
                         mCliente.setLatitud(mapa.getCameraPosition().target.latitude);
                         mCliente.setLongitud(mapa.getCameraPosition().target.longitude);
                         mCliente.setEstado(2);
-                        mCliente.setCczona(zonaSelected.getLanumi());
+                        int idZonas= DataPreferences.getPrefInt("Zonas",mContext);
+                        if (idZonas==-1){
+                            mCliente.setCczona(zonaSelected.getLanumi());
+                        }else{
+                            mCliente.setCczona(idZonas);
+                        }
+
                         viewModel.updateCliente(mCliente);
                         try {
                             List<PedidoEntity> listPedido=viewModelPedidos.getPedidobyCliente(mCliente.getCodigogenerado());

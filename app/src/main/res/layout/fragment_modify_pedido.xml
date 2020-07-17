@@ -242,7 +242,7 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="410dp"
+                    android:layout_height="350dp"
                     android:layout_gravity="bottom"
                     android:gravity="bottom"
                     android:background="@color/marfil"
@@ -289,7 +289,7 @@
                                             <TextView
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
-                                                android:text="Sub Total"
+                                                android:text="Sub Total Bs"
                                                 android:textColor="@color/gray_dark"
                                                 android:textSize="16dp"
                                                 android:paddingLeft="15dp"
@@ -348,7 +348,7 @@
                                             <TextView
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
-                                                android:text="Descuento $ "
+                                                android:text="Descuento Bs "
                                                 android:textColor="@color/gray_dark"
                                                 android:textSize="16dp"
                                                 android:paddingLeft="15dp"
@@ -407,7 +407,7 @@
                                             <TextView
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
-                                                android:text="Total $ "
+                                                android:text="Total Bs "
                                                 android:textColor="@color/gray_dark"
                                                 android:textSize="16dp"
                                                 android:paddingLeft="15dp"
@@ -529,7 +529,7 @@
                                 android:layout_width="fill_parent"
                                 android:layout_height="fill_parent"
                                 android:orientation="vertical"
-
+                                android:visibility="gone"
                                 >
                                 <TextView
                                     android:layout_width="wrap_content"

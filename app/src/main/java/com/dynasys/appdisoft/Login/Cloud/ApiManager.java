@@ -85,8 +85,8 @@ private static Context mcontext;
         Call<ResponseLogin> userCall = service.UpdateDetalle(user,oanumi);
         userCall.enqueue(callback);
     }
-    public void ObtenerClientes( String idRepartidor,Callback<List<ClienteEntity>> callback) {
-        Call<List<ClienteEntity>> userCall = service.ObtenerClientes(idRepartidor);
+    public void ObtenerClientes( String idRepartidor,int idZona,Callback<List<ClienteEntity>> callback) {
+        Call<List<ClienteEntity>> userCall = service.ObtenerClientes(idRepartidor,idZona);
         userCall.enqueue(callback);
     }
 
