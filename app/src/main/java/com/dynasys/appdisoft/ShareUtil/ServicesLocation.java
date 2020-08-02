@@ -59,8 +59,8 @@ public class ServicesLocation  extends Service implements
                     .addApi(LocationServices.API)
                     .build();
 
-            mLocationRequest.setInterval(25 * 1000);
-            mLocationRequest.setFastestInterval(25 * 1000);
+            mLocationRequest.setInterval(60 * 1000);
+            mLocationRequest.setFastestInterval(60 * 1000);
 
 
             int priority = LocationRequest.PRIORITY_HIGH_ACCURACY; //by default

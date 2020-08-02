@@ -220,6 +220,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
                 tilNit.getEditText().setText(mCliente.getNit());
                 tilDireccion.getEditText().setText(mCliente.getDireccion());
                 tilTelefono.getEditText().setText(mCliente.getTelefono());
+                tilRazonSocial.getEditText().setText(mCliente.getRazon_social());
                 listaSpinnerZona.setSelection(ObtenerPosicionListaZona(mCliente.getCczona()));
             }
         } catch (ExecutionException e) {
@@ -709,7 +710,7 @@ return false;
                         cliente.setRazon_social(tilRazonSocial.getEditText().getText().toString());
                         cliente.setLatitud(mapa.getCameraPosition().target.latitude);
                         cliente.setLongitud(mapa.getCameraPosition().target.longitude);
-                        int idzona=DataPreferences.getPrefInt("zona",getContext());
+
                         cliente.setCccat(2);
                         int idZonas= DataPreferences.getPrefInt("Zonas",mContext);
                         if (idZonas==-1){
