@@ -989,7 +989,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                     double cantf =0;
                     for (int j = 0; j < mDetalleItem.size(); j++) {
                         if(familia==mDetalleItem.get(j).getFamilia()){
-                            cantf+=mDetalleItem.get(i).getObpcant();
+                            cantf+=mDetalleItem.get(j).getObpcant();
                         }
                     }
 

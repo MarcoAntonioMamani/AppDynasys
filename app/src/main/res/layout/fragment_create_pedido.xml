@@ -101,6 +101,7 @@ android:background="@color/marfil"
                                 android:background="@drawable/animation_editext"
                                 android:inputType="textCapSentences|textMultiLine"
                                 android:textColor="@color/black"
+                                android:maxLength="200"
                              />
 
                         </LinearLayout>
