@@ -81,7 +81,12 @@ public class LoginPresenter implements LoginMvp.Presenter {
                             }
 
                         } else {
-                            mLoginView.ShowMessageResult(responseUser.getMessage());
+                            if (responseUser!=null){
+                                mLoginView.ShowMessageResult(responseUser.getMessage());
+                            }else{
+                                mLoginView.ShowMessageResult("Hubo un Error en la respuesta del web service null");
+                            }
+
                         }
                     }
 

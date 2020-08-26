@@ -318,7 +318,7 @@ if (UtilShare.mActivity!=null){
                     }
                     new ChecarNotificaciones().execute();
 }
-            }, 7*1000);//8
+            }, 6*1000);//8
             super.onPostExecute(result);
         }
     }
@@ -474,12 +474,17 @@ if (UtilShare.mActivity!=null){
                             return;
                         }
                         if (response.isSuccessful() && responseUser != null) {
-
+                            if (responseUser.size()>0){
+                                viewModelStock.deleteAllStocks();
+                            }
                                 List<StockEntity> listStock = viewModelStock.getAllStock();
 
                                 for (int i = 0; i < responseUser.size(); i++) {
                                     StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
                                     //viewModel.insertCliente(cliente);
+                                    if (stock.getCodigoProducto()==61){
+                                        StockEntity stock02 = responseUser.get(i);
+                                    }
                                     StockEntity dbStock = ObtenerProducto(listStock,stock.getCodigoProducto());
                                     if (dbStock == null) {
                                         viewModelStock.insertStock(stock);
