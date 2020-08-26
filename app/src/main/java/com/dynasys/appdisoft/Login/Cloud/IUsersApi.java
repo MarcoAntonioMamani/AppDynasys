@@ -1,6 +1,7 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetallle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
@@ -50,6 +51,9 @@ public interface IUsersApi {
 
     @POST("/api/repartidor/pedido")
     Call<ResponseLogin> InsertPedido(@Body PedidoEntity user);
+
+    @POST("/api/repartidor/pedidoDetalle")
+    Call<ResponseLogin> InsertPedidoDetalle(@Body PedidoDetallle user);
 
     @PUT("/api/repartidor/pedido")
     Call<ResponseLogin> UpdatePedido(@Body PedidoEntity user);

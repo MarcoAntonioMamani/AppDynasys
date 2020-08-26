@@ -117,7 +117,7 @@ public class LoginPresenter implements LoginMvp.Presenter {
 
             @Override
             public void onFailure(Call<List<ZonasEntity>> call, Throwable t) {
-                mLoginView.ShowMessageResult("No es posible conectarse con el servicio.");
+                mLoginView.ShowMessageResult("No es posible conectarse con el servicio de Zonas");
             }
         });
     }

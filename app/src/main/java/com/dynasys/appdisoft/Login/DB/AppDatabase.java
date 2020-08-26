@@ -29,7 +29,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
  * Created by ravi on 05/02/18.
  */
 
-@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, ProductoEntity.class, PedidoEntity.class, DetalleEntity.class, StockEntity.class, ZonasEntity.class}, version = 1)
+@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, ProductoEntity.class, PedidoEntity.class, DetalleEntity.class, StockEntity.class, ZonasEntity.class}, version = 2)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -49,6 +49,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class, "disoft_database")
+                            .fallbackToDestructiveMigration()
                             .build();
 
                 }
