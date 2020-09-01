@@ -468,26 +468,31 @@ if (UtilShare.mActivity!=null){
                         }
                         if (response.isSuccessful() && responseUser != null) {
 
-                                List<StockEntity> listStock = viewModelStock.getAllStock();
+                            if (responseUser.size()>0){
+                                viewModelStock.deleteAllStocks();
+                            }
+                            List<StockEntity> listStock = viewModelStock.getAllStock();
 
-                                for (int i = 0; i < responseUser.size(); i++) {
-                                    StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
-                                    //viewModel.insertCliente(cliente);
-                                    StockEntity dbStock = ObtenerProducto(listStock,stock.getCodigoProducto());
-                                    if (dbStock == null) {
-                                        viewModelStock.insertStock(stock);
-                                    } else {
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
+                                //viewModel.insertCliente(cliente);
+
+                                StockEntity dbStock = ObtenerProducto(listStock,stock.getCodigoProducto());
+                                if (dbStock == null) {
+                                    viewModelStock.insertStock(stock);
+                                } else {
 
 
-                                            if (stock.getCodigoProducto()==dbStock.getCodigoProducto()&&stock.getCantidad()!=dbStock.getCantidad()){
-                                                dbStock .setCantidad(stock.getCantidad());
-                                                viewModelStock.updateStock(dbStock);
-                                            }
-
+                                    if (stock.getCodigoProducto()==dbStock.getCodigoProducto()&&stock.getCantidad()!=dbStock.getCantidad()){
+                                        dbStock .setCantidad(stock.getCantidad());
+                                        viewModelStock.updateStock(dbStock);
                                     }
 
-
                                 }
+
+
+                            }
+
 
 
                         } else {
@@ -693,9 +698,7 @@ if (UtilShare.mActivity!=null){
                                                mPedido.setEstadoUpdate(1);
                                                mPedido.setCodigogenerado(responseUser.getToken());
 
-                                               List<DetalleEntity> list=viewModelDetalle.getDetalle(CodeGenerado);
-                                              // InsertarDetalleServicio(responseUser.getToken(),list,mPedido,CodeGenerado);
-                                               //showSaveResultOption(1,""+mcliente.getNumi(),"");
+
                                                List<DetalleEntity> listDetalle= viewModelDetalle.getDetalle(CodeGenerado);
                                                if (listDetalle!=null) {
                                                    for (int i = 0; i < listDetalle.size(); i++) {

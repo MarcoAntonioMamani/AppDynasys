@@ -9,6 +9,7 @@ import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetallle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
@@ -103,8 +104,38 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
             //mContext.stopService(intent);
             ServiceSincronizacion.getInstance().onDestroy();
         }
+
+        final String CodeGenerado=pedido.getCodigogenerado();
+        List<DetalleEntity> Detalle= null;
+        try {
+            Detalle = viewModelDetalle.getDetalle(CodeGenerado);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        final PedidoDetallle p= new PedidoDetallle();
+        p.setCliente(pedido.getCliente());
+        p.setCodigogenerado(pedido.getCodigogenerado());
+        p.setDetalle(Detalle);
+        p.setEstado(pedido.getEstado());
+        p.setId(pedido.getId());
+        p.setOanumi(pedido.getOanumi());
+        p.setOafdoc(pedido.getOafdoc());
+        p.setOahora(pedido.getOahora());
+        p.setOaccli(pedido.getOaccli());
+        p.setOarepa(pedido.getOarepa());
+        p.setOaest(pedido.getOaest());
+        p.setOaobs(pedido.getOaobs());
+        p.setLatitud(pedido.getLatitud());
+        p.setLongitud(pedido.getLongitud());
+        p.setTotal(pedido.getTotal());
+        p.setTipocobro(pedido.getTipocobro());
+        p.setTotalcredito(pedido.getTotalcredito());
+        p.setEstado(pedido.getEstado());
+        p.setEstadoUpdate(pedido.getEstadoUpdate());
         ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.InsertPedido(pedido, new Callback<ResponseLogin>() {
+        apiManager.InsertPedidoConDetalle(p, new Callback<ResponseLogin>() {
             @Override
             public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                 ResponseLogin responseUser = response.body();
@@ -127,8 +158,20 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                                 mPedido.setEstado(1);
                                 mPedido.setEstadoUpdate(1);
                                 mPedido.setCodigogenerado(responseUser.getToken());
+                                List<DetalleEntity> listDetalle= viewModelDetalle.getDetalle(CodeGenerado);
+                                if (listDetalle!=null) {
+                                    for (int i = 0; i < listDetalle.size(); i++) {
+                                        DetalleEntity item = listDetalle.get(i);
+                                        item.setObnumi(responseUser.getToken());
+                                        item.setEstado(true);
+                                        item.setObupdate(1);
+                                        viewModelDetalle.updateDetalle(item);
+
+                                    }
+                                    viewModelPedidos.updatePedido(mPedido);
+                                }
                                 viewModelPedidos.updatePedido(mPedido);
-                                InsertarDetalleServicio(responseUser.getToken(),list,pedido);
+                                mPedidoView.showSaveResultOption(1,""+responseUser.getToken(),"");
                                 if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
                                     UtilShare.mActivity=activity;
                                     Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
