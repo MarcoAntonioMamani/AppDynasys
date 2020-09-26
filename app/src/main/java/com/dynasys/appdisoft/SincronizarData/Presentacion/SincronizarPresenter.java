@@ -391,22 +391,44 @@ int ZonaSelected=0;
                     return;
                 }
                 if (response.isSuccessful() && responseUser != null) {
-                    try {
+
                         viewModelStock.deleteAllStocks();
-                        List<StockEntity> listStock = viewModelStock.getAllStock();
+                        List<StockEntity> listStock = viewModelStock.getMStockAllAsync();
 
                         for (int i = 0; i < responseUser.size(); i++) {
                             StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
                             //viewModel.insertCliente(cliente);
-                            StockEntity dbStock = viewModelStock.getStock(stock.getCodigoProducto());
+                            StockEntity dbStock = null;
+                            try {
+                                dbStock = viewModelStock.getStock(stock.getCodigoProducto());
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             if (dbStock == null) {
-                                viewModelStock.insertStock(stock);
+                                if (stock.getCantidad()<0){
+                                    stock.setCantidad(0);
+                                    viewModelStock.insertStock(stock);
+                                }else{
+                                    viewModelStock.insertStock(stock);
+                                }
+
+
                             } else {
                                 for (int j = 0; j < listStock.size(); j++) {
                                     StockEntity dbStock02=listStock.get(j);
 
                                     if (stock.getCodigoProducto()==dbStock02.getCodigoProducto()&&stock.getCantidad()!=dbStock02.getCantidad()){
-                                        viewModelStock.updateStock(stock);
+                                        if (stock.getCantidad()<0) {
+                                            dbStock02.setCantidad(0);
+                                            viewModelStock.updateStock(dbStock02);
+                                        }else {
+                                            dbStock02.setCantidad(stock.getCantidad());
+                                            viewModelStock.updateStock(dbStock02);
+                                        }
+
+
                                     }
 
                                 }
@@ -415,9 +437,7 @@ int ZonaSelected=0;
 
                         }
 
-                    } catch (ExecutionException e) {
-                    } catch (InterruptedException e) {
-                    }
+
 
                 } else {
                     // mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
@@ -453,7 +473,8 @@ int ZonaSelected=0;
                                     if (pedido.getOaest() == 1) {
                                             pedido.setOaest(2);
                                             pedido.setEstado(2);
-                                            viewModelPedidos.insertPedido(pedido);
+                                           pedido .setEstadoStock(1);
+                                        viewModelPedidos.insertPedido(pedido);
                                     }else{
                                         viewModelPedidos.insertPedido(pedido);
                                     }

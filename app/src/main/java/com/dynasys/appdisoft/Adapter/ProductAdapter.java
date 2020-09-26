@@ -56,7 +56,7 @@ public void setLista(List<ProductoEntity> items){
             product_name.setText(item.getProducto());
             product_price .setText(""+item.getPrecio()+" Bs" );
             producto_code.setText(""+item.getNumi());
-            producto_stock.setText("Stock = "+item.getStock());
+            producto_stock.setText(""+item.getStock());
 
 
             int stock= DataPreferences.getPrefInt("stock",context);
@@ -100,20 +100,59 @@ public void setLista(List<ProductoEntity> items){
         protected FilterResults performFiltering(CharSequence charSequence) {
             if (charSequence != null) {
                 suggestions.clear();
-                int cantidad=7;
-                int contador=0;
+                int cantidad=12;
+                int cont=0;
+                String[] word=charSequence.toString().toUpperCase().split(" ");
+                int cant = word.length;
                 for (ProductoEntity item: tempItems) {
-                    String word=charSequence.toString().toUpperCase();
-                    String nameProducto=item.getCod()+item.getProducto().toUpperCase();
-                    if (nameProducto.trim().contains(word.trim())) {
-                        suggestions.add(item);
-                        contador+=1;
-                        if (contador>=cantidad){
-                            FilterResults filterResults = new FilterResults();
-                            filterResults.values = suggestions;
-                            filterResults.count = suggestions.size();
-                            return filterResults;
-                        }
+                    String nameCliente=item.getNumi()+" "+item.getProducto().toUpperCase();
+                    switch (cant){
+                        case 1:
+                            if (nameCliente.trim().contains(word[0])) {
+                                suggestions.add(item);
+                                cont +=1;
+                            }
+                            break;
+                        case 2:
+                            if (nameCliente.trim().contains(word[0])
+                                    && nameCliente.trim().contains(word[1])) {
+                                suggestions.add(item);
+                                cont +=1;
+                            }
+                            break;
+                        case 3:
+                            if (nameCliente.trim().contains(word[0])
+                                    && nameCliente.trim().contains(word[1])
+                                    && nameCliente.trim().contains(word[2])) {
+                                suggestions.add(item);
+                                cont +=1;
+                            }
+                            break;
+                        case 4:
+
+                            if (nameCliente.trim().contains(word[0])
+                                    && nameCliente.trim().contains(word[1])
+                                    && nameCliente.trim().contains(word[2])
+                                    && nameCliente.trim().contains(word[3])) {
+                                suggestions.add(item);
+                                cont +=1;
+                            }
+                            break;
+                        case 5:
+                        default:
+                            if (nameCliente.trim().contains(word[0])
+                                    && nameCliente.trim().contains(word[1])
+                                    && nameCliente.trim().contains(word[2])
+                                    && nameCliente.trim().contains(word[3])
+                                    && nameCliente.trim().contains(word[4])) {
+                                suggestions.add(item);
+                                cont +=1;
+                            }
+                            break;
+                    }
+
+                    if (cont==10){
+                        break;
                     }
                 }
                 FilterResults filterResults = new FilterResults();

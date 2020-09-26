@@ -262,7 +262,11 @@ public void onClickAtras(){
                     }else{
                         M_Uii="";
                     }
+                }else{
+                    ShowMessageResult("El cliente ya ha sido guardado localmente, por favor vuelva hacia atras");
                 }
+
+
 
 
             }
@@ -445,7 +449,7 @@ public void onClickAtras(){
                 Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
                 getContext().startService(intent);
             }
-            ShowMessageResult("El Cliente no ha podido ser guardado: "+ e.getMessage());
+            showSaveResultOption(0,"","");
         }
 
 }
@@ -700,7 +704,7 @@ return false;
                         DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
                         String code = df.format(Calendar.getInstance().getTime());
                         code=""+codigoRepartidor+","+code;
-                        cliente.setCodigogenerado(code+"V2.2");
+                        cliente.setCodigogenerado(code+"V2.5");
                         cliente.setNumi(0);
                         cliente.setFechaingreso(Calendar.getInstance().getTime());
                         cliente.setDireccion(tilDireccion.getEditText().getText().toString());

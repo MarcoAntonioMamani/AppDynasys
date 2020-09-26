@@ -3,15 +3,19 @@ package com.dynasys.appdisoft.Pedidos.CreatePedidos;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.StockListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
@@ -27,18 +31,29 @@ import java.util.concurrent.ExecutionException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+import android.Manifest;
+import android.app.Service;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
-
+    private static final String TAG = "Tracking";
     private final CreatePedidoMvp.View mPedidoView;
     private final Context mContext;
     private ClientesListViewModel viewModelClientes;
     private ProductosListViewModel viewModelProductos;
     private PedidoListViewModel viewModelPedidos;
     private DetalleListViewModel viewModelDetalle;
+    private StockListViewModel viewModelStock;
     private FragmentActivity activity;
     public CreatePedidoPresenter(CreatePedidoMvp.View  pedidosView, Context context, ClientesListViewModel viewModel,ProductosListViewModel viewModelProductos, FragmentActivity activity,
-                                 PedidoListViewModel mviewPedidos,DetalleListViewModel mviewDetalle){
+                                 PedidoListViewModel mviewPedidos,DetalleListViewModel mviewDetalle,StockListViewModel mviewStock){
         mPedidoView = Preconditions.checkNotNull(pedidosView);
         mPedidoView.setPresenter(this);
         this.mContext=context;
@@ -46,6 +61,7 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
         this.viewModelPedidos=mviewPedidos;
         this.viewModelProductos=viewModelProductos;
         this.viewModelDetalle=mviewDetalle;
+        this.viewModelStock=mviewStock;
         this.activity=activity;
     }
     @Override
@@ -95,6 +111,27 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
         for (int i = 0; i < list.size(); i++) {
             DetalleEntity item=list.get(i);
             viewModelDetalle.insertDetalle(item);
+
+
+
+            try{
+                List<StockEntity> listStock = viewModelStock.getMStockAllAsync();
+                if (listStock.size()>0){
+                    StockEntity  st = viewModelStock.getStock(item.getObcprod());
+                    if (st!=null){
+                        st.setCantidad(st.getCantidad()-item.getObpcant());
+                        viewModelStock.updateStock(st);
+                    }
+                }
+
+            }catch (Exception e){
+
+                Log.d(TAG, "respuesta: "+e.getMessage());
+            }
+
+
+
+
         }
 
         if (ShareMethods.IsServiceRunning(mContext, ServiceSincronizacion.class)){
@@ -104,7 +141,38 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
             ServiceSincronizacion.getInstance().onDestroy();
         }
         ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.InsertPedido(pedido, new Callback<ResponseLogin>() {
+
+        final String CodeGenerado=pedido.getCodigogenerado();
+        List<DetalleEntity> Detalle= null;
+        try {
+            Detalle = viewModelDetalle.getDetalle(CodeGenerado);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        final PedidoDetalle p= new PedidoDetalle();
+        p.setCliente(pedido.getCliente());
+        p.setCodigogenerado(pedido.getCodigogenerado());
+        p.setDetalle(Detalle);
+        p.setEstado(pedido.getEstado());
+        p.setId(pedido.getId());
+        p.setOanumi(pedido.getOanumi());
+        p.setOafdoc(pedido.getOafdoc());
+        p.setOahora(pedido.getOahora());
+        p.setOaccli(pedido.getOaccli());
+        p.setOarepa(pedido.getOarepa());
+        p.setOaest(pedido.getOaest());
+        p.setOaobs(pedido.getOaobs());
+        p.setLatitud(pedido.getLatitud());
+        p.setLongitud(pedido.getLongitud());
+        p.setTotal(pedido.getTotal());
+        p.setTipocobro(pedido.getTipocobro());
+        p.setTotalcredito(pedido.getTotalcredito());
+        p.setEstado(pedido.getEstado());
+        p.setEstadoUpdate(pedido.getEstadoUpdate());
+        p.setReclamo(pedido.getReclamo());
+        apiManager.InsertPedido(p, new Callback<ResponseLogin>() {
             @Override
             public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                 ResponseLogin responseUser = response.body();
@@ -126,9 +194,30 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
                                 mPedido.setOanumi(responseUser.getToken());
                                 mPedido.setEstado(1);
                                 mPedido.setEstadoUpdate(1);
+                                mPedido .setEstadoStock(1);
                                 mPedido.setCodigogenerado(responseUser.getToken());
-                                viewModelPedidos.updatePedido(mPedido);
-                                InsertarDetalleServicio(responseUser.getToken(),list,pedido);
+                                List<DetalleEntity> listDetalle= viewModelDetalle.getDetalle(CodeGenerado);
+                                if (listDetalle!=null) {
+                                    for (int i = 0; i < listDetalle.size(); i++) {
+                                        DetalleEntity item = listDetalle.get(i);
+                                        item.setObnumi(responseUser.getToken());
+                                        item.setEstado(true);
+                                        item.setObupdate(1);
+                                        viewModelDetalle.updateDetalle(item);
+
+                                    }
+                                    viewModelPedidos.updatePedido(mPedido);
+                                    mPedidoView.showSaveResultOption(1,""+responseUser.getToken(),"");
+                                }else{
+                                    if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
+                                        UtilShare.mActivity=activity;
+                                        Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
+                                        mContext.startService(intent);
+                                    }
+                                    mPedidoView.showSaveResultOption(0,"","");
+                                }
+
+
                                 if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
                                     UtilShare.mActivity=activity;
                                     Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
@@ -189,45 +278,4 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
         }
     }
 
-    public void InsertarDetalleServicio(final String Oanumi, List<DetalleEntity> list, final PedidoEntity pedido){
-        ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.InsertDetalle(list,Oanumi, new Callback<ResponseLogin>() {
-            @Override
-            public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
-                ResponseLogin responseUser = response.body();
-                if (response.code()==404 || response.code()==500){
-                    mPedidoView.showSaveResultOption(0,"","");
-                    return;
-                }
-                try{
-                    if (responseUser!=null){
-                        if (responseUser.getCode()==1){
-                            List<DetalleEntity> listDetalle= viewModelDetalle.getDetalle(pedido.getCodigogenerado());
-                            if (listDetalle!=null){
-                                for (int i = 0; i < listDetalle.size(); i++) {
-                                    DetalleEntity item=listDetalle.get(i);
-                                    item.setObnumi(Oanumi);
-                                    item.setEstado(true);
-                                    item.setObupdate(1);
-                                    viewModelDetalle.updateDetalle(item);
-                                }
-                                mPedidoView.showSaveResultOption(1,""+Oanumi,"");
-                                return;
-                            }
-                        }
-                    }
-                }catch (Exception e){
-                    mPedidoView.showSaveResultOption(0,"","");
-                    return;
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseLogin> call, Throwable t) {
-                mPedidoView.showSaveResultOption(0,"","");
-                //ShowMessageResult("Error al guardar el pedido");
-            }
-        });
-    }
 }

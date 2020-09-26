@@ -1,61 +1,58 @@
 package com.dynasys.appdisoft.Login.DB.Entity;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-
-
 import java.util.Date;
-@Entity(tableName = "pedido")
-public class PedidoEntity implements Comparable<PedidoEntity> {
-    @PrimaryKey(autoGenerate = true)
+import java.util.List;
+
+public class PedidoDetalle {
+
     int id;
-    @ColumnInfo(name = "oanumi")
+
     String oanumi;
-    @ColumnInfo(name = "oafdoc")
+
     Date oafdoc;
-    @ColumnInfo(name = "oahora")
+
     String oahora;
-    @ColumnInfo(name = "oaccli")
+
     String oaccli;
-    @ColumnInfo(name = "cliente")
+
     String cliente;
-    @ColumnInfo(name = "oarepa")
+
     int oarepa;
-    @ColumnInfo(name = "oaest")
+
     int oaest;
-    @ColumnInfo(name = "oaobs")
+
     String oaobs;
-    @ColumnInfo(name = "latitud")
+
     Double latitud;
-    @ColumnInfo(name = "longitud")
+
     Double longitud;
-    @ColumnInfo(name = "total")
+
     Double total;
-    @ColumnInfo(name = "tipocobro")
+
     int tipocobro;
-    @ColumnInfo(name = "totalcredito")
+
     Double totalcredito;
-    @ColumnInfo(name = "estado")
+
     int estado;
-    @ColumnInfo(name = "codigogenerado")
+
     String codigogenerado;
-    @ColumnInfo(name = "estadoupdate")
+
     int estadoUpdate;
-    @ColumnInfo(name = "reclamo")
+
     String reclamo;
-    @ColumnInfo(name = "estadoStock")
-    int estadoStock ;
-public PedidoEntity(){
+    List<DetalleEntity> detalle;
 
-}
 
-    public int getEstadoStock() {
-        return estadoStock;
+    public PedidoDetalle(){
+
     }
 
-    public void setEstadoStock(int estadoStock) {
-        this.estadoStock = estadoStock;
+    public List<DetalleEntity> getDetalle() {
+        return detalle;
+    }
+
+    public void setDetalle(List<DetalleEntity> detalle) {
+        this.detalle = detalle;
     }
 
     public int getId() {
@@ -202,10 +199,5 @@ public PedidoEntity(){
         this.reclamo = reclamo;
     }
 
-    @Override
-    public int compareTo(PedidoEntity pedidoEntity) {
-        int thisVal = this.getId();
-        int anotherVal = pedidoEntity.getId();
-        return (thisVal>anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
-    }
+
 }

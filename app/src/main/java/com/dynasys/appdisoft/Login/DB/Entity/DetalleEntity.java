@@ -38,21 +38,6 @@ public class DetalleEntity  implements Cloneable{
 
     }
 
-    public DetalleEntity(int id, String obnumi, int obcprod, String cadesc, double obpcant, double obpbase, double obptot, double descuento, double total, int familia, boolean estado, int obupdate, double stock) {
-        this.id = id;
-        this.obnumi = obnumi;
-        this.obcprod = obcprod;
-        this.cadesc = cadesc;
-        this.obpcant = obpcant;
-        this.obpbase = obpbase;
-        this.obptot = obptot;
-        this.descuento = descuento;
-        this.total = total;
-        this.familia = familia;
-        this.estado = estado;
-        this.obupdate = obupdate;
-        this.stock = stock;
-    }
 
     public int getId() {
         return id;

@@ -27,6 +27,10 @@ public class ProductosListViewModel extends AndroidViewModel {
     public List<ProductoEntity> getMAllProducto(int code) throws ExecutionException, InterruptedException {
         return mRepository.getMProductoAll(code);
     }
+
+    public ProductoEntity getMProductoByStock(int code) throws ExecutionException, InterruptedException {
+        return mRepository.getMProductoStock(code);
+    }
     public List<ProductoEntity> getProductoByCliente(int code) throws ExecutionException, InterruptedException {
         return mRepository.getMProductoByCliente(code);
     }

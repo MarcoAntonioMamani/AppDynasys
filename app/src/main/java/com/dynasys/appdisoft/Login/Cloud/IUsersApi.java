@@ -2,6 +2,7 @@ package com.dynasys.appdisoft.Login.Cloud;
 
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
@@ -53,8 +54,10 @@ public interface IUsersApi {
     @GET("/api/stock/{idrepartidor}")
     Call<List<StockEntity>> ObtenerStocks(@Path("idrepartidor") String idRepartidor);
 
-    @POST("/api/repartidor/pedido")
-    Call<ResponseLogin> InsertPedido(@Body PedidoEntity user);
+
+
+    @POST("/api/repartidor/pedidoDetalleCF")
+    Call<ResponseLogin> InsertPedido(@Body PedidoDetalle user);
 
     @PUT("/api/repartidor/pedido")
     Call<ResponseLogin> UpdatePedido(@Body PedidoEntity user);

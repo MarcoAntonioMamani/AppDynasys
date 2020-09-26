@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.dynasys.appdisoft.Login.DB.Converter.DateConverter;
 import com.dynasys.appdisoft.Login.DB.Dao.DescuentosDao;
@@ -31,7 +32,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
  * Created by ravi on 05/02/18.
  */
 
-@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, ProductoEntity.class, PedidoEntity.class, DetalleEntity.class, StockEntity.class, ZonasEntity.class, DescuentosEntity.class}, version = 1)
+@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, ProductoEntity.class, PedidoEntity.class, DetalleEntity.class, StockEntity.class, ZonasEntity.class, DescuentosEntity.class}, version = 8)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -51,7 +52,8 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "disoft_database")
+                            AppDatabase.class, "disoftCF_database")
+                            .fallbackToDestructiveMigration()
                             .build();
 
                 }
@@ -64,4 +66,5 @@ public abstract class AppDatabase extends RoomDatabase {
        INSTANCE.clearAllTables();
         INSTANCE = null;
     }
+
 }

@@ -21,10 +21,9 @@ public interface StockDao {
     LiveData<List<StockEntity>> getAllStock();
 
     @Query("SELECT * FROM stock WHERE codigoProducto=:id")
-    StockEntity getStockById(int id);
+    StockEntity getStockProducto(int id);
 
-    @Query("SELECT * FROM stock WHERE codigoProducto=:id")
-    LiveData<StockEntity> getStock(int id);
+
 
     @Insert
     long insert(StockEntity stock);
@@ -40,5 +39,5 @@ public interface StockDao {
     void deleteAll();
 
     @Query("SELECT * FROM stock")
-    List<StockEntity> getStockAll();
+    List<StockEntity> getStockMAll();
 }

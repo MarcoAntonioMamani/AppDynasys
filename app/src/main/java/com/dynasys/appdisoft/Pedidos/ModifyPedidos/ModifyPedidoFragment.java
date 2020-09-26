@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -41,13 +43,16 @@ import com.dynasys.appdisoft.Adapter.ProductAdapter;
 import com.dynasys.appdisoft.Clientes.MapClientActivity;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
+import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.StockListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
@@ -77,6 +82,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import okhttp3.internal.Util;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -101,6 +111,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     private PedidoListViewModel viewModelPedido;
     private DetalleListViewModel viewModelDetalle;
     private DescuentosListViewModel viewModelDescuento;
+    private  StockListViewModel viewModelStock;
     private List<DetalleEntity> mDetalleItem=new ArrayList<>();
     private CreatePedidoMvp.Presenter mCreatePedidoPresenter;
     private List<ClienteEntity> lisCliente;
@@ -128,7 +139,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         context=getContext();
     }
     public void iniciarRecyclerView(){
-        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this);
+        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this,getActivity());
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         detalle_List.setLayoutManager(llm);
@@ -176,7 +187,8 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         viewModelPedido = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
-        new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle);
+        viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
+        new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock);
         iniciarRecyclerView();
         acliente.setText(mCliente.getNamecliente());
         acliente.setEnabled(false);
@@ -223,248 +235,625 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
             linearViewCredito.setVisibility(View.VISIBLE);
         }
     }
+public void Saveoffline(){
+    try {
+
+
+        if (ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
+            UtilShare.mActivity=getActivity();
+            Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
+            //mContext.stopService(intent);
+            ServiceSincronizacion.getInstance().onDestroy();
+        }
+        PedidoEntity pedi= viewModelPedido.getPedido(mPedido.getCodigogenerado());
+        if (pedi!=null){
+            if (mPedido.getEstado()==1){
+                pedi.setEstado(2);
+            }
+            pedi.setReclamo(EtReclamo.getText().toString());
+            pedi.setOaobs(tvObservacion.getText().toString());
+            pedi.setOafdoc(mFecha);
+            pedi.setTotal(ObtenerTotal());
+
+            if (rCredito.isChecked()==true){
+                pedi.setTipocobro(2);
+                pedi.setTotalcredito(Double.parseDouble(tvTotalPago.getText().toString()));
+            }else{
+                pedi.setTipocobro(1);
+                pedi.setTotalcredito(0.0);
+            }
+            viewModelPedido.updatePedido(pedi);
+            List<DetalleEntity> list=viewModelDetalle.getDetalle(pedi.getCodigogenerado());
+            for (int i = 0; i < mDetalleItem.size(); i++) {
+                DetalleEntity NewValor=mDetalleItem.get(i);
+                boolean bandera=false;
+                int j=0;
+                while (j < list.size() &&bandera==false) {
+                    DetalleEntity detalle=list.get(j);
+                    double cant=detalle.getObpcant();
+                    if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==2){
+
+
+                        detalle.setObpcant(NewValor.getObpcant());
+                        detalle.setObupdate(NewValor.getObupdate());
+                        detalle.setObptot(NewValor.getObptot());
+                        detalle.setDescuento(NewValor.getDescuento());
+                        detalle.setTotal(NewValor.getTotal());
+                        StockEntity st=viewModelStock.getStock(detalle.getObcprod());
+                        if (st!=null){
+                            double dif=0 ;
+                            if (NewValor.getObpcant()>cant){
+                                dif=NewValor.getObpcant()-cant;
+                                st.setCantidad(st.getCantidad()-dif);
+                                viewModelStock.updateStock(st);
+                            }
+                            ///6 -10
+                            if (NewValor.getObpcant()<cant){
+                                dif=cant-NewValor.getObpcant();
+                                st.setCantidad(st.getCantidad()+dif);
+                                viewModelStock.updateStock(st);
+                            }
+
+                        }
+
+                        viewModelDetalle.updateDetalle(detalle);
+                        bandera=true;
+                    }
+                    if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
+                        detalle.setObpcant(NewValor.getObpcant());
+                        detalle.setObupdate(NewValor.getObupdate());
+                        detalle.setObptot(NewValor.getObptot());
+                        detalle.setDescuento(NewValor.getDescuento());
+                        detalle.setTotal(NewValor.getTotal());
+                        StockEntity st=viewModelStock.getStock(detalle.getObcprod());
+                        if (st!=null){
+                            double dif=0 ;
+                            if (NewValor.getObpcant()>cant){
+                                dif=NewValor.getObpcant()-cant;
+                                st.setCantidad(st.getCantidad()-dif);
+                                viewModelStock.updateStock(st);
+                            }
+                            ///6 -10
+                            if (NewValor.getObpcant()<cant){
+                                dif=cant-NewValor.getObpcant();
+                                st.setCantidad(st.getCantidad()+dif);
+                                viewModelStock.updateStock(st);
+                            }
+
+                        }
+                        viewModelDetalle.updateDetalle(detalle);
+                        bandera=true;
+                    }
+                    if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-2){
+                        StockEntity st=viewModelStock.getStock(detalle.getObcprod());
+                        if (st!=null){
+                            double dif=detalle.getObpcant() ;
+
+                                st.setCantidad(st.getCantidad()+dif);
+                            viewModelStock.updateStock(st);
+
+                        }
+                        viewModelDetalle.deleteDetalle(detalle);
+                        bandera=true;
+                    }
+                    if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0 &&detalle.getId()>0){
+                        detalle.setObpcant(NewValor.getObpcant());
+                        detalle.setObupdate(NewValor.getObupdate());
+                        detalle.setObptot(NewValor.getObptot());
+                        detalle.setObnumi(pedi.getCodigogenerado());
+                        detalle.setDescuento(NewValor.getDescuento());
+                        detalle.setTotal(NewValor.getTotal());
+                        StockEntity st=viewModelStock.getStock(detalle.getObcprod());
+                        if (st!=null){
+                            double dif=0 ;
+                            if (NewValor.getObpcant()>cant){
+                                dif=NewValor.getObpcant()-cant;
+                                st.setCantidad(st.getCantidad()-dif);
+                                viewModelStock.updateStock(st);
+                            }
+                            ///6 -10
+                            if (NewValor.getObpcant()<cant){
+                                dif=cant-NewValor.getObpcant();
+                                st.setCantidad(st.getCantidad()+dif);
+                                viewModelStock.updateStock(st);
+                            }
+
+                        }
+                        viewModelDetalle.updateDetalle(NewValor);
+                        bandera=true;
+                    }
+                    j++;
+                }
+
+
+            }
+
+            for (int i = 0; i < mDetalleItem.size(); i++) {
+                DetalleEntity NewValor=mDetalleItem.get(i);
+                boolean bandera=false;
+                int j=0;
+                while (j < list.size() &&bandera==false) {
+                    DetalleEntity detalle=list.get(j);
+                    if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==2){
+                        bandera=true;
+                    }
+                    if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
+                        bandera=true;
+                    }
+                    if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-2){
+                        bandera=true;
+                    }
+                    if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0){
+                        bandera=true;
+                    }
+                    j++;
+                }
+                if (bandera==false && NewValor.getObupdate() ==0){
+                    NewValor.setObnumi(pedi.getCodigogenerado());
+                    StockEntity st=viewModelStock.getStock(NewValor.getObcprod());
+
+                            st.setCantidad(st.getCantidad()-NewValor.getObpcant());
+                      viewModelStock.updateStock(st);
+
+                    viewModelDetalle.insertDetalle(NewValor);
+                }
+
+            }
+            viewModelPedido.updatePedido(pedi);
+
+            if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
+                UtilShare.mActivity=getActivity();
+                Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
+                getContext().startService(intent);
+            }
+        }
+        showSaveResultOption(0,"","");
+    } catch (ExecutionException e) {
+        if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
+            UtilShare.mActivity=getActivity();
+            Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
+            getContext().startService(intent);
+        }
+    } catch (InterruptedException e) {
+        if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
+            UtilShare.mActivity=getActivity();
+            Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
+            getContext().startService(intent);
+        }
+    }
+}
+
+public void VerficarStockDisponible(int tipo){
+       // viewModelProducto.getMProductoByStock();
+    for (int i = 0; i < mDetalleItem.size(); i++) {
+
+        DetalleEntity detail=mDetalleItem.get(i);
+        try {
+            ProductoEntity p =viewModelProducto.getMProductoByStock(detail.getObcprod());
+            if (p!=null){
+                if (mDetalleItem .get(i).getObupdate()>=1){
+                   DetalleEntity d1= ObtenerDetail(viewModelDetalle.getMAllDetalle(1),mDetalleItem.get(i));
+                    if (d1!=null){
+                        mDetalleItem.get(i).setStock(p.getStock()+d1.getObpcant());
+                    }else{
+                        mDetalleItem.get(i).setStock(p.getStock());
+                    }
+
+                }else{
+                    mDetalleItem.get(i).setStock(p.getStock());
+                }
+
+            }
+        } catch (ExecutionException e) {
+        } catch (InterruptedException e) {
+        }
+    }
+    boolean b =true;
+
+    for (int i = 0; i < mDetalleItem.size(); i++) {
+        if (mDetalleItem.get(i).getObupdate()>=0){
+
+            if (mDetalleItem.get(i).getObpcant() >mDetalleItem.get(i).getStock()){
+                b=false;
+            }
+        }
+
+    }
+    if (b==true){
+        if (tipo==1){
+            Saveoffline();
+        }else{
+            SaveOffLineEntregar();
+        }
+
+    }else{  //Existen productos sin stock
+        Reconstruir();
+        ShowMessageResult("Existen Productos que ya no Cuentan con el Stock ingresado");
+    }
+
+
+}
+
+public DetalleEntity ObtenerDetail(List<DetalleEntity> list,DetalleEntity d){
+
+    for (int i = 0; i < list.size(); i++) {
+        if (list.get(i).getId()==d.getId()){
+            return list.get(i);
+        }
+    }
+return null;
+}
+    public void Verificaronline(){
+        int idRepartidor=DataPreferences.getPrefInt("idrepartidor",context);
+
+        ApiManager apiManager=ApiManager.getInstance(context);
+        apiManager.ObtenerStock(new Callback<List<StockEntity>>() {
+            @Override
+            public void onResponse(Call<List<StockEntity>> call, Response<List<StockEntity>> response) {
+                final List<StockEntity> responseUser = (List<StockEntity>) response.body();
+                if (response.code() == 404) {
+                    Saveoffline();
+                    // mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+
+                        viewModelStock.deleteAllStocks();
+                        List<StockEntity> listStock = viewModelStock.getMStockAllAsync();
+
+                        for (int i = 0; i < responseUser.size(); i++) {
+                            StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
+                            //viewModel.insertCliente(cliente);
+                            StockEntity dbStock = null;
+                            try {
+                                dbStock = viewModelStock.getStock(stock.getCodigoProducto());
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if (dbStock == null) {
+
+                                if (stock.getCantidad()<0){
+                                    stock.setCantidad(0);
+                                    viewModelStock.insertStock(stock);
+                                }else{
+                                    viewModelStock.insertStock(stock);
+                                }
+                            } else {
+                                for (int j = 0; j < listStock.size(); j++) {
+                                    StockEntity dbStock02=listStock.get(j);
+
+                                    if (stock.getCodigoProducto()==dbStock02.getCodigoProducto()&&stock.getCantidad()!=dbStock02.getCantidad()){
+                                       if (stock.getCantidad()<0){
+                                           dbStock02.setCantidad(0);
+                                           viewModelStock.updateStock(dbStock02);
+                                       }else{
+                                           dbStock02.setCantidad(stock.getCantidad());
+                                           viewModelStock.updateStock(dbStock02);
+                                       }
+
+
+                                    }
+
+                                }
+                            }
+
+
+                        }
+                        VerficarStockDisponible(1);
+
+
+
+
+                } else {
+                    Saveoffline();
+                    // mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<StockEntity>> call, Throwable t) {
+                Saveoffline();
+            }
+        },""+idRepartidor);
+    }
+
+    public void VerificarOnlineEntregar(){
+        int idRepartidor=DataPreferences.getPrefInt("idrepartidor",context);
+
+        ApiManager apiManager=ApiManager.getInstance(context);
+        apiManager.ObtenerStock(new Callback<List<StockEntity>>() {
+            @Override
+            public void onResponse(Call<List<StockEntity>> call, Response<List<StockEntity>> response) {
+                final List<StockEntity> responseUser = (List<StockEntity>) response.body();
+                if (response.code() == 404) {
+                    SaveOffLineEntregar();
+                    // mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+
+                        viewModelStock.deleteAllStocks();
+                        List<StockEntity> listStock = viewModelStock.getMStockAllAsync();
+
+                        for (int i = 0; i < responseUser.size(); i++) {
+                            StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
+                            //viewModel.insertCliente(cliente);
+                            StockEntity dbStock = null;
+                            try {
+                                dbStock = viewModelStock.getStock(stock.getCodigoProducto());
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if (dbStock == null) {
+                                if (stock.getCantidad()<0){
+                                    stock.setCantidad(0);
+                                }
+                                viewModelStock.insertStock(stock);
+                            } else {
+                                for (int j = 0; j < listStock.size(); j++) {
+                                    StockEntity dbStock02=listStock.get(j);
+
+                                    if (stock.getCodigoProducto()==dbStock02.getCodigoProducto()&&stock.getCantidad()!=dbStock02.getCantidad()){
+                                        if (stock.getCantidad()<0){
+                                            dbStock02.setCantidad(0);
+                                        }else{{
+                                            dbStock02.setCantidad(stock.getCantidad());
+                                        }}
+
+                                        viewModelStock.updateStock(dbStock02);
+                                    }
+
+                                }
+                            }
+
+
+                        }
+                        VerficarStockDisponible(2);
+
+
+
+
+                } else {
+                    SaveOffLineEntregar();
+                    // mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<StockEntity>> call, Throwable t) {
+                Saveoffline();
+            }
+        },""+idRepartidor);
+    }
     public void onClickModificar(){
         // private Button mbutton_update,mbutton_entrega,mbutton_viewcliente;
 
         mbutton_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
+                if (isOnline()){
+                    Verificaronline();
 
-                    if (ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
-                        UtilShare.mActivity=getActivity();
-                        Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
-                        //mContext.stopService(intent);
-                        ServiceSincronizacion.getInstance().onDestroy();
-                    }
-                    PedidoEntity pedi= viewModelPedido.getPedido(mPedido.getCodigogenerado());
-                    if (pedi!=null){
-                        if (mPedido.getEstado()==1){
-                            pedi.setEstado(2);
-                        }
-                        pedi.setReclamo(EtReclamo.getText().toString());
-                        pedi.setOaobs(tvObservacion.getText().toString());
-                        pedi.setOafdoc(mFecha);
-                        pedi.setTotal(ObtenerTotal());
-
-                        if (rCredito.isChecked()==true){
-                            pedi.setTipocobro(2);
-                            pedi.setTotalcredito(Double.parseDouble(tvTotalPago.getText().toString()));
-                        }else{
-                            pedi.setTipocobro(1);
-                            pedi.setTotalcredito(0.0);
-                        }
-                        List<DetalleEntity> list=viewModelDetalle.getDetalle(pedi.getCodigogenerado());
-                        for (int i = 0; i < mDetalleItem.size(); i++) {
-                              DetalleEntity NewValor=mDetalleItem.get(i);
-                              boolean bandera=false;
-                              int j=0;
-                            while (j < list.size() &&bandera==false) {
-                                   DetalleEntity detalle=list.get(j);
-                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==2){
-                                    detalle.setObpcant(NewValor.getObpcant());
-                                    detalle.setObupdate(NewValor.getObupdate());
-                                    detalle.setObptot(NewValor.getObptot());
-                                    viewModelDetalle.updateDetalle(detalle);
-                                    bandera=true;
-                                }
-                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
-                                    detalle.setObpcant(NewValor.getObpcant());
-                                    detalle.setObupdate(NewValor.getObupdate());
-                                    detalle.setObptot(NewValor.getObptot());
-                                    viewModelDetalle.updateDetalle(detalle);
-                                    bandera=true;
-                                }
-                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-2){
-
-                                    viewModelDetalle.deleteDetalle(detalle);
-                                    bandera=true;
-                                }
-                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0 &&detalle.getId()>0){
-                                    detalle.setObpcant(NewValor.getObpcant());
-                                    detalle.setObupdate(NewValor.getObupdate());
-                                    detalle.setObptot(NewValor.getObptot());
-                                    detalle.setObnumi(pedi.getCodigogenerado());
-                                  viewModelDetalle.updateDetalle(NewValor);
-                                    bandera=true;
-                                }
-                                j++;
-                            }
-
-
-                        }
-
-                        for (int i = 0; i < mDetalleItem.size(); i++) {
-                            DetalleEntity NewValor=mDetalleItem.get(i);
-                            boolean bandera=false;
-                            int j=0;
-                            while (j < list.size() &&bandera==false) {
-                                DetalleEntity detalle=list.get(j);
-                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==2){
-                                    bandera=true;
-                                }
-                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
-                                    bandera=true;
-                                }
-                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-2){
-                                    bandera=true;
-                                }
-                                if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0){
-                                    bandera=true;
-                                }
-                                j++;
-                            }
-                            if (bandera==false && NewValor.getObupdate() ==0){
-                                NewValor.setObnumi(pedi.getCodigogenerado());
-                                viewModelDetalle.insertDetalle(NewValor);
-                            }
-
-                        }
-                        viewModelPedido.updatePedido(pedi);
-
-                        if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
-                            UtilShare.mActivity=getActivity();
-                            Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
-                            getContext().startService(intent);
-                        }
-                    }
-                    showSaveResultOption(0,"","");
-                } catch (ExecutionException e) {
-                    if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
-                        UtilShare.mActivity=getActivity();
-                        Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
-                        getContext().startService(intent);
-                    }
-                } catch (InterruptedException e) {
-                    if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
-                        UtilShare.mActivity=getActivity();
-                        Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
-                        getContext().startService(intent);
-                    }
+                }else{
+                    Saveoffline();
                 }
+
+
+
             }
         });
+    }
+    private boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnected();
+    }
+
+    public void SaveOffLineEntregar(){
+        if (ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
+            UtilShare.mActivity=getActivity();
+            Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
+            //mContext.stopService(intent);
+            ServiceSincronizacion.getInstance().onDestroy();
+        }
+
+        try {
+            PedidoEntity pedi= viewModelPedido.getPedido(mPedido.getCodigogenerado());
+            if (pedi!=null){
+                if (mPedido.getEstado()==1){
+                    pedi.setEstado(2);
+                }
+                pedi.setReclamo(EtReclamo.getText().toString());
+                pedi.setOaest(3);
+                pedi.setOaobs(tvObservacion.getText().toString());
+                pedi.setOafdoc(mFecha);
+                pedi.setTotal(ObtenerTotal());
+                if (rCredito.isChecked()==true){
+                    pedi.setTipocobro(2);
+                    pedi.setTotalcredito(Double.parseDouble(tvTotalPago.getText().toString()));
+                }else{
+                    pedi.setTipocobro(1);
+                    pedi.setTotalcredito(0.0);
+                }
+
+                viewModelPedido.updatePedido(pedi);
+                List<DetalleEntity> list=viewModelDetalle.getDetalle(pedi.getCodigogenerado());
+                for (int i = 0; i < mDetalleItem.size(); i++) {
+                    DetalleEntity NewValor=mDetalleItem.get(i);
+                    boolean bandera=false;
+                    int j=0;
+                    while (j < list.size() &&bandera==false) {
+                        DetalleEntity detalle=list.get(j);
+                        double cant=detalle.getObpcant();
+                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==2){
+                            detalle.setObpcant(NewValor.getObpcant());
+                            detalle.setObupdate(NewValor.getObupdate());
+                            detalle.setObptot(NewValor.getObptot());
+                            detalle.setDescuento(NewValor.getDescuento());
+                            detalle.setTotal(NewValor.getTotal());
+                            StockEntity st=viewModelStock.getStock(detalle.getObcprod());
+                            if (st!=null){
+                                double dif=0 ;
+                                if (NewValor.getObpcant()>cant){
+                                    dif=NewValor.getObpcant()-cant;
+                                    st.setCantidad(st.getCantidad()-dif);
+                                    viewModelStock.updateStock(st);
+                                }
+                                ///6 -10
+                                if (NewValor.getObpcant()<cant){
+                                    dif=cant-NewValor.getObpcant();
+                                    st.setCantidad(st.getCantidad()+dif);
+                                    viewModelStock.updateStock(st);
+                                }
+
+                            }
+                            viewModelDetalle.updateDetalle(detalle);
+                            bandera=true;
+                        }
+                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
+                            detalle.setObpcant(NewValor.getObpcant());
+                            detalle.setObupdate(NewValor.getObupdate());
+                            detalle.setObptot(NewValor.getObptot());
+                            detalle.setDescuento(NewValor.getDescuento());
+                            detalle.setTotal(NewValor.getTotal());
+                            StockEntity st=viewModelStock.getStock(detalle.getObcprod());
+                            if (st!=null){
+                                double dif=0 ;
+                                if (NewValor.getObpcant()>cant){
+                                    dif=NewValor.getObpcant()-cant;
+                                    st.setCantidad(st.getCantidad()-dif);
+                                    viewModelStock.updateStock(st);
+                                }
+                                ///6 -10
+                                if (NewValor.getObpcant()<cant){
+                                    dif=cant-NewValor.getObpcant();
+                                    st.setCantidad(st.getCantidad()+dif);
+                                    viewModelStock.updateStock(st);
+                                }
+
+                            }
+                            viewModelDetalle.updateDetalle(detalle);
+                            bandera=true;
+                        }
+                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-2){
+                            StockEntity st=viewModelStock.getStock(detalle.getObcprod());
+
+                                    st.setCantidad(st.getCantidad()+detalle.getObpcant());
+                                    viewModelStock.updateStock(st);
+
+                            viewModelDetalle.deleteDetalle(detalle);
+                            bandera=true;
+                        }
+                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0){
+                            detalle.setObpcant(NewValor.getObpcant());
+                            detalle.setObupdate(NewValor.getObupdate());
+                            detalle.setObptot(NewValor.getObptot());
+                            detalle.setObnumi(pedi.getCodigogenerado());
+                            detalle.setDescuento(NewValor.getDescuento());
+                            detalle.setTotal(NewValor.getTotal());
+                            StockEntity st=viewModelStock.getStock(detalle.getObcprod());
+                            if (st!=null){
+                                double dif=0 ;
+                                if (NewValor.getObpcant()>cant){
+                                    dif=NewValor.getObpcant()-cant;
+                                    st.setCantidad(st.getCantidad()-dif);
+                                    viewModelStock.updateStock(st);
+                                }
+                                ///6 -10
+                                if (NewValor.getObpcant()<cant){
+                                    dif=cant-NewValor.getObpcant();
+                                    st.setCantidad(st.getCantidad()+dif);
+                                    viewModelStock.updateStock(st);
+                                }
+
+                            }
+                            viewModelDetalle.updateDetalle(NewValor);
+                            bandera=true;
+                        }
+                        j++;
+                    }
+
+
+                }
+                for (int i = 0; i < mDetalleItem.size(); i++) {
+                    DetalleEntity NewValor=mDetalleItem.get(i);
+                    boolean bandera=false;
+                    int j=0;
+                    while (j < list.size() &&bandera==false) {
+                        DetalleEntity detalle=list.get(j);
+                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==2){
+                            bandera=true;
+                        }
+                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
+                            bandera=true;
+                        }
+                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-2){
+                            bandera=true;
+                        }
+                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0){
+                            bandera=true;
+                        }
+                        j++;
+                    }
+                    if (bandera==false && NewValor.getObupdate() ==0){
+                        NewValor.setObnumi(pedi.getCodigogenerado());
+
+                        StockEntity st=viewModelStock.getStock(NewValor.getObcprod());
+                        if (st!=null){
+
+                                st.setCantidad(st.getCantidad()-NewValor.getObpcant());
+                                viewModelStock.updateStock(st);
+
+
+                        }
+                        viewModelDetalle.insertDetalle(NewValor);
+                    }
+
+                }
+
+
+                viewModelPedido.updatePedido(pedi);
+
+                if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
+                    UtilShare.mActivity=getActivity();
+                    Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
+                    getContext().startService(intent);
+                }
+            }
+            showSaveResultOption(0,"","");
+        } catch (ExecutionException e) {
+            if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
+                UtilShare.mActivity=getActivity();
+                Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
+                getContext().startService(intent);
+            }
+        } catch (InterruptedException e) {
+            if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
+                UtilShare.mActivity=getActivity();
+                Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
+                getContext().startService(intent);
+            }
+        }
     }
     public void onClickEtregar(){
         mbutton_entrega.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
-                    UtilShare.mActivity=getActivity();
-                    Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
-                    //mContext.stopService(intent);
-                    ServiceSincronizacion.getInstance().onDestroy();
+
+
+                if (isOnline()){
+                    VerificarOnlineEntregar();
+
+                }else{
+                    SaveOffLineEntregar();
                 }
 
-                        try {
-                            PedidoEntity pedi= viewModelPedido.getPedido(mPedido.getCodigogenerado());
-                            if (pedi!=null){
-                                if (mPedido.getEstado()==1){
-                                    pedi.setEstado(2);
-                                }
-                                pedi.setReclamo(EtReclamo.getText().toString());
-                                pedi.setOaest(3);
-                                pedi.setOaobs(tvObservacion.getText().toString());
-                                pedi.setOafdoc(mFecha);
-                                pedi.setTotal(ObtenerTotal());
-                                if (rCredito.isChecked()==true){
-                                    pedi.setTipocobro(2);
-                                    pedi.setTotalcredito(Double.parseDouble(tvTotalPago.getText().toString()));
-                                }else{
-                                    pedi.setTipocobro(1);
-                                    pedi.setTotalcredito(0.0);
-                                }
-
-
-                                List<DetalleEntity> list=viewModelDetalle.getDetalle(pedi.getCodigogenerado());
-                                for (int i = 0; i < mDetalleItem.size(); i++) {
-                                    DetalleEntity NewValor=mDetalleItem.get(i);
-                                    boolean bandera=false;
-                                    int j=0;
-                                    while (j < list.size() &&bandera==false) {
-                                        DetalleEntity detalle=list.get(j);
-                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==2){
-                                            detalle.setObpcant(NewValor.getObpcant());
-                                            detalle.setObupdate(NewValor.getObupdate());
-                                            detalle.setObptot(NewValor.getObptot());
-                                            viewModelDetalle.updateDetalle(detalle);
-                                            bandera=true;
-                                        }
-                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
-                                            detalle.setObpcant(NewValor.getObpcant());
-                                            detalle.setObupdate(NewValor.getObupdate());
-                                            detalle.setObptot(NewValor.getObptot());
-                                            viewModelDetalle.updateDetalle(detalle);
-                                            bandera=true;
-                                        }
-                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-2){
-
-                                            viewModelDetalle.deleteDetalle(detalle);
-                                            bandera=true;
-                                        }
-                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0){
-                                            detalle.setObpcant(NewValor.getObpcant());
-                                            detalle.setObupdate(NewValor.getObupdate());
-                                            detalle.setObptot(NewValor.getObptot());
-                                            detalle.setObnumi(pedi.getCodigogenerado());
-                                            viewModelDetalle.updateDetalle(NewValor);
-                                            bandera=true;
-                                        }
-                                        j++;
-                                    }
-
-
-                                }
-                                for (int i = 0; i < mDetalleItem.size(); i++) {
-                                    DetalleEntity NewValor=mDetalleItem.get(i);
-                                    boolean bandera=false;
-                                    int j=0;
-                                    while (j < list.size() &&bandera==false) {
-                                        DetalleEntity detalle=list.get(j);
-                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==2){
-                                            bandera=true;
-                                        }
-                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
-                                            bandera=true;
-                                        }
-                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-2){
-                                            bandera=true;
-                                        }
-                                        if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0){
-                                            bandera=true;
-                                        }
-                                        j++;
-                                    }
-                                    if (bandera==false && NewValor.getObupdate() ==0){
-                                        NewValor.setObnumi(pedi.getCodigogenerado());
-                                        viewModelDetalle.insertDetalle(NewValor);
-                                    }
-
-                                }
-
-
-                                viewModelPedido.updatePedido(pedi);
-
-                                if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
-                                    UtilShare.mActivity=getActivity();
-                                    Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
-                                    getContext().startService(intent);
-                                }
-                            }
-                            showSaveResultOption(0,"","");
-                        } catch (ExecutionException e) {
-                            if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
-                                UtilShare.mActivity=getActivity();
-                                Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
-                                getContext().startService(intent);
-                            }
-                        } catch (InterruptedException e) {
-                            if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
-                                UtilShare.mActivity=getActivity();
-                                Intent intent = new Intent(getActivity(),new ServiceSincronizacion(viewModelCliente,getActivity()).getClass());
-                                getContext().startService(intent);
-                            }
-                        }
                     }
                 });
 
@@ -557,39 +946,79 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                         int MaximaCantidadProductos=DataPreferences.getPrefInt("CantidadProducto",context);
 
                         if(CantidadSeleccionada<MaximaCantidadProductos){
-                            DetalleEntity ItemDetalle=ObtenerDetalle(item);
-                            if (ItemDetalle==null){
-                                DetalleEntity detalle=new DetalleEntity();
-                                detalle.setObnumi(mPedido.getCodigogenerado());
-                                detalle.setObcprod(item.getNumi());
-                                detalle.setCadesc(item.getProducto());
-                                detalle.setObpcant(1.0);
-                                detalle.setObpbase(item.getPrecio());
-                                detalle.setObptot(item.getPrecio());
-                                detalle.setEstado(false);
-                                detalle.setObupdate(0);
-                                mDetalleItem.add(detalle);
-                                //mDetalleAdapter.setFilter(mDetalleItem);
-                                Reconstruir();
-                                calcularTotal();
-                                aProducto .setText("");
-                                aProducto.clearFocus();
-                                mscroll.fullScroll(View.FOCUS_DOWN);
-                                productoAdapter.setLista(GetActualProducts());
-                                productoAdapter.notifyDataSetChanged();
-                            }else{
-                                try {
-
-                                    DetalleEntity  detalle = ItemDetalle.clone();
-                                    mDetalleItem.remove(ItemDetalle);
-                                    detalle.setObpcant(1.0);
-                                    mDetalleItem.add(detalle);
-                                    if (detalle.getObupdate()==-1){
-                                        detalle.setObupdate(2);
-                                    }else{
+                            int stock= DataPreferences.getPrefInt("stock",context);
+                            if (stock>0){
+                                if (item.getStock()>0){
+                                    DetalleEntity ItemDetalle=ObtenerDetalle(item);
+                                    if (ItemDetalle==null){
+                                        DetalleEntity detalle=new DetalleEntity();
+                                        detalle.setObnumi(mPedido.getCodigogenerado());
+                                        detalle.setObcprod(item.getNumi());
+                                        detalle.setCadesc(item.getProducto());
+                                        detalle.setObpcant(1.0);
+                                        detalle.setObpbase(item.getPrecio());
+                                        detalle.setObptot(item.getPrecio());
+                                        detalle.setTotal(item.getPrecio());
+                                        detalle.setStock(item.getStock());
+                                        detalle.setEstado(false);
                                         detalle.setObupdate(0);
-                                    }
+                                        mDetalleItem.add(detalle);
+                                        //mDetalleAdapter.setFilter(mDetalleItem);
+                                        Reconstruir();
+                                        calcularTotal();
+                                        aProducto .setText("");
+                                        aProducto.clearFocus();
+                                        mscroll.fullScroll(View.FOCUS_DOWN);
+                                        productoAdapter.setLista(GetActualProducts());
+                                        productoAdapter.notifyDataSetChanged();
+                                    }else{
+                                        try {
 
+                                            DetalleEntity  detalle = ItemDetalle.clone();
+                                            mDetalleItem.remove(ItemDetalle);
+                                            detalle.setObpcant(1.0);
+                                            mDetalleItem.add(detalle);
+                                            if (detalle.getObupdate()==-1){
+                                                detalle.setObupdate(2);
+                                            }else{
+                                                detalle.setObupdate(0);
+                                            }
+
+                                            //mDetalleAdapter.setFilter(mDetalleItem);
+                                            Reconstruir();
+                                            calcularTotal();
+                                            aProducto .setText("");
+                                            aProducto.clearFocus();
+                                            mscroll.fullScroll(View.FOCUS_DOWN);
+                                            productoAdapter.setLista(GetActualProducts());
+                                            productoAdapter.notifyDataSetChanged();
+
+                                        } catch (CloneNotSupportedException e) {
+
+                                        }
+
+                                    }
+                                }else{
+                                    hideKeyboard();
+
+                                    aProducto.setText("");
+                                    ShowMessageResult("No Existe Stock para seleccionar el producto");
+                                }
+                            }else{
+                                DetalleEntity ItemDetalle=ObtenerDetalle(item);
+                                if (ItemDetalle==null){
+                                    DetalleEntity detalle=new DetalleEntity();
+                                    detalle.setObnumi(mPedido.getCodigogenerado());
+                                    detalle.setObcprod(item.getNumi());
+                                    detalle.setCadesc(item.getProducto());
+                                    detalle.setObpcant(1.0);
+                                    detalle.setStock(item.getStock());
+                                    detalle.setObpbase(item.getPrecio());
+                                    detalle.setObptot(item.getPrecio());
+                                    detalle.setTotal(item.getPrecio());
+                                    detalle.setEstado(false);
+                                    detalle.setObupdate(0);
+                                    mDetalleItem.add(detalle);
                                     //mDetalleAdapter.setFilter(mDetalleItem);
                                     Reconstruir();
                                     calcularTotal();
@@ -598,12 +1027,35 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                                     mscroll.fullScroll(View.FOCUS_DOWN);
                                     productoAdapter.setLista(GetActualProducts());
                                     productoAdapter.notifyDataSetChanged();
+                                }else{
+                                    try {
 
-                                } catch (CloneNotSupportedException e) {
+                                        DetalleEntity  detalle = ItemDetalle.clone();
+                                        mDetalleItem.remove(ItemDetalle);
+                                        detalle.setObpcant(1.0);
+                                        mDetalleItem.add(detalle);
+                                        if (detalle.getObupdate()==-1){
+                                            detalle.setObupdate(2);
+                                        }else{
+                                            detalle.setObupdate(0);
+                                        }
+
+                                        //mDetalleAdapter.setFilter(mDetalleItem);
+                                        Reconstruir();
+                                        calcularTotal();
+                                        aProducto .setText("");
+                                        aProducto.clearFocus();
+                                        mscroll.fullScroll(View.FOCUS_DOWN);
+                                        productoAdapter.setLista(GetActualProducts());
+                                        productoAdapter.notifyDataSetChanged();
+
+                                    } catch (CloneNotSupportedException e) {
+
+                                    }
 
                                 }
-
                             }
+
                         }else{
                             hideKeyboard();
 
@@ -653,22 +1105,64 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     }
 
     @Override
-    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad) {
+    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad,LinearLayout fondo) {
         double cantidad=0.0;
         if (isDouble(value)){
             cantidad=Double.parseDouble(value);
         }
-        int posicion =obtenerPosicionItem(item);
-        if (posicion>=0){
-            DetalleEntity detalle= mDetalleItem.get(posicion);
-            detalle.setObpcant(cantidad);
-            detalle.setObptot(cantidad*detalle.getObpbase());
-            tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
-            calcularTotal();
-            if (mDetalleItem.get(posicion).getObupdate()>=1){
-                detalle.setObupdate(2);
+
+        int stock= DataPreferences.getPrefInt("stock",context);
+        if (stock>0){
+            int posicion =obtenerPosicionItem(item);
+            if (posicion>=0){
+                if(cantidad> item.getStock()){
+                    hideKeyboard();
+                    // getActivity().onBackPressed();
+                    ShowMessageResult("La cantidad es Superior al Stock Disponible = "+item.getStock());
+                    cantidad=1;
+                    eCantidad.setText("1");
+                    DetalleEntity detalle= mDetalleItem.get(posicion);
+                    detalle.setObpcant(cantidad);
+                    detalle.setObptot(cantidad*detalle.getObpbase());
+                    detalle.setTotal(cantidad*detalle.getObpbase());
+                    double total=cantidad*mDetalleItem.get(posicion).getObpbase();
+                    tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
+                    if (mDetalleItem.get(posicion).getObupdate()>=1){
+                        detalle.setObupdate(2);
+                    }
+                    // tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                    calcularTotal();
+                }else{
+                    fondo.setBackgroundColor(getActivity().getResources().getColor(R.color.marfil));
+                    DetalleEntity detalle= mDetalleItem.get(posicion);
+                    detalle.setObpcant(cantidad);
+                    detalle.setObptot(cantidad*detalle.getObpbase());
+                    detalle.setTotal(cantidad*detalle.getObpbase());
+                    double total=cantidad*mDetalleItem.get(posicion).getObpbase();
+                    tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
+                    if (mDetalleItem.get(posicion).getObupdate()>=1){
+                        detalle.setObupdate(2);
+                    }
+                    //tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                    calcularTotal();
+                }
+
+            }
+        }else{
+            int posicion =obtenerPosicionItem(item);
+            if (posicion>=0){
+                DetalleEntity detalle= mDetalleItem.get(posicion);
+                detalle.setObpcant(cantidad);
+                detalle.setObptot(cantidad*detalle.getObpbase());
+                detalle.setTotal(cantidad*detalle.getObpbase());
+                tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                calcularTotal();
+                if (mDetalleItem.get(posicion).getObupdate()>=1){
+                    detalle.setObupdate(2);
+                }
             }
         }
+
     }
 
     @Override
@@ -726,6 +1220,25 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     @Override
     public void ShowMessageResult(String message) {
 
+        if (alertDialog!=null){
+            if (alertDialog.isShowing()){
+                alertDialog.dismiss();
+            }
+        }
+
+        alertDialog=new LottieAlertDialog.Builder(getContext(),DialogTypes.TYPE_WARNING)
+                .setTitle("Advertencia")
+                .setDescription(message)
+                .setPositiveText("Aceptar")
+                .setPositiveButtonColor(Color.parseColor("#008ebe"))
+                .setPositiveTextColor(Color.parseColor("#ffffff"))
+                .setPositiveListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        lottieAlertDialog.dismiss();
+                    }
+                }).build();
+        alertDialog.show();
     }
     public void RetornarPrincipal(){
         MainActivity fca = ((MainActivity) getActivity());
@@ -1029,7 +1542,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     }
     public void Reconstruir(){
         mDetalleAdapter=null;
-        mDetalleAdapter = new DetalleAdaptader(context, ObtenerProductosDisponibles(),this);
+        mDetalleAdapter = new DetalleAdaptader(context, ObtenerProductosDisponibles(),this,getActivity());
         detalle_List.setAdapter(mDetalleAdapter);
     }
     public List<DetalleEntity> ObtenerProductosDisponibles(){

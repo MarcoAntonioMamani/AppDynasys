@@ -44,23 +44,6 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
 
     }
 
-    public ClienteEntity(int id, int numi, String codigo, String namecliente, String nit, String direccion, String telefono, Double latitud, Double longitud, Date fechaingreso, int estado, String codigogenerado, int cccat, int cczona, String razon_social) {
-        this.id = id;
-        this.numi = numi;
-        this.codigo = codigo;
-        this.namecliente = namecliente;
-        this.nit = nit;
-        this.direccion = direccion;
-        this.telefono = telefono;
-        this.latitud = latitud;
-        this.longitud = longitud;
-        this.fechaingreso = fechaingreso;
-        this.estado = estado;
-        this.codigogenerado = codigogenerado;
-        this.cccat = cccat;
-        this.cczona = cczona;
-        this.razon_social = razon_social;
-    }
 
     public String getRazon_social() {
         return razon_social;

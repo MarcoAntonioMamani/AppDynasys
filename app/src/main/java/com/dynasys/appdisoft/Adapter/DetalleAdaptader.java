@@ -1,5 +1,6 @@
 package com.dynasys.appdisoft.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -17,6 +19,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoMvp;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
+import com.pdfjet.Line;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +33,9 @@ ViewGroup viewgroup;
     private CreatePedidoMvp.View mView;
     private List<DetalleEntity> items;
     Context context;
-    public DetalleAdaptader(Context ctx) {
-        this.context = ctx;
+    Activity activity;
+    public DetalleAdaptader(Context ctx,Activity activity) {
+        this.context = ctx;this.activity=activity;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -41,14 +45,18 @@ ViewGroup viewgroup;
         public TextView subtotal;
         public EditText cantidad;
         public ImageView img_delete;
+        public TextView stock;
+        public LinearLayout fondo;
           public ViewHolder(View v) {
             super(v);
 
             nombre = (TextView) v.findViewById(R.id.id_detalle_name);
               price = (TextView) v.findViewById(R.id.id_detalle_price);
               subtotal=(TextView)v.findViewById(R.id.id_detalle_subtotal);
+              stock=(TextView)v.findViewById(R.id.id_detalle_stock);
               cantidad=(EditText)v.findViewById(R.id.id_detalle_cantidad);
               img_delete=(ImageView)v.findViewById(R.id.id_detalle_remove);
+              fondo=(LinearLayout)v.findViewById(R.id.detail_content);
                      }
     }
 
@@ -58,10 +66,11 @@ ViewGroup viewgroup;
         this.context=s;
         this.viewgroup=v;
     }
-    public DetalleAdaptader(Context ctx, List<DetalleEntity> s, CreatePedidoMvp.View mView) {
+    public DetalleAdaptader(Context ctx, List<DetalleEntity> s, CreatePedidoMvp.View mView,Activity activity) {
         this.context = ctx;
         this.items = s;
         this.mView=mView;
+        this.activity=activity;
     }
     @Override
     public int getItemCount() {
@@ -80,18 +89,30 @@ ViewGroup viewgroup;
         final DetalleEntity item;
         final TextView tvsubtotal;
         final EditText tvCantidad;
+        final LinearLayout fondo;
         final TextView  tvPrecio;
+        final TextView  tvStock;
             item = items.get(i);
-            viewHolder.nombre.setText(item.getCadesc());
+            viewHolder.nombre.setText(item.getObcprod()+" "+item.getCadesc());
             viewHolder.img_delete.setTag(item);
             viewHolder.price.setText(""+item.getObpbase());
         double total=item.getObpcant()*item.getObpbase();
         viewHolder.subtotal.setText(""+(""+ ShareMethods.redondearDecimales(total,2)));
             viewHolder.cantidad.setText(""+item.getObpcant());
             viewHolder.cantidad.setTag(item);
+            viewHolder.stock.setText("Stock: "+item.getStock());
              tvsubtotal=viewHolder.subtotal;
         tvCantidad=viewHolder.cantidad;
+        fondo=viewHolder.fondo;
         tvPrecio=viewHolder.price;
+        if(item.getObpcant()>item.getStock()){
+            viewHolder.fondo.setBackgroundColor(activity.getResources().getColor(R.color.state_canceledclaro));
+
+        }else{
+            viewHolder.fondo.setBackgroundColor(activity.getResources().getColor(R.color.marfil));
+        }
+
+
             if (i== items.size()-1){
                 viewHolder.cantidad.requestFocus();
             }
@@ -105,7 +126,7 @@ ViewGroup viewgroup;
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     int pos =ObtenerPosicionElemento(item);
                     if (pos>=0){
-                        mView.ModifyItem(pos,s.toString(),item,tvsubtotal,tvCantidad);
+                        mView.ModifyItem(pos,s.toString(),item,tvsubtotal,tvCantidad,fondo);
                     }
 
 

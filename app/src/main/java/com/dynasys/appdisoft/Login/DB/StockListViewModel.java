@@ -4,12 +4,15 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class StockListViewModel extends AndroidViewModel {
 
@@ -31,21 +34,22 @@ public class StockListViewModel extends AndroidViewModel {
     }
 
 
-    public List<StockEntity> getAllStock() {
-        if (stockList == null) {
-            try {
-                stockList = mRepository.getMStockAll(1);
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    public List<StockEntity> getMStockAllAsync() {
+        try {
+            stockList = mRepository.getMStockAll(1);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
 
         return stockList;
     }
     public StockEntity getStock(int id) throws ExecutionException, InterruptedException {
-        return mRepository.getStock(id);
+
+            return mRepository.getStock(id);
+
     }
 
     public void insertStock(StockEntity user) {

@@ -5,6 +5,7 @@ import android.widget.EditText;
 
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
@@ -68,7 +69,7 @@ private static Context mcontext;
         userCall.enqueue(callback);
     }
 
-    public void InsertPedido(PedidoEntity user, Callback<ResponseLogin> callback) {
+    public void InsertPedido(PedidoDetalle user, Callback<ResponseLogin> callback) {
         Call<ResponseLogin> userCall = service.InsertPedido(user);
         userCall.enqueue(callback);
     }

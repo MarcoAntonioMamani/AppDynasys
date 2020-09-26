@@ -36,8 +36,15 @@ public class PedidoListViewModel extends AndroidViewModel {
 
         return pedidos;
     }
-    public PedidoEntity getPedido(String id) throws ExecutionException, InterruptedException {
-        return mRepository.getPedido(id);
+    public PedidoEntity getPedido(String id) {
+        try {
+            return mRepository.getPedido(id);
+        } catch (ExecutionException e) {
+
+        } catch (InterruptedException e) {
+
+        }
+        return null;
     }
     public List<PedidoEntity> getPedidoState(String id) throws ExecutionException, InterruptedException {
         return mRepository.getPedidoState(id);
@@ -50,6 +57,9 @@ public class PedidoListViewModel extends AndroidViewModel {
     }
     public List<PedidoEntity> getMAllPedidoState(int code) throws ExecutionException, InterruptedException {
         return mRepository.getMPedidoAllState(code);
+    }
+    public List<PedidoEntity> getMAllPedidoSinStock(int code) throws ExecutionException, InterruptedException {
+        return mRepository.getMPedidoAllSinStock(code);
     }
     public List<PedidoEntity> getMAllPedidoState02(int code) throws ExecutionException, InterruptedException {
         return mRepository.getMPedidoAllState02(code);

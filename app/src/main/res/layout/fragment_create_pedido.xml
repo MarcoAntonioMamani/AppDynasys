@@ -151,12 +151,13 @@ android:background="@color/marfil"
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="280dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:gravity="bottom"
                     android:background="@color/marfil"
                     android:orientation="vertical"
-                    android:paddingBottom="20dp"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="10dp"
 
                     >
                     <LinearLayout
@@ -179,16 +180,11 @@ android:background="@color/marfil"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:orientation="horizontal">
-                                    <LinearLayout
-                                        android:layout_width="0dp"
-                                        android:layout_height="fill_parent"
-                                        android:layout_weight="1">
 
-                                    </LinearLayout>
                                     <LinearLayout
                                         android:layout_width="0dp"
                                         android:layout_height="fill_parent"
-                                        android:layout_weight="2"
+                                        android:layout_weight="1"
                                         android:background="@drawable/animation_bottoncancel"
                                         >
                                         <LinearLayout
@@ -200,8 +196,8 @@ android:background="@color/marfil"
                                                 android:layout_height="wrap_content"
                                                 android:text="Sub Total Bs "
                                                 android:textColor="@color/gray_dark"
-                                                android:textSize="16dp"
-                                                android:paddingLeft="15dp"
+                                                android:textSize="14dp"
+                                                android:paddingLeft="5dp"
                                                 android:textStyle="bold"
                                                 android:layout_gravity="center"
                                                 android:gravity="center"
@@ -212,7 +208,7 @@ android:background="@color/marfil"
                                                 android:layout_height="wrap_content"
                                                 android:text="0.00"
                                                 android:textColor="@color/gray_dark"
-                                                android:textSize="18dp"
+                                                android:textSize="14dp"
                                                 android:paddingRight="18dp"
                                                 android:textStyle="bold"
                                                 android:layout_gravity="center"
@@ -220,34 +216,10 @@ android:background="@color/marfil"
                                                 />
                                         </LinearLayout>
                                     </LinearLayout>
-                                </LinearLayout>
-                            </RelativeLayout>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                           android:paddingTop="7dp"
-                            >
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-
-                                android:gravity="right"
-                                >
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal">
                                     <LinearLayout
                                         android:layout_width="0dp"
                                         android:layout_height="fill_parent"
-                                        android:layout_weight="1">
-
-                                    </LinearLayout>
-                                    <LinearLayout
-                                        android:layout_width="0dp"
-                                        android:layout_height="fill_parent"
-                                        android:layout_weight="2"
+                                        android:layout_weight="1"
                                         android:background="@drawable/animation_bottoncancel"
                                         >
                                         <LinearLayout
@@ -259,8 +231,8 @@ android:background="@color/marfil"
                                                 android:layout_height="wrap_content"
                                                 android:text="Descuento Bs "
                                                 android:textColor="@color/gray_dark"
-                                                android:textSize="16dp"
-                                                android:paddingLeft="15dp"
+                                                android:textSize="14dp"
+                                                android:paddingLeft="5dp"
                                                 android:textStyle="bold"
                                                 android:layout_gravity="center"
                                                 android:gravity="center"
@@ -271,7 +243,7 @@ android:background="@color/marfil"
                                                 android:layout_height="wrap_content"
                                                 android:text="0.00"
                                                 android:textColor="@color/gray_dark"
-                                                android:textSize="18dp"
+                                                android:textSize="14dp"
                                                 android:paddingRight="18dp"
                                                 android:textStyle="bold"
                                                 android:layout_gravity="center"
@@ -282,151 +254,107 @@ android:background="@color/marfil"
                                 </LinearLayout>
                             </RelativeLayout>
                         </LinearLayout>
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingTop="7dp"
-                            >
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-
-                                android:gravity="right"
-                                >
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal">
-                                    <LinearLayout
-                                        android:layout_width="0dp"
-                                        android:layout_height="fill_parent"
-                                        android:layout_weight="1">
-
-                                    </LinearLayout>
-                                    <LinearLayout
-                                        android:layout_width="0dp"
-                                        android:layout_height="fill_parent"
-                                        android:layout_weight="2"
-                                        android:background="@drawable/animation_bottoncancel"
-                                        >
-                                        <LinearLayout
-                                            android:layout_width="fill_parent"
-                                            android:layout_height="fill_parent"
-                                            android:orientation="horizontal">
-                                            <TextView
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:text="Total Bs "
-                                                android:textColor="@color/gray_dark"
-                                                android:textSize="16dp"
-                                                android:paddingLeft="15dp"
-                                                android:textStyle="bold"
-                                                android:layout_gravity="center"
-                                                android:gravity="center"
-                                                />
-                                            <TextView
-                                                android:id="@+id/pedido_view_TotalDescuento"
-                                                android:layout_width="fill_parent"
-                                                android:layout_height="wrap_content"
-                                                android:text="0.00"
-                                                android:textColor="@color/gray_dark"
-                                                android:textSize="18dp"
-                                                android:paddingRight="18dp"
-                                                android:textStyle="bold"
-                                                android:layout_gravity="center"
-                                                android:gravity="right"
-                                                />
-                                        </LinearLayout>
-                                    </LinearLayout>
-                                </LinearLayout>
-                            </RelativeLayout>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-
-                            android:paddingTop="8dp"
+                            android:orientation="horizontal"
                             >
                             <LinearLayout
-                                android:layout_width="fill_parent"
-                                android:layout_height="fill_parent"
-                                android:orientation="horizontal"
-
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
                                 >
-
                                 <LinearLayout
                                     android:layout_width="fill_parent"
                                     android:layout_height="fill_parent"
-                                    android:paddingRight="5dp"
-                                    android:layout_gravity="right"
-                                    android:gravity="right"
+                                    android:orientation="horizontal"
                                     >
-                                    <LinearLayout
-                                        android:layout_width="fill_parent"
-                                        android:layout_height="fill_parent"
 
-                                        android:orientation="vertical">
+                                    <ImageButton
+                                        android:id="@+id/ib_obtener_fecha"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:background="@color/marfil"
+                                        android:src="@drawable/ic_calendario"
+                                        tools:ignore="ContentDescription"
+                                        android:layout_marginTop="4dp"
+                                        android:paddingLeft="4dp"
+                                        />
+                                    <TextView
+                                        android:id="@+id/et_mostrar_fecha_picker"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ems="6"
+                                        android:layout_gravity="center"
+                                        android:gravity="center"
+                                        android:inputType="date"
+                                        android:hint="dd/mm/yyyy"
+                                        android:background="@drawable/animation_bottoncancel"
+                                        />
+
+
+
+
+
+                                </LinearLayout>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                >
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
                                         <LinearLayout
-                                            android:layout_width="fill_parent"
+                                            android:layout_width="0dp"
                                             android:layout_height="fill_parent"
-                                            android:layout_gravity="right"
-                                            android:gravity="right"
+                                            android:layout_weight="2"
+                                            android:background="@drawable/animation_bottoncancel"
                                             >
                                             <LinearLayout
                                                 android:layout_width="fill_parent"
                                                 android:layout_height="fill_parent"
-                                                android:orientation="horizontal"
-                                                android:layout_gravity="right"
-                                                android:gravity="right"
-                                                >
-
+                                                android:orientation="horizontal">
                                                 <TextView
                                                     android:layout_width="wrap_content"
                                                     android:layout_height="wrap_content"
-                                                    android:layout_gravity="center"
-                                                    android:gravity="center"
-                                                    android:paddingLeft="15dp"
-                                                    android:text="Fecha Entrega: "
+                                                    android:text="Total Bs "
                                                     android:textColor="@color/gray_dark"
-                                                    android:textSize="16dp"
-                                                    android:textStyle="bold" />
-                                                <TextView
-                                                    android:id="@+id/et_mostrar_fecha_picker"
-                                                    android:layout_width="wrap_content"
-                                                    android:layout_height="wrap_content"
-                                                    android:ems="6"
+                                                    android:textSize="14dp"
+                                                    android:paddingLeft="15dp"
+                                                    android:textStyle="bold"
                                                     android:layout_gravity="center"
                                                     android:gravity="center"
-                                                    android:inputType="date"
-                                                    android:hint="dd/mm/yyyy"
-                                                    android:background="@drawable/animation_bottoncancel"
                                                     />
-
-
-                                                <ImageButton
-                                                    android:id="@+id/ib_obtener_fecha"
-                                                    android:layout_width="wrap_content"
+                                                <TextView
+                                                    android:id="@+id/pedido_view_TotalDescuento"
+                                                    android:layout_width="fill_parent"
                                                     android:layout_height="wrap_content"
-                                                    android:background="@color/marfil"
-                                                    android:src="@drawable/ic_calendario"
-                                                    tools:ignore="ContentDescription"
-                                                    android:layout_marginTop="4dp"
-                                                    android:paddingLeft="4dp"
+                                                    android:text="0.00"
+                                                    android:textColor="@color/gray_dark"
+                                                    android:textSize="14dp"
+                                                    android:paddingRight="18dp"
+                                                    android:textStyle="bold"
+                                                    android:layout_gravity="center"
+                                                    android:gravity="right"
                                                     />
-
-
                                             </LinearLayout>
                                         </LinearLayout>
                                     </LinearLayout>
-                                </LinearLayout>
 
                             </LinearLayout>
                         </LinearLayout>
+
                         <LinearLayout
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:paddingBottom="20dp"
+                            android:paddingBottom="5dp"
                             android:paddingTop="8dp"
                             >
                             <LinearLayout
@@ -483,6 +411,7 @@ android:background="@color/marfil"
                                         android:textColor="@color/colorAccent"
                                         android:gravity="center"
                                         android:textStyle="bold"
+                                        android:textSize="12dp"
                                         android:paddingBottom="@dimen/keyline_1"
                                         android:paddingTop="@dimen/keyline_1"
                                         android:text="Cancelar" />
@@ -499,6 +428,8 @@ android:background="@color/marfil"
                                         android:layout_gravity="center"
                                         android:textColor="@color/white"
                                         android:gravity="center"
+
+                                        android:textSize="12dp"
                                         android:textStyle="bold"
                                         android:paddingBottom="@dimen/keyline_1"
                                         android:paddingTop="@dimen/keyline_1"

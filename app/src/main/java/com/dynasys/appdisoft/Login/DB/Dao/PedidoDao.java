@@ -24,8 +24,11 @@ public interface PedidoDao {
     @Query("SELECT * FROM pedido")
     List<PedidoEntity> getPedidoAll();
 
-    @Query("SELECT * FROM pedido where estado=0")
+    @Query("SELECT * FROM pedido where estado=0 and estadoStock <>2")
     List<PedidoEntity> getPedidoAllState();
+
+    @Query("SELECT * FROM pedido where estado=0 and estadoStock =2")
+    List<PedidoEntity> getPedidoAllStateSinStock();
 
     @Query("SELECT * FROM pedido where estado=2")
     List<PedidoEntity> getPedidoAllState02();

@@ -20,7 +20,7 @@
     <color name="state_paid">#008991</color>
     <color name="state_sent">#0E79BF</color>
     <color name="state_canceled">#EE3F22</color>
-
+    <color name="state_canceledclaro">#F6C6BE</color>
     <color name="colorBackground">#333C46</color>
     <color name="colorSplashText">#F0F0F0</color>
     <color name="colorProgressBar">#FFCE511C</color>

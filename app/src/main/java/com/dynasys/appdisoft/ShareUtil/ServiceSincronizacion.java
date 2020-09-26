@@ -29,11 +29,14 @@ import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.StockListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
+import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
@@ -63,21 +66,20 @@ public class ServiceSincronizacion extends Service {
     private PedidoListViewModel viewModelPedidos;
     private StockListViewModel viewModelStock;
     private DetalleListViewModel viewModelDetalle;
+    private ProductosListViewModel viewModelProducto;
     public static ServiceSincronizacion mInstance;
     public Runnable runnable = null;
     FragmentActivity activity;
     int idRepartidor;
     public int posicion;
-    public boolean banderaPedidos=false;
-    public boolean banderaUpdatePedidos=false;
+
     public ServiceSincronizacion(){
 
     }
     public ServiceSincronizacion(ClientesListViewModel mviewCliente,FragmentActivity f){
         this.viewModelClientes=mviewCliente;
         activity=f;
-        banderaPedidos=false;
-        banderaUpdatePedidos=false;
+
 
     }
     public static ServiceSincronizacion getInstance() {
@@ -115,6 +117,7 @@ if (UtilShare.mActivity!=null){
     viewModelPedidos= ViewModelProviders.of(UtilShare.mActivity).get(PedidoListViewModel.class);
     viewModelStock= ViewModelProviders.of(UtilShare.mActivity).get(StockListViewModel.class);
     viewModelDetalle=ViewModelProviders.of(UtilShare.mActivity).get(DetalleListViewModel.class);
+    viewModelProducto=ViewModelProviders.of(UtilShare.mActivity).get(ProductosListViewModel.class);
 }
 
     }
@@ -305,10 +308,10 @@ if (UtilShare.mActivity!=null){
                         try{
                             idRepartidor= DataPreferences.getPrefInt("idrepartidor",mContext);
                             _DecargarPedidos(""+idRepartidor);
-                            _DecargarStocks(""+idRepartidor);
+                            _DecargarStocks(""+idRepartidor,0);
                             exportarClientes();
                             UpdateClientes();
-                            exportarPedidos();
+                            exportarPedidos(""+idRepartidor);
                             exportarPedidosEstados();
                         }catch (Exception e){
                             Log.d(TAG, "Error" + e.getMessage());
@@ -381,6 +384,7 @@ if (UtilShare.mActivity!=null){
                                     if (pedido.getOaest() == 1) {
                                         pedido.setOaest(2);
                                         pedido.setEstado(2);
+                                        pedido .setEstadoStock(1);
                                         viewModelPedidos.insertPedido(pedido);
 
                                         Notificacion("" + pedido.getOanumi(), pedido.getCliente(), "" + pedido.getTotal());
@@ -431,7 +435,7 @@ if (UtilShare.mActivity!=null){
     }
 
 
-    public void _DecargarStocks(final String idRepartidor){
+    public void _DecargarStocks(final String idRepartidor,final int Tipo){
 
         List<ClienteEntity> listCliente = null;
         try {
@@ -462,7 +466,7 @@ if (UtilShare.mActivity!=null){
                 return ;
             }
 
-            if (listCliente.size()==0 &&listClienteUpdate.size()==0 && listPedidos.size()==0 && listPedidoModificados.size()==0&& listDetalle.size()==0) {
+            if (listCliente.size()==0 &&listClienteUpdate.size()==0 ) {
 
                 ApiManager apiManager = ApiManager.getInstance(mContext);
                 apiManager.ObtenerStock(new Callback<List<StockEntity>>() {
@@ -477,7 +481,7 @@ if (UtilShare.mActivity!=null){
                             if (responseUser.size()>0){
                                 viewModelStock.deleteAllStocks();
                             }
-                                List<StockEntity> listStock = viewModelStock.getAllStock();
+                                List<StockEntity> listStock = viewModelStock.getMStockAllAsync();
 
                                 for (int i = 0; i < responseUser.size(); i++) {
                                     StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
@@ -485,13 +489,26 @@ if (UtilShare.mActivity!=null){
 
                                     StockEntity dbStock = ObtenerProducto(listStock,stock.getCodigoProducto());
                                     if (dbStock == null) {
-                                        viewModelStock.insertStock(stock);
+                                        if (stock.getCantidad()<0) {
+                                            stock.setCantidad(0);
+                                            viewModelStock.insertStock(stock);
+                                        }else{
+                                            viewModelStock.insertStock(stock);
+                                        }
+
                                     } else {
 
 
                                             if (stock.getCodigoProducto()==dbStock.getCodigoProducto()&&stock.getCantidad()!=dbStock.getCantidad()){
-                                                dbStock .setCantidad(stock.getCantidad());
-                                                viewModelStock.updateStock(dbStock);
+
+                                                if (stock.getCantidad()<0) {
+                                                    dbStock .setCantidad(0);
+                                                    viewModelStock.updateStock(dbStock);
+                                                }else{
+                                                    dbStock .setCantidad(stock.getCantidad());
+                                                    viewModelStock.updateStock(dbStock);
+                                                }
+
                                             }
 
                                     }
@@ -499,7 +516,9 @@ if (UtilShare.mActivity!=null){
 
                                 }
 
-
+                                if (Tipo==1){  //Quiere decir que haique insertar Pedidos
+                                    exportarPedidosStock();
+                                }
                         } else {
                             // mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
                         }
@@ -638,7 +657,14 @@ if (UtilShare.mActivity!=null){
             }
         },idRepartidor);
     }
-    private void exportarPedidos(){
+
+
+    private void exportarPedidos(String IdRepartidor){
+        _DecargarStocks(IdRepartidor,1);
+
+
+    }
+    private void exportarPedidosStock(){
 //        Looper.prepare();
         try {
             if (viewModelClientes==null){
@@ -648,6 +674,7 @@ if (UtilShare.mActivity!=null){
             List<ClienteEntity>   listClienteUpdate = viewModelClientes.getMAllStateClienteUpdate(1);
             List<PedidoEntity> listPedidos=viewModelPedidos.getMAllPedidoState(1);
             List<DetalleEntity>listDetalle=viewModelDetalle.getMAllDetalleState(1);
+            List<PedidoEntity>listPedidoSinStock=viewModelPedidos.getMAllPedidoSinStock(1);
             if (listCliente==null){
                 return;
             }
@@ -660,75 +687,252 @@ if (UtilShare.mActivity!=null){
             if (listDetalle==null){
                 return;
             }
-            if (listCliente.size()==0 && listClienteUpdate.size()==0 && listPedidos.size()>0 && banderaPedidos==false){
+            if (listCliente.size()==0 && listClienteUpdate.size()==0 && listPedidos.size()>0){
                 posicion = 0;
                 final Boolean[] bandera = {false};
 
-                       bandera[0] =true;
-                       final PedidoEntity pedido=listPedidos.get(posicion);
-                       final String CodeGenerado=pedido.getCodigogenerado();
-                        banderaPedidos=true;
-                       ApiManager apiManager=ApiManager.getInstance(mContext);
-                       apiManager.InsertPedido(pedido, new Callback<ResponseLogin>() {
-                           @Override
-                           public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
-                               ResponseLogin responseUser = response.body();
-                               if (response.code()==404){
-                                   // mPedidoView.showSaveResultOption(0,"","");
-                                   banderaPedidos=false;
-                                   return;
-                               }
-                               try{
-                                   if (responseUser!=null){
-                                       if (responseUser.getCode()==0){
-                                           PedidoEntity mPedido= viewModelPedidos.getPedido(pedido.getOanumi());
-                                           if (mPedido!=null){
-                                               mPedido.setOanumi(responseUser.getToken());
-                                               mPedido.setEstado(1);
-                                               mPedido.setEstadoUpdate(1);
-                                               mPedido.setCodigogenerado(responseUser.getToken());
-                                               // viewModelPedidos.updatePedido(mPedido);
-                                               List<DetalleEntity> list=viewModelDetalle.getDetalle(CodeGenerado);
-                                               InsertarDetalleServicio(responseUser.getToken(),list,mPedido,CodeGenerado);
-                                               //showSaveResultOption(1,""+mcliente.getNumi(),"");
-                                              bandera[0] =false;
+                bandera[0] =true;
+                final PedidoEntity pedido=listPedidos.get(posicion);
+                final String CodeGenerado=pedido.getCodigogenerado();
+                List<DetalleEntity> Detalle= viewModelDetalle.getDetalle(CodeGenerado);
+                final PedidoDetalle p= new PedidoDetalle();
+                p.setCliente(pedido.getCliente());
+                p.setCodigogenerado(pedido.getCodigogenerado());
+                p.setDetalle(Detalle);
+                p.setEstado(pedido.getEstado());
+                p.setId(pedido.getId());
+                p.setOanumi(pedido.getOanumi());
+                p.setOafdoc(pedido.getOafdoc());
+                p.setOahora(pedido.getOahora());
+                p.setOaccli(pedido.getOaccli());
+                p.setOarepa(pedido.getOarepa());
+                p.setOaest(pedido.getOaest());
+                p.setOaobs(pedido.getOaobs());
+                p.setLatitud(pedido.getLatitud());
+                p.setLongitud(pedido.getLongitud());
+                p.setTotal(pedido.getTotal());
+                p.setTipocobro(pedido.getTipocobro());
+                p.setTotalcredito(pedido.getTotalcredito());
+                p.setEstado(pedido.getEstado());
+                p.setEstadoUpdate(pedido.getEstadoUpdate());
+                p.setReclamo(pedido.getReclamo());
+                ///Validamos Stock
+                Boolean TieneStock=VerficarStockDisponible(Detalle);
+                if (TieneStock==false){
+                    pedido.setEstadoStock(2);
+                    viewModelPedidos .updatePedido(pedido);
+                    return;
+                }
 
-                                           }
-                                       }
-                                   }
-                               }catch (Exception e){
-                                   // mPedidoView.showSaveResultOption(0,"","");
-                                   bandera[0] =false;
-                                   banderaPedidos=false;
-                               ;
-                               }
 
-                           }
 
-                           @Override
-                           public void onFailure(Call<ResponseLogin> call, Throwable t) {
-                               //  mPedidoView.showSaveResultOption(0,"","");
-                               bandera[0] =false;
-                               banderaPedidos=false;
-                               //ShowMessageResult("Error al guardar el pedido");
-                           }
-                       });
+
+                ApiManager apiManager=ApiManager.getInstance(mContext);
+                apiManager.InsertPedido(p, new Callback<ResponseLogin>() {
+                    @Override
+                    public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
+                        ResponseLogin responseUser = response.body();
+                        if (response.code()==404){
+                            // mPedidoView.showSaveResultOption(0,"","");
+
+                            return;
+                        }
+                        try{
+                            if (responseUser!=null){
+                                if (responseUser.getCode()==0){
+                                    PedidoEntity mPedido= viewModelPedidos.getPedido(pedido.getOanumi());
+                                    if (mPedido!=null){
+                                        mPedido.setOanumi(responseUser.getToken());
+                                        mPedido.setEstado(1);
+                                        mPedido.setEstadoUpdate(1);
+                                        mPedido.setCodigogenerado(responseUser.getToken());
+                                        // viewModelPedidos.updatePedido(mPedido);
+                                        List<DetalleEntity> listDetalle= viewModelDetalle.getDetalle(CodeGenerado);
+                                        if (listDetalle!=null) {
+                                            for (int i = 0; i < listDetalle.size(); i++) {
+                                                DetalleEntity item = listDetalle.get(i);
+                                                item.setObnumi(responseUser.getToken());
+                                                item.setEstado(true);
+                                                item.setObupdate(1);
+                                                viewModelDetalle.updateDetalle(item);
+
+                                            }
+                                            viewModelPedidos.updatePedido(mPedido);
+                                        }
+
+
+                                    }
+                                }
+                            }
+                        }catch (Exception e){
+                            // mPedidoView.showSaveResultOption(0,"","");
+
+                            ;
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseLogin> call, Throwable t) {
+                        //  mPedidoView.showSaveResultOption(0,"","");
+
+                        //ShowMessageResult("Error al guardar el pedido");
+                    }
+                });
 
 
 
             }else{
-                Log.d(TAG, "No Hay Datos Para Exportar");
+                if (listCliente.size()==0 && listClienteUpdate.size()==0 && listPedidos.size()==0 && listPedidoSinStock .size()>0){
+
+
+                    posicion = 0;
+                    final Boolean[] bandera = {false};
+
+                    bandera[0] =true;
+                    final PedidoEntity pedido=listPedidoSinStock.get(posicion);
+                    final String CodeGenerado=pedido.getCodigogenerado();
+                    List<DetalleEntity> Detalle= viewModelDetalle.getDetalle(CodeGenerado);
+                    final PedidoDetalle p= new PedidoDetalle();
+                    p.setCliente(pedido.getCliente());
+                    p.setCodigogenerado(pedido.getCodigogenerado());
+                    p.setDetalle(Detalle);
+                    p.setEstado(pedido.getEstado());
+                    p.setId(pedido.getId());
+                    p.setOanumi(pedido.getOanumi());
+                    p.setOafdoc(pedido.getOafdoc());
+                    p.setOahora(pedido.getOahora());
+                    p.setOaccli(pedido.getOaccli());
+                    p.setOarepa(pedido.getOarepa());
+                    p.setOaest(pedido.getOaest());
+                    p.setOaobs(pedido.getOaobs());
+                    p.setLatitud(pedido.getLatitud());
+                    p.setLongitud(pedido.getLongitud());
+                    p.setTotal(pedido.getTotal());
+                    p.setTipocobro(pedido.getTipocobro());
+                    p.setTotalcredito(pedido.getTotalcredito());
+                    p.setEstado(pedido.getEstado());
+                    p.setEstadoUpdate(pedido.getEstadoUpdate());
+                    p.setReclamo(pedido.getReclamo());
+                    ///Validamos Stock
+                    Boolean TieneStock=VerficarStockDisponible(Detalle);
+                    if (TieneStock==false){
+                       // pedido.setEstadoStock(2);
+                       // viewModelPedidos .updatePedido(pedido);
+                        return;
+                    }
+
+
+
+
+                    ApiManager apiManager=ApiManager.getInstance(mContext);
+                    apiManager.InsertPedido(p, new Callback<ResponseLogin>() {
+                        @Override
+                        public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
+                            ResponseLogin responseUser = response.body();
+                            if (response.code()==404){
+                                // mPedidoView.showSaveResultOption(0,"","");
+
+                                return;
+                            }
+                            try{
+                                if (responseUser!=null){
+                                    if (responseUser.getCode()==0){
+                                        PedidoEntity mPedido= viewModelPedidos.getPedido(pedido.getOanumi());
+                                        if (mPedido!=null){
+                                            mPedido.setOanumi(responseUser.getToken());
+                                            mPedido.setEstado(1);
+                                            mPedido.setEstadoUpdate(1);
+                                            mPedido.setEstadoStock(1);
+                                            mPedido.setCodigogenerado(responseUser.getToken());
+                                            // viewModelPedidos.updatePedido(mPedido);
+                                            List<DetalleEntity> listDetalle= viewModelDetalle.getDetalle(CodeGenerado);
+                                            if (listDetalle!=null) {
+                                                for (int i = 0; i < listDetalle.size(); i++) {
+                                                    DetalleEntity item = listDetalle.get(i);
+                                                    item.setObnumi(responseUser.getToken());
+                                                    item.setEstado(true);
+                                                    item.setObupdate(1);
+                                                    viewModelDetalle.updateDetalle(item);
+
+                                                }
+                                                viewModelPedidos.updatePedido(mPedido);
+                                            }
+
+
+                                        }
+                                    }
+                                }
+                            }catch (Exception e){
+                                // mPedidoView.showSaveResultOption(0,"","");
+
+                                ;
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseLogin> call, Throwable t) {
+                            //  mPedidoView.showSaveResultOption(0,"","");
+
+                            //ShowMessageResult("Error al guardar el pedido");
+                        }
+                    });
+
+
+
+
+
+
+
+
+                }else{
+                    Log.d(TAG, "No Hay Datos Para Exportar");
+                }
+
             }
         } catch (ExecutionException e) {
-            banderaPedidos=false;
+
             Log.d(TAG, "Error: "+e.getMessage());
         } catch (InterruptedException e) {
-            banderaPedidos=false;
+
             Log.d(TAG, "Error: "+e.getMessage());
         }
 
     }
 
+    public Boolean VerficarStockDisponible(List<DetalleEntity> mDetalleItem){
+        // viewModelProducto.getMProductoByStock();
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+
+            DetalleEntity detail=mDetalleItem.get(i);
+            try {
+                ProductoEntity p =viewModelProducto.getMProductoByStock(detail.getObcprod());
+                if (p!=null){
+
+                    mDetalleItem.get(i).setStock(p.getStock());
+
+
+                }
+            } catch (ExecutionException e) {
+            } catch (InterruptedException e) {
+            }
+        }
+        boolean b =true;
+
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            if (mDetalleItem.get(i).getObupdate()>=0){
+
+                if (mDetalleItem.get(i).getObpcant() >mDetalleItem.get(i).getStock()){
+                    return false;
+                }
+            }
+
+        }
+        return true;
+
+
+    }
     private void exportarPedidosEstados(){
 //        Looper.prepare();
         try {
@@ -752,21 +956,21 @@ if (UtilShare.mActivity!=null){
             if (listDetalle==null){
                 return;
             }
-            if (listCliente.size()==0 && listClienteUpdate.size()==0 && listPedidos.size()==0&& listDetalle.size()>=0 &&listPedidosEstados.size()>0 && banderaUpdatePedidos==false){
+            if (listCliente.size()==0 && listClienteUpdate.size()==0 && listPedidos.size()==0&& listDetalle.size()>=0 &&listPedidosEstados.size()>0 ){
                 posicion = 0;
                 final Boolean[] bandera = {false};
 
                 bandera[0] =true;
                 final PedidoEntity pedido=listPedidosEstados.get(posicion);
                 final String CodeGenerado=pedido.getCodigogenerado();
-                banderaUpdatePedidos=true;
+
                 ApiManager apiManager=ApiManager.getInstance(mContext);
                 apiManager.UpdatePedido(pedido, new Callback<ResponseLogin>() {
                     @Override
                     public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                         ResponseLogin responseUser = response.body();
                         if (response.code()==404){
-                            banderaUpdatePedidos=false;
+
                             // mPedidoView.showSaveResultOption(0,"","");
                             return;
                         }
@@ -780,15 +984,15 @@ if (UtilShare.mActivity!=null){
                                         List<DetalleEntity> list=viewModelDetalle.getDetalle(CodeGenerado);
                                         UpdateDetalleServicio(responseUser.getToken(),list,mPedido,CodeGenerado);
                                         //showSaveResultOption(1,""+mcliente.getNumi(),"");
-                                        bandera[0] =false;
+
                                     //viewModelPedidos.updatePedido(mPedido);
                                     }
                                 }
                             }
                         }catch (Exception e){
                             // mPedidoView.showSaveResultOption(0,"","");
-                            bandera[0] =false;
-                            banderaUpdatePedidos=false;
+
+
                             ;
                         }
 
@@ -798,7 +1002,7 @@ if (UtilShare.mActivity!=null){
                     public void onFailure(Call<ResponseLogin> call, Throwable t) {
                         //  mPedidoView.showSaveResultOption(0,"","");
                         bandera[0] =false;
-                        banderaUpdatePedidos=false;
+
                         //ShowMessageResult("Error al guardar el pedido");
                     }
                 });
@@ -806,67 +1010,19 @@ if (UtilShare.mActivity!=null){
 
 
             }else{
-                banderaUpdatePedidos=false;
+
                 Log.d(TAG, "No Hay Datos Para Exportar");
             }
         } catch (ExecutionException e) {
-            banderaUpdatePedidos=false;
+
             Log.d(TAG, "Error: "+e.getMessage());
         } catch (InterruptedException e) {
-            banderaUpdatePedidos=false;
+
             Log.d(TAG, "Error: "+e.getMessage());
         }
 
     }
 
-    public void InsertarDetalleServicio(final String Oanumi, List<DetalleEntity> list, final PedidoEntity pedido, final String CodigoGenerado){
-        ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.InsertDetalle(list,Oanumi, new Callback<ResponseLogin>() {
-            @Override
-            public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
-                ResponseLogin responseUser = response.body();
-                if (response.code()==404){
-                  //  mPedidoView.showSaveResultOption(0,"","");
-                    return;
-                }
-                try{
-                    if (responseUser!=null){
-                        if (responseUser.getCode()==1){
-                            List<DetalleEntity> listDetalle= viewModelDetalle.getDetalle(CodigoGenerado);
-                            if (listDetalle!=null){
-                                for (int i = 0; i < listDetalle.size(); i++) {
-                                    DetalleEntity item=listDetalle.get(i);
-                                    item.setObnumi(Oanumi);
-                                    item.setEstado(true);
-                                    item.setObupdate(1);
-                                    viewModelDetalle.updateDetalle(item);
-
-                                }
-                                viewModelPedidos.updatePedido(pedido);
-                                banderaPedidos=false;
-                               // mPedidoView.showSaveResultOption(1,""+Oanumi,"");
-                                return;
-                            }
-                        }
-                    }
-                }catch (Exception e){
-                    banderaPedidos=false;
-                   // mPedidoView.showSaveResultOption(0,"","");
-                    return;
-
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseLogin> call, Throwable t) {
-                //mPedidoView.showSaveResultOption(0,"","");
-                //ShowMessageResult("Error al guardar el pedido");
-                banderaPedidos=false;
-                return;
-            }
-        });
-    }
 
     public void UpdateDetalleServicio(final String Oanumi, List<DetalleEntity> list, final PedidoEntity pedido, final String CodigoGenerado){
         ApiManager apiManager=ApiManager.getInstance(mContext);
@@ -876,12 +1032,12 @@ if (UtilShare.mActivity!=null){
                 ResponseLogin responseUser = response.body();
                 if (response.code()==404){
                     //  mPedidoView.showSaveResultOption(0,"","");
-                    banderaUpdatePedidos=false;
+
                     return;
                 }
-                try{banderaUpdatePedidos=false;
+                try{
                     if (responseUser!=null){
-                        banderaUpdatePedidos=false;
+
                         if (responseUser.getCode()==1){
                             List<DetalleEntity> listDetalle= viewModelDetalle.getDetalle(CodigoGenerado);
                             if (listDetalle!=null){
@@ -906,7 +1062,7 @@ if (UtilShare.mActivity!=null){
                         }
                     }
                 }catch (Exception e){
-                    banderaUpdatePedidos=false;
+
                     // mPedidoView.showSaveResultOption(0,"","");
                     return;
                 }
@@ -917,7 +1073,7 @@ if (UtilShare.mActivity!=null){
             public void onFailure(Call<ResponseLogin> call, Throwable t) {
                 //mPedidoView.showSaveResultOption(0,"","");
                 //ShowMessageResult("Error al guardar el pedido");
-                banderaUpdatePedidos=false;
+
                 return;
             }
         });

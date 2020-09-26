@@ -31,7 +31,9 @@ public class PedidoRepository {
     public List<PedidoEntity> getMPedidoAllState(int clienteId) throws ExecutionException, InterruptedException {
         return new getMPedidoAllStateAsync(mPedidoDao).execute(clienteId).get();
     }
-
+    public List<PedidoEntity> getMPedidoAllSinStock(int clienteId) throws ExecutionException, InterruptedException {
+        return new getMPedidoAllSinStockAsync(mPedidoDao).execute(clienteId).get();
+    }
     public List<PedidoEntity> getMPedidoAllState02(int clienteId) throws ExecutionException, InterruptedException {
         return new getMPedidoAllState02Async(mPedidoDao).execute(clienteId).get();
     }
@@ -108,7 +110,19 @@ try {
             return mPedidoDaoAsync.getPedidoAllState();
         }
     }
+    private static class getMPedidoAllSinStockAsync extends AsyncTask<Integer, Void, List<PedidoEntity>> {
 
+        private PedidoDao mPedidoDaoAsync;
+
+        getMPedidoAllSinStockAsync(PedidoDao clienteDao) {
+            mPedidoDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected List<PedidoEntity> doInBackground(Integer... ids) {
+            return mPedidoDaoAsync.getPedidoAllStateSinStock();
+        }
+    }
     private static class getMPedidoAllState02Async extends AsyncTask<Integer, Void, List<PedidoEntity>> {
 
         private PedidoDao mPedidoDaoAsync;

@@ -64,7 +64,7 @@ public class StockRepository {
 
         @Override
         protected StockEntity doInBackground(Integer... ids) {
-            return mStockDaoAsync.getStockById(ids[0]);
+            return mStockDaoAsync.getStockProducto(ids[0]);
         }
     }
 
@@ -79,7 +79,7 @@ public class StockRepository {
 
         @Override
         protected List<StockEntity> doInBackground(Integer... ids) {
-            return mPedidoDaoAsync.getStockAll();
+            return mPedidoDaoAsync.getStockMAll();
         }
     }
     private static class insertStockAsync extends AsyncTask<StockEntity, Void, Long> {

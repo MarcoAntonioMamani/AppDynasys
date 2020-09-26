@@ -44,7 +44,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Nombre"
-                            android:inputType="textCapWords"
+                            android:textSize="15dp"
+                            android:inputType="textCapCharacters"
                             android:singleLine="true" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -73,7 +74,8 @@
                             style="@style/Widget.AppCompat.EditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="text"
+                            android:inputType="textCapCharacters"
+                            android:textSize="15dp"
                             android:hint="Razón Social" />
                     </android.support.design.widget.TextInputLayout>
                     <android.support.design.widget.TextInputLayout
@@ -88,6 +90,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
+                            android:textSize="15dp"
                             android:hint="NIT/CI" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -103,7 +106,8 @@
                             style="@style/Widget.AppCompat.EditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="textCapSentences|textMultiLine"
+                            android:textSize="15dp"
+                            android:inputType="textCapCharacters|textMultiLine"
                             android:hint="Dirección" />
                     </android.support.design.widget.TextInputLayout>
 

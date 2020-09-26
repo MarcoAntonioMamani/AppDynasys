@@ -24,7 +24,9 @@ public interface DetalleDao {
     @Query("SELECT * FROM detalle where estado=0")
     List<DetalleEntity> getDetalleAllState();
 
-    @Query("SELECT * FROM detalle WHERE obnumi=:numi")
+    @Query("SELECT id,obnumi,obcprod,cadesc,obpcant," +
+            "obpbase,obptot,descuento,total,familia,estado,obupdate,((select r.cantidad  from (select  MAx(st.id),st.cantidad   " +
+            "from stock as st where st.codigoProducto=obcprod) as r )+(Case  When detalle.estado=0 Then 0 Else obpcant end))as stock  FROM detalle WHERE obnumi=:numi")
     List<DetalleEntity> getDetalleById(String numi);
 
     @Query("SELECT * FROM detalle WHERE obnumi=:numi and obcprod=:producto")

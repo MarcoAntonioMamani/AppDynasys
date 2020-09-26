@@ -175,7 +175,7 @@ public void IniciarParametros(){
             @Override
             public void onClick(View view) {
 
-                try {
+
                    PedidoEntity pedi= viewModelPedidos.getPedido(mPedido.getCodigogenerado());
                    if (pedi!=null){
                        if (rCredito.isChecked()==true){
@@ -189,11 +189,7 @@ public void IniciarParametros(){
                        viewModelPedidos.updatePedido(pedi);
                    }
                     showSaveResultOption(0,"","");
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
 
 
             }

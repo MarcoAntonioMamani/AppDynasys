@@ -20,11 +20,7 @@ public class ZonasEntity   implements Serializable {
     public ZonasEntity() {
     }
 
-    public ZonasEntity(int lanumi, String zona, int idRepartidor) {
-        this.lanumi = lanumi;
-        this.zona = zona;
-        this.idRepartidor = idRepartidor;
-    }
+
 
     public int getLanumi() {
         return lanumi;

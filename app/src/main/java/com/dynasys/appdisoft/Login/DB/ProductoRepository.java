@@ -40,6 +40,9 @@ public class ProductoRepository {
     public List<ProductoEntity> getMProductoAll(int clienteId) throws ExecutionException, InterruptedException {
         return new getMProductoAllAsync(mProductoDao).execute(clienteId).get();
     }
+    public ProductoEntity getMProductoStock(int clienteId) throws ExecutionException, InterruptedException {
+        return new getMProductobyStockAsync(mProductoDao).execute(clienteId).get();
+    }
     public List<ProductoEntity> getMProductoByCliente(int clienteId) throws ExecutionException, InterruptedException {
         return new getMProductobyClienteAsync(mProductoDao).execute(clienteId).get();
     }
@@ -89,6 +92,20 @@ public class ProductoRepository {
         @Override
         protected List<ProductoEntity> doInBackground(Integer... ids) {
             return mProductoDaoAsync.getAllMProductos();
+        }
+    }
+
+    private static class getMProductobyStockAsync extends AsyncTask<Integer, Void, ProductoEntity> {
+
+        private ProductoDao mProductoDaoAsync;
+
+        getMProductobyStockAsync(ProductoDao clienteDao) {
+            mProductoDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected ProductoEntity doInBackground(Integer... ids) {
+            return mProductoDaoAsync.getProductoByStockId(ids[0]);
         }
     }
     private static class getMProductobyClienteAsync extends AsyncTask<Integer, Void, List<ProductoEntity>> {

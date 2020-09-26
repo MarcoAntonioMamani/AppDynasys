@@ -9,6 +9,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +34,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -42,14 +45,17 @@ import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
 import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
+import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
+import com.dynasys.appdisoft.Login.DB.StockListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
@@ -68,6 +74,7 @@ import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.security.Guard;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -75,7 +82,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -98,6 +110,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private ProductosListViewModel viewModelProducto;
     private PedidoListViewModel viewModelPedido;
     private DescuentosListViewModel viewModelDescuento;
+    private StockListViewModel viewModelStock;
     private DetalleListViewModel viewModelDetalle;
     private List<DetalleEntity> mDetalleItem=new ArrayList<>();
     private CreatePedidoMvp.Presenter mCreatePedidoPresenter;
@@ -107,6 +120,8 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private RecyclerView detalle_List;
     ClientesAdapter clientAdapter;
     ProductAdapter productoAdapter;
+    private String M_Uii="";
+    Boolean Grabado=false;
 DetalleAdaptader mDetalleAdapter;
 TextView name_total,etFecha,name_descuento,name_descuentoTotal;
 EditText tvObservacion;
@@ -133,7 +148,7 @@ private PedidoEntity mPedido;
         context=getContext();
     }
     public void iniciarRecyclerView(){
-        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this);
+        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this,getActivity());
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         detalle_List.setLayoutManager(llm);
@@ -164,7 +179,8 @@ private PedidoEntity mPedido;
         viewModelPedido = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
-        new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle);
+        viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
+        new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock);
         mCreatePedidoPresenter.CargarClientes();
         iniciarRecyclerView();
         onclickObtenerFecha();
@@ -198,10 +214,187 @@ private PedidoEntity mPedido;
         ShowDialogSincronizando();
         alertDialog.show();
     }
+    private boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnected();
+    }
+    public void SaveOnline(){
+        M_Uii= UUID.randomUUID().toString();
+        Calendar c2 = Calendar.getInstance();
+        final int hora = c2.get(Calendar.HOUR);
+        final int minuto = c2.get(Calendar.MINUTE);
+        final int Segundo = c2.get(Calendar.SECOND);
+        mPedido=new PedidoEntity();
+        mPedido.setOafdoc(mFecha);
+        mPedido.setOahora(""+hora+":"+minuto);
+        if (mCliente.getNumi()==0) {
+            mPedido.setOaccli("" + mCliente.getCodigogenerado());
+        }else{
+            mPedido.setOaccli(""+mCliente.getNumi());
+        }
+
+        mPedido.setCliente(mCliente.getNamecliente());
+        int idRepartidor= DataPreferences.getPrefInt("idrepartidor",getContext());
+        mPedido.setOarepa(idRepartidor);
+        mPedido.setOaest(2);
+        mPedido.setOaobs(tvObservacion.getText().toString());
+        mPedido.setLatitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLatitude());
+        mPedido.setLongitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLongitude());
+        mPedido.setTotal(_prObtenerTotal());
+        mPedido.setTipocobro(1);
+        mPedido.setTotalcredito(0.0);
+        mPedido.setEstado(0);
+        mPedido.setReclamo(EtReclamo.getText().toString());
+        int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
+        //cliente.setCodigogenerado();
+        DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
+        String code = df.format(Calendar.getInstance().getTime());
+        code=""+codigoRepartidor+","+code+"V2.5";
+        mPedido.setCodigogenerado(code);
+        mPedido.setOanumi(code);
+        _prModificarNumi(code);
+
+        List<StockEntity> st=viewModelStock.getMStockAllAsync();
+        mCreatePedidoPresenter.GuardarDatos(mDetalleItem,mPedido);
+
+    }
+    public void Verificaronline(){
+        int idRepartidor=DataPreferences.getPrefInt("idrepartidor",context);
+
+        ApiManager apiManager=ApiManager.getInstance(context);
+        apiManager.ObtenerStock(new Callback<List<StockEntity>>() {
+            @Override
+            public void onResponse(Call<List<StockEntity>> call, Response<List<StockEntity>> response) {
+                final List<StockEntity> responseUser = (List<StockEntity>) response.body();
+                if (response.code() == 404) {
+                    SaveOnline();
+                    // mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+                        viewModelStock.deleteAllStocks();
+                        List<StockEntity> listStock = viewModelStock.getMStockAllAsync();
+
+                        for (int i = 0; i < responseUser.size(); i++) {
+                            StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
+                            //viewModel.insertCliente(cliente);
+                            StockEntity dbStock = null;
+                            try {
+                                dbStock = viewModelStock.getStock(stock.getCodigoProducto());
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if (dbStock == null) {
+
+                                if (stock.getCantidad()<0){
+                                    stock.setCantidad(0);
+                                    viewModelStock.insertStock(stock);
+                                }else{
+                                    viewModelStock.insertStock(stock);
+                                }
+                            } else {
+                                for (int j = 0; j < listStock.size(); j++) {
+                                    StockEntity dbStock02=listStock.get(j);
+
+                                    if (stock.getCodigoProducto()==dbStock02.getCodigoProducto()&&stock.getCantidad()!=dbStock02.getCantidad()){
+                                        if (stock.getCantidad()<0){
+                                            dbStock02.setCantidad(0);
+                                            viewModelStock.updateStock(dbStock02);
+                                        }else{
+                                            dbStock02.setCantidad(stock.getCantidad());
+                                            viewModelStock.updateStock(dbStock02);
+                                        }
+
+
+                                    }
+
+                                }
+                            }
+
+
+                        }
+                        VerficarStockDisponible(1);
+
+
+
+
+                } else {
+                    SaveOnline();
+                    // mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<StockEntity>> call, Throwable t) {
+                SaveOnline();
+            }
+        },""+idRepartidor);
+    }
+
+
+    public void VerficarStockDisponible(int tipo){
+        // viewModelProducto.getMProductoByStock();
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+
+            DetalleEntity detail=mDetalleItem.get(i);
+            try {
+                ProductoEntity p =viewModelProducto.getMProductoByStock(detail.getObcprod());
+                if (p!=null){
+
+                        mDetalleItem.get(i).setStock(p.getStock());
+
+
+                }
+            } catch (ExecutionException e) {
+            } catch (InterruptedException e) {
+            }
+        }
+        boolean b =true;
+
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            if (mDetalleItem.get(i).getObupdate()>=0){
+
+                if (mDetalleItem.get(i).getObpcant() >mDetalleItem.get(i).getStock()){
+                    b=false;
+                }
+            }
+
+        }
+        if (b==true){
+            if (tipo==1){
+                SaveOnline();
+            }
+
+        }else{  //Existen productos sin stock
+            Reconstruir();
+            ShowMessageResult("Existen Productos que ya no Cuentan con el Stock ingresado");
+        }
+
+
+    }
+
     public void GuardarPedido(){
         if (mDetalleItem.size()>0){
-            showDialogs();
-            new ChecarNotificaciones().execute();
+            if (Grabado ==false){
+                if (M_Uii.trim().equals("")){
+                    showDialogs();
+                    new ChecarNotificaciones().execute();
+                }else{
+                    ShowMessageResult("El pedido ya ha sido guardado localmente, por favor vuelva hacia atras");
+                }
+
+            }else{
+                ShowMessageResult("El pedido ya ha sido guardado localmente, por favor vuelva hacia atras");
+            }
+
+
+
+
 
 
         }else{
@@ -266,11 +459,14 @@ private PedidoEntity mPedido;
         return builder.create();
     }
     public void RetornarPrincipal(){
-        MainActivity fca = ((MainActivity) getActivity());
-        fca.removeAllFragments();
-        Fragment frag = new  ListPedidosFragment(1);
-        //fca.switchFragment(frag,"LISTAR_PEDIDOS");
-        fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
+
+            MainActivity fca = ((MainActivity) getActivity());
+            fca.removeAllFragments();
+            Fragment frag = new  ListPedidosFragment(1);
+            //fca.switchFragment(frag,"LISTAR_PEDIDOS");
+            fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
+
+
 
 
     }
@@ -410,7 +606,7 @@ private PedidoEntity mPedido;
     }
     public void Reconstruir(){
         mDetalleAdapter=null;
-        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this);
+        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this,getActivity());
         detalle_List.setAdapter(mDetalleAdapter);
     }
     @Override
@@ -419,7 +615,7 @@ private PedidoEntity mPedido;
     }
 
     @Override
-    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad) {
+    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad, LinearLayout fondo) {
         double cantidad=0.0;
         if (isDouble(value)){
             cantidad=Double.parseDouble(value);
@@ -444,6 +640,7 @@ private PedidoEntity mPedido;
                    // tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
                     calcularTotal();
                 }else{
+                    fondo.setBackgroundColor(getActivity().getResources().getColor(R.color.marfil));
                     DetalleEntity detalle= mDetalleItem.get(posicion);
                     detalle.setObpcant(cantidad);
                     detalle.setObptot(cantidad*detalle.getObpbase());
@@ -796,15 +993,17 @@ private PedidoEntity mPedido;
         if (alertDialog.isShowing()){
             alertDialog.dismiss();
         }
-
+        M_Uii="";
         switch (codigo){
             case 0:
+                Grabado=true;
                 dialogs= showCustomDialog("El Pedido ha sido guardado localmente con exito. Pero no pudo ser guardado en el servidor por problemas de red"
                         ,true);
                 dialogs.setCancelable(false);
                 dialogs.show();
                 break;
             case 1:
+                Grabado=true;
                 dialogs= showCustomDialog("El Pedido Nro:"+id+" ha sido guardado localmente y en el servidor" +
                         " con exito.",true);
                 dialogs.setCancelable(false);
@@ -892,7 +1091,12 @@ private PedidoEntity mPedido;
     private class ChecarNotificaciones extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
+            if (isOnline()){
+                Verificaronline();
+            }else{
 
+                Verificaronline();
+            }
             return "";
         }
 
@@ -901,41 +1105,7 @@ private PedidoEntity mPedido;
             //NUESTRO CODIGO
             new Handler().postDelayed(new Runnable() {
                 public void run() {
-                    Calendar c2 = Calendar.getInstance();
-                    final int hora = c2.get(Calendar.HOUR);
-                    final int minuto = c2.get(Calendar.MINUTE);
-                    final int Segundo = c2.get(Calendar.SECOND);
-                    mPedido=new PedidoEntity();
-                    mPedido.setOafdoc(mFecha);
-                    mPedido.setOahora(""+hora+":"+minuto);
-                    if (mCliente.getNumi()==0) {
-                        mPedido.setOaccli("" + mCliente.getCodigogenerado());
-                    }else{
-                        mPedido.setOaccli(""+mCliente.getNumi());
-                    }
 
-                    mPedido.setCliente(mCliente.getNamecliente());
-                    int idRepartidor= DataPreferences.getPrefInt("idrepartidor",getContext());
-                    mPedido.setOarepa(idRepartidor);
-                    mPedido.setOaest(2);
-                    mPedido.setOaobs(tvObservacion.getText().toString());
-                    mPedido.setLatitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLatitude());
-                    mPedido.setLongitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLongitude());
-                    mPedido.setTotal(_prObtenerTotal());
-                    mPedido.setTipocobro(1);
-                    mPedido.setTotalcredito(0.0);
-                    mPedido.setEstado(0);
-                    mPedido.setReclamo(EtReclamo.getText().toString());
-                    int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
-                    //cliente.setCodigogenerado();
-                    DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
-                    String code = df.format(Calendar.getInstance().getTime());
-                    code=""+codigoRepartidor+","+code+"V2.2";
-                    mPedido.setCodigogenerado(code);
-                    mPedido.setOanumi(code);
-                    _prModificarNumi(code);
-
-                    mCreatePedidoPresenter.GuardarDatos(mDetalleItem,mPedido);
                 }
             }, 1 * 2000);
             super.onPostExecute(result);

@@ -24,11 +24,19 @@ public interface ProductoDao {
             "select r.cantidad  from (select  MAx(st.id),st.cantidad   from stock as st where st.codigoProducto=p.numi) as r ) as stock " +
             ",p.familia " +
             "FROM producto as p inner join precio on precio.chcprod =p.numi " +
-            " WHERE precio.chcatcl=:numi")
+            " WHERE precio.chcatcl=:numi and precio.chprecio >0")
     List<ProductoEntity> getProductoByCliente(int numi);
 
     @Query("SELECT * FROM producto WHERE numi=:numi")
     ProductoEntity getProductoById(int numi);
+
+
+    @Query("SELECT distinct  p.numi,p.cod,p.producto,p.desccorta,p.idcategoria,p.categoria,0 as precio, (" +
+            "select r.cantidad  from (select  MAx(st.id),st.cantidad   from stock as st where st.codigoProducto=p.numi) as r ) as stock " +
+            ",p.familia " +
+            "FROM producto as p   " +
+            " WHERE p.numi=:numi  limit 1")
+    ProductoEntity getProductoByStockId(int numi);
 
     @Query("SELECT * FROM producto WHERE numi=:numi")
     LiveData<ProductoEntity> getProducto(int numi);
