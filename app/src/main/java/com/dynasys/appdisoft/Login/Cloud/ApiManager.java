@@ -3,8 +3,11 @@ package com.dynasys.appdisoft.Login.Cloud;
 import android.content.Context;
 import android.widget.EditText;
 
+import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.CobranzaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.DeudaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
@@ -97,6 +100,20 @@ private static Context mcontext;
     }
     public void ObtenerPrecios( Callback<List<PrecioEntity>> callback) {
         Call<List<PrecioEntity>> userCall = service.ObtenerPrecios();
+        userCall.enqueue(callback);
+    }
+
+    public void ObtenerDeudas( Callback<List<DeudaEntity>> callback) {
+        Call<List<DeudaEntity>> userCall = service.ObtenerDeudas();
+        userCall.enqueue(callback);
+    }
+    public void ObtenerCobranza( Callback<List<CobranzaEntity>> callback) {
+        Call<List<CobranzaEntity>> userCall = service.ObtenerCobranza();
+        userCall.enqueue(callback);
+    }
+
+    public void ObtenerCobranzaDetalle( Callback<List<CobranzaDetalleEntity>> callback) {
+        Call<List<CobranzaDetalleEntity>> userCall = service.ObtenerCobranzaDetalle();
         userCall.enqueue(callback);
     }
     public void ObtenerProductos( Callback<List<ProductoEntity>> callback) {

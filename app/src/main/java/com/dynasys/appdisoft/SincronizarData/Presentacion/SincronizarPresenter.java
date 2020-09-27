@@ -12,12 +12,18 @@ import com.dynasys.appdisoft.Login.Cloud.Bodylogin;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.CobranzaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.DeudaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
+import com.dynasys.appdisoft.Login.DB.ListViewModel.CobranzaDetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewModel.CobranzaListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewModel.DeudaListaViewModel;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.DB.StockListViewModel;
@@ -40,6 +46,9 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
     private final Context mContext;
     private final ClientesListViewModel viewModel;
     private final PreciosListViewModel viewModelPrecios;
+    private final DeudaListaViewModel viewModelDeuda;
+    private final CobranzaListViewModel viewModelCobranza;
+    private final CobranzaDetalleListViewModel viewModelCobranzaDetalle;
     private final ProductosListViewModel viewModelProductos;
     private final DescuentosListViewModel viewModelDescuentos;
     private final PedidoListViewModel viewModelPedidos;
@@ -57,7 +66,8 @@ int ZonaSelected=0;
 
     public SincronizarPresenter(SincronizarMvp.View sincronizarView, Context context, ClientesListViewModel viewModel, Activity activity, PreciosListViewModel
                                 viewModelPrecios, ProductosListViewModel viewModelProductos,PedidoListViewModel viewModelPedidos,
-                                DetalleListViewModel viewModelDetalles,StockListViewModel stock,DescuentosListViewModel descuento){
+                                DetalleListViewModel viewModelDetalles,StockListViewModel stock,DescuentosListViewModel descuento,
+                                DeudaListaViewModel mdeuda,CobranzaListViewModel mcobranza,CobranzaDetalleListViewModel mcobranzaDetalle){
         mSincronizarview = Preconditions.checkNotNull(sincronizarView);
         mSincronizarview.setPresenter(this);
         this.viewModel=viewModel;
@@ -65,6 +75,9 @@ int ZonaSelected=0;
         this.activity=activity;
         this.viewModelPrecios=viewModelPrecios;
         this.viewModelProductos=viewModelProductos;
+        this.viewModelDeuda =mdeuda;
+        this.viewModelCobranza=mcobranza;
+        this.viewModelCobranzaDetalle=mcobranzaDetalle;
         this.viewModelPedidos=viewModelPedidos;
         this.viewModelDetalles=viewModelDetalles;
         this.viewModelStock=stock;
@@ -94,6 +107,9 @@ int ZonaSelected=0;
         CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:0)+(pedidos==true? 1:0);
         String Mensaje="";
 
+        _DecargarDeudas();
+        _DecargarCobranza();
+        _DecargarCobranzaDetalle();
         if (cliente==true ){
             _DescargarClientes(""+idRepartidor);
         }
@@ -599,17 +615,7 @@ int ZonaSelected=0;
         return Mensaje;
     }
 
-    public void setMensaje(String mensaje) {
-        Mensaje = mensaje;
-    }
 
-    public int getCantidadPenticiones() {
-        return CantidadPenticiones;
-    }
-
-    public void setCantidadPenticiones(int cantidadPenticiones) {
-        CantidadPenticiones = cantidadPenticiones;
-    }
 
     public boolean existeDetalle(List<DetalleEntity> listDetalle,DetalleEntity detail){
         for (int i = 0; i < listDetalle.size(); i++) {
@@ -619,6 +625,183 @@ int ZonaSelected=0;
             }
         }
         return false;
+    }
+
+    public void _DecargarDeudas(){
+        ApiManager apiManager=ApiManager.getInstance(mContext);
+        apiManager.ObtenerDeudas( new Callback<List<DeudaEntity>>() {
+            @Override
+            public void onResponse(Call<List<DeudaEntity>> call, Response<List<DeudaEntity>> response) {
+                final List<DeudaEntity> responseUser = (List<DeudaEntity>) response.body();
+                if (response.code()==404){
+                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+                    try {
+                        List<DeudaEntity> listCliente = viewModelDeuda.getMDeudaAllAsync();
+                        if (listCliente.size() <= 0) {
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                DeudaEntity precio = responseUser.get(i);
+                                viewModelDeuda.insertDeuda(precio);
+                            }
+                            //cantidadPrecio+=responseUser.size();
+                            // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                        }else{
+                            viewModelDeuda.deleteAllDeudas();
+                            List<DeudaEntity> listupdate=new ArrayList<>();
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                DeudaEntity precio = responseUser.get(i);
+                                //viewModel.insertCliente(cliente);
+                                DeudaEntity dbprecio=viewModelDeuda.getDeuda(precio.getPedidoId());
+                                if (dbprecio==null){
+                                    viewModelDeuda.insertDeuda(precio);
+                                }else{
+
+                                    listupdate.add(precio);
+                                    //viewModelPrecios.updatePrecio(precio);
+                                }
+
+                            }
+
+                            //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                        }
+
+
+                    } catch (ExecutionException e) {
+                        //e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Deudas : "+e.getMessage());
+                    } catch (InterruptedException e) {
+                        //   e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Deudas: "+e.getMessage());
+                    }
+
+
+
+                } else {
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Deudas");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<DeudaEntity>> call, Throwable t) {
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio.");
+            }
+        });
+    }
+
+    public void _DecargarCobranza(){
+        ApiManager apiManager=ApiManager.getInstance(mContext);
+        apiManager.ObtenerCobranza( new Callback<List<CobranzaEntity>>() {
+            @Override
+            public void onResponse(Call<List<CobranzaEntity>> call, Response<List<CobranzaEntity>> response) {
+                final List<CobranzaEntity> responseUser = (List<CobranzaEntity>) response.body();
+                if (response.code()==404){
+                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+                    try {
+                        List<CobranzaEntity> listCliente = viewModelCobranza.getMCobranzaAllAsync();
+                        if (listCliente.size() <= 0) {
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                CobranzaEntity precio = responseUser.get(i);
+                                viewModelCobranza.insertCobranza(precio);
+                            }
+                            //cantidadPrecio+=responseUser.size();
+                            // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                        }else{
+                            viewModelCobranza.deleteAllCobranzas();
+                            List<CobranzaEntity> listupdate=new ArrayList<>();
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                CobranzaEntity precio = responseUser.get(i);
+                                //viewModel.insertCliente(cliente);
+                                CobranzaEntity dbprecio=viewModelCobranza.getCobranza(precio.getTenumi());
+                                if (dbprecio==null){
+                                    viewModelCobranza.insertCobranza(precio);
+                                }else{
+
+                                    listupdate.add(precio);
+                                    //viewModelPrecios.updatePrecio(precio);
+                                }
+
+                            }
+
+                            //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                        }
+
+
+                    } catch (ExecutionException e) {
+                        //e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza : "+e.getMessage());
+                    } catch (InterruptedException e) {
+                        //   e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza: "+e.getMessage());
+                    }
+
+
+
+                } else {
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CobranzaEntity>> call, Throwable t) {
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio.");
+            }
+        });
+    }
+
+    public void _DecargarCobranzaDetalle(){
+        ApiManager apiManager=ApiManager.getInstance(mContext);
+        apiManager.ObtenerCobranzaDetalle( new Callback<List<CobranzaDetalleEntity>>() {
+            @Override
+            public void onResponse(Call<List<CobranzaDetalleEntity>> call, Response<List<CobranzaDetalleEntity>> response) {
+                final List<CobranzaDetalleEntity> responseUser = (List<CobranzaDetalleEntity>) response.body();
+                if (response.code()==404){
+                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+
+                        List<CobranzaDetalleEntity> listCliente = viewModelCobranzaDetalle.getMCobranzaDetalleAllAsync();
+                        if (listCliente.size() <= 0) {
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                CobranzaDetalleEntity precio = responseUser.get(i);
+                                viewModelCobranzaDetalle.insertCobranzaDetalle(precio);
+                            }
+                            //cantidadPrecio+=responseUser.size();
+                            // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                        }else{
+                            viewModelCobranzaDetalle.deleteAllCobranzaDetalles();
+
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                CobranzaDetalleEntity precio = responseUser.get(i);
+
+                                    viewModelCobranzaDetalle.insertCobranzaDetalle(precio);
+
+
+                            }
+
+                            //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                        }
+
+
+
+
+
+
+                } else {
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para CobranzaDetalle");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CobranzaDetalleEntity>> call, Throwable t) {
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio.");
+            }
+        });
     }
 
 }

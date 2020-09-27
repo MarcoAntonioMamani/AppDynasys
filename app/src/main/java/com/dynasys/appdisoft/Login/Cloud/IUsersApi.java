@@ -1,7 +1,10 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
+import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.CobranzaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.DeudaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
@@ -40,6 +43,12 @@ public interface IUsersApi {
     @GET("/api/repartidor/precios")
     Call<List<PrecioEntity>> ObtenerPrecios();
 
+    @GET("/api/repartidor/deudas")
+    Call<List<DeudaEntity>> ObtenerDeudas();
+    @GET("/api/repartidor/Cobranza")
+    Call<List<CobranzaEntity>> ObtenerCobranza();
+    @GET("/api/repartidor/CobranzaDetalle")
+    Call<List<CobranzaDetalleEntity>> ObtenerCobranzaDetalle();
     @GET("/api/repartidor/productos")
     Call<List<ProductoEntity>> ObtenerProductos();
 
