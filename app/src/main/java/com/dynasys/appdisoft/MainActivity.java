@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.MapClientActivity;
 import com.dynasys.appdisoft.Clientes.UtilShare;
+import com.dynasys.appdisoft.ListarDeudas.ListDeudasFragment;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
@@ -234,6 +235,14 @@ public class MainActivity extends AppCompatActivity {
                             //setFragment(2);
                             drawerLayout.closeDrawer(GravityCompat.START);
                             return true;
+                    case R.id.item_navigation_drawer_Deudas:
+                        setFragment(7);
+                        item.setChecked(true);
+                        //setFragment(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
+
+
                     case R.id.item_navigation_drawer_help_and_feedback:
                         item.setChecked(true);
                         setFragment(21);
@@ -282,6 +291,12 @@ public class MainActivity extends AppCompatActivity {
             case 6:
                 returnToMain();
                 frag = new CreatePedidoFragment();
+                tag = Constantes.TAG_PEDIDOS;
+                break;
+
+            case 7:
+                returnToMain();
+                frag = new ListDeudasFragment();
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 21:
@@ -386,12 +401,15 @@ public class MainActivity extends AppCompatActivity {
         MenuItem menuped = navigationView.getMenu().findItem(R.id.item_navigation_drawer_pedidos);
         MenuItem menuMapa = navigationView.getMenu().findItem(R.id.item_navigation_drawer_mapa);
         MenuItem menupedEntregados = navigationView.getMenu().findItem(R.id.item_navigation_drawer_entregados);
+        MenuItem menuCobranza = navigationView.getMenu().findItem(R.id.item_navigation_drawer_Deudas);
+
             menulcv.setVisible(true);
             menucli.setVisible(true);
             menuped.setVisible(true);
             menuMapa.setVisible(true);
         menuAddPedido.setVisible(true);
         menupedEntregados.setVisible(true);
+        menuCobranza.setVisible(true);
     }
 
     @Override

@@ -49,7 +49,7 @@ import butterknife.Unbinder;
  * A simple {@link Fragment} subclass.
  */
 public class ListDeudasFragment extends Fragment     implements SearchView.OnQueryTextListener, DeudasMvp.View {
-    private List<DeudaEntity> lisClientes=new ArrayList<>();
+    private List<DeudaEntity> listDeudas=new ArrayList<>();
     View view;
     Context context;
     RecyclerView recList;
@@ -66,7 +66,7 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().setTitle("Deudas");
+        getActivity().setTitle("Cobranzas");
     }
 
     @Override
@@ -115,9 +115,9 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
                 try{
                     // lisClientes=FiltarByZona(notes)
                     notes=UnificarListadoDeudas(notes);
-                    lisClientes=notes;
-                    Collections.sort(lisClientes);
-                    CargarRecycler(lisClientes);
+                    listDeudas=notes;
+                    Collections.sort(listDeudas);
+                    CargarRecycler(listDeudas);
                 }catch(Exception e){
 
                 }
@@ -168,7 +168,7 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
 
     public void CargarRecycler(List<DeudaEntity> listCliente){
         if (listCliente!=null){
-            adapterPerfil = new AdapterDeudas(context,lisClientes,this,listClientes);
+            adapterPerfil = new AdapterDeudas(context,listDeudas,this,listClientes,getActivity());
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
             final LayoutAnimationController controller =
@@ -189,7 +189,7 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
     @Override
     public boolean onQueryTextChange(String newText) {
         try{
-            List<DeudaEntity> ListaFiltrada=filter(lisClientes,newText);
+            List<DeudaEntity> ListaFiltrada=filter(listDeudas,newText);
             adapterPerfil.setFilter(ListaFiltrada);
 
         }catch (Exception e){

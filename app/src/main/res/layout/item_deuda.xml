@@ -113,6 +113,7 @@
                                 android:textStyle="bold"
                                 android:textColor="@color/secondary_text"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:textSize="10dp"
                                 android:paddingBottom="5dp"
                                 />
 

@@ -1,5 +1,6 @@
 package com.dynasys.appdisoft.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -29,11 +30,13 @@ public class AdapterDeudas extends RecyclerView.Adapter<AdapterDeudas.PedidosVie
     private List<ClienteEntity> listClientes;
     private Context context;
 private DeudasMvp.View mview;
-    public AdapterDeudas(Context ctx, List<DeudaEntity> s, DeudasMvp.View view, List<ClienteEntity> listcliente) {
+private Activity act;
+    public AdapterDeudas(Context ctx, List<DeudaEntity> s, DeudasMvp.View view, List<ClienteEntity> listcliente, Activity act) {
         this.context = ctx;
         this.listaPedidos = s;
         this.mview=view;
         this.listClientes=listcliente;
+        this.act=act;
     }
     public AdapterDeudas(Context ctx) {
         this.context = ctx;
@@ -49,10 +52,10 @@ private DeudasMvp.View mview;
     @Override
     public void onBindViewHolder(PedidosViewHolder clientesViewHolder, final int i) {
         clientesViewHolder.TvNombreCliente.setText((CharSequence) listaPedidos.get(i).getCliente());
-        clientesViewHolder.TvDireccionCliente.setText((CharSequence) ObtenerDireccionCliente(""+listaPedidos.get(i).getClienteId()));
+        clientesViewHolder.TvDireccionCliente.setText((CharSequence) listaPedidos.get(i).getDireccion());
         clientesViewHolder.TvTotal.setText((CharSequence) ShareMethods.ObtenerDecimalToString( listaPedidos.get(i).getPendiente(),2)+" Bs");
         ColorGenerator generator = ColorGenerator.MATERIAL;
-        clientesViewHolder.tvTelefono.setText((CharSequence) "Telf: "+ObtenerTelefonoCliente(""+listaPedidos.get(i).getClienteId()));
+        clientesViewHolder.tvTelefono.setText((CharSequence) "Telf: "+listaPedidos.get(i).getTelefono());
         clientesViewHolder.CardViewPedidos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,11 +64,11 @@ private DeudasMvp.View mview;
         });
 
         if (listaPedidos.get(i).getEstado()==1 ){
-            clientesViewHolder.TvNombreCliente.setBackground(context.getResources().getDrawable(R.drawable.line_drawable));
+            clientesViewHolder.TvNombreCliente.setBackground(act.getResources().getDrawable(R.drawable.line_drawable));
 
         }
         if (listaPedidos.get(i).getEstado()!=1 ){
-            clientesViewHolder.TvNombreCliente.setBackground(context.getResources().getDrawable(R.drawable.animation_bottoncancelrojo));
+            clientesViewHolder.TvNombreCliente.setBackground(act.getResources().getDrawable(R.drawable.animation_bottoncancelrojo));
         }
 
     }
@@ -91,7 +94,7 @@ public String ObtenerDireccionCliente(String numi){
     public PedidosViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.
                 from(viewGroup.getContext()).
-                inflate(R.layout.item_order, viewGroup, false);
+                inflate(R.layout.item_deuda, viewGroup, false);
 
         return new PedidosViewHolder(itemView);
     }

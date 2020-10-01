@@ -1,0 +1,151 @@
+package com.dynasys.appdisoft.Adapter;
+
+import android.content.Context;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.DeudaEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
+import com.dynasys.appdisoft.Pedidos.ShareMethods;
+import com.dynasys.appdisoft.R;
+import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * Created by Marco on 2016-08-01.
+ */
+public class AdapterDetalleDeuda extends RecyclerView.Adapter<AdapterDetalleDeuda.PedidosViewHolder> {
+    private List<DeudaEntity> listaDeudas;
+    private List<ClienteEntity> listClientes;
+    private Context context;
+private PedidosMvp.View mview;
+    public AdapterDetalleDeuda(Context ctx, List<DeudaEntity> s, PedidosMvp.View view, List<ClienteEntity> listcliente) {
+        this.context = ctx;
+        this.listaDeudas = s;
+        this.mview=view;
+        this.listClientes=listcliente;
+    }
+    public AdapterDetalleDeuda(Context ctx) {
+        this.context = ctx;
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return listaDeudas.size();
+    }
+
+
+    @Override
+    public void onBindViewHolder(PedidosViewHolder clientesViewHolder, final int i) {
+        clientesViewHolder.TvNroPedido.setText( ""+listaDeudas.get(i).getPedidoId());
+        clientesViewHolder.tvFecha.setText(ShareMethods.ObtenerFecha(listaDeudas.get(i).getFechaPedido()));
+        clientesViewHolder.tvMonto.setText(ShareMethods.ObtenerDecimalToString(listaDeudas.get(i).getPendiente(),2));
+        final DeudaEntity item=listaDeudas.get(i);
+        if (listaDeudas.get(i).getTotalAPagar()>0){
+            clientesViewHolder.chkDeuda.setChecked(true);
+        }else{
+            clientesViewHolder.chkDeuda.setChecked(false);
+        }
+
+        clientesViewHolder.etMontoPagar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+               int pos =ObtenerPosicionElemento(item);
+                if (pos>=0){
+                 //   mView.ModifyItem(pos,s.toString(),item,tvsubtotal,tvCantidad,fondo);
+                }
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int i=0;
+            }
+        });
+
+
+    }
+
+    public int ObtenerPosicionElemento( DeudaEntity item){
+        for (int i = 0; i < listaDeudas.size(); i++) {
+            if (item.getPedidoId()==listaDeudas.get(i).getPedidoId()){
+                return i;
+            }
+        }
+        return -1;
+    }
+public String ObtenerDireccionCliente(String numi){
+    for (int i = 0; i < listClientes.size(); i++) {
+        ClienteEntity cliente=listClientes.get(i);
+        if (cliente.getCodigogenerado().trim().equals(numi.trim())){
+            return cliente.getDireccion();
+        }
+    }
+    return "S/D";
+}
+    public String ObtenerTelefonoCliente(String numi){
+        for (int i = 0; i < listClientes.size(); i++) {
+            ClienteEntity cliente=listClientes.get(i);
+            if (cliente.getCodigogenerado().trim().equals(numi.trim())){
+                return cliente.getTelefono();
+            }
+        }
+        return "S/N";
+    }
+    @Override
+    public PedidosViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View itemView = LayoutInflater.
+                from(viewGroup.getContext()).
+                inflate(R.layout.item_detalle_deuda, viewGroup, false);
+
+        return new PedidosViewHolder(itemView);
+    }
+
+
+
+    public static class PedidosViewHolder extends RecyclerView.ViewHolder {
+
+        protected TextView TvNroPedido;
+        protected TextView tvFecha;
+        protected TextView tvMonto;
+        protected CheckBox chkDeuda;
+        protected EditText etMontoPagar;
+        public PedidosViewHolder(View v) {
+            super(v);
+
+            TvNroPedido = (TextView) v.findViewById(R.id.view_detalle_deuda_nropedido);
+            tvFecha=(TextView) v.findViewById(R.id.view_detalle_deuda_fecha);
+            tvMonto = (TextView) v.findViewById(R.id.view_detalle_deuda_monto);
+            chkDeuda = (CheckBox) v.findViewById(R.id.deuda_detalle_chk);
+            etMontoPagar = (EditText) v.findViewById(R.id.view_detalle_deuda_montopagar);
+
+        }
+    }
+
+    public void setFilter(List<DeudaEntity> ListaFiltrada){
+        this.listaDeudas =new ArrayList<>();
+        this.listaDeudas.addAll(ListaFiltrada);
+        notifyDataSetChanged();
+    }
+}

@@ -2,6 +2,7 @@ package com.dynasys.appdisoft.Login.DB.Entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
@@ -18,6 +19,12 @@ public class DeudaEntity implements Comparable<DeudaEntity> {
     int ClienteId;
     @ColumnInfo(name = "cliente")
     String cliente;
+    @ColumnInfo(name = "direccion")
+    String direccion;
+    @ColumnInfo(name = "telefono")
+    String telefono;
+    @ColumnInfo(name = "limiteCliente")
+    double limiteCliente;
     @ColumnInfo(name = "PersonalId")
     int PersonalId;
     @ColumnInfo(name = "vendedor")
@@ -30,8 +37,42 @@ public class DeudaEntity implements Comparable<DeudaEntity> {
     double pendiente;
     @ColumnInfo(name = "estado")
     int estado;
+    @Ignore
+    double totalAPagar;
+
+    public double getTotalAPagar() {
+        return totalAPagar;
+    }
+
+    public void setTotalAPagar(double totalAPagar) {
+        this.totalAPagar = totalAPagar;
+    }
 
     public DeudaEntity() {
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public double getLimiteCliente() {
+        return limiteCliente;
+    }
+
+    public void setLimiteCliente(double limiteCliente) {
+        this.limiteCliente = limiteCliente;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
     public int getId() {
