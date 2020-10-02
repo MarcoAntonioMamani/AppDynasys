@@ -27,6 +27,7 @@ import com.dynasys.appdisoft.Clientes.ClienteMvp;
 import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
 import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
+import com.dynasys.appdisoft.ListarDeudas.Pagos.PagosFragment;
 import com.dynasys.appdisoft.Login.DB.Entity.DeudaEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewModel.DeudaListaViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
@@ -236,9 +237,9 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
         if (pedido!=null){
             UtilShare.deuda=pedido;
 
-           /* Fragment frag = new CreateClienteFragment(1,cliente,isUpdate);
+           Fragment frag = new PagosFragment(pedido);
             MainActivity fca = (MainActivity) getActivity();
-            fca.switchFragment(frag,"UpdateClientes");*/
+            fca.switchFragment(frag,"UpdateClientes");
         }
     }
 

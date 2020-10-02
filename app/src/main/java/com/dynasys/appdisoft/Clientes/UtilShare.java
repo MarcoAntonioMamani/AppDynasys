@@ -18,5 +18,6 @@ public class UtilShare {
     public static int tipoAccion=0;
     public static TextView tvZona;
     public static DeudaEntity deuda;
+    public static  int IdCLiente;
 
 }

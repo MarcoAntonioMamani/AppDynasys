@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.dynasys.appdisoft.ListarDeudas.Pagos.PagosMvp;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DeudaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
@@ -32,12 +33,12 @@ public class AdapterDetalleDeuda extends RecyclerView.Adapter<AdapterDetalleDeud
     private List<DeudaEntity> listaDeudas;
     private List<ClienteEntity> listClientes;
     private Context context;
-private PedidosMvp.View mview;
-    public AdapterDetalleDeuda(Context ctx, List<DeudaEntity> s, PedidosMvp.View view, List<ClienteEntity> listcliente) {
+private PagosMvp.View mview;
+    public AdapterDetalleDeuda(Context ctx, List<DeudaEntity> s, PagosMvp.View view) {
         this.context = ctx;
         this.listaDeudas = s;
         this.mview=view;
-        this.listClientes=listcliente;
+
     }
     public AdapterDetalleDeuda(Context ctx) {
         this.context = ctx;
@@ -51,9 +52,9 @@ private PedidosMvp.View mview;
 
 
     @Override
-    public void onBindViewHolder(PedidosViewHolder clientesViewHolder, final int i) {
+    public void onBindViewHolder(final PedidosViewHolder clientesViewHolder, final int i) {
         clientesViewHolder.TvNroPedido.setText( ""+listaDeudas.get(i).getPedidoId());
-        clientesViewHolder.tvFecha.setText(ShareMethods.ObtenerFecha(listaDeudas.get(i).getFechaPedido()));
+        clientesViewHolder.tvFecha.setText(ShareMethods.ObtenerFecha02(listaDeudas.get(i).getFechaPedido()));
         clientesViewHolder.tvMonto.setText(ShareMethods.ObtenerDecimalToString(listaDeudas.get(i).getPendiente(),2));
         final DeudaEntity item=listaDeudas.get(i);
         if (listaDeudas.get(i).getTotalAPagar()>0){
@@ -72,7 +73,7 @@ private PedidosMvp.View mview;
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                int pos =ObtenerPosicionElemento(item);
                 if (pos>=0){
-                 //   mView.ModifyItem(pos,s.toString(),item,tvsubtotal,tvCantidad,fondo);
+                    mview.ModifyPago(item,clientesViewHolder.chkDeuda.isChecked(),pos,clientesViewHolder.etMontoPagar,clientesViewHolder.chkDeuda,s.toString());
                 }
 
 
@@ -83,7 +84,13 @@ private PedidosMvp.View mview;
                 int i=0;
             }
         });
-
+        clientesViewHolder.chkDeuda.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pos =ObtenerPosicionElemento(item);
+                mview.OnClickCheck(item,clientesViewHolder.chkDeuda.isChecked(),pos,clientesViewHolder.etMontoPagar);
+            }
+        });
 
     }
 

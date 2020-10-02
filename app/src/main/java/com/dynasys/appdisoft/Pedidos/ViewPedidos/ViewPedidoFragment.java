@@ -54,7 +54,7 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
 
     View view;
     Context context;
-    RecyclerView  detalle_List;;
+    RecyclerView  detalle_List;
     private List<ClienteEntity> lisClientes=new ArrayList<>();
     private List<DetalleEntity> listDetalle=new ArrayList<>();
     private ClientesListViewModel viewModelClientes;

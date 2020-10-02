@@ -162,7 +162,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/primary_text"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
                             android:text="Pedido"/>
                     </LinearLayout>
@@ -176,7 +176,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/primary_text"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
                             android:text="Fecha"/>
                     </LinearLayout>
@@ -190,7 +190,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/primary_text"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
                             android:text="Monto"/>
                     </LinearLayout>
@@ -204,7 +204,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/primary_text"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
                             android:text="Pago"/>
                     </LinearLayout>
