@@ -134,11 +134,7 @@ public class PagosPresenter implements PagosMvp.Presenter  {
                                     viewModelCobranza.updateCobranza(mPedido);
                                     mPagosView.showSaveResultOption(1,""+responseUser.getToken(),"");
                                 }else{
-                                    if (!ShareMethods.IsServiceRunning(mContext,ServiceSincronizacion.class)){
-                                        UtilShare.mActivity=activity;
-                                        Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
-                                        mContext.startService(intent);
-                                    }
+
                                     mPagosView.showSaveResultOption(0,"","");
                                 }
 

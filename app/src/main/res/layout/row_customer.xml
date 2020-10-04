@@ -34,16 +34,62 @@
         android:text="Loading..."
         android:textColor="@color/gray_dark"
         android:textSize="10sp" />
-    <TextView
-        android:id="@+id/row_cliente_telefono"
-        android:layout_width="150dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_below="@id/row_cliente_direccion"
-        android:layout_marginTop="5dp"
         android:layout_toRightOf="@id/row_cliente_img"
-        android:text="Loading..."
-        android:textColor="@color/gray_dark"
-        android:textSize="10sp" />
+        android:layout_marginTop="5dp"
+        >
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            >
+            <TextView
+                android:id="@+id/row_cliente_telefono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Loading..."
+                android:textColor="@color/gray_dark"
+                android:textSize="10sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Debe:"
+
+                    android:textColor="@color/primary_text"
+                    android:textStyle="bold"
+                    android:textSize="10sp" />
+                <TextView
+                    android:id="@+id/row_cliente_debe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1500 bs"
+                    android:paddingLeft="5dp"
+                    android:textColor="@color/gray_dark"
+                    android:textSize="10sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

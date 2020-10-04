@@ -12,8 +12,11 @@ import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,11 +50,12 @@ public class ClientesAdapter extends ArrayAdapter<ClienteEntity> {
             ImageView clientImageView = view.findViewById(R.id.row_cliente_img);
             TextView client_direccion=(TextView) view.findViewById(R.id.row_cliente_direccion);
             TextView client_telefono=(TextView) view.findViewById(R.id.row_cliente_telefono);
-
+            TextView cliente_debe=(TextView)view.findViewById(R.id.row_cliente_debe);
             //imageView.setImageResource(client.getImageUrl());
             cliente_Name.setText(client.getNamecliente());
             client_direccion .setText(client.getDireccion());
             client_telefono.setText(client.getTelefono());
+            cliente_debe.setText(ShareMethods.ObtenerDecimalToString(client.getDeuda(),2));
 
         } catch (Exception e) {
             e.printStackTrace();

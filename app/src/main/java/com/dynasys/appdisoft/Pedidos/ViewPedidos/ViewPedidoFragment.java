@@ -64,7 +64,7 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
     private AlertDialog dialogs,dialogQuestion;
     private viewOrdersAdaptader mviewOrderAdapter;
     private EditText tvCliente,tvObservacion,tvTotalPago;
-    private TextView tvFecha,tvMontoTotal;
+    private TextView tvFecha,tvMontoTotal,tvDebe,tvLimite,tvDisponible;
     private Button btnMapa,btnEntrega;
     RadioButton rEfectivo,rCredito;
     private PedidoEntity mPedido;
@@ -108,6 +108,9 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
         LinearViewCredito =(LinearLayout)view.findViewById(R.id.view_CreditoContado);
         btnMapa=(Button)view.findViewById(R.id.pedido_viewdata_btnVerCliente);
         btnEntrega=(Button)view.findViewById(R.id.pedido_viewdata_btnEntregar);
+        tvDebe=view.findViewById(R.id.view_pedido_deuda_debe);
+        tvLimite=view.findViewById(R.id.view_pedido_deuda_limite);
+        tvDisponible=view.findViewById(R.id.view_pedido_deuda_disponible);
         viewModelDetalles = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelClientes = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
         viewModelPedidos=ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
@@ -255,6 +258,9 @@ public void CargarDatos(){
         tvMontoTotal.setText(ShareMethods.ObtenerDecimalToString(mPedido.getTotal(),2));
         tvObservacion.setText(mPedido.getOaobs());
         tvCliente.setText(mPedido.getCliente());
+        tvDebe.setText(ShareMethods.ObtenerDecimalToString(mCliente.getDeuda(),2));
+    tvLimite.setText(ShareMethods.ObtenerDecimalToString(mCliente.getLimite(),2));
+    tvDisponible.setText(ShareMethods.ObtenerDecimalToString(mCliente.getLimite()-mCliente.getDeuda(),2));
         tvFecha.setText(ShareMethods.ObtenerFecha02(mPedido.getOafdoc()));
 }
     @Override

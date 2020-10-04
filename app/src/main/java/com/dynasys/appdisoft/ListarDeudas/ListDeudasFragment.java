@@ -28,7 +28,10 @@ import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
 import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.ListarDeudas.Pagos.PagosFragment;
+import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DeudaEntity;
+import com.dynasys.appdisoft.Login.DB.ListViewModel.CobranzaDetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewModel.CobranzaListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewModel.DeudaListaViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.MainActivity;
@@ -59,6 +62,7 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
     List<ClienteEntity> listClientes=new ArrayList<>();
     private DeudaListaViewModel viewModel;
     private ClientesListViewModel viewModelCliente;
+    private CobranzaDetalleListViewModel viewModelCobranzaDetalle;
     private Unbinder unbinder;
     public static final String TAG = ListClientesFragment.class.getSimpleName();
     public ListDeudasFragment() {
@@ -102,6 +106,7 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
 
         viewModel = ViewModelProviders.of(getActivity()).get(DeudaListaViewModel.class);
         viewModelCliente= ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
+        viewModelCobranzaDetalle=ViewModelProviders.of(getActivity()).get(CobranzaDetalleListViewModel.class);
         try {
             listClientes=viewModelCliente.getMAllCliente(1);
         } catch (ExecutionException e) {
@@ -114,9 +119,16 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
             public void onChanged(@Nullable List<DeudaEntity> notes) {
                 try{
                     // lisClientes=FiltarByZona(notes)
-                    notes=UnificarListadoDeudas(notes);
+                    for (int i = 0; i < notes.size(); i++) {
+                        notes.get(i).setEstado(1);
+                    }
+
+                    List<DeudaEntity> lis=new ArrayList<>();
+                    lis=ActualizarEstado(notes);
+                    notes=UnificarListadoDeudas(lis);
                     listDeudas=notes;
                     Collections.sort(listDeudas);
+                    listDeudas=LimpiarPendiente(listDeudas);
                     CargarRecycler(listDeudas);
                 }catch(Exception e){
 
@@ -126,6 +138,41 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
 
             }  });
         recList.requestFocus();
+    }
+
+    public List<DeudaEntity> LimpiarPendiente(List<DeudaEntity> list) {
+
+        List<DeudaEntity> listNew=new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getPendiente()>0){
+                listNew.add(list.get(i));
+            }else{
+                if (list.get(i).getEstado()==0 && list.get(i).getPendiente()==0){
+                    listNew.add(list.get(i));
+                }
+            }
+
+        }
+        return listNew;
+
+    }
+
+    public List<DeudaEntity> ActualizarEstado(List<DeudaEntity> list){
+
+        List<CobranzaDetalleEntity> listDetalle=  viewModelCobranzaDetalle.getMCobranzaDetalleAllAsync();
+        for (int i = 0; i < list.size(); i++) {
+            DeudaEntity d=list.get(i);
+            for (int j = 0; j < listDetalle.size(); j++) {
+
+                if (listDetalle.get(j).getPedidoId()==d.getPedidoId()&& listDetalle.get(j).getEstado()==0){
+                    d.setEstado(0);
+                }
+            }
+
+
+        }
+        return list;
+
     }
 
     public List<DeudaEntity> UnificarListadoDeudas(List<DeudaEntity> list){
@@ -145,7 +192,9 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
                 for (int j = 0; j < ListNew.size(); j++) {
                     if (ListNew.get(j).getClienteId()==deuda.getClienteId()){
                         ListNew.get(j).setPendiente(ListNew.get(j).getPendiente()+deuda.getPendiente());
-
+                        if (deuda.getEstado()==0){
+                            ListNew.get(j).setEstado(0);
+                        }
                     }
 
                 }
@@ -239,11 +288,17 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
     @Override
     public void recyclerViewListClicked(View v, DeudaEntity pedido) {
         if (pedido!=null){
-            UtilShare.deuda=pedido;
+            if (pedido.getPendiente()>0){
+                UtilShare.deuda=pedido;
 
-           Fragment frag = new PagosFragment(pedido);
-            MainActivity fca = (MainActivity) getActivity();
-            fca.switchFragment(frag,"UpdateClientes");
+                Fragment frag = new PagosFragment(pedido);
+                MainActivity fca = (MainActivity) getActivity();
+                fca.switchFragment(frag,"UpdateClientes");
+            }else{
+                ShowMessageResult("No existe Deuda Pendiente.");
+            }
+
+
         }
     }
 

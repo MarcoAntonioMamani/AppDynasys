@@ -17,7 +17,7 @@ public interface DeudadDao {
 
 
     @Query("SELECT id,PedidoId,ClienteId,cliente,direccion,telefono,limiteCliente,PersonalId,vendedor,FechaPedido," +
-            "totalfactura,pendiente,(select c.estado from cobranzaDetalle as c where c.pedidoId=PedidoId and c.estado=0 order by c.id desc limit 1) as estado,0 as totalAPagar FROM deuda  ORDER BY PedidoId  DESC")
+            "totalfactura,pendiente,1 as estado,0 as totalAPagar FROM deuda as t   ORDER BY PedidoId  DESC")
     LiveData<List<DeudaEntity>> getAllDeuda();
 
     @Query("SELECT * FROM deuda  WHERE PedidoId =:id")
@@ -36,6 +36,6 @@ public interface DeudadDao {
     @Query("DELETE FROM deuda")
     void deleteAll();
 
-    @Query("SELECT * FROM deuda")
+    @Query("SELECT * FROM deuda where pendiente>0")
     List<DeudaEntity> getDeudaMAll();
 }

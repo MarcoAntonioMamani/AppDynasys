@@ -236,11 +236,93 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingTop="8dp"
+                            android:orientation="horizontal"
+                            android:paddingLeft="5dp"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:id="@+id/view_pedido_linearcredito"
+                            >
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/colorAccent"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:text="Debe:"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/primary_text"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                                    android:textSize="14sp"
+                                    android:paddingLeft="5dp"
+                                    android:id="@+id/view_pedido_deuda_debe"
+                                    android:text="2500"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/colorAccent"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:text="Limite:"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/primary_text"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                                    android:textSize="14sp"
+                                    android:paddingLeft="5dp"
+                                    android:id="@+id/view_pedido_deuda_limite"
+                                    android:text="10.000"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/colorAccent"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:text="Disp.:"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/primary_text"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                                    android:textSize="14sp"
+                                    android:paddingLeft="5dp"
+                                    android:id="@+id/view_pedido_deuda_disponible"
+                                    android:text="6.500"/>
+                            </LinearLayout>
+
+
+
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="12dp"
                             >
 
                             <RelativeLayout

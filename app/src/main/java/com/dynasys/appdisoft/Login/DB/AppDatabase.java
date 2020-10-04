@@ -38,7 +38,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
  * Created by ravi on 05/02/18.
  */
 
-@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, CobranzaDetalleEntity.class, ProductoEntity.class, PedidoEntity.class, DetalleEntity.class, StockEntity.class, ZonasEntity.class, DescuentosEntity.class, DeudaEntity.class, CobranzaEntity.class}, version = 12)
+@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, CobranzaDetalleEntity.class, ProductoEntity.class, PedidoEntity.class, DetalleEntity.class, StockEntity.class, ZonasEntity.class, DescuentosEntity.class, DeudaEntity.class, CobranzaEntity.class}, version = 13)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 

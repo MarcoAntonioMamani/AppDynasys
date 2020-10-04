@@ -122,7 +122,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     ClientesAdapter clientAdapter;
     ProductAdapter productoAdapter;
     DetalleAdaptader mDetalleAdapter;
-    TextView name_total,etFecha,name_descuento,name_totalDescuento;
+    TextView name_total,etFecha,name_descuento,name_totalDescuento,tvDebe,tvLimite,tvDisponible;
     EditText tvObservacion,tvTotalPago;
     Date mFecha;
     String Hora;
@@ -177,6 +177,9 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         tvObservacion=(EditText)view.findViewById(R.id.edit_view_observacion) ;
         rEfectivo=(RadioButton)view.findViewById(R.id.edit_order_rbt_efectivo) ;
         rCredito=(RadioButton)view.findViewById(R.id.edit_order_rbt_credito);
+        tvDebe=view.findViewById(R.id.modify_pedido_deuda_debe);
+        tvLimite=view.findViewById(R.id.modify_pedido_deuda_limite);
+        tvDisponible=view.findViewById(R.id.modify_pedido_deuda_disponible);
         mbutton_update = (Button)view.findViewById(R.id.edit_viewdata_btnUpdatePedido);
         mbutton_entrega=(Button)view.findViewById(R.id.edit_viewdata_btnEntregar);
         mbutton_viewcliente=(Button)view.findViewById(R.id.edit_viewdata_btnVerCliente);
@@ -192,6 +195,9 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         iniciarRecyclerView();
         acliente.setText(mCliente.getNamecliente());
         acliente.setEnabled(false);
+        tvDebe.setText(ShareMethods.ObtenerDecimalToString(mCliente.getDeuda(),2));
+        tvLimite.setText(ShareMethods.ObtenerDecimalToString(mCliente.getLimite(),2));
+        tvDisponible.setText(ShareMethods.ObtenerDecimalToString(mCliente.getLimite()-mCliente.getDeuda(),2));
         onclickObtenerFecha();
         onClickModificar();
         InterpretarDatos();

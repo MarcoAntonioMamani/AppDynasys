@@ -22,7 +22,11 @@ public interface ClientesDao {
 
     @Query("SELECT * FROM clientes WHERE numi=:id")
     ClienteEntity getClienteByNumi(int id);
-    @Query("SELECT * FROM clientes")
+
+
+    @Query("SELECT  id,numi,codigo,namecliente," +
+            "nit,direccion,telefono,latitud,longitud,fechaingreso,estado,codigogenerado,cccat,cczona," +
+            "razon_social,limite,ifnull((select sum(a.pendiente)from deuda as a where a.ClienteId=b.numi),0) as deuda FROM clientes as b")
     List<ClienteEntity> getClienteAll();
 
 

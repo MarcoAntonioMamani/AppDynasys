@@ -123,7 +123,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private String M_Uii="";
     Boolean Grabado=false;
 DetalleAdaptader mDetalleAdapter;
-TextView name_total,etFecha,name_descuento,name_descuentoTotal;
+TextView name_total,etFecha,name_descuento,name_descuentoTotal,tvDebe,tvLimite,tvDisponible;
 EditText tvObservacion;
 Date mFecha;
 String Hora;
@@ -167,6 +167,9 @@ private PedidoEntity mPedido;
         name_total=view.findViewById(R.id.pedido_view_Total);
         name_descuento=view.findViewById(R.id.pedido_view_Descuento);
         name_descuentoTotal=view.findViewById(R.id.pedido_view_TotalDescuento);
+        tvDebe=view.findViewById(R.id.create_pedido_deuda_debe);
+        tvLimite=view.findViewById(R.id.create_pedido_deuda_limite);
+        tvDisponible=view.findViewById(R.id.create_pedido_deuda_disponible);
         EtReclamo=view.findViewById(R.id.edit_Reclamo);
         etFecha=view.findViewById(R.id.et_mostrar_fecha_picker);
         ObFecha=(ImageButton)view.findViewById(R.id.ib_obtener_fecha);
@@ -200,6 +203,9 @@ private PedidoEntity mPedido;
             acliente.setText(mCliente.getNamecliente());
             mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
         }
+        tvDebe.setText(ShareMethods.ObtenerDecimalToString(0,2));
+        tvLimite.setText(ShareMethods.ObtenerDecimalToString(0,2));
+        tvDisponible.setText(ShareMethods.ObtenerDecimalToString(0,2));
     }
     public void onclickGuardar(){
         mbutton_guardar.setOnClickListener(new View.OnClickListener() {
@@ -484,6 +490,10 @@ private PedidoEntity mPedido;
                         if ((ClienteEntity) adapterView.getItemAtPosition(i)!=null){
                             mCliente = (ClienteEntity) adapterView.getItemAtPosition(i);
                             mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
+                            tvDebe.setText(ShareMethods.ObtenerDecimalToString(mCliente.getDeuda(),2));
+                            tvLimite.setText(ShareMethods.ObtenerDecimalToString(mCliente.getLimite(),2));
+                            tvDisponible.setText(ShareMethods.ObtenerDecimalToString(mCliente.getLimite()-mCliente.getDeuda(),2));
+
                         }
 
 
