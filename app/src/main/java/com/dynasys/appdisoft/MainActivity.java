@@ -46,6 +46,7 @@ import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.Pedidos.ModifyPedidos.ModifyPedidoFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.Pedidos.ViewPedidos.ViewPedidoFragment;
+import com.dynasys.appdisoft.RevisarEfectivo.EfectivoFragment;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
@@ -241,7 +242,12 @@ public class MainActivity extends AppCompatActivity {
                         //setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
-
+                    case R.id.item_navigation_drawer_Efectivo:
+                        setFragment(8);
+                        item.setChecked(true);
+                        //setFragment(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
 
                     case R.id.item_navigation_drawer_help_and_feedback:
                         item.setChecked(true);
@@ -297,6 +303,11 @@ public class MainActivity extends AppCompatActivity {
             case 7:
                 returnToMain();
                 frag = new ListDeudasFragment();
+                tag = Constantes.TAG_PEDIDOS;
+                break;
+            case 8:
+                returnToMain();
+                frag = new EfectivoFragment();
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 21:
@@ -402,6 +413,7 @@ public class MainActivity extends AppCompatActivity {
         MenuItem menuMapa = navigationView.getMenu().findItem(R.id.item_navigation_drawer_mapa);
         MenuItem menupedEntregados = navigationView.getMenu().findItem(R.id.item_navigation_drawer_entregados);
         MenuItem menuCobranza = navigationView.getMenu().findItem(R.id.item_navigation_drawer_Deudas);
+        MenuItem menuEfectivo=navigationView.getMenu().findItem(R.id.item_navigation_drawer_Efectivo);
 
             menulcv.setVisible(true);
             menucli.setVisible(true);
@@ -410,6 +422,7 @@ public class MainActivity extends AppCompatActivity {
         menuAddPedido.setVisible(true);
         menupedEntregados.setVisible(true);
         menuCobranza.setVisible(true);
+        menuEfectivo.setVisible(true);
     }
 
     @Override

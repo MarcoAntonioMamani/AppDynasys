@@ -431,36 +431,41 @@ public double MontoTotalCobrar(){
         final int hora = c2.get(Calendar.HOUR);
         final int minuto = c2.get(Calendar.MINUTE);
         final int Segundo = c2.get(Calendar.SECOND);
+
+
+
         int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
         //cliente.setCodigogenerado();
         DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
+
         String code = df.format(Calendar.getInstance().getTime());
         code=""+codigoRepartidor+","+code+"V2.5";
 
         CobranzaRequest cobranza=new CobranzaRequest();
 
         cobranza.setEstado(0);
-        cobranza.setFecha(c2.getTime());
+        cobranza.setFecha(Calendar.getInstance().getTime());
         cobranza.setId(0);
         cobranza.setObservacion(code);
         cobranza.setTenumi(code);
         cobranza.setIdPersonal(codigoRepartidor);
-        cobranza.setListDetalle(ObtenerDetalle(code,c2.getTime()));
+        cobranza.setListDetalle(ObtenerDetalle(code));
         mDeudaPresenter.GuardarCobranza(cobranza,MListaDeuda);
 
 
 
     }
-  public List<CobranzaDetalleEntity> ObtenerDetalle(String NumiCobranza, Date fecha){
+  public List<CobranzaDetalleEntity> ObtenerDetalle(String NumiCobranza){
         List<CobranzaDetalleEntity> list=new ArrayList<>();
       for (int i = 0; i < MListaDeuda.size(); i++) {
           if (MListaDeuda.get(i).getTotalAPagar()>0){
               CobranzaDetalleEntity detalle=new CobranzaDetalleEntity();
               detalle.setCobranzaId(NumiCobranza);
               detalle.setEstado(0);
-              detalle.setFechaPago(fecha);
+              detalle.setFechaPago(Calendar.getInstance().getTime());
               detalle.setPedidoId(MListaDeuda.get(i).getPedidoId());
               detalle.setTdnumi(0);//0 por que identity
+              detalle.setCliente(MListaDeuda.get(i).getCliente());
               detalle.setMontoAPagar(MListaDeuda.get(i).getTotalAPagar());
               list.add(detalle);
           }

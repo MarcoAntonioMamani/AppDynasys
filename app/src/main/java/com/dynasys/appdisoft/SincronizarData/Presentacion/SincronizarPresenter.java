@@ -107,9 +107,9 @@ int ZonaSelected=0;
         CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:0)+(pedidos==true? 1:0);
         String Mensaje="";
 
-        _DecargarDeudas();
-        _DecargarCobranza();
-        _DecargarCobranzaDetalle();
+        _DecargarDeudas(""+idRepartidor);
+        _DecargarCobranza(""+idRepartidor);
+        _DecargarCobranzaDetalle(""+idRepartidor);
         if (cliente==true ){
             _DescargarClientes(""+idRepartidor);
         }
@@ -627,9 +627,9 @@ int ZonaSelected=0;
         return false;
     }
 
-    public void _DecargarDeudas(){
+    public void _DecargarDeudas(String idRepartidor){
         ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.ObtenerDeudas( new Callback<List<DeudaEntity>>() {
+        apiManager.ObtenerDeudas( idRepartidor,new Callback<List<DeudaEntity>>() {
             @Override
             public void onResponse(Call<List<DeudaEntity>> call, Response<List<DeudaEntity>> response) {
                 final List<DeudaEntity> responseUser = (List<DeudaEntity>) response.body();
@@ -690,9 +690,9 @@ int ZonaSelected=0;
         });
     }
 
-    public void _DecargarCobranza(){
+    public void _DecargarCobranza(String idRepartidor){
         ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.ObtenerCobranza( new Callback<List<CobranzaEntity>>() {
+        apiManager.ObtenerCobranza(idRepartidor, new Callback<List<CobranzaEntity>>() {
             @Override
             public void onResponse(Call<List<CobranzaEntity>> call, Response<List<CobranzaEntity>> response) {
                 final List<CobranzaEntity> responseUser = (List<CobranzaEntity>) response.body();
@@ -753,9 +753,9 @@ int ZonaSelected=0;
         });
     }
 
-    public void _DecargarCobranzaDetalle(){
+    public void _DecargarCobranzaDetalle(String idRepartidor){
         ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.ObtenerCobranzaDetalle( new Callback<List<CobranzaDetalleEntity>>() {
+        apiManager.ObtenerCobranzaDetalle( idRepartidor,new Callback<List<CobranzaDetalleEntity>>() {
             @Override
             public void onResponse(Call<List<CobranzaDetalleEntity>> call, Response<List<CobranzaDetalleEntity>> response) {
                 final List<CobranzaDetalleEntity> responseUser = (List<CobranzaDetalleEntity>) response.body();

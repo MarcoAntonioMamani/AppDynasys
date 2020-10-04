@@ -329,9 +329,9 @@ if (UtilShare.mActivity!=null){
                             exportarPedidos(""+idRepartidor);
                             exportarPedidosEstados();
                             _PostInsertarCobranza();
-                            _DecargarDeudas();
-                            _DecargarCobranza();
-                            _DecargarCobranzaDetalle();
+                            _DecargarDeudas(""+idRepartidor);
+                            _DecargarCobranza(""+idRepartidor);
+                            _DecargarCobranzaDetalle(""+idRepartidor);
 
                         }catch (Exception e){
                             Log.d(TAG, "Error" + e.getMessage());
@@ -453,7 +453,7 @@ if (UtilShare.mActivity!=null){
             e.printStackTrace();
         }
     }
-    public void _DecargarDeudas(){
+    public void _DecargarDeudas(String idRepartidor){
 
         List<ClienteEntity> listCliente = null;
         List<CobranzaEntity> listCobranza=null;
@@ -490,7 +490,7 @@ if (UtilShare.mActivity!=null){
             listDetalle.size()==0 && listCobranza.size()==0) {
 
                 ApiManager apiManager = ApiManager.getInstance(mContext);
-                apiManager.ObtenerDeudas( new Callback<List<DeudaEntity>>() {
+                apiManager.ObtenerDeudas(idRepartidor, new Callback<List<DeudaEntity>>() {
                     @Override
                     public void onResponse(Call<List<DeudaEntity>> call, Response<List<DeudaEntity>> response) {
                         final List<DeudaEntity> responseUser = (List<DeudaEntity>) response.body();
@@ -572,7 +572,7 @@ if (UtilShare.mActivity!=null){
     }
 
 
-    public void _DecargarCobranza(){
+    public void _DecargarCobranza(String idRepartidor){
 
         List<ClienteEntity> listCliente = null;
         List<CobranzaEntity> listCobranza=null;
@@ -609,7 +609,7 @@ if (UtilShare.mActivity!=null){
                     listDetalle.size()==0 && listCobranza.size()==0) {
 
                 ApiManager apiManager = ApiManager.getInstance(mContext);
-                apiManager.ObtenerCobranza( new Callback<List<CobranzaEntity>>() {
+                apiManager.ObtenerCobranza(idRepartidor, new Callback<List<CobranzaEntity>>() {
                     @Override
                     public void onResponse(Call<List<CobranzaEntity>> call, Response<List<CobranzaEntity>> response) {
                         final List<CobranzaEntity> responseUser = (List<CobranzaEntity>) response.body();
@@ -676,7 +676,7 @@ if (UtilShare.mActivity!=null){
         }
     }
 
-    public void _DecargarCobranzaDetalle(){
+    public void _DecargarCobranzaDetalle(String idRepartidor){
 
         List<ClienteEntity> listCliente = null;
         List<CobranzaEntity> listCobranza=null;
@@ -713,7 +713,7 @@ if (UtilShare.mActivity!=null){
                     listDetalle.size()==0 && listCobranza.size()==0) {
 
                 ApiManager apiManager = ApiManager.getInstance(mContext);
-                apiManager.ObtenerCobranzaDetalle( new Callback<List<CobranzaDetalleEntity>>() {
+                apiManager.ObtenerCobranzaDetalle(idRepartidor, new Callback<List<CobranzaDetalleEntity>>() {
                     @Override
                     public void onResponse(Call<List<CobranzaDetalleEntity>> call, Response<List<CobranzaDetalleEntity>> response) {
                         final List<CobranzaDetalleEntity> responseUser = (List<CobranzaDetalleEntity>) response.body();

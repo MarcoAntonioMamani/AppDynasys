@@ -108,17 +108,17 @@ private static Context mcontext;
         userCall.enqueue(callback);
     }
 
-    public void ObtenerDeudas( Callback<List<DeudaEntity>> callback) {
-        Call<List<DeudaEntity>> userCall = service.ObtenerDeudas();
+    public void ObtenerDeudas(String idRepartidor, Callback<List<DeudaEntity>> callback) {
+        Call<List<DeudaEntity>> userCall = service.ObtenerDeudas(idRepartidor);
         userCall.enqueue(callback);
     }
-    public void ObtenerCobranza( Callback<List<CobranzaEntity>> callback) {
-        Call<List<CobranzaEntity>> userCall = service.ObtenerCobranza();
+    public void ObtenerCobranza(String idRepartidor, Callback<List<CobranzaEntity>> callback) {
+        Call<List<CobranzaEntity>> userCall = service.ObtenerCobranza(idRepartidor);
         userCall.enqueue(callback);
     }
 
-    public void ObtenerCobranzaDetalle( Callback<List<CobranzaDetalleEntity>> callback) {
-        Call<List<CobranzaDetalleEntity>> userCall = service.ObtenerCobranzaDetalle();
+    public void ObtenerCobranzaDetalle(String idRepartidor, Callback<List<CobranzaDetalleEntity>> callback) {
+        Call<List<CobranzaDetalleEntity>> userCall = service.ObtenerCobranzaDetalle(idRepartidor);
         userCall.enqueue(callback);
     }
     public void ObtenerProductos( Callback<List<ProductoEntity>> callback) {

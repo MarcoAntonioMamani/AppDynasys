@@ -44,12 +44,12 @@ public interface IUsersApi {
     @GET("/api/repartidor/precios")
     Call<List<PrecioEntity>> ObtenerPrecios();
 
-    @GET("/api/repartidor/deudas")
-    Call<List<DeudaEntity>> ObtenerDeudas();
-    @GET("/api/repartidor/Cobranza")
-    Call<List<CobranzaEntity>> ObtenerCobranza();
-    @GET("/api/repartidor/CobranzaDetalle")
-    Call<List<CobranzaDetalleEntity>> ObtenerCobranzaDetalle();
+    @GET("/api/repartidor/deudas/{idrepartidor}")
+    Call<List<DeudaEntity>> ObtenerDeudas(@Path("idrepartidor") String idRepartidor);
+    @GET("/api/repartidor/Cobranza/{idrepartidor}")
+    Call<List<CobranzaEntity>> ObtenerCobranza(@Path("idrepartidor") String idRepartidor);
+    @GET("/api/repartidor/CobranzaDetalle/{idrepartidor}")
+    Call<List<CobranzaDetalleEntity>> ObtenerCobranzaDetalle(@Path("idrepartidor") String idRepartidor);
     @GET("/api/repartidor/productos")
     Call<List<ProductoEntity>> ObtenerProductos();
 

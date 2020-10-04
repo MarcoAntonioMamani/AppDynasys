@@ -23,8 +23,17 @@ public class CobranzaDetalleEntity {
     double montoAPagar;
     @ColumnInfo(name = "estado")
     int estado;
-
+    @ColumnInfo(name = "cliente")
+    String cliente;
     public CobranzaDetalleEntity() {
+    }
+
+    public String getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(String cliente) {
+        this.cliente = cliente;
     }
 
     public int getId() {
