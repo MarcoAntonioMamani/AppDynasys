@@ -12,7 +12,7 @@ public class CobranzaEntity {
     int id;
 
     @ColumnInfo(name = "tenumi")
-    int tenumi;
+    String tenumi;
     @ColumnInfo(name = "fecha")
     Date fecha;
     @ColumnInfo(name = "IdPersonal")
@@ -40,11 +40,11 @@ public class CobranzaEntity {
         this.id = id;
     }
 
-    public int getTenumi() {
+    public String getTenumi() {
         return tenumi;
     }
 
-    public void setTenumi(int tenumi) {
+    public void setTenumi(String tenumi) {
         this.tenumi = tenumi;
     }
 

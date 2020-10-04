@@ -74,8 +74,7 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        LocationGeo.getInstance(getContext(),getActivity());
-        LocationGeo.PedirPermisoApp();
+
 
     }
 
@@ -133,7 +132,12 @@ public class ListDeudasFragment extends Fragment     implements SearchView.OnQue
 
         List<DeudaEntity> ListNew=new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            DeudaEntity deuda=list.get(i);
+            DeudaEntity deuda= null;
+            try {
+                deuda = list.get(i).clone();
+            } catch (CloneNotSupportedException e) {
+
+            }
             if (!ExisteCliente(ListNew,deuda)){
                 ListNew.add(deuda);
 

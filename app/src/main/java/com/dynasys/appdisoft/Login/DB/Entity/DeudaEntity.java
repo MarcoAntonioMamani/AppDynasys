@@ -10,7 +10,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import java.util.Date;
 
 @Entity(tableName = "deuda")
-public class DeudaEntity implements Comparable<DeudaEntity> {
+public class DeudaEntity implements Comparable<DeudaEntity> ,Cloneable{
     @PrimaryKey(autoGenerate = true)
     int id;
     @ColumnInfo(name = "PedidoId")
@@ -160,5 +160,9 @@ public class DeudaEntity implements Comparable<DeudaEntity> {
         String a=new String(String.valueOf(this.getCliente()));
         String b=new String(String.valueOf(cliente.getCliente()));
         return a.compareTo(b);
+    }
+
+    public DeudaEntity clone() throws CloneNotSupportedException {
+        return (DeudaEntity) super.clone();
     }
 }

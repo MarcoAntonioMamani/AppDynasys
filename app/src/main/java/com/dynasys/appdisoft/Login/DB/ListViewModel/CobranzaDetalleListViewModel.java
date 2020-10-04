@@ -44,7 +44,7 @@ public class CobranzaDetalleListViewModel  extends AndroidViewModel {
 
         return CobranzaDetalleList;
     }
-    public CobranzaDetalleEntity getCobranzaDetalle(int id) throws ExecutionException, InterruptedException {
+    public List<CobranzaDetalleEntity> getCobranzaDetalle(String id) throws ExecutionException, InterruptedException {
 
         return mRepository.getCobranzaDetalle(id);
 

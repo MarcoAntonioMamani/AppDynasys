@@ -27,11 +27,14 @@ public class CobranzaRepository {
         return mAllCobranza;
     }
 
-    public CobranzaEntity getCobranza(int noteId) throws ExecutionException, InterruptedException {
+    public CobranzaEntity getCobranza(String noteId) throws ExecutionException, InterruptedException {
         return new CobranzaRepository.getCobranzaAsync(mCobranzaDao).execute(noteId).get();
     }
     public List<CobranzaEntity> getMCobranzaAll(int clienteId) throws ExecutionException, InterruptedException {
         return new CobranzaRepository.getMCobranzaAllAsync(mCobranzaDao).execute(clienteId).get();
+    }
+    public List<CobranzaEntity> getMCobranzaAllNoSincronizadas(int clienteId) throws ExecutionException, InterruptedException {
+        return new getCobranzasNoSincronizadasAllAsync(mCobranzaDao).execute(clienteId).get();
     }
     public void insertCobranza(CobranzaEntity user) {
         new CobranzaRepository.insertCobranzaAsync(mCobranzaDao).execute(user);
@@ -55,7 +58,7 @@ public class CobranzaRepository {
      * `java.lang.IllegalStateException: Cannot access database on the main thread since it may potentially lock the UI for a long period of time.`
      */
 
-    private static class getCobranzaAsync extends AsyncTask<Integer, Void, CobranzaEntity> {
+    private static class getCobranzaAsync extends AsyncTask<String, Void, CobranzaEntity> {
 
         private CobranzaDao mCobranzaDaoAsync;
 
@@ -64,7 +67,7 @@ public class CobranzaRepository {
         }
 
         @Override
-        protected CobranzaEntity doInBackground(Integer... ids) {
+        protected CobranzaEntity doInBackground(String... ids) {
             return mCobranzaDaoAsync.getcobranza(ids[0]);
         }
     }
@@ -81,6 +84,20 @@ public class CobranzaRepository {
         @Override
         protected List<CobranzaEntity> doInBackground(Integer... ids) {
             return mPedidoDaoAsync.getcobranzaMAll();
+        }
+    }
+
+    private static class getCobranzasNoSincronizadasAllAsync extends AsyncTask<Integer, Void, List<CobranzaEntity>> {
+
+        private CobranzaDao mPedidoDaoAsync;
+
+        getCobranzasNoSincronizadasAllAsync(CobranzaDao clienteDao) {
+            mPedidoDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected List<CobranzaEntity> doInBackground(Integer... ids) {
+            return mPedidoDaoAsync.getcobranzaNoSincronizados();
         }
     }
     private static class insertCobranzaAsync extends AsyncTask<CobranzaEntity, Void, Long> {

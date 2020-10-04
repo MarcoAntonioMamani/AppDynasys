@@ -1,5 +1,6 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
+import com.dynasys.appdisoft.ListarDeudas.Pagos.CobranzaRequest;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
@@ -67,6 +68,9 @@ public interface IUsersApi {
 
     @POST("/api/repartidor/pedidoDetalleCF")
     Call<ResponseLogin> InsertPedido(@Body PedidoDetalle user);
+
+    @POST("/api/repartidor/cobranza")
+    Call<ResponseLogin> InsertCobranza(@Body CobranzaRequest user);
 
     @PUT("/api/repartidor/pedido")
     Call<ResponseLogin> UpdatePedido(@Body PedidoEntity user);

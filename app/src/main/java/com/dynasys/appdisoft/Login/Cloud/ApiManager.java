@@ -3,6 +3,7 @@ package com.dynasys.appdisoft.Login.Cloud;
 import android.content.Context;
 import android.widget.EditText;
 
+import com.dynasys.appdisoft.ListarDeudas.Pagos.CobranzaRequest;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
@@ -74,6 +75,10 @@ private static Context mcontext;
 
     public void InsertPedido(PedidoDetalle user, Callback<ResponseLogin> callback) {
         Call<ResponseLogin> userCall = service.InsertPedido(user);
+        userCall.enqueue(callback);
+    }
+    public void InsertCobranza(CobranzaRequest user, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.InsertCobranza(user);
         userCall.enqueue(callback);
     }
     public void UpdatePedido(PedidoEntity user, Callback<ResponseLogin> callback) {

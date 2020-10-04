@@ -19,7 +19,7 @@ public interface CobranzaDao {
     LiveData<List<CobranzaEntity>> getAllcobranza();
 
     @Query("SELECT * FROM cobranza WHERE tenumi=:id")
-    CobranzaEntity getcobranza(int id);
+    CobranzaEntity getcobranza(String id);
 
 
 
@@ -38,4 +38,7 @@ public interface CobranzaDao {
 
     @Query("SELECT * FROM cobranza")
     List<CobranzaEntity> getcobranzaMAll();
+
+    @Query("SELECT * FROM cobranza where estado=0")
+    List<CobranzaEntity> getcobranzaNoSincronizados();
 }

@@ -45,7 +45,21 @@ public class CobranzaListViewModel extends AndroidViewModel {
 
         return cobranzaList;
     }
-    public CobranzaEntity getCobranza(int id) throws ExecutionException, InterruptedException {
+
+
+    public List<CobranzaEntity> getMCobranzaNoSincronizadas() {
+        try {
+            cobranzaList = mRepository.getMCobranzaAllNoSincronizadas(1);
+        } catch (ExecutionException e) {
+            return null;
+        } catch (InterruptedException e) {
+           return null;
+        }
+
+
+        return cobranzaList;
+    }
+    public CobranzaEntity getCobranza(String id) throws ExecutionException, InterruptedException {
 
         return mRepository.getCobranza(id);
 

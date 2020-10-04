@@ -16,7 +16,7 @@ public class CobranzaDetalleEntity {
     @ColumnInfo(name = "pedidoId")
     int PedidoId;
     @ColumnInfo(name = "cobranzaId")
-    int cobranzaId;
+    String cobranzaId;
     @ColumnInfo(name = "fechaPago")
     Date fechaPago;
     @ColumnInfo(name = "montoAPagar")
@@ -51,11 +51,11 @@ public class CobranzaDetalleEntity {
         PedidoId = pedidoId;
     }
 
-    public int getCobranzaId() {
+    public String getCobranzaId() {
         return cobranzaId;
     }
 
-    public void setCobranzaId(int cobranzaId) {
+    public void setCobranzaId(String cobranzaId) {
         this.cobranzaId = cobranzaId;
     }
 

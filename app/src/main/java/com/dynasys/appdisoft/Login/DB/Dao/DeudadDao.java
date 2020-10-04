@@ -16,7 +16,8 @@ import java.util.List;
 public interface DeudadDao {
 
 
-    @Query("SELECT * FROM deuda  ORDER BY PedidoId  DESC")
+    @Query("SELECT id,PedidoId,ClienteId,cliente,direccion,telefono,limiteCliente,PersonalId,vendedor,FechaPedido," +
+            "totalfactura,pendiente,(select c.estado from cobranzaDetalle as c where c.pedidoId=PedidoId and c.estado=0 order by c.id desc limit 1) as estado,0 as totalAPagar FROM deuda  ORDER BY PedidoId  DESC")
     LiveData<List<DeudaEntity>> getAllDeuda();
 
     @Query("SELECT * FROM deuda  WHERE PedidoId =:id")

@@ -29,7 +29,7 @@ public class CobranzaDetalleRepository {
         return mAllCobranzaDetalle;
     }
 
-    public CobranzaDetalleEntity getCobranzaDetalle(int noteId) throws ExecutionException, InterruptedException {
+    public List<CobranzaDetalleEntity> getCobranzaDetalle(String noteId) throws ExecutionException, InterruptedException {
         return new getCobranzaAsync(mCobranzaDetalleDao).execute(noteId).get();
     }
     public List<CobranzaDetalleEntity> getMCobranzaDetalleAll(int clienteId) throws ExecutionException, InterruptedException {
@@ -57,7 +57,7 @@ public class CobranzaDetalleRepository {
      * `java.lang.IllegalStateException: Cannot access database on the main thread since it may potentially lock the UI for a long period of time.`
      */
 
-    private static class getCobranzaAsync extends AsyncTask<Integer, Void, CobranzaDetalleEntity> {
+    private static class getCobranzaAsync extends AsyncTask<String, Void, List<CobranzaDetalleEntity>> {
 
         private CobranzaDetalleDao mCobranzaDetalleDaoAsync;
 
@@ -66,7 +66,7 @@ public class CobranzaDetalleRepository {
         }
 
         @Override
-        protected CobranzaDetalleEntity doInBackground(Integer... ids) {
+        protected List<CobranzaDetalleEntity> doInBackground(String... ids) {
             return mCobranzaDetalleDaoAsync.getcobranzaDetalleByPedido(ids[0]);
         }
     }

@@ -18,8 +18,8 @@ public interface CobranzaDetalleDao {
     @Query("SELECT * FROM cobranzaDetalle ORDER BY tdnumi DESC")
     LiveData<List<CobranzaDetalleEntity>> getAllcobranzaDetalle();
 
-    @Query("SELECT * FROM cobranzaDetalle WHERE pedidoId=:id")
-    CobranzaDetalleEntity getcobranzaDetalleByPedido(int id);
+    @Query("SELECT * FROM cobranzaDetalle WHERE cobranzaId=:id")
+    List<CobranzaDetalleEntity> getcobranzaDetalleByPedido(String id);
 
 
 
