@@ -19,6 +19,11 @@
             android:title="Revisar Efectivo"
             android:visible="false"/>
         <item
+            android:id="@+id/item_navigation_drawer_ReviewProducto"
+            android:icon="@drawable/ic_producto"
+            android:title="Revisar Producto"
+            android:visible="false"/>
+        <item
             android:id="@+id/item_navigation_drawer_nuevo_pedido"
             android:title="Nuevo Pedido"
             android:icon="@drawable/ic_add02"
