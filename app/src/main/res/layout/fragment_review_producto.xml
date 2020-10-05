@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".RevisarProductos.ReviewProductoFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+
+        >
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/marfil"
+
+            android:layout_marginLeft="4dp"
+
+            android:layout_marginRight="4dp"
+            app:contentPaddingLeft="8dp"
+            app:contentPaddingRight="8dp"
+            app:contentPaddingTop="8dp"
+            >
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/marfil"
+                android:paddingTop="10dp"
+                android:paddingLeft="5dp"
+                android:paddingBottom="5dp"
+                >
+                <SearchView
+                    android:id = "@+id/simpleSearchViewReviewProduct"
+                    android:layout_width = "fill_parent"
+                    android:layout_height = "wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:queryHint = "Buscar aquí"
+                    android:background="@color/blanco"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/animation_editext"
+                        >
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/primary_text"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:text="Producto"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/primary_text"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:text="Inicial"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/primary_text"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:text="Ingreso"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/primary_text"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:text="Ventas"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/primary_text"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:text="Saldos"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/id_detalle_listreview_producto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:scrollbars="vertical"
+
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="bottom"
+            android:background="@color/marfil"
+            android:orientation="vertical"
+            android:paddingBottom="15dp"
+            android:paddingTop="10dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="10dp"
+
+            >
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/marfil"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:gravity="left"
+                        android:orientation="vertical"
+                        android:background="@color/marfil"
+                        >
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <Button
+                                android:id="@+id/id_btn_producto_buscar"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentEnd="true"
+                                android:layout_alignParentRight="true"
+                                android:layout_gravity="bottom|end"
+                                android:layout_marginEnd="6dp"
+                                android:layout_marginRight="3dp"
+                                android:layout_marginBottom="6dp"
+                                android:background="@drawable/animation_riple_button"
+                                android:text="Cargar"
+                                android:textColor="@color/white"
+                                android:textStyle="bold"
+                                />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                >
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+
+                                    >
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="left"
+                                        android:gravity="left"
+                                        android:paddingLeft="5dp"
+                                        android:text="Desde: "
+                                        android:textStyle="bold"
+                                        android:textColor="@color/colorAccent"
+                                        android:textSize="13dp" />
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+
+                                        android:layout_gravity="left"
+                                        android:gravity="left"
+                                        android:paddingLeft="5dp"
+
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:id="@+id/id_tvfecha_producto_desde"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:background="@drawable/animation_bottoncancel"
+                                            android:ems="8"
+                                            android:gravity="center"
+                                            android:textSize="13dp"
+                                            android:textColor="@color/primary_text"
+                                            android:paddingLeft="@dimen/keyline_1_minus_8dp"
+
+                                            android:inputType="date" />
+
+
+                                        <ImageButton
+                                            android:id="@+id/ib_btn_producto_desde"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="4dp"
+                                            android:background="@color/marfil"
+                                            android:paddingLeft="8dp"
+                                            android:src="@drawable/ic_calendario"
+                                            tools:ignore="ContentDescription" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingTop="7dp"
+                                    >
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="left"
+                                        android:gravity="left"
+                                        android:paddingLeft="5dp"
+                                        android:text="Hasta:  "
+                                        android:textColor="@color/colorAccent"
+                                        android:textStyle="bold"
+                                        android:textSize="13dp" />
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+
+                                        android:layout_gravity="left"
+                                        android:gravity="left"
+                                        android:paddingLeft="5dp"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:id="@+id/id_tvfecha_producto_hasta"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:background="@drawable/animation_bottoncancel"
+                                            android:ems="8"
+                                            android:gravity="center"
+                                            android:textSize="13dp"
+                                            android:paddingLeft="@dimen/keyline_1_minus_8dp"
+                                            android:textColor="@color/primary_text"
+                                            android:inputType="date" />
+
+
+                                        <ImageButton
+                                            android:id="@+id/id_btn_producto_hasta"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="4dp"
+                                            android:background="@color/marfil"
+                                            android:paddingLeft="8dp"
+                                            android:src="@drawable/ic_calendario"
+                                            tools:ignore="ContentDescription" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+
+
+                        </RelativeLayout>
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="5dp"
+                    >
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorAccent"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:text="Ingresos:"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/primary_text"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                            android:textSize="16sp"
+                            android:paddingLeft="5dp"
+                            android:id="@+id/view_info_producto_ingreso"
+                            android:text="2500"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorAccent"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:text="Ventas:"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/primary_text"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                            android:textSize="16sp"
+                            android:paddingLeft="5dp"
+                            android:id="@+id/view_info_productos_ventas"
+                            android:text="10.000"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorAccent"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:text="Saldo:"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/primary_text"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                            android:textSize="16sp"
+                            android:paddingLeft="5dp"
+                            android:id="@+id/view_info_producto_saldo"
+                            android:text="6.500"/>
+                    </LinearLayout>
+
+
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    >
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:orientation="horizontal"
+                        android:paddingTop="8dp"
+                        >
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+
+                            android:layout_weight="1">
+                            <Button
+                                android:id="@+id/id_btn_producto_cancelar"
+                                android:background="@drawable/animation_bottoncancel"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textColor="@color/colorAccent"
+                                android:gravity="center"
+                                android:textStyle="bold"
+                                android:textSize="12dp"
+                                android:paddingBottom="@dimen/keyline_1"
+                                android:paddingTop="@dimen/keyline_1"
+                                android:text="Salir" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView >

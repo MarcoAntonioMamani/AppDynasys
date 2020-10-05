@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.EditText;
 
 import com.dynasys.appdisoft.ListarDeudas.Pagos.CobranzaRequest;
+import com.dynasys.appdisoft.Login.DB.Entity.AlmacenEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
@@ -116,6 +117,11 @@ private static Context mcontext;
         Call<List<CobranzaEntity>> userCall = service.ObtenerCobranza(idRepartidor);
         userCall.enqueue(callback);
     }
+    public void ObtenerProductosAlmacen(String idRepartidor, Callback<List<AlmacenEntity>> callback) {
+        Call<List<AlmacenEntity>> userCall = service.ObtenerProductoAlmacen(idRepartidor);
+        userCall.enqueue(callback);
+    }
+
 
     public void ObtenerCobranzaDetalle(String idRepartidor, Callback<List<CobranzaDetalleEntity>> callback) {
         Call<List<CobranzaDetalleEntity>> userCall = service.ObtenerCobranzaDetalle(idRepartidor);

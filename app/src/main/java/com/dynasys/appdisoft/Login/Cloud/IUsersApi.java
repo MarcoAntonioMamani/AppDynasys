@@ -1,6 +1,7 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
 import com.dynasys.appdisoft.ListarDeudas.Pagos.CobranzaRequest;
+import com.dynasys.appdisoft.Login.DB.Entity.AlmacenEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
@@ -48,6 +49,8 @@ public interface IUsersApi {
     Call<List<DeudaEntity>> ObtenerDeudas(@Path("idrepartidor") String idRepartidor);
     @GET("/api/repartidor/Cobranza/{idrepartidor}")
     Call<List<CobranzaEntity>> ObtenerCobranza(@Path("idrepartidor") String idRepartidor);
+    @GET("/api/repartidor/almacen/{idrepartidor}")
+    Call<List<AlmacenEntity>> ObtenerProductoAlmacen(@Path("idrepartidor") String idRepartidor);
     @GET("/api/repartidor/CobranzaDetalle/{idrepartidor}")
     Call<List<CobranzaDetalleEntity>> ObtenerCobranzaDetalle(@Path("idrepartidor") String idRepartidor);
     @GET("/api/repartidor/productos")

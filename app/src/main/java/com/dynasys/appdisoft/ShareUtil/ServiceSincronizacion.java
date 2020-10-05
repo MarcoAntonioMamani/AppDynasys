@@ -29,6 +29,7 @@ import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.Entity.AlmacenEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
@@ -37,6 +38,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
+import com.dynasys.appdisoft.Login.DB.ListViewModel.AlmacenListaViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewModel.CobranzaDetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewModel.CobranzaListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewModel.DeudaListaViewModel;
@@ -79,6 +81,7 @@ public class ServiceSincronizacion extends Service {
     private CobranzaListViewModel viewModelCobranza;
     private DeudaListaViewModel viewModelDeuda;
     private CobranzaDetalleListViewModel viewModelCobranzaDetalle;
+    private AlmacenListaViewModel viewModelAlmacen;
     public static ServiceSincronizacion mInstance;
     public Runnable runnable = null;
     FragmentActivity activity;
@@ -133,6 +136,7 @@ if (UtilShare.mActivity!=null){
     viewModelCobranza =ViewModelProviders.of(UtilShare.mActivity).get(CobranzaListViewModel.class);
     viewModelCobranzaDetalle=ViewModelProviders.of(UtilShare.mActivity).get(CobranzaDetalleListViewModel.class);
     viewModelDeuda=ViewModelProviders.of(UtilShare.mActivity).get(DeudaListaViewModel.class);
+    viewModelAlmacen=ViewModelProviders.of(UtilShare.mActivity).get(AlmacenListaViewModel.class);
 }
 
     }
@@ -329,6 +333,7 @@ if (UtilShare.mActivity!=null){
                             exportarPedidos(""+idRepartidor);
                             exportarPedidosEstados();
                             _PostInsertarCobranza();
+                            _DecargarAlmacen(""+idRepartidor);
                             _DecargarDeudas(""+idRepartidor);
                             _DecargarCobranza(""+idRepartidor);
                             _DecargarCobranzaDetalle(""+idRepartidor);
@@ -765,6 +770,110 @@ if (UtilShare.mActivity!=null){
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void _DecargarAlmacen(String idRepartidor){
+
+        List<ClienteEntity> listCliente = null;
+        List<CobranzaEntity> listCobranza=null;
+        try {
+            listCliente = viewModelClientes.getMAllStateCliente(1);
+            List<ClienteEntity>   listClienteUpdate = viewModelClientes.getMAllStateClienteUpdate(1);
+            List<PedidoEntity> listPedidos=viewModelPedidos.getMAllPedidoState(1);
+            List<DetalleEntity>listDetalle=viewModelDetalle.getMAllDetalleState(1);
+            List<PedidoEntity> listPedidoModificados=viewModelPedidos.getMAllPedidoState02(2);
+            listCobranza=viewModelCobranza.getMCobranzaNoSincronizadas();
+            if (listCliente==null){
+                return;
+            }
+            if (listPedidos==null){
+                return;
+            }
+            if (listClienteUpdate==null){
+                return;
+            }
+            if (listPedidoModificados==null){
+                return;
+            }
+            if (listDetalle==null){
+                return;
+            }
+            Boolean IsLogeado=DataPreferences.getPrefLogin("isLogin",getApplicationContext());
+
+            if (IsLogeado==false){
+                onDestroy();
+                return ;
+            }
+
+            if (listCliente.size()==0 &&listClienteUpdate.size()==0 && listPedidos.size()==0 && listPedidoModificados.size()==0 &&
+                    listDetalle.size()==0 && listCobranza.size()==0) {
+
+                ApiManager apiManager = ApiManager.getInstance(mContext);
+                apiManager.ObtenerProductosAlmacen(idRepartidor, new Callback<List<AlmacenEntity>>() {
+                    @Override
+                    public void onResponse(Call<List<AlmacenEntity>> call, Response<List<AlmacenEntity>> response) {
+                        final List<AlmacenEntity> responseUser = (List<AlmacenEntity>) response.body();
+                        if (response.code()==404){
+
+                            return;
+                        }
+                        if (response.isSuccessful() && responseUser != null) {
+                            try {
+                                List<AlmacenEntity> listCliente = viewModelAlmacen.getMAlmacenAllAsync();
+                                if (listCliente.size() <= 0) {
+                                    for (int i = 0; i < responseUser.size(); i++) {
+                                        AlmacenEntity precio = responseUser.get(i);
+                                        viewModelAlmacen.insertAlmacen(precio);
+                                    }
+                                    //cantidadPrecio+=responseUser.size();
+                                    // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                                }else{
+                                    viewModelAlmacen.deleteAllAlmacens();
+                                    List<AlmacenEntity> listupdate=new ArrayList<>();
+                                    for (int i = 0; i < responseUser.size(); i++) {
+                                        AlmacenEntity precio = responseUser.get(i);
+                                        //viewModel.insertCliente(cliente);
+                                        AlmacenEntity dbprecio=viewModelAlmacen.getAlmacen(precio.getProductoId());
+                                        if (dbprecio==null){
+                                            viewModelAlmacen.insertAlmacen(precio);
+                                        }else{
+
+                                            listupdate.add(precio);
+                                            //viewModelPrecios.updatePrecio(precio);
+                                        }
+
+                                    }
+
+                                    //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                                }
+
+
+                            } catch (ExecutionException e) {
+                                //e.printStackTrace();
+
+                            } catch (InterruptedException e) {
+                                //   e.printStackTrace();
+
+                            }
+
+
+
+                        } else {
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<AlmacenEntity>> call, Throwable t) {
+
+                    }
+                });
+
+            }   } catch (ExecutionException e) {
+
+        } catch (InterruptedException e) {
+
         }
     }
     public void _PostInsertarCobranza(){

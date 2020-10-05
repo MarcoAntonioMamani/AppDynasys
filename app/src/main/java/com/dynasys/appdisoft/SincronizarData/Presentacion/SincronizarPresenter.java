@@ -12,6 +12,7 @@ import com.dynasys.appdisoft.Login.Cloud.Bodylogin;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.Entity.AlmacenEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.CobranzaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
@@ -21,6 +22,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
+import com.dynasys.appdisoft.Login.DB.ListViewModel.AlmacenListaViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewModel.CobranzaDetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewModel.CobranzaListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewModel.DeudaListaViewModel;
@@ -54,6 +56,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
     private final PedidoListViewModel viewModelPedidos;
     private final DetalleListViewModel viewModelDetalles;
     private final StockListViewModel viewModelStock;
+    private final AlmacenListaViewModel viewModelAlmacen;
     private final Activity activity;
      int cantidadCliente = 0;
     int cantidadProducto=0;
@@ -67,7 +70,8 @@ int ZonaSelected=0;
     public SincronizarPresenter(SincronizarMvp.View sincronizarView, Context context, ClientesListViewModel viewModel, Activity activity, PreciosListViewModel
                                 viewModelPrecios, ProductosListViewModel viewModelProductos,PedidoListViewModel viewModelPedidos,
                                 DetalleListViewModel viewModelDetalles,StockListViewModel stock,DescuentosListViewModel descuento,
-                                DeudaListaViewModel mdeuda,CobranzaListViewModel mcobranza,CobranzaDetalleListViewModel mcobranzaDetalle){
+                                DeudaListaViewModel mdeuda,CobranzaListViewModel mcobranza,CobranzaDetalleListViewModel mcobranzaDetalle,
+                                AlmacenListaViewModel alm){
         mSincronizarview = Preconditions.checkNotNull(sincronizarView);
         mSincronizarview.setPresenter(this);
         this.viewModel=viewModel;
@@ -80,6 +84,7 @@ int ZonaSelected=0;
         this.viewModelCobranzaDetalle=mcobranzaDetalle;
         this.viewModelPedidos=viewModelPedidos;
         this.viewModelDetalles=viewModelDetalles;
+        this.viewModelAlmacen=alm;
         this.viewModelStock=stock;
         this.viewModelDescuentos =descuento;
          cantidadCliente = 0;
@@ -109,6 +114,7 @@ int ZonaSelected=0;
 
         _DecargarDeudas(""+idRepartidor);
         _DecargarCobranza(""+idRepartidor);
+        _DecargarAlmacen(""+idRepartidor);
         _DecargarCobranzaDetalle(""+idRepartidor);
         if (cliente==true ){
             _DescargarClientes(""+idRepartidor);
@@ -753,6 +759,68 @@ int ZonaSelected=0;
         });
     }
 
+    public void _DecargarAlmacen(String idRepartidor){
+        ApiManager apiManager=ApiManager.getInstance(mContext);
+        apiManager.ObtenerProductosAlmacen(idRepartidor, new Callback<List<AlmacenEntity>>() {
+            @Override
+            public void onResponse(Call<List<AlmacenEntity>> call, Response<List<AlmacenEntity>> response) {
+                final List<AlmacenEntity> responseUser = (List<AlmacenEntity>) response.body();
+                if (response.code()==404){
+                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+                    try {
+                        List<AlmacenEntity> listCliente = viewModelAlmacen.getMAlmacenAllAsync();
+                        if (listCliente.size() <= 0) {
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                AlmacenEntity precio = responseUser.get(i);
+                                viewModelAlmacen.insertAlmacen(precio);
+                            }
+                            //cantidadPrecio+=responseUser.size();
+                            // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                        }else{
+                            viewModelAlmacen.deleteAllAlmacens();
+                            List<AlmacenEntity> listupdate=new ArrayList<>();
+                            for (int i = 0; i < responseUser.size(); i++) {
+                                AlmacenEntity precio = responseUser.get(i);
+                                //viewModel.insertCliente(cliente);
+                                AlmacenEntity dbprecio=viewModelAlmacen.getAlmacen(precio.getProductoId());
+                                if (dbprecio==null){
+                                    viewModelAlmacen.insertAlmacen(precio);
+                                }else{
+
+                                    listupdate.add(precio);
+                                    //viewModelPrecios.updatePrecio(precio);
+                                }
+
+                            }
+
+                            //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                        }
+
+
+                    } catch (ExecutionException e) {
+                        //e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza : "+e.getMessage());
+                    } catch (InterruptedException e) {
+                        //   e.printStackTrace();
+                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza: "+e.getMessage());
+                    }
+
+
+
+                } else {
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<AlmacenEntity>> call, Throwable t) {
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio.");
+            }
+        });
+    }
     public void _DecargarCobranzaDetalle(String idRepartidor){
         ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.ObtenerCobranzaDetalle( idRepartidor,new Callback<List<CobranzaDetalleEntity>>() {
