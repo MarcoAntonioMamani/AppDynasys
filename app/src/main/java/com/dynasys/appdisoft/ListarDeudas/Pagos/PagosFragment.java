@@ -76,6 +76,8 @@ Button btnCancelar,BtnPagar;
     private CobranzaDetalleListViewModel viewModeloCobranzaDetalle;
     private PagosMvp.Presenter mDeudaPresenter;
     private AlertDialog dialogs,dialogQuestion;
+    EditText tvMontoDistribucion;
+    Button btnDistribuir;
     List<DeudaEntity> MListaDeuda;
     DeudaEntity mDeuda;
     private String M_Uii="";
@@ -112,6 +114,8 @@ Button btnCancelar,BtnPagar;
         tvTotalDisponible=(TextView)view.findViewById(R.id.view_info_deuda_MontoDisponible);
         tvTotalPagar=(TextView)view.findViewById(R.id.view_info_deuda_totalPagar);
         btnCancelar=(Button)view.findViewById(R.id.id_btn_deuda_cancelar);
+        tvMontoDistribucion=(EditText) view.findViewById(R.id.view_deuda_Monto);
+        btnDistribuir=(Button)view.findViewById(R.id.id_btn_distribuir);
         BtnPagar=(Button)view.findViewById(R.id.id_btn_deuda_guardar);
         viewModelDeuda= ViewModelProviders.of(getActivity()).get(DeudaListaViewModel.class);
         viewModelCobranza=ViewModelProviders.of(getActivity()).get(CobranzaListViewModel.class);
@@ -124,7 +128,51 @@ Button btnCancelar,BtnPagar;
         OnClickButton();
         return view;
     }
+
+
     public void OnClickButton(){
+        btnDistribuir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (tvMontoDistribucion.getText().toString()!=""){
+
+
+                    double monto=Double.parseDouble(tvMontoDistribucion.getText().toString());
+                    if (monto>0){
+                        double saldo =monto;
+                        for (int i = 0; i < MListaDeuda.size(); i++) {
+                            MListaDeuda.get(i).setTotalAPagar(0);
+                        }
+
+                        for (int i = 0; i < MListaDeuda.size(); i++) {
+
+                            if (MListaDeuda.get(i).getPendiente()<=saldo){
+                                MListaDeuda.get(i).setTotalAPagar(MListaDeuda.get(i).getPendiente());
+                                saldo-=MListaDeuda.get(i).getPendiente();
+                            }else{
+                                if (saldo>0){
+                                    MListaDeuda.get(i).setTotalAPagar(saldo);
+                                    saldo=0;
+                                }
+
+                            }
+
+                        }
+
+                    }else{
+                        ShowMessageResult("No existe un monto Valido");
+                    }
+                    CalcularTotales();
+                    mviewOrderAdapter.setFilter(MListaDeuda);
+                    mviewOrderAdapter.notifyDataSetChanged();
+                }else{
+                    ShowMessageResult("No existe un monto Valido");
+                }
+
+            }
+        });
+
+
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

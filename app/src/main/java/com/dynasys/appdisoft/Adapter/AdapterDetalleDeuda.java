@@ -62,7 +62,7 @@ private PagosMvp.View mview;
         }else{
             clientesViewHolder.chkDeuda.setChecked(false);
         }
-
+        clientesViewHolder.etMontoPagar.setText(ShareMethods.ObtenerDecimalToString(listaDeudas.get(i).getTotalAPagar(),2));
         clientesViewHolder.etMontoPagar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

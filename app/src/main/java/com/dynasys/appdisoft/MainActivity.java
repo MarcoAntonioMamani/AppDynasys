@@ -47,6 +47,7 @@ import com.dynasys.appdisoft.Pedidos.ModifyPedidos.ModifyPedidoFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.Pedidos.ViewPedidos.ViewPedidoFragment;
 import com.dynasys.appdisoft.RevisarEfectivo.EfectivoFragment;
+import com.dynasys.appdisoft.RevisarProductos.FisicoProductos.FisicoProductosFragment;
 import com.dynasys.appdisoft.RevisarProductos.ReviewProductoFragment;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
@@ -249,8 +250,15 @@ public class MainActivity extends AppCompatActivity {
                         //setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
+                        //item_navigation_drawer_FisicoProducto
                     case R.id.item_navigation_drawer_ReviewProducto:
                         setFragment(9);
+                        item.setChecked(true);
+                        //setFragment(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
+                    case R.id.item_navigation_drawer_FisicoProducto:
+                        setFragment(10);
                         item.setChecked(true);
                         //setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
@@ -319,6 +327,12 @@ public class MainActivity extends AppCompatActivity {
             case 9:
                 returnToMain();
                 frag = new ReviewProductoFragment();
+                tag = Constantes.TAG_PEDIDOS;
+                break;
+
+            case 10:
+                returnToMain();
+                frag = new FisicoProductosFragment();
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 21:
@@ -426,12 +440,14 @@ public class MainActivity extends AppCompatActivity {
         MenuItem menuCobranza = navigationView.getMenu().findItem(R.id.item_navigation_drawer_Deudas);
         MenuItem menuEfectivo=navigationView.getMenu().findItem(R.id.item_navigation_drawer_Efectivo);
         MenuItem menuReviewProducto=navigationView.getMenu().findItem(R.id.item_navigation_drawer_ReviewProducto);
+        MenuItem menuFisicoProducto=navigationView.getMenu().findItem(R.id.item_navigation_drawer_FisicoProducto);
 
             menulcv.setVisible(true);
             menucli.setVisible(true);
             menuped.setVisible(true);
             menuMapa.setVisible(true);
         menuAddPedido.setVisible(true);
+        menuFisicoProducto.setVisible(true);
         menupedEntregados.setVisible(true);
         menuCobranza.setVisible(true);
         menuEfectivo.setVisible(true);
