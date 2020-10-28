@@ -72,6 +72,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -101,6 +102,8 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private ClienteEntity mCliente=null;
     private RecyclerView detalle_List;
     ClientesAdapter clientAdapter;
+    private String M_Uii="";
+    Boolean Grabado=false;
     ProductAdapter productoAdapter;
 DetalleAdaptader mDetalleAdapter;
 TextView name_total,etFecha;
@@ -109,7 +112,7 @@ Date mFecha;
 String Hora;
 Double mTotal=0.0;
    int tipoActividad=0;
-
+    String code;
     LottieAlertDialog alertDialog;
 private PedidoEntity mPedido;
     private NestedScrollView mscroll;
@@ -167,6 +170,11 @@ private PedidoEntity mPedido;
         LocationGeo.iniciarGPS();
         ShowDialogSincronizando();
         CargarDatosclienteMapa();
+        int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
+        //cliente.setCodigogenerado();
+        DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
+        code= df.format(Calendar.getInstance().getTime());
+        code=""+codigoRepartidor+","+code+"V5.1";
         return view;
     }
     public void CargarDatosclienteMapa(){
@@ -191,8 +199,20 @@ private PedidoEntity mPedido;
     }
     public void GuardarPedido(){
         if (mDetalleItem.size()>0){
-            showDialogs();
-            new ChecarNotificaciones().execute();
+            if (Grabado ==false){
+                if (M_Uii.trim().equals("")){
+                    M_Uii= UUID.randomUUID().toString();
+                    showDialogs();
+                    new ChecarNotificaciones().execute();
+                }else{
+                    ShowMessageResult("El pedido ya ha sido guardado localmente, por favor vuelva hacia atras");
+                }
+
+            }else{
+                ShowMessageResult("El pedido ya ha sido guardado localmente, por favor vuelva hacia atras");
+            }
+
+
 
 
         }else{
@@ -591,24 +611,29 @@ private PedidoEntity mPedido;
 
         switch (codigo){
             case 0:
+                Grabado=true;
+
                 dialogs= showCustomDialog("El Pedido ha sido guardado localmente con exito. Pero no pudo ser guardado en el servidor por problemas de red"
                         ,true);
                 dialogs.setCancelable(false);
                 dialogs.show();
                 break;
             case 1:
+                Grabado=true;
                 dialogs= showCustomDialog("El Pedido Nro:"+id+" ha sido guardado localmente y en el servidor" +
                         " con exito.",true);
                 dialogs.setCancelable(false);
                 dialogs.show();
                 break;
             case 2:
+                Grabado=true;
                 dialogs= showCustomDialog("El PedidoEntity #"+id+" ha sido guardado localmente con exito. Existen problemas" +
                         " en la exportacion:\n" + mensaje,true);
                 dialogs.setCancelable(false);
                 dialogs.show();
                 break;
             case 3:
+                Grabado=true;
                 dialogs= showCustomDialog("Existe un problema al guardar el pedido localmente:\n"  + mensaje,false);
                 dialogs.setCancelable(false);
                 dialogs.show();
@@ -709,11 +734,8 @@ private PedidoEntity mPedido;
                     mPedido.setTipocobro(1);
                     mPedido.setTotalcredito(0.0);
                     mPedido.setEstado(0);
-                    int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
-                    //cliente.setCodigogenerado();
-                    DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
-                    String code = df.format(Calendar.getInstance().getTime());
-                    code=""+codigoRepartidor+","+code+"V2.3";
+
+
                     mPedido.setCodigogenerado(code);
                     mPedido.setOanumi(code);
                     _prModificarNumi(code);

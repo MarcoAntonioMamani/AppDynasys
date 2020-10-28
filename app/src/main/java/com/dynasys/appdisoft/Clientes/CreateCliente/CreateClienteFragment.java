@@ -105,6 +105,9 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
     ClienteEntity mCliente;
     private Spinner listaSpinnerZona;
     private String M_Uii="";
+    DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
+    String code ;
+
     private int tipo=0; //// TIpo=0 = Nuevo Cliente ------------------  Tipo = 1 Modificacion Cliente
     private int  isUpdate=0;
     LottieAlertDialog alertDialog;
@@ -192,6 +195,9 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        code= df.format(Calendar.getInstance().getTime());
+        int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
+        code=""+codigoRepartidor+","+code;
         return view;
     }
 
@@ -671,12 +677,10 @@ return false;
 
                     if (tipo==0){
                         ClienteEntity cliente=new ClienteEntity();
-                        int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
+
                         //cliente.setCodigogenerado();
-                        DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
-                        String code = df.format(Calendar.getInstance().getTime());
-                        code=""+codigoRepartidor+","+code;
-                        cliente.setCodigogenerado(code+"V2.3");
+
+                        cliente.setCodigogenerado(code+"V5.1");
                         cliente.setNumi(0);
                         cliente.setFechaingreso(Calendar.getInstance().getTime());
                         cliente.setDireccion(tilDireccion.getEditText().getText().toString());
