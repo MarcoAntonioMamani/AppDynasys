@@ -635,6 +635,17 @@ return null;
         mbutton_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (rCredito.isChecked()==true){
+                    if (tvTotalPago.getText().toString()==""){
+                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                        return;
+                    }
+                    if (ObtenerTotal()<Double.parseDouble(tvTotalPago.getText().toString())){
+                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                        return;
+                    }
+                }
+
                 if (isOnline()){
                     Verificaronline();
 
@@ -664,6 +675,9 @@ return null;
         }
 
         try {
+
+
+
             PedidoEntity pedi= viewModelPedido.getPedido(mPedido.getCodigogenerado());
             if (pedi!=null){
                 if (mPedido.getEstado()==1){
@@ -846,6 +860,16 @@ return null;
             @Override
             public void onClick(View view) {
 
+                if (rCredito.isChecked()==true){
+                    if (tvTotalPago.getText().toString()==""){
+                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                        return;
+                    }
+                    if (ObtenerTotal()<Double.parseDouble(tvTotalPago.getText().toString())){
+                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                        return;
+                    }
+                }
 
                 if (isOnline()){
                     VerificarOnlineEntregar();

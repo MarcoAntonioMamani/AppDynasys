@@ -26,6 +26,7 @@ import android.util.Log;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
+import com.dynasys.appdisoft.Login.DB.AppDatabase;
 import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
@@ -42,6 +43,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Stopwatch;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.ExecutionException;
@@ -321,7 +323,7 @@ if (UtilShare.mActivity!=null){
                     }
                     new ChecarNotificaciones().execute();
 }
-            }, 6*1000);//8
+            }, 12*1000);//8
             super.onPostExecute(result);
         }
     }
@@ -482,18 +484,22 @@ if (UtilShare.mActivity!=null){
                                 viewModelStock.deleteAllStocks();
                             }
                                 List<StockEntity> listStock = viewModelStock.getMStockAllAsync();
-
+                             final List<StockEntity > listStockInsert = new ArrayList<>();
                                 for (int i = 0; i < responseUser.size(); i++) {
                                     StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
                                     //viewModel.insertCliente(cliente);
 
                                     StockEntity dbStock = ObtenerProducto(listStock,stock.getCodigoProducto());
+
                                     if (dbStock == null) {
                                         if (stock.getCantidad()<0) {
                                             stock.setCantidad(0);
-                                            viewModelStock.insertStock(stock);
+                                           // viewModelStock.insertStock(stock);
+                                            listStockInsert.add(stock);
                                         }else{
-                                            viewModelStock.insertStock(stock);
+                                            listStockInsert.add(stock);
+                                            listStockInsert.add(stock);
+                                           // viewModelStock.insertStock(stock);
                                         }
 
                                     } else {
@@ -514,7 +520,17 @@ if (UtilShare.mActivity!=null){
                                     }
 
 
+
                                 }
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AppDatabase db = AppDatabase.getDatabase(UtilShare.mActivity.getApplicationContext());
+                                    db.stockDao().insertList(listStockInsert);
+                                    // viewModelStock.insertListStock(listStockInsert);
+                                }
+                            }).start();
 
                                 if (Tipo==1){  //Quiere decir que haique insertar Pedidos
                                     exportarPedidosStock();

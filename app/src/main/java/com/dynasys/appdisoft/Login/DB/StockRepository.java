@@ -39,7 +39,10 @@ public class StockRepository {
     public void updateStock(StockEntity user) {
         new updateStockAsync(mStockDao).execute(user);
     }
+public void InsertStockList(List<StockEntity > list){
 
+        new insertListStockAsync(mStockDao).execute(list);
+}
     public void deleteStock(StockEntity user) {
         new deleteStockAsync(mStockDao).execute(user);
     }
@@ -96,7 +99,26 @@ public class StockRepository {
             return id;
         }
     }
+    private static class insertListStockAsync extends AsyncTask<List<StockEntity>, Void, Void> {
 
+        private StockDao mStockDaoAsync;
+
+        insertListStockAsync(StockDao userDao) {
+            mStockDaoAsync = userDao;
+        }
+
+
+       /* @Override
+        protected Void doInBackground(List<StockEntity> lists) {
+             mStockDaoAsync.insertList(lists);
+             return null;
+        }*/
+
+        @Override
+        protected Void doInBackground(List<StockEntity>... lists) {
+            return null;
+        }
+    }
     private static class updateStockAsync extends AsyncTask<StockEntity, Void, Void> {
 
         private StockDao mStockDaoAsync;
