@@ -28,6 +28,9 @@ public interface StockDao {
     @Insert
     long insert(StockEntity stock);
 
+    @Insert
+    void insertList(List<StockEntity> stock);
+
     @Update
     void update(StockEntity stock);
 

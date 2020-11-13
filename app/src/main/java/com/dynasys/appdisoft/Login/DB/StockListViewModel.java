@@ -12,7 +12,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import static android.support.constraint.Constraints.TAG;
+
 
 public class StockListViewModel extends AndroidViewModel {
 
@@ -61,7 +61,9 @@ public class StockListViewModel extends AndroidViewModel {
     public void updateStock(StockEntity user) {
         mRepository.updateStock(user);
     }
-
+public void insertListStock(List<StockEntity> st){
+        mRepository.InsertStockList(st);
+}
     public void deleteStock(StockEntity user) {
         mRepository.deleteStock(user);
     }
