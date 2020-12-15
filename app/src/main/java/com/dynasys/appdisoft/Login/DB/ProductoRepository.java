@@ -6,11 +6,14 @@ import android.os.AsyncTask;
 
 import com.dynasys.appdisoft.Login.DB.Dao.PrecioDao;
 import com.dynasys.appdisoft.Login.DB.Dao.ProductoDao;
+import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.Dao.UserDao;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -49,7 +52,11 @@ public class ProductoRepository {
     public void insertProducto(ProductoEntity user) {
         new insertProductosAsync(mProductoDao).execute(user);
     }
+//insertListProductoAsync
 
+    public void insertProductoList(List<ProductoEntity> user) {
+        new insertListProductoAsync(mProductoDao).execute(user);
+    }
     public void updateProductos(ProductoEntity user) {
         new updateProductosAsync(mProductoDao).execute(user);
     }
@@ -135,7 +142,24 @@ public class ProductoRepository {
             return id;
         }
     }
+    private static class insertListProductoAsync extends AsyncTask<List<ProductoEntity>, Void, Void> {
 
+        private ProductoDao mProductoDaoAsync;
+
+        insertListProductoAsync(ProductoDao userDao) {
+            mProductoDaoAsync = userDao;
+        }
+
+
+
+        @Override
+        protected Void doInBackground(List<ProductoEntity>... lists) {
+            List<ProductoEntity> st=new ArrayList<>();
+            st=lists[0];
+            mProductoDaoAsync.insertList(st);
+            return null;
+        }
+    }
     private static class updateProductosAsync extends AsyncTask<ProductoEntity, Void, Void> {
 
         private ProductoDao mProductoDaoAsync;

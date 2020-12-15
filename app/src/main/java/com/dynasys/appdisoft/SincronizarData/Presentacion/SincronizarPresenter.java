@@ -122,36 +122,14 @@ int ZonaSelected=0;
                     try {
                         List<PrecioEntity> listCliente = viewModelPrecios.getMAllPrecio(1);
                         if (listCliente.size() <= 0) {
-                            for (int i = 0; i < responseUser.size(); i++) {
-                                PrecioEntity precio = responseUser.get(i);
-                                viewModelPrecios.insertPrecio(precio);
-                            }
+
+                            viewModelPrecios.insertListPrecio(responseUser);
                            cantidadPrecio+=responseUser.size();
                            // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }else{
                               viewModelPrecios.deleteAllPrecios();
-                           List<PrecioEntity> listupdate=new ArrayList<>();
-                           List<PrecioEntity> listinsert=new ArrayList<>();
-                            for (int i = 0; i < responseUser.size(); i++) {
-                                PrecioEntity precio = responseUser.get(i);
-                                //viewModel.insertCliente(cliente);
-                                PrecioEntity dbprecio=viewModelPrecios.getPrecio(precio.getChnumi());
-                                if (dbprecio==null){
-                                    viewModelPrecios.insertPrecio(precio);
-                                }else{
+                            viewModelPrecios.insertListPrecio(responseUser);
 
-                                            listupdate.add(precio);
-                                    //viewModelPrecios.updatePrecio(precio);
-                                }
-
-                            }
-                        if (listupdate.size()>0){
-                            PrecioEntity[]  listu=new PrecioEntity[listupdate.size()];
-                            for (int i = 0; i < listupdate.size(); i++) {
-                                listu[i]=listupdate.get(i);
-                            }
-                            viewModelPrecios.updateListPrecio(listu);
-                        }
                           //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }
 
@@ -197,36 +175,14 @@ int ZonaSelected=0;
                     try {
                         List<ClienteEntity> listCliente = viewModel.getMAllCliente(1);
                         if (listCliente.size() <= 0) {
-                            for (int i = 0; i < responseUser.size(); i++) {
-                                ClienteEntity cliente = responseUser.get(i);
-                                viewModel.insertCliente(cliente);
-                            }
+
+                            viewModel.insertListCliente(responseUser);
                             cantidadCliente=responseUser.size();
                             //mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Clientes");
                         }else{
                             viewModel.deleteAllClientes();
-                            List<ClienteEntity> listupdate=new ArrayList<>();
+                            viewModel.insertListCliente(responseUser);
 
-                            for (int i = 0; i < responseUser.size(); i++) {
-                                ClienteEntity cliente = responseUser.get(i);
-                                //viewModel.insertCliente(cliente);
-                                ClienteEntity dbcliente=viewModel.getClienteNumi(cliente.getNumi());
-                                if (dbcliente==null){
-                                    viewModel.insertCliente(cliente);
-                                }else{
-
-                                    listupdate.add(cliente);
-                                    //viewModelPrecios.updatePrecio(precio);
-                                }
-
-                            }
-                            if (listupdate.size()>0){
-                                ClienteEntity[]  listu=new ClienteEntity[listupdate.size()];
-                                for (int i = 0; i < listupdate.size(); i++) {
-                                    listu[i]=listupdate.get(i);
-                                }
-                                viewModel.updateListCliente(listu);
-                            }
                            // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Clientes");
                         }
                         Contador+=1;
@@ -274,10 +230,7 @@ int ZonaSelected=0;
                     try {
                         List<ProductoEntity> listCliente = viewModelProductos.getMAllProducto(1);
                         if (listCliente.size() <= 0) {
-                            for (int i = 0; i < responseUser.size(); i++) {
-                                ProductoEntity producto = responseUser.get(i);
-                                viewModelProductos.insertProducto(producto);
-                            }
+                           viewModelProductos.insertProductoList(responseUser);
                             cantidadProducto+=responseUser.size();
                             // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }else{
@@ -287,17 +240,8 @@ int ZonaSelected=0;
                                 viewModelProductos.insertProducto(producto);
                             }*/
                           viewModelProductos.deleteAllProductos();
-                            for (int i = 0; i < responseUser.size(); i++) {
-                                ProductoEntity producto = responseUser.get(i);
-                                //viewModel.insertCliente(cliente);
-                                ProductoEntity dbproducto=viewModelProductos.getProducto(producto.getNumi());
-                                if (dbproducto==null){
-                                    viewModelProductos.insertProducto(producto);
-                                }else{
-                                    viewModelProductos.updateProducto(producto);
-                                }
+                            viewModelProductos.insertProductoList(responseUser);
 
-                            }
                             //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }
 
@@ -343,29 +287,13 @@ int ZonaSelected=0;
                 }
                 if (response.isSuccessful() && responseUser != null) {
 
-                    try {
+
 
                             viewModelDescuentos.deleteAllDescuentos();
-                            for (int i = 0; i < responseUser.size(); i++) {
-                                DescuentosEntity descuento = responseUser.get(i);
-                                //viewModel.insertCliente(cliente);
-                                DescuentosEntity dbproducto=viewModelDescuentos.getDescuentos(descuento.getId());
-                                if (dbproducto==null){
-                                    viewModelDescuentos.insertDescuentos(descuento);
-                                }else{
-                                    viewModelDescuentos.updateDescuentos(descuento);
-                                }
-
-                            }
+                        viewModelDescuentos.insertDescuentoList(responseUser);
 
 
-                    } catch (ExecutionException e) {
-                        //e.printStackTrace();
-                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Descuentos : "+e.getMessage());
-                    } catch (InterruptedException e) {
-                        //   e.printStackTrace();
-                        mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Descuentos: "+e.getMessage());
-                    }
+
 
 
 
@@ -393,49 +321,7 @@ int ZonaSelected=0;
                 if (response.isSuccessful() && responseUser != null) {
 
                         viewModelStock.deleteAllStocks();
-                        List<StockEntity> listStock = viewModelStock.getMStockAllAsync();
-
-                        for (int i = 0; i < responseUser.size(); i++) {
-                            StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
-                            //viewModel.insertCliente(cliente);
-                            StockEntity dbStock = null;
-                            try {
-                                dbStock = viewModelStock.getStock(stock.getCodigoProducto());
-                            } catch (ExecutionException e) {
-                                e.printStackTrace();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            if (dbStock == null) {
-                                if (stock.getCantidad()<0){
-                                    stock.setCantidad(0);
-                                    viewModelStock.insertStock(stock);
-                                }else{
-                                    viewModelStock.insertStock(stock);
-                                }
-
-
-                            } else {
-                                for (int j = 0; j < listStock.size(); j++) {
-                                    StockEntity dbStock02=listStock.get(j);
-
-                                    if (stock.getCodigoProducto()==dbStock02.getCodigoProducto()&&stock.getCantidad()!=dbStock02.getCantidad()){
-                                        if (stock.getCantidad()<0) {
-                                            dbStock02.setCantidad(0);
-                                            viewModelStock.updateStock(dbStock02);
-                                        }else {
-                                            dbStock02.setCantidad(stock.getCantidad());
-                                            viewModelStock.updateStock(dbStock02);
-                                        }
-
-
-                                    }
-
-                                }
-                            }
-
-
-                        }
+viewModelStock.insertListStock(responseUser);
 
 
 
@@ -466,6 +352,7 @@ int ZonaSelected=0;
                         viewModelPedidos.deleteAllPedido();
                         viewModelDetalles.deleteAllDetalles();
                         if (listCliente.size() <= 0) {
+                            List<PedidoEntity> lst=new ArrayList<>();
                             for (int i = 0; i < responseUser.size(); i++) {
                                 PedidoEntity pedido = responseUser.get(i);
                                 if (pedido.getOaest()!=3){
@@ -474,16 +361,17 @@ int ZonaSelected=0;
                                             pedido.setOaest(2);
                                             pedido.setEstado(2);
                                            pedido .setEstadoStock(1);
-                                        viewModelPedidos.insertPedido(pedido);
+                                       lst.add(pedido);
                                     }else{
-                                        viewModelPedidos.insertPedido(pedido);
+                                        lst.add(pedido);
+
                                     }
 
 
                                 }
 
                             }
-
+                            viewModelPedidos.insertPedidosList(lst);
                             // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }else{
                           /*  viewModelProductos.deleteAllProductos();
@@ -542,27 +430,13 @@ int ZonaSelected=0;
                     try {
                         List<DetalleEntity> listDetalle = viewModelDetalles.getMAllDetalle(1);
                         if (listDetalle.size() <= 0) {
-                            for (int i = 0; i < responseUser.size(); i++) {
-                                DetalleEntity pedido = responseUser.get(i);
-                                viewModelDetalles.insertDetalle(pedido);
-                            }
+                            viewModelDetalles.insertDetallesList(responseUser);
+
                             // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
                         }else{
-                          /*  viewModelProductos.deleteAllProductos();
-                            for (int i = 0; i < responseUser.size(); i++) {
-                                ProductoEntity producto = responseUser.get(i);
-                                viewModelProductos.insertProducto(producto);
-                            }*/
-                            for (int i = 0; i < responseUser.size(); i++) {
-                                DetalleEntity detalle = responseUser.get(i);
+                       viewModelDetalles.deleteAllDetalles();
+                            viewModelDetalles.insertDetallesList(responseUser);
 
-                                if (!existeDetalle(listDetalle,detalle)){
-                                    viewModelDetalles.insertDetalle(detalle);
-                                }else{
-                                    viewModelDetalles.updateDetalle(detalle);
-                                }
-
-                            }
 
                         }
 

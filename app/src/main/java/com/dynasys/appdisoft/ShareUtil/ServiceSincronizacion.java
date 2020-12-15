@@ -498,7 +498,7 @@ if (UtilShare.mActivity!=null){
                                             listStockInsert.add(stock);
                                         }else{
                                             listStockInsert.add(stock);
-                                            listStockInsert.add(stock);
+
                                            // viewModelStock.insertStock(stock);
                                         }
 
@@ -522,15 +522,8 @@ if (UtilShare.mActivity!=null){
 
 
                                 }
+                            viewModelStock.insertListStock(listStockInsert);
 
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    AppDatabase db = AppDatabase.getDatabase(UtilShare.mActivity.getApplicationContext());
-                                    db.stockDao().insertList(listStockInsert);
-                                    // viewModelStock.insertListStock(listStockInsert);
-                                }
-                            }).start();
 
                                 if (Tipo==1){  //Quiere decir que haique insertar Pedidos
                                     exportarPedidosStock();

@@ -6,9 +6,12 @@ import android.os.AsyncTask;
 
 import com.dynasys.appdisoft.Login.DB.Dao.PedidoDao;
 import com.dynasys.appdisoft.Login.DB.Dao.PrecioDao;
+import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -56,6 +59,11 @@ public class PedidoRepository {
     public void insertPedidos(PedidoEntity user) {
         new insertPedidoAsync(mPedidoDao).execute(user);
     }
+    public void insertPedidosList(List<PedidoEntity> user) {
+        new insertListPedidosAsync(mPedidoDao).execute(user);
+    }
+    //insertListPedidosAsync
+
 
     public void updatePedido(PedidoEntity user) {
         new updatePedidoAsync(mPedidoDao).execute(user);
@@ -188,6 +196,25 @@ try {
         protected Long doInBackground(PedidoEntity... notes) {
             long id = mPedidoDaoAsync.insert(notes[0]);
             return id;
+        }
+    }
+
+    private static class insertListPedidosAsync extends AsyncTask<List<PedidoEntity>, Void, Void> {
+
+        private PedidoDao mPedidoDaoAsync;
+
+        insertListPedidosAsync(PedidoDao userDao) {
+            mPedidoDaoAsync = userDao;
+        }
+
+
+
+        @Override
+        protected Void doInBackground(List<PedidoEntity>... lists) {
+            List<PedidoEntity> st=new ArrayList<>();
+            st=lists[0];
+            mPedidoDaoAsync.insertList(st);
+            return null;
         }
     }
 

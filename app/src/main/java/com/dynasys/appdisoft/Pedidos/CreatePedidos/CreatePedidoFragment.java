@@ -46,6 +46,7 @@ import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
+import com.dynasys.appdisoft.Login.DB.AppDatabase;
 import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
@@ -252,7 +253,7 @@ private PedidoEntity mPedido;
         //cliente.setCodigogenerado();
         DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
         String code = df.format(Calendar.getInstance().getTime());
-        code=""+codigoRepartidor+","+code+"V2.5";
+        code=""+codigoRepartidor+","+code+"V2.6";
         mPedido.setCodigogenerado(code);
         mPedido.setOanumi(code);
         _prModificarNumi(code);
@@ -276,49 +277,41 @@ private PedidoEntity mPedido;
                 }
                 if (response.isSuccessful() && responseUser != null) {
                         viewModelStock.deleteAllStocks();
-                        List<StockEntity> listStock = viewModelStock.getMStockAllAsync();
 
-                        for (int i = 0; i < responseUser.size(); i++) {
-                            StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
-                            //viewModel.insertCliente(cliente);
-                            StockEntity dbStock = null;
-                            try {
-                                dbStock = viewModelStock.getStock(stock.getCodigoProducto());
-                            } catch (ExecutionException e) {
-                                e.printStackTrace();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            if (dbStock == null) {
+                    final List<StockEntity > listStockInsert = new ArrayList<>();
+                    for (int i = 0; i < responseUser.size(); i++) {
+                        StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
+                        //viewModel.insertCliente(cliente);
 
-                                if (stock.getCantidad()<0){
-                                    stock.setCantidad(0);
-                                    viewModelStock.insertStock(stock);
-                                }else{
-                                    viewModelStock.insertStock(stock);
-                                }
-                            } else {
-                                for (int j = 0; j < listStock.size(); j++) {
-                                    StockEntity dbStock02=listStock.get(j);
+                                listStockInsert.add(stock);
 
-                                    if (stock.getCodigoProducto()==dbStock02.getCodigoProducto()&&stock.getCantidad()!=dbStock02.getCantidad()){
-                                        if (stock.getCantidad()<0){
-                                            dbStock02.setCantidad(0);
-                                            viewModelStock.updateStock(dbStock02);
-                                        }else{
-                                            dbStock02.setCantidad(stock.getCantidad());
-                                            viewModelStock.updateStock(dbStock02);
-                                        }
-
-
-                                    }
-
-                                }
-                            }
+                                // viewModelStock.insertStock(stock);
 
 
                         }
-                        VerficarStockDisponible(1);
+                     viewModelStock.insertListStock(listStockInsert);
+                    VerficarStockDisponible(1);
+                   /* new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            AppDatabase db = AppDatabase.getDatabase(UtilShare.mActivity.getApplicationContext());
+                            db.stockDao().insertList(listStockInsert);
+                            VerficarStockDisponible(1);
+                        }
+                    });*/
+                   /* new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AppDatabase db = AppDatabase.getDatabase(UtilShare.mActivity.getApplicationContext());
+                            db.stockDao().insertList(listStockInsert);
+                            VerficarStockDisponible(1);
+                            // viewModelStock.insertListStock(listStockInsert);
+                        }
+                    }).start();*/
+
+
+
+
 
 
 

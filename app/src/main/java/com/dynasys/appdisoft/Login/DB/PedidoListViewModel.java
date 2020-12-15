@@ -67,8 +67,11 @@ public class PedidoListViewModel extends AndroidViewModel {
     public void insertPedido(PedidoEntity user) {
         mRepository.insertPedidos(user);
     }
+//insertPedidosList
 
-
+    public void insertPedidosList(List<PedidoEntity> user) {
+        mRepository.insertPedidosList(user);
+    }
 
     public void updatePedido(PedidoEntity user) {
         mRepository.updatePedido(user);

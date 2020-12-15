@@ -40,7 +40,9 @@ public class PreciosListViewModel extends AndroidViewModel {
     public void insertPrecio(PrecioEntity user) {
         mRepository.insertPrecios(user);
     }
-
+public void insertListPrecio(List<PrecioEntity> list){
+        mRepository.insertpreciosList(list);
+}
 
 
     public void updatePrecio(PrecioEntity user) {
