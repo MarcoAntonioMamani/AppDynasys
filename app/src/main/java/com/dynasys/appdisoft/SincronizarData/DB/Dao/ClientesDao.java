@@ -7,6 +7,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 
@@ -46,7 +47,8 @@ public interface ClientesDao {
     @Insert
     long insert(ClienteEntity note);
 
-
+    @Insert
+    void insertList(List<ClienteEntity> stock);
     @Update
     void update(ClienteEntity note);
     @Update

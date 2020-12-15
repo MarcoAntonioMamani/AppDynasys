@@ -41,7 +41,10 @@ public class DescuentosListViewModel  extends AndroidViewModel {
     public void insertDescuentos(DescuentosEntity user) {
         mRepository.insertDescuento(user);
     }
-
+//insertDescuentoList
+public void insertDescuentoList(List<DescuentosEntity> user) {
+    mRepository.insertDescuentoList(user);
+}
     public void updateDescuentos(DescuentosEntity user) {
         mRepository.updateDescuentos(user);
     }

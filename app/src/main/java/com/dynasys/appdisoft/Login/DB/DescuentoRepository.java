@@ -5,8 +5,11 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
 import com.dynasys.appdisoft.Login.DB.Dao.DescuentosDao;
+import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -36,7 +39,10 @@ public class DescuentoRepository {
     public void insertDescuento(DescuentosEntity user) {
         new insertDescuentosAsync(mDescuentoDao).execute(user);
     }
-
+    public void insertDescuentoList(List<DescuentosEntity> user) {
+        new insertListDescuentoAsync(mDescuentoDao).execute(user);
+    }
+//insertListDescuentoAsync
     public void updateDescuentos(DescuentosEntity user) {
         new updateDescuentosAsync(mDescuentoDao).execute(user);
     }
@@ -108,7 +114,24 @@ public class DescuentoRepository {
             return id;
         }
     }
+    private static class insertListDescuentoAsync extends AsyncTask<List<DescuentosEntity>, Void, Void> {
 
+        private DescuentosDao mDescuentoDaoAsync;
+
+        insertListDescuentoAsync(DescuentosDao userDao) {
+            mDescuentoDaoAsync = userDao;
+        }
+
+
+
+        @Override
+        protected Void doInBackground(List<DescuentosEntity>... lists) {
+            List<DescuentosEntity> st=new ArrayList<>();
+            st=lists[0];
+            mDescuentoDaoAsync.insertList(st);
+            return null;
+        }
+    }
     private static class updateDescuentosAsync extends AsyncTask<DescuentosEntity, Void, Void> {
 
         private DescuentosDao mDescuentoDaoAsync;

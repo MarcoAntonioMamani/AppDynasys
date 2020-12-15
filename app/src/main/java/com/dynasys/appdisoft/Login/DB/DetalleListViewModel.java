@@ -42,8 +42,10 @@ public class DetalleListViewModel extends AndroidViewModel {
     public void insertDetalle(DetalleEntity user) {
         mRepository.insertDetalles(user);
     }
-
-
+//insertDetallesList
+public void insertDetallesList(List<DetalleEntity> user) {
+    mRepository.insertDetallesList(user);
+}
 
     public void updateDetalle(DetalleEntity user) {
         mRepository.updateDetalle(user);

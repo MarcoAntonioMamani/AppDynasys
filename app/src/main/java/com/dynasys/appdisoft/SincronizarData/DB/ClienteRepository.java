@@ -5,8 +5,11 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
 import com.dynasys.appdisoft.Login.DB.AppDatabase;
+import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -48,7 +51,9 @@ public class ClienteRepository {
     public void insertCliente(ClienteEntity user) {
         new insertClientesAsync(mClienteDao).execute(user);
     }
-
+public void insertClienteList(List<ClienteEntity> cl){
+        new insertListClienteAsync(mClienteDao).execute(cl);
+}
 
     public void updateCliente(ClienteEntity user) {
         new updateClientesAsync(mClienteDao).execute(user);
@@ -167,7 +172,24 @@ public class ClienteRepository {
             return id;
         }
     }
+    private static class insertListClienteAsync extends AsyncTask<List<ClienteEntity>, Void, Void> {
 
+        private ClientesDao mClienteDaoAsync;
+
+        insertListClienteAsync(ClientesDao userDao) {
+            mClienteDaoAsync = userDao;
+        }
+
+
+
+        @Override
+        protected Void doInBackground(List<ClienteEntity>... lists) {
+            List<ClienteEntity> st=new ArrayList<>();
+            st=lists[0];
+            mClienteDaoAsync.insertList(st);
+            return null;
+        }
+    }
 
     private static class updateClientesAsync extends AsyncTask<ClienteEntity, Void, Void> {
 

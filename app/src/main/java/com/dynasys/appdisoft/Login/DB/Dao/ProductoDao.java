@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 
 import java.util.List;
 
@@ -43,7 +44,8 @@ public interface ProductoDao {
 
     @Insert
     long insert(ProductoEntity note);
-
+    @Insert
+    void insertList(List<ProductoEntity> stock);
     @Update
     void update(ProductoEntity note);
 

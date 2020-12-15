@@ -3,11 +3,14 @@ package com.dynasys.appdisoft.Login.DB;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.os.Handler;
 
+import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -32,6 +35,7 @@ public class StockRepository {
     public List<StockEntity> getMStockAll(int clienteId) throws ExecutionException, InterruptedException {
         return new StockRepository.getMStockAllAsync(mStockDao).execute(clienteId).get();
     }
+
     public void insertStock(StockEntity user) {
         new insertStockAsync(mStockDao).execute(user);
     }
@@ -56,7 +60,35 @@ public void InsertStockList(List<StockEntity > list){
      * otherwise the following error will be thrown
      * `java.lang.IllegalStateException: Cannot access database on the main thread since it may potentially lock the UI for a long period of time.`
      */
+    private class InsertarListaAsync extends AsyncTask<List<StockEntity>, String, String> {
 
+        private StockDao mStockDaoAsync;
+        InsertarListaAsync(StockDao animalDao) {
+            mStockDaoAsync = animalDao;
+        }
+
+
+
+        @Override
+        protected String doInBackground(List<StockEntity>... lists) {
+            List<StockEntity> st=new ArrayList<>();
+            st=lists[0];
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //NUESTRO CODIGO
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+
+                }
+            }, 0);
+            super.onPostExecute(result);
+        }
+    }
     private static class getStockAsync extends AsyncTask<Integer, Void, StockEntity> {
 
         private StockDao mStockDaoAsync;
@@ -108,14 +140,12 @@ public void InsertStockList(List<StockEntity > list){
         }
 
 
-       /* @Override
-        protected Void doInBackground(List<StockEntity> lists) {
-             mStockDaoAsync.insertList(lists);
-             return null;
-        }*/
 
         @Override
         protected Void doInBackground(List<StockEntity>... lists) {
+            List<StockEntity> st=new ArrayList<>();
+            st=lists[0];
+            mStockDaoAsync.insertList(st);
             return null;
         }
     }

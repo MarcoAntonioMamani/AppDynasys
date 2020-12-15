@@ -6,9 +6,12 @@ import android.os.AsyncTask;
 
 import com.dynasys.appdisoft.Login.DB.Dao.DetalleDao;
 import com.dynasys.appdisoft.Login.DB.Dao.PedidoDao;
+import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -41,6 +44,11 @@ public class DetalleRepository {
 
     public void insertDetalles(DetalleEntity user) {
         new insertDetalleAsync(mDetalleDao).execute(user);
+    }
+
+    //insertListDetalleAsync
+    public void insertDetallesList(List<DetalleEntity> user) {
+        new insertListDetalleAsync(mDetalleDao).execute(user);
     }
 
     public void updateDetalle(DetalleEntity user) {
@@ -129,6 +137,24 @@ public class DetalleRepository {
         protected Long doInBackground(DetalleEntity... notes) {
             long id = mDetalleDaoAsync.insert(notes[0]);
             return id;
+        }
+    }
+    private static class insertListDetalleAsync extends AsyncTask<List<DetalleEntity>, Void, Void> {
+
+        private DetalleDao mDetalleDaoAsync;
+
+        insertListDetalleAsync(DetalleDao userDao) {
+            mDetalleDaoAsync = userDao;
+        }
+
+
+
+        @Override
+        protected Void doInBackground(List<DetalleEntity>... lists) {
+            List<DetalleEntity> st=new ArrayList<>();
+            st=lists[0];
+            mDetalleDaoAsync.insertList(st);
+            return null;
         }
     }
 

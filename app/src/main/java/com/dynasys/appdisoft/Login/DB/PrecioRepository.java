@@ -6,12 +6,15 @@ import android.os.AsyncTask;
 
 import com.dynasys.appdisoft.Login.DB.Dao.PrecioDao;
 import com.dynasys.appdisoft.Login.DB.Dao.ProductoDao;
+import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteRepository;
 import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -41,7 +44,10 @@ public class PrecioRepository {
     public void insertPrecios(PrecioEntity user) {
         new insertPreciosAsync(mPrecioDao).execute(user);
     }
+public void insertpreciosList(List<PrecioEntity> precio){
+        new insertListPrecioAsync(mPrecioDao).execute(precio);
 
+}
     public void updatePrecios(PrecioEntity user) {
         new updatePrecioAsync(mPrecioDao).execute(user);
     }
@@ -101,6 +107,24 @@ public class PrecioRepository {
         protected Long doInBackground(PrecioEntity... notes) {
             long id = mPrecioDaoAsync.insert(notes[0]);
             return id;
+        }
+    }
+    private static class insertListPrecioAsync extends AsyncTask<List<PrecioEntity>, Void, Void> {
+
+        private PrecioDao mPrecioDaoAsync;
+
+        insertListPrecioAsync(PrecioDao userDao) {
+            mPrecioDaoAsync = userDao;
+        }
+
+
+
+        @Override
+        protected Void doInBackground(List<PrecioEntity>... lists) {
+            List<PrecioEntity> st=new ArrayList<>();
+            st=lists[0];
+            mPrecioDaoAsync.insertList(st);
+            return null;
         }
     }
 

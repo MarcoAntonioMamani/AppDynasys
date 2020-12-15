@@ -50,6 +50,10 @@ public class ProductosListViewModel extends AndroidViewModel {
         mRepository.insertProducto(user);
     }
 
+    public void insertProductoList(List<ProductoEntity> user) {
+        mRepository.insertProductoList(user);
+    }
+//insertProductoList
     public void updateProducto(ProductoEntity user) {
         mRepository.updateProductos(user);
     }

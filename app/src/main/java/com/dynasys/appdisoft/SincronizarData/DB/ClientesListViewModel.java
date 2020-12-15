@@ -51,7 +51,9 @@ public class ClientesListViewModel extends AndroidViewModel {
     public void insertCliente(ClienteEntity user) {
         mRepository.insertCliente(user);
     }
-
+public void insertListCliente(List<ClienteEntity> cl){
+        mRepository.insertClienteList(cl);
+}
     public void updateCliente(ClienteEntity user) {
         mRepository.updateCliente(user);
     }

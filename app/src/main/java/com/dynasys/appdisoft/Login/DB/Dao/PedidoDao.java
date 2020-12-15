@@ -9,6 +9,7 @@ import android.arch.persistence.room.Update;
 
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 
 import java.util.List;
 
@@ -47,7 +48,8 @@ public interface PedidoDao {
 
     @Insert
     long insert(PedidoEntity note);
-
+    @Insert
+    void insertList(List<PedidoEntity> stock);
 
     @Update
     void update(PedidoEntity note);
