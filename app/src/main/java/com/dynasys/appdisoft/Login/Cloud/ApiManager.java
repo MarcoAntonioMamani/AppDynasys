@@ -127,8 +127,8 @@ private static Context mcontext;
         Call<List<CobranzaDetalleEntity>> userCall = service.ObtenerCobranzaDetalle(idRepartidor);
         userCall.enqueue(callback);
     }
-    public void ObtenerProductos( Callback<List<ProductoEntity>> callback) {
-        Call<List<ProductoEntity>> userCall = service.ObtenerProductos();
+    public void ObtenerProductos(String idrepartidor, Callback<List<ProductoEntity>> callback) {
+        Call<List<ProductoEntity>> userCall = service.ObtenerProductos(idrepartidor);
         userCall.enqueue(callback);
     }
 

@@ -141,14 +141,16 @@
                         android:textColor="@color/secondary_text"
                         />
 
-                    <TextView
+                    <EditText
                         android:id="@+id/id_detalle_price"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:background="@drawable/animation_edittext_cantidad"
                         android:inputType="numberDecimal"
                         android:layout_gravity="center"
                         android:textStyle="bold"
                         android:selectAllOnFocus="true"
+
                         android:textColor="@color/primary_text"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:gravity="center"

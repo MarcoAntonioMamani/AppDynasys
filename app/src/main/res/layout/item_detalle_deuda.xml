@@ -21,6 +21,7 @@ android:paddingTop="5dp"
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             >
             <LinearLayout
                 android:layout_width="match_parent"
@@ -117,6 +118,64 @@ android:paddingTop="5dp"
                         android:textSize="14dp"
                         android:hint="0" />
                 </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="10dp"
+                >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="8dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:background="@drawable/animation_editext"
+
+
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Factura = 152"
+                        android:id="@+id/tvFactura"
+                        android:textColor="@color/primary_text"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textSize="8dp"
+                        android:paddingRight="20dp"
+                        android:paddingLeft="20dp"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="8dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:background="@drawable/animation_riple_button"
+                    android:id="@+id/banckgroundMora"
+
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mora = 0 (Dias)"
+                        android:id="@+id/tvMora"
+                        android:textColor="@color/white"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textSize="8dp"
+                        android:paddingRight="20dp"
+                        android:paddingLeft="20dp"
+                        />
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
 

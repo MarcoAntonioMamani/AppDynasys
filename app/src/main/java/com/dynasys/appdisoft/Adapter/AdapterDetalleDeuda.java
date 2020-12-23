@@ -1,5 +1,6 @@
 package com.dynasys.appdisoft.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.util.ColorGenerator;
@@ -21,6 +23,7 @@ import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+import com.pdfjet.Line;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +37,12 @@ public class AdapterDetalleDeuda extends RecyclerView.Adapter<AdapterDetalleDeud
     private List<ClienteEntity> listClientes;
     private Context context;
 private PagosMvp.View mview;
-    public AdapterDetalleDeuda(Context ctx, List<DeudaEntity> s, PagosMvp.View view) {
+private Activity activity;
+    public AdapterDetalleDeuda(Context ctx, List<DeudaEntity> s, PagosMvp.View view, Activity act) {
         this.context = ctx;
         this.listaDeudas = s;
         this.mview=view;
+        this.activity=act;
 
     }
     public AdapterDetalleDeuda(Context ctx) {
@@ -56,11 +61,24 @@ private PagosMvp.View mview;
         clientesViewHolder.TvNroPedido.setText( ""+listaDeudas.get(i).getPedidoId());
         clientesViewHolder.tvFecha.setText(ShareMethods.ObtenerFecha02(listaDeudas.get(i).getFechaPedido()));
         clientesViewHolder.tvMonto.setText(ShareMethods.ObtenerDecimalToString(listaDeudas.get(i).getPendiente(),2));
+        clientesViewHolder.txtFactura.setText("Factura = "+listaDeudas.get(i).getFactura());
         final DeudaEntity item=listaDeudas.get(i);
         if (listaDeudas.get(i).getTotalAPagar()>0){
             clientesViewHolder.chkDeuda.setChecked(true);
         }else{
             clientesViewHolder.chkDeuda.setChecked(false);
+        }
+
+        if (listaDeudas.get(i).getMora()>0){
+            clientesViewHolder.txtMora.setText("Mora = "+listaDeudas.get(i).getMora()+" (Dias)");
+        }else{
+            clientesViewHolder.txtMora.setText("Mora = "+0+" (Dias)");
+        }
+        if(listaDeudas.get(i).isEstadoCredito()==false){
+            clientesViewHolder.lnMora.setBackground(activity.getResources().getDrawable(R.drawable.animation_bottoncancelrojo ));
+
+        }else{
+            clientesViewHolder.lnMora.setBackground(activity.getResources().getDrawable(R.drawable.animation_riple_button));
         }
         clientesViewHolder.etMontoPagar.setText(ShareMethods.ObtenerDecimalToString(listaDeudas.get(i).getTotalAPagar(),2));
         clientesViewHolder.etMontoPagar.addTextChangedListener(new TextWatcher() {
@@ -138,6 +156,9 @@ public String ObtenerDireccionCliente(String numi){
         protected TextView tvMonto;
         protected CheckBox chkDeuda;
         protected EditText etMontoPagar;
+        protected LinearLayout lnMora;
+        protected TextView txtMora;
+        protected  TextView txtFactura;
         public PedidosViewHolder(View v) {
             super(v);
 
@@ -146,7 +167,9 @@ public String ObtenerDireccionCliente(String numi){
             tvMonto = (TextView) v.findViewById(R.id.view_detalle_deuda_monto);
             chkDeuda = (CheckBox) v.findViewById(R.id.deuda_detalle_chk);
             etMontoPagar = (EditText) v.findViewById(R.id.view_detalle_deuda_montopagar);
-
+            lnMora=(LinearLayout) v.findViewById(R.id.banckgroundMora);
+            txtMora=(TextView)v.findViewById(R.id.tvMora);
+            txtFactura =(TextView)v.findViewById(R.id.tvFactura);
         }
     }
 

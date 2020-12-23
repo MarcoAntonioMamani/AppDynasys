@@ -112,6 +112,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private PedidoListViewModel viewModelPedido;
     private DescuentosListViewModel viewModelDescuento;
     private StockListViewModel viewModelStock;
+    private Boolean BanderaPrecio =false;
     private DetalleListViewModel viewModelDetalle;
     private List<DetalleEntity> mDetalleItem=new ArrayList<>();
     private CreatePedidoMvp.Presenter mCreatePedidoPresenter;
@@ -196,6 +197,7 @@ private PedidoEntity mPedido;
         LocationGeo.iniciarGPS();
         ShowDialogSincronizando();
         CargarDatosclienteMapa();
+        BanderaPrecio =false;
         return view;
     }
     public void CargarDatosclienteMapa(){
@@ -377,19 +379,37 @@ private PedidoEntity mPedido;
 
     }
 
+    public boolean VerificarPrecio0(){
+
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            DetalleEntity detail =mDetalleItem.get(i);
+
+            if (detail.getObupdate() >=0 && detail.getObpbase() <=0){
+                return true;
+            }
+
+        }
+        return false;
+    }
+
     public void GuardarPedido(){
         if (mDetalleItem.size()>0){
-            if (Grabado ==false){
-                if (M_Uii.trim().equals("")){
-                    showDialogs();
-                    new ChecarNotificaciones().execute();
+            if (!VerificarPrecio0()){
+                if (Grabado ==false){
+                    if (M_Uii.trim().equals("")){
+                        showDialogs();
+                        new ChecarNotificaciones().execute();
+                    }else{
+                        ShowMessageResult("El pedido ya ha sido guardado localmente, por favor vuelva hacia atras");
+                    }
+
                 }else{
                     ShowMessageResult("El pedido ya ha sido guardado localmente, por favor vuelva hacia atras");
                 }
-
             }else{
-                ShowMessageResult("El pedido ya ha sido guardado localmente, por favor vuelva hacia atras");
+                ShowMessageResult("Existen Productos con Precio 0");
             }
+
 
 
 
@@ -669,28 +689,79 @@ private PedidoEntity mPedido;
 
     }
 
+    public ProductoEntity ObtenerProducto(int id){
+
+        for (int i = 0; i < lisProducto.size(); i++) {
+            if (id==lisProducto.get(i).getNumi()){
+                return  lisProducto.get(i);
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public void ModifyItemPrecio(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText ePrecio) {
+
+        if (BanderaPrecio==true){
+            return;
+        }
         double precio=0.0;
         if (isDouble(value)){
             precio=Double.parseDouble(value);
         }
         int posicion =obtenerPosicionItem(item);
-        int stock= DataPreferences.getPrefInt("stock",context);
+
 
             if (posicion>=0 && precio>0){
-                DetalleEntity detalle= mDetalleItem.get(posicion);
-                detalle.setObpbase(precio);
-                detalle.setObptot(precio*detalle.getObpcant());
-               // tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));
-                double total=precio*mDetalleItem.get(posicion).getObpcant();
-                tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
-                calcularTotal();
+
+                ProductoEntity pro=ObtenerProducto(item.getObcprod());
+
+                if (pro!=null && precio>=pro.getPrecioMinimo() && precio<= pro.getPrecioMaximo()){
+
+                    DetalleEntity detalle= mDetalleItem.get(posicion);
+                    detalle.setObpbase(precio);
+                    detalle.setObptot(precio*detalle.getObpcant());
+                    detalle.setTotal(precio*detalle.getObpcant());
+                    detalle.setDescuento(0);
+                    // tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));
+                    double total=precio*mDetalleItem.get(posicion).getObpcant();
+
+                    tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
+                    calcularTotal();
+                }else{
+
+                    ShowMessageResult("EL Precio= "+precio+" no esta en el rango \n Min= "+pro.getPrecioMinimo()+" \n  Max="+pro.getPrecioMaximo());
+                    DetalleEntity detalle= mDetalleItem.get(posicion);
+
+                    precio=pro.getPrecioMinimo();
+                    detalle.setObpbase(precio);
+                    detalle.setObptot(precio*detalle.getObpcant());
+                    detalle.setTotal(precio*detalle.getObpcant());
+
+                    detalle.setDescuento(0);
+                    double total=precio*mDetalleItem.get(posicion).getObpcant();
+                    tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
+                    BanderaPrecio=true;
+                    ePrecio.setText(""+ ShareMethods.redondearDecimales(precio,2));
+                    BanderaPrecio=false;
+                    //  tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));
+                    calcularTotal();
+
+
+                }
+
 
             }else{
                 DetalleEntity detalle= mDetalleItem.get(posicion);
                 detalle.setObpbase(precio);
-                detalle.setObptot(0);
+
+                detalle.setObptot(precio*detalle.getObpcant());
+                detalle.setTotal(precio*detalle.getObpcant());
+               // ePrecio.setText(""+ ShareMethods.redondearDecimales(precio,2));
+              /*  BanderaPrecio=true;
+                ePrecio.setText(""+ ShareMethods.redondearDecimales(precio,2));
+                BanderaPrecio=false;*/
                 double total=precio*mDetalleItem.get(posicion).getObpcant();
                 tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
               //  tvsubtotal.setText(""+String.format("%.2f", (precio*mDetalleItem.get(posicion).getObpcant())));

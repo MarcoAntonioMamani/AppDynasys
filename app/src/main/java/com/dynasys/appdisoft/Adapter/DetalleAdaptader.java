@@ -41,7 +41,7 @@ ViewGroup viewgroup;
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView nombre;
-        public TextView price;
+        public EditText price;
         public TextView subtotal;
         public EditText cantidad;
         public ImageView img_delete;
@@ -51,7 +51,7 @@ ViewGroup viewgroup;
             super(v);
 
             nombre = (TextView) v.findViewById(R.id.id_detalle_name);
-              price = (TextView) v.findViewById(R.id.id_detalle_price);
+              price = (EditText) v.findViewById(R.id.id_detalle_price);
               subtotal=(TextView)v.findViewById(R.id.id_detalle_subtotal);
               stock=(TextView)v.findViewById(R.id.id_detalle_stock);
               cantidad=(EditText)v.findViewById(R.id.id_detalle_cantidad);
@@ -90,7 +90,7 @@ ViewGroup viewgroup;
         final TextView tvsubtotal;
         final EditText tvCantidad;
         final LinearLayout fondo;
-        final TextView  tvPrecio;
+        final EditText  tvPrecio;
         final TextView  tvStock;
             item = items.get(i);
             viewHolder.nombre.setText(item.getObcprod()+" "+item.getCadesc());
@@ -116,6 +116,26 @@ ViewGroup viewgroup;
             if (i== items.size()-1){
                 viewHolder.cantidad.requestFocus();
             }
+            viewHolder.price .addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    int pos =ObtenerPosicionElemento(item);
+                    if (pos>=0){
+                        mView.ModifyItemPrecio(pos,charSequence.toString(),item,tvsubtotal,tvPrecio);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
             viewHolder.cantidad.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {

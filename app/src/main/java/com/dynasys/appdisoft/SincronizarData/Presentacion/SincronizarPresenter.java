@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.Bodylogin;
@@ -137,7 +138,7 @@ int ZonaSelected=0;
             public void onResponse(Call<List<PrecioEntity>> call, Response<List<PrecioEntity>> response) {
                 final List<PrecioEntity> responseUser = (List<PrecioEntity>) response.body();
                 if (response.code()==404){
-                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message() );
                     return;
                 }
                 if (response.isSuccessful() && responseUser != null) {
@@ -173,13 +174,14 @@ int ZonaSelected=0;
 
 
                 } else {
-                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Precios");
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Precios"+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<PrecioEntity>> call, Throwable t) {
-                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio.");
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio."+ t.getMessage());
+                Log.d("PRecios=>", t.getMessage());
             }
         });
     }
@@ -225,20 +227,21 @@ int ZonaSelected=0;
 
 
                 } else {
-                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Clientes");
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Clientes"+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<ClienteEntity>> call, Throwable t) {
-                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio.");
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio."+ t.getMessage());
+                Log.d("Clientes=>", t.getMessage());
             }
         });
     }
     public void _DecargarProductos(){
         final String idRepartidor= ""+DataPreferences.getPrefInt("idrepartidor",mContext);
         ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.ObtenerProductos( new Callback<List<ProductoEntity>>() {
+        apiManager.ObtenerProductos(idRepartidor, new Callback<List<ProductoEntity>>() {
             @Override
             public void onResponse(Call<List<ProductoEntity>> call, Response<List<ProductoEntity>> response) {
                 final List<ProductoEntity> responseUser = (List<ProductoEntity>) response.body();
@@ -285,13 +288,14 @@ int ZonaSelected=0;
 
 
                 } else {
-                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos"+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<ProductoEntity>> call, Throwable t) {
-                mSincronizarview.ShowMessageResult("No es posible conectarse con el web services.");
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el web services."+ t.getMessage());
+                Log.d("Producto=>", t.getMessage());
             }
         });
     }
@@ -320,13 +324,14 @@ int ZonaSelected=0;
 
 
                 } else {
-                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos"+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<DescuentosEntity>> call, Throwable t) {
-                mSincronizarview.ShowMessageResult("No es posible conectarse con el web services.");
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el web services."+ t.getMessage());
+                Log.d("Descuento=>", t.getMessage());
             }
         });
     }
@@ -354,7 +359,7 @@ viewModelStock.insertListStock(responseUser);
 
             @Override
             public void onFailure(Call<List<StockEntity>> call, Throwable t) {
-
+                Log.d("Stock=>", t.getMessage());
             }
         },idRepartidor);
     }
@@ -427,13 +432,14 @@ viewModelStock.insertListStock(responseUser);
 
 
                 } else {
-                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos"+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<PedidoEntity>> call, Throwable t) {
-                mSincronizarview.ShowMessageResult("No es posible conectarse con el web services.");
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el web services."+ t.getMessage());
+                Log.d("Pedido=>", t.getMessage());
             }
         },idRepartidor,ZonaSelected);
     }
@@ -480,13 +486,14 @@ viewModelStock.insertListStock(responseUser);
 
 
                 } else {
-                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Detalles");
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Detalles"+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<DetalleEntity>> call, Throwable t) {
-                mSincronizarview.ShowMessageResult("No es posible conectarse con el web services.");
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el web services."+ t.getMessage());
+                Log.d("Detalle=>", t.getMessage());
             }
         },idRepartidor);
     }
@@ -559,13 +566,14 @@ viewModelStock.insertListStock(responseUser);
 
 
                 } else {
-                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Deudas");
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Deudas"+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<DeudaEntity>> call, Throwable t) {
-                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio.");
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio."+ t.getMessage());
+                Log.d("Deudas=>", t.getMessage());
             }
         });
     }
@@ -622,13 +630,14 @@ viewModelStock.insertListStock(responseUser);
 
 
                 } else {
-                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza");
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza"+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<CobranzaEntity>> call, Throwable t) {
-                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio.");
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio."+ t.getMessage());
+                Log.d("Cobranzas=>", t.getMessage());
             }
         });
     }
@@ -685,13 +694,14 @@ viewModelStock.insertListStock(responseUser);
 
 
                 } else {
-                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza");
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza"+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<AlmacenEntity>> call, Throwable t) {
-                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio.");
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio."+ t.getMessage());
+                Log.d("Almancen=>", t.getMessage());
             }
         });
     }
@@ -735,13 +745,14 @@ viewModelStock.insertListStock(responseUser);
 
 
                 } else {
-                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para CobranzaDetalle");
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para CobranzaDetalle"+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<CobranzaDetalleEntity>> call, Throwable t) {
-                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio.");
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio."+ t.getMessage());
+                Log.d("CobranzaDetalle=>", t.getMessage());
             }
         });
     }

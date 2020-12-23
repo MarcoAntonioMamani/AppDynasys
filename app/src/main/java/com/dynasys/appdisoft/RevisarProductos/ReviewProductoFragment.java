@@ -108,6 +108,8 @@ public class ReviewProductoFragment extends Fragment implements SearchView.OnQue
         onclickObtenerFechaDesde();
         onclickObtenerFechaHasta();
         OnClickCargar();
+
+
         btnSalir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -227,9 +229,9 @@ public class ReviewProductoFragment extends Fragment implements SearchView.OnQue
 
 
 
-        Long fechaDesde = getFechaFromStringtoLong(tvDesde.getText().toString(), "dd/MM/yyyy");
+        /*Long fechaDesde = getFechaFromStringtoLong(tvDesde.getText().toString(), "dd/MM/yyyy");
         Long fechaHasta = getFechaHastaFromStringtoLong(tvHasta.getText().toString(), "dd/MM/yyyy");
-
+*/
         double Ventas=0;
         double Ingreso=0;
         double Saldo=0;
@@ -240,7 +242,7 @@ public class ReviewProductoFragment extends Fragment implements SearchView.OnQue
             double cantidad=0.0;
             for (int j = 0; j < listPedidos.size(); j++) {
                 PedidoEntity ped=listPedidos.get(j);
-                if (ped.getOafdoc().getTime()>=fechaDesde && ped.getOafdoc().getTime()<=fechaHasta){
+               // if (ped.getOafdoc().getTime()>=fechaDesde && ped.getOafdoc().getTime()<=fechaHasta){
                     List<DetalleEntity> listDet=viewModelPedidoDetalle.getDetalle(ped.getOanumi());
                     for (int k = 0; k < listDet.size(); k++) {
                         DetalleEntity detalle=listDet.get(k);
@@ -249,7 +251,7 @@ public class ReviewProductoFragment extends Fragment implements SearchView.OnQue
                         }
                     }
 
-                }
+                //}
 
             }
             lisAlmacen.get(i).setVenta(cantidad);

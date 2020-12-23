@@ -17,7 +17,7 @@ public interface DeudadDao {
 
 
     @Query("SELECT id,PedidoId,ClienteId,cliente,direccion,telefono,limiteCliente,PersonalId,vendedor,FechaPedido," +
-            "totalfactura,pendiente,1 as estado,0 as totalAPagar FROM deuda as t   ORDER BY PedidoId  DESC")
+            "totalfactura,pendiente,1 as estado,t.EstadoCredito,t.Mora,t.Factura,0 as totalAPagar FROM deuda as t   ORDER BY PedidoId  DESC")
     LiveData<List<DeudaEntity>> getAllDeuda();
 
     @Query("SELECT * FROM deuda  WHERE PedidoId =:id")

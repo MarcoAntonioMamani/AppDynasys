@@ -288,7 +288,7 @@ public double MontoTotalCobrar(){
     tvTotalDisponible.setText(ShareMethods.ObtenerDecimalToString(mDeuda.getLimiteCliente()-mDeuda.getPendiente(),2));
     }
     public void iniciarRecyclerView(){
-        mviewOrderAdapter = new AdapterDetalleDeuda(getContext(),MListaDeuda,this);
+        mviewOrderAdapter = new AdapterDetalleDeuda(getContext(),MListaDeuda,this,getActivity());
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         detalle_List.setLayoutManager(llm);

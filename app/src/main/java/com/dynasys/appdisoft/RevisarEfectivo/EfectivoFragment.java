@@ -111,6 +111,7 @@ public class EfectivoFragment extends Fragment implements SearchView.OnQueryText
         onclickObtenerFechaDesde();
         onclickObtenerFechaHasta();
         OnClickCargar();
+
         btnSalir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,8 +126,11 @@ public class EfectivoFragment extends Fragment implements SearchView.OnQueryText
 
         }
 
+
         return view;
     }
+
+
     public void RetornarPrincipal(){
 
         MainActivity fca = ((MainActivity) getActivity());
@@ -221,16 +225,16 @@ public void iniciarParametroFecha(){
         List<Efectivo> listNewEfectivo=new ArrayList<>();
 
 
-        Long fechaDesde = getFechaFromStringtoLong(tvDesde.getText().toString(), "dd/MM/yyyy");
+       /* Long fechaDesde = getFechaFromStringtoLong(tvDesde.getText().toString(), "dd/MM/yyyy");
         Long fechaHasta = getFechaHastaFromStringtoLong(tvHasta.getText().toString(), "dd/MM/yyyy");
-
+*/
         double Ventas=0;
         double Pagos=0;
         double General=0;
 
         for (int i = 0; i < listPedidos.size(); i++) {
             PedidoEntity ped=listPedidos.get(i);
-            if (ped.getOafdoc().getTime()>=fechaDesde && ped.getOafdoc().getTime()<=fechaHasta){
+          //  if (ped.getOafdoc().getTime()>=fechaDesde && ped.getOafdoc().getTime()<=fechaHasta){
              Efectivo ef=new Efectivo();
              ef.setCliente(ped.getCliente());
              ef.setFecha(ped.getOafdoc());
@@ -241,13 +245,13 @@ public void iniciarParametroFecha(){
              Ventas+=ped.getTotal();
                 listNewEfectivo.add(ef);
 
-            }
+         //   }
         }
 
         for (int i = 0; i < listCobranza.size(); i++) {
 
             CobranzaDetalleEntity cob=listCobranza.get(i);
-            if (cob.getFechaPago().getTime()>=fechaDesde && cob.getFechaPago().getTime()<=fechaHasta){
+         //   if (cob.getFechaPago().getTime()>=fechaDesde && cob.getFechaPago().getTime()<=fechaHasta){
                Efectivo ef=new Efectivo();
                 ef.setCliente(cob.getCliente());
                 ef.setFecha(cob.getFechaPago());
@@ -257,7 +261,7 @@ public void iniciarParametroFecha(){
                 ef.setTipo(2);
                 Pagos+=cob.getMontoAPagar();
                 listNewEfectivo.add(ef);
-            }
+            //}
         }
 General=Ventas+Pagos;
         tvTotalVenta.setText(ShareMethods.ObtenerDecimalToString(Ventas,2));

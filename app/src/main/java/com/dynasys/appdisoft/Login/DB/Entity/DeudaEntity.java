@@ -37,6 +37,13 @@ public class DeudaEntity implements Comparable<DeudaEntity> ,Cloneable{
     double pendiente;
     @ColumnInfo(name = "estado")
     int estado;
+    @ColumnInfo(name = "EstadoCredito")
+    boolean EstadoCredito;
+    @ColumnInfo(name = "Mora")
+    int Mora;
+    @ColumnInfo(name = "Factura")
+    int Factura;
+
     @Ignore
     double totalAPagar;
 
@@ -49,6 +56,22 @@ public class DeudaEntity implements Comparable<DeudaEntity> ,Cloneable{
     }
 
     public DeudaEntity() {
+    }
+
+    public boolean isEstadoCredito() {
+        return EstadoCredito;
+    }
+
+    public void setEstadoCredito(boolean estadoCredito) {
+        EstadoCredito = estadoCredito;
+    }
+
+    public int getMora() {
+        return Mora;
+    }
+
+    public void setMora(int mora) {
+        Mora = mora;
     }
 
     public String getDireccion() {
@@ -153,6 +176,14 @@ public class DeudaEntity implements Comparable<DeudaEntity> ,Cloneable{
 
     public void setEstado(int estado) {
         this.estado = estado;
+    }
+
+    public int getFactura() {
+        return Factura;
+    }
+
+    public void setFactura(int factura) {
+        Factura = factura;
     }
 
     @Override

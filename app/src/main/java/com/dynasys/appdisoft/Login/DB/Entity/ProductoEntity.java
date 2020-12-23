@@ -26,8 +26,14 @@ public class ProductoEntity  implements Cloneable{
     double stock;
     @ColumnInfo(name = "familia")
     int familia;
+    @ColumnInfo(name = "PrecioMinimo")
+    double PrecioMinimo;
+    @ColumnInfo(name = "PrecioMaximo")
+    double PrecioMaximo;
+public ProductoEntity(){
 
-    public ProductoEntity(int numi, String cod, String producto, String desccorta, int idcategoria, String categoria, double precio, double stock, int familia) {
+}
+    public ProductoEntity(int numi, String cod, String producto, String desccorta, int idcategoria, String categoria, double precio, double stock, int familia, double precioMinimo, double precioMaximo) {
         this.numi = numi;
         this.cod = cod;
         this.producto = producto;
@@ -37,6 +43,8 @@ public class ProductoEntity  implements Cloneable{
         this.precio = precio;
         this.stock = stock;
         this.familia = familia;
+        PrecioMinimo = precioMinimo;
+        PrecioMaximo = precioMaximo;
     }
 
     public int getNumi() {
@@ -109,6 +117,22 @@ public class ProductoEntity  implements Cloneable{
 
     public void setFamilia(int familia) {
         this.familia = familia;
+    }
+
+    public double getPrecioMinimo() {
+        return PrecioMinimo;
+    }
+
+    public void setPrecioMinimo(double precioMinimo) {
+        PrecioMinimo = precioMinimo;
+    }
+
+    public double getPrecioMaximo() {
+        return PrecioMaximo;
+    }
+
+    public void setPrecioMaximo(double precioMaximo) {
+        PrecioMaximo = precioMaximo;
     }
 
     public ProductoEntity clone() throws CloneNotSupportedException {

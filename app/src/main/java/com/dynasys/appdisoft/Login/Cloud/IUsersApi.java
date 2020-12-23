@@ -52,9 +52,11 @@ public interface IUsersApi {
     @GET("/api/repartidor/almacen/{idrepartidor}")
     Call<List<AlmacenEntity>> ObtenerProductoAlmacen(@Path("idrepartidor") String idRepartidor);
     @GET("/api/repartidor/CobranzaDetalle/{idrepartidor}")
+
     Call<List<CobranzaDetalleEntity>> ObtenerCobranzaDetalle(@Path("idrepartidor") String idRepartidor);
-    @GET("/api/repartidor/productos")
-    Call<List<ProductoEntity>> ObtenerProductos();
+    @GET("/api/repartidor/productosRolon/{idrepartidor}")
+
+    Call<List<ProductoEntity>> ObtenerProductos(@Path("idrepartidor") String idRepartidor);
 
     @GET("/api/repartidor/descuentos")
     Call<List<DescuentosEntity>> ObtenerDescuentos();
