@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 android {
     signingConfigs {
-        marco {
-            storeFile file('dfsfs')
-            storePassword 'fsdsdf'
-            keyAlias = 'sfdsd'
-            keyPassword 'dsfsdf'
+        Marco {
+            storeFile file('ghjj')
+            storePassword 'ghjghj'
+            keyAlias 'gjh'
+            keyPassword 'ghjh'
         }
     }
     compileSdkVersion 28
