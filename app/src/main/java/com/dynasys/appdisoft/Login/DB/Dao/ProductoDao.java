@@ -23,8 +23,7 @@ public interface ProductoDao {
 
 
     @Query("SELECT distinct p.numi,p.cod,p.producto,p.desccorta,p.idcategoria,p.categoria,precio.chprecio as precio, (" +
-            "select r.cantidad  from (select  MAx(st.id),st.cantidad   from stock as st where st.codigoProducto=p.numi) as r ) as stock " +
-            "FROM producto as p inner join precio on precio.chcprod =p.numi " +
+            "select r.cantidad  from (select  MAx(st.id),st.cantidad   from stock as st where st.codigoProducto=p.numi) as r ) as stock,p.conversion FROM producto as p inner join precio on precio.chcprod =p.numi " +
             " WHERE precio.chcatcl=:numi")
     List<ProductoEntity> getProductoByCliente(int numi);
 

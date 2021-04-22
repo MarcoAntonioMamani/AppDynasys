@@ -28,11 +28,18 @@ public class DetalleEntity  implements Cloneable{
 
     @ColumnInfo(name = "stock")
     double stock;
+
+    //cajas
+    @ColumnInfo(name = "cajas")
+    double cajas;
+    @ColumnInfo(name = "conversion")
+    double conversion;
+
     public DetalleEntity(){
 
     }
 
-    public DetalleEntity(int id, String obnumi, int obcprod, String cadesc, double obpcant, double obpbase, double obptot, boolean estado, int obupdate, double stock) {
+    public DetalleEntity(int id, String obnumi, int obcprod, String cadesc, double obpcant, double obpbase, double obptot, boolean estado, int obupdate, double stock, double cajas, double conversion) {
         this.id = id;
         this.obnumi = obnumi;
         this.obcprod = obcprod;
@@ -43,6 +50,24 @@ public class DetalleEntity  implements Cloneable{
         this.estado = estado;
         this.obupdate = obupdate;
         this.stock = stock;
+        this.cajas = cajas;
+        this.conversion = conversion;
+    }
+
+    public double getConversion() {
+        return conversion;
+    }
+
+    public void setConversion(double conversion) {
+        this.conversion = conversion;
+    }
+
+    public double getCajas() {
+        return cajas;
+    }
+
+    public void setCajas(double cajas) {
+        this.cajas = cajas;
     }
 
     public int getId() {

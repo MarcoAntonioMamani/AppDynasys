@@ -340,6 +340,15 @@ private PedidoEntity mPedido;
                                 detalle.setEstado(false);
                                 detalle.setStock(item.getStock());
 
+                                if (item.getConversion()==1){
+                                    detalle.setCajas(1.0);
+                                }else{
+                                    detalle.setCajas(0);
+                                }
+
+
+
+                                detalle.setConversion(item.getConversion());
                                 mDetalleItem.add(detalle);
 
 
@@ -406,7 +415,7 @@ private PedidoEntity mPedido;
     }
 
     @Override
-    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad) {
+    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad,EditText eCatidadCajas) {
         double cantidad=0.0;
         if (isDouble(value)){
             cantidad=Double.parseDouble(value);
@@ -421,12 +430,27 @@ private PedidoEntity mPedido;
                     ShowMessageResult("La cantidad es Superior al Stock Disponible = "+item.getStock());
                     cantidad=1;
                     eCantidad.setText("1");
+
+                    if (item.getConversion()==1.0){
+                        eCatidadCajas.setText("1");
+                    }else{
+
+                    }
+
+
+
                     DetalleEntity detalle= mDetalleItem.get(posicion);
                     detalle.setObpcant(cantidad);
                     detalle.setObptot(cantidad*detalle.getObpbase());
                     tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
                     calcularTotal();
                 }else{
+                    if (item.getConversion()==1.0){
+                        eCatidadCajas.setText(""+String.format("%.2f",cantidad));
+                    }else{
+
+                    }
+
                     DetalleEntity detalle= mDetalleItem.get(posicion);
                     detalle.setObpcant(cantidad);
                     detalle.setObptot(cantidad*detalle.getObpbase());
@@ -437,6 +461,12 @@ private PedidoEntity mPedido;
             }
         }else{
             if (posicion>=0){
+                if (item.getConversion()==1.0){
+                    eCatidadCajas.setText(""+String.format("%.2f",cantidad));
+                }else{
+
+                }
+
                 DetalleEntity detalle= mDetalleItem.get(posicion);
                 detalle.setObpcant(cantidad);
                 detalle.setObptot(cantidad*detalle.getObpbase());

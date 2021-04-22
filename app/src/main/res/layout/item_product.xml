@@ -81,7 +81,42 @@
                         android:hint="0" />
                 </LinearLayout>
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cajas"
+                        android:maxLines="1"
+                        android:textColor="@color/secondary_text"
+                        />
 
+                    <EditText
+                        android:id="@+id/id_detalle_Caja"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/animation_edittext_cantidad"
+                        android:inputType="numberDecimal"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:selectAllOnFocus="true"
+
+                        android:textColor="@color/primary_text"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:gravity="center"
+                        android:hint="0" />
+                </LinearLayout>
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="60dp"
@@ -150,27 +185,35 @@
                         />
                 </LinearLayout>
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="0.7"
-                android:layout_gravity="center"
-                android:gravity="center"
-                >
-                 <ImageView
-                     android:layout_width="40dp"
-                     android:layout_height="40dp"
-                     android:src="@drawable/ic_delete"
-                     android:layout_gravity="center"
-                     android:id="@+id/id_detalle_remove"
 
-                     />
-            </LinearLayout>
 
         </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="7dp"
+        >
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_detalle_remove"
+            android:background="@drawable/animation_bottoncancelrojo"
+            android:text="Eliminar"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            />
+
+    </LinearLayout>
+
+
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:background="@color/colorAccent"
 
             >

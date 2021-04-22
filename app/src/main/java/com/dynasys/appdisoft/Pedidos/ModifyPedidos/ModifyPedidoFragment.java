@@ -626,7 +626,7 @@ public void OnClickObtenerFecha(){
     }
 
     @Override
-    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad) {
+    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad,EditText eCatidadCajas) {
         double cantidad=0.0;
         if (isDouble(value)){
             cantidad=Double.parseDouble(value);

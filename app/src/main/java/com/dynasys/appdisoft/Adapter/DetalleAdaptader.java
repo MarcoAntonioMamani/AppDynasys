@@ -17,6 +17,8 @@ import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoMvp;
 import com.dynasys.appdisoft.R;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +41,8 @@ ViewGroup viewgroup;
         public EditText price;
         public TextView subtotal;
         public EditText cantidad;
-        public ImageView img_delete;
+        public EditText caja;
+        public TextView img_delete;
           public ViewHolder(View v) {
             super(v);
 
@@ -47,7 +50,8 @@ ViewGroup viewgroup;
               price = (EditText) v.findViewById(R.id.id_detalle_price);
               subtotal=(TextView)v.findViewById(R.id.id_detalle_subtotal);
               cantidad=(EditText)v.findViewById(R.id.id_detalle_cantidad);
-              img_delete=(ImageView)v.findViewById(R.id.id_detalle_remove);
+              caja=(EditText)v.findViewById(R.id.id_detalle_Caja);
+              img_delete=(TextView)v.findViewById(R.id.id_detalle_remove);
                      }
     }
 
@@ -79,6 +83,7 @@ ViewGroup viewgroup;
         final DetalleEntity item;
         final TextView tvsubtotal;
         final EditText tvCantidad;
+        final EditText tvCantidadCajas;
         final EditText tvPrecio;
             item = items.get(i);
             viewHolder.nombre.setText(item.getCadesc());
@@ -90,6 +95,7 @@ ViewGroup viewgroup;
              tvsubtotal=viewHolder.subtotal;
         tvCantidad=viewHolder.cantidad;
         tvPrecio=viewHolder.price;
+        tvCantidadCajas=viewHolder.caja;
             if (i== items.size()-1){
                 viewHolder.cantidad.requestFocus();
             }
@@ -103,7 +109,7 @@ ViewGroup viewgroup;
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     int pos =ObtenerPosicionElemento(item);
                     if (pos>=0){
-                        mView.ModifyItem(pos,s.toString(),item,tvsubtotal,tvCantidad);
+                        mView.ModifyItem(pos,s.toString(),item,tvsubtotal,tvCantidad,tvCantidadCajas);
                     }
 
 
@@ -138,7 +144,7 @@ ViewGroup viewgroup;
             viewHolder.img_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ImageView img=(ImageView)view;
+                    TextView img=(TextView)view;
                     DetalleEntity obj =(DetalleEntity) img.getTag();
                     int pos=ObtenerPosicionElemento(obj);
                     if (pos>=0){

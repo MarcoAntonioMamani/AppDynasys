@@ -18,7 +18,7 @@ public interface CreatePedidoMvp {
         void MostrarClientes(List<ClienteEntity> clientes);
         void MostrarProductos(List<ProductoEntity> productos);
         void setPresenter(Presenter presenter);
-        void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad);
+        void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad,EditText eCatidadCajas);
         void ModifyItemPrecio(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText ePrecio);
         void DeleteAndModifyDetailOrder(DetalleEntity item,int pos);
         void ShowMessageResult(String message);
