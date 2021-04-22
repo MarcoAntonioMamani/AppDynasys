@@ -88,9 +88,12 @@ ViewGroup viewgroup;
             item = items.get(i);
             viewHolder.nombre.setText(item.getCadesc());
             viewHolder.img_delete.setTag(item);
+
+        viewHolder.img_delete.setText("Conv. = "+item.getConversion()+"  Eliminar");
             viewHolder.price.setText(""+item.getObpbase());
             viewHolder.subtotal.setText(""+(item.getObpcant()*item.getObpbase()));
             viewHolder.cantidad.setText(""+item.getObpcant());
+            viewHolder.caja.setText(""+item.getCajas());
             viewHolder.cantidad.setTag(item);
              tvsubtotal=viewHolder.subtotal;
         tvCantidad=viewHolder.cantidad;
@@ -99,6 +102,28 @@ ViewGroup viewgroup;
             if (i== items.size()-1){
                 viewHolder.cantidad.requestFocus();
             }
+        viewHolder.caja.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int pos =ObtenerPosicionElemento(item);
+                if (pos>=0){
+                    mView.ModifyItemCaja(pos,s.toString(),item,tvsubtotal,tvCantidad,tvCantidadCajas);
+                }
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int i=0;
+            }
+        });
+
             viewHolder.cantidad.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {

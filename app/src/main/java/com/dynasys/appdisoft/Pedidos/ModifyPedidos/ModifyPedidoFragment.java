@@ -2,6 +2,7 @@ package com.dynasys.appdisoft.Pedidos.ModifyPedidos;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
@@ -20,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -625,7 +627,7 @@ public void OnClickObtenerFecha(){
         mCreatePedidoPresenter = Preconditions.checkNotNull(presenter);
     }
 
-    @Override
+    /*@Override
     public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad,EditText eCatidadCajas) {
         double cantidad=0.0;
         if (isDouble(value)){
@@ -643,7 +645,205 @@ public void OnClickObtenerFecha(){
             }
         }
     }
+*/
+    @Override
+    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad,EditText eCatidadCajas) {
+        double cantidad=0.0;
+        if (isDouble(value)){
+            cantidad=Double.parseDouble(value);
+        }
+        int posicion =obtenerPosicionItem(item);
 
+        if (mDetalleItem.get(posicion).getObupdate()>=1){
+            DetalleEntity detalle= mDetalleItem.get(posicion);
+            detalle.setObupdate(2);
+        }
+
+        int stock= DataPreferences.getPrefInt("stock",context);
+        if (stock>0){
+            if (posicion>=0){
+                if(cantidad> item.getStock()){
+                    hideKeyboard();
+                    // getActivity().onBackPressed();
+                    ShowMessageResult("La cantidad es Superior al Stock Disponible = "+item.getStock());
+                    cantidad=1;
+                    eCantidad.setText("1");
+
+                    ////////////Caja Logica//////////////////////
+                    double CantCajaValue =0;
+                    if (item.getConversion()==1.0){
+                        eCatidadCajas.setText(""+String.format("%.2f",cantidad));
+                        CantCajaValue=cantidad;
+                    }else{
+                        double Conversion=item.getConversion();
+                        int CantCaja= (int) (cantidad/Conversion);
+                        int Residuo =(int)(cantidad %Conversion);
+                        String ValuesCaja="";
+                        if (Residuo>9){
+                            ValuesCaja=CantCaja+"."+Residuo;
+                        }else{
+                            ValuesCaja=CantCaja+".0"+Residuo;
+                        }
+
+                        eCatidadCajas.setText(ValuesCaja);
+                        CantCajaValue=Double.parseDouble(ValuesCaja);
+                    }
+
+                    ////////////Caja Logica////////////////////////////////
+                    DetalleEntity detalle= mDetalleItem.get(posicion);
+                    detalle.setObpcant(cantidad);
+                    detalle.setCajas(CantCajaValue);
+                    detalle.setObptot(cantidad*detalle.getObpbase());
+                    tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                    calcularTotal();
+                }else{
+                    ////////////Caja Logica//////////////////////
+                    double CantCajaValue =0;
+                    if (item.getConversion()==1.0){
+                        eCatidadCajas.setText(""+String.format("%.2f",cantidad));
+                        CantCajaValue=cantidad;
+                    }else{
+                        double Conversion=item.getConversion();
+                        int CantCaja= (int) (cantidad/Conversion);
+                        int Residuo =(int)(cantidad %Conversion);
+                        String ValuesCaja="";
+                        if (Residuo>9){
+                            ValuesCaja=CantCaja+"."+Residuo;
+                        }else{
+                            ValuesCaja=CantCaja+".0"+Residuo;
+                        }
+
+                        eCatidadCajas.setText(ValuesCaja);
+                        CantCajaValue=Double.parseDouble(ValuesCaja);
+                    }
+                    ////////////Caja Logica//////////////////////
+                    DetalleEntity detalle= mDetalleItem.get(posicion);
+                    detalle.setObpcant(cantidad);
+                    detalle.setCajas(CantCajaValue);
+                    detalle.setObptot(cantidad*detalle.getObpbase());
+                    tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                    calcularTotal();
+                }
+
+            }
+        }else{
+            if (posicion>=0){
+
+                ////////////Caja Logica//////////////////////
+                double CantCajaValue =0;
+                if (item.getConversion()==1.0){
+                    eCatidadCajas.setText(""+String.format("%.2f",cantidad));
+                    CantCajaValue=cantidad;
+                }else{
+                    double Conversion=item.getConversion();
+                    int CantCaja= (int) (cantidad/Conversion);
+                    int Residuo =(int)(cantidad %Conversion);
+                    String ValuesCaja="";
+                    if (Residuo>9){
+                        ValuesCaja=CantCaja+"."+Residuo;
+                    }else{
+                        ValuesCaja=CantCaja+".0"+Residuo;
+                    }
+
+                    eCatidadCajas.setText(ValuesCaja);
+                    CantCajaValue=Double.parseDouble(ValuesCaja);
+                }
+                ////////////Caja Logica//////////////////////
+                DetalleEntity detalle= mDetalleItem.get(posicion);
+                detalle.setObpcant(cantidad);
+                detalle.setCajas(CantCajaValue);
+                detalle.setObptot(cantidad*detalle.getObpbase());
+                tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                calcularTotal();
+            }
+        }
+
+    }
+
+    private  void hideKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
+        }
+    }
+    @Override
+    public void ModifyItemCaja(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad, EditText eCatidadCajas) {
+        double cantidad=0.0;
+        if (isDouble(value)){
+
+            int ParteEnteraCaja=(int)Double.parseDouble(value);
+            int CantUnitCaja=(int)(ParteEnteraCaja*item.getConversion());
+            int decNumberInt = Integer.parseInt(value.substring(value.indexOf('.') + 1));
+            cantidad=CantUnitCaja+decNumberInt;
+            cantidad=Double.parseDouble(value);
+        }
+
+
+        int posicion =obtenerPosicionItem(item);
+        int stock= DataPreferences.getPrefInt("stock",context);
+        if (stock>0){
+            if (posicion>=0){
+                if(cantidad> item.getStock()){
+                    hideKeyboard();
+                    // getActivity().onBackPressed();
+                    ShowMessageResult("La cantidad es Superior al Stock Disponible = "+item.getStock());
+                    cantidad=1;
+                    eCantidad.setText("1");
+
+                    ////////////Caja Logica//////////////////////
+                    double CantCajaValue =0;
+                    if (item.getConversion()==1.0){
+                        eCatidadCajas.setText(""+String.format("%.2f",cantidad));
+                        CantCajaValue=cantidad;
+                    }else{
+                        double Conversion=item.getConversion();
+                        int CantCaja= (int) (cantidad/Conversion);
+                        int Residuo =(int)(cantidad %Conversion);
+                        String ValuesCaja="";
+                        if (Residuo>9){
+                            ValuesCaja=CantCaja+"."+Residuo;
+                        }else{
+                            ValuesCaja=CantCaja+".0"+Residuo;
+                        }
+
+                        eCatidadCajas.setText(ValuesCaja);
+                        CantCajaValue=Double.parseDouble(ValuesCaja);
+                    }
+
+                    ////////////Caja Logica////////////////////////////////
+                    DetalleEntity detalle= mDetalleItem.get(posicion);
+                    detalle.setObpcant(cantidad);
+                    detalle.setCajas(CantCajaValue);
+                    detalle.setObptot(cantidad*detalle.getObpbase());
+                    tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                    calcularTotal();
+                }else{
+                    eCatidadCajas.setText(""+String.format("%.2f",cantidad));
+                    DetalleEntity detalle= mDetalleItem.get(posicion);
+                    detalle.setObpcant(cantidad);
+                    detalle.setCajas(Double.parseDouble(value));
+                    detalle.setObptot(cantidad*detalle.getObpbase());
+                    tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                    calcularTotal();
+                }
+
+            }
+        }else{
+            if (posicion>=0){
+
+                ////////////Caja Logica//////////////////////
+                eCatidadCajas.setText(""+String.format("%.2f",cantidad));
+                ////////////Caja Logica//////////////////////
+                DetalleEntity detalle= mDetalleItem.get(posicion);
+                detalle.setObpcant(cantidad);
+                detalle.setCajas(Double.parseDouble(value));
+                detalle.setObptot(cantidad*detalle.getObpbase());
+                tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                calcularTotal();
+            }
+        }
+
+    }
     @Override
     public void ModifyItemPrecio(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText ePrecio) {
         double precio=0.0;
