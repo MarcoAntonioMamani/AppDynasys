@@ -91,7 +91,7 @@ ViewGroup viewgroup;
 
         viewHolder.img_delete.setText("Conv. = "+item.getConversion()+"  Eliminar");
             viewHolder.price.setText(""+item.getObpbase());
-            viewHolder.subtotal.setText(""+(item.getObpcant()*item.getObpbase()));
+            viewHolder.subtotal.setText(""+(String.format("%.2f",item.getObpcant()*item.getObpbase())));
             viewHolder.cantidad.setText(""+item.getObpcant());
             viewHolder.caja.setText(""+item.getCajas());
             viewHolder.cantidad.setTag(item);
@@ -100,7 +100,7 @@ ViewGroup viewgroup;
         tvPrecio=viewHolder.price;
         tvCantidadCajas=viewHolder.caja;
             if (i== items.size()-1){
-                viewHolder.cantidad.requestFocus();
+                viewHolder.caja.requestFocus();
             }
         viewHolder.caja.addTextChangedListener(new TextWatcher() {
             @Override
