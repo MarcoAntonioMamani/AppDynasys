@@ -133,6 +133,8 @@ Double mTotal=0.0;
    int tipoActividad=0;
 EditText EtReclamo;
     LottieAlertDialog alertDialog;
+
+    LinearLayout linearCredito;
 private PedidoEntity mPedido;
     private NestedScrollView mscroll;
     public CreatePedidoFragment() {
@@ -178,6 +180,7 @@ private PedidoEntity mPedido;
         tvObservacion=(EditText)view.findViewById(R.id.pedido_view_observacion) ;
         mbutton_guardar = (Button)view.findViewById(R.id.id_btn_guardarPedido);
         mbutton_cancelar=(Button)view.findViewById(R.id.id_btn_cancelarPedido);
+        linearCredito=(LinearLayout)view.findViewById(R.id.creare_pedido_linearcredito);
         mscroll=view.findViewById(R.id.id_order_scroll);
         viewModelCliente = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
         viewModelProducto = ViewModelProviders.of(getActivity()).get(ProductosListViewModel.class);
@@ -366,15 +369,15 @@ private PedidoEntity mPedido;
             }
 
         }
-        if (b==true){
+        /*if (b==true){*/
             if (tipo==1){
                 SaveOnline();
             }
 
-        }else{  //Existen productos sin stock
+        /*}else{  //Existen productos sin stock
             Reconstruir();
             ShowMessageResult("Existen Productos que ya no Cuentan con el Stock ingresado");
-        }
+        }*/
 
 
     }
@@ -506,7 +509,11 @@ private PedidoEntity mPedido;
                             tvDebe.setText(ShareMethods.ObtenerDecimalToString(mCliente.getDeuda(),2));
                             tvLimite.setText(ShareMethods.ObtenerDecimalToString(mCliente.getLimite(),2));
                             tvDisponible.setText(ShareMethods.ObtenerDecimalToString(mCliente.getLimite()-mCliente.getDeuda(),2));
-
+                            if (mCliente.getContadocredito()==1){
+                                linearCredito.setVisibility(View.GONE);
+                            }else{
+                                linearCredito.setVisibility(View.VISIBLE);
+                            }
                         }
 
 

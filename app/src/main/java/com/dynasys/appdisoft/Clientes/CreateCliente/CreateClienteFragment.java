@@ -155,6 +155,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
         viewModelPedidos=ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelZona =ViewModelProviders.of(getActivity()).get(ZonaListViewModel.class);
         mSupportMapFragment = (MySupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+
         if(mSupportMapFragment != null)
             mSupportMapFragment.setListener(new MySupportMapFragment.OnTouchListener() {
                 @Override
@@ -165,6 +166,9 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
           //  SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
 
         mSupportMapFragment.getMapAsync(this);
+
+
+
 
         OnClickGps();
         onClickAtras();
@@ -582,7 +586,9 @@ return false;
 // create marker
         MarkerOptions marker = new MarkerOptions().position(sydney);
 
-
+        if (tipo!=0){
+            mapa.getUiSettings().setScrollGesturesEnabled(false);
+        }
     }
 
 

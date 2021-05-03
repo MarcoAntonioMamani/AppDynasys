@@ -9,8 +9,16 @@ public class Efectivo {
     double Monto;
     int Tipo;
     Date Fecha;
-
+    String Observacion;
     public Efectivo() {
+    }
+
+    public String getObservacion() {
+        return Observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        Observacion = observacion;
     }
 
     public String getIdPedido() {

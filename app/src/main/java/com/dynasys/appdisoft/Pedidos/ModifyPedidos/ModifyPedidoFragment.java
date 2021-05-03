@@ -131,6 +131,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     private NestedScrollView mscroll;
     LottieAlertDialog alertDialog;
     LinearLayout linearViewCredito;
+    LinearLayout linearContadoCredito;
     EditText EtReclamo;
     boolean BanderaPrecio=false;
     @Override
@@ -175,6 +176,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         EtReclamo=view.findViewById(R.id.edit_update_Reclamo);
         ObFecha=(ImageButton)view.findViewById(R.id.edit_obtener_fecha);
         linearViewCredito=view.findViewById(R.id.modify_viewCredito);
+        linearContadoCredito=view.findViewById(R.id.modify_pedido_linearcredito);
         tvObservacion=(EditText)view.findViewById(R.id.edit_view_observacion) ;
         rEfectivo=(RadioButton)view.findViewById(R.id.edit_order_rbt_efectivo) ;
         rCredito=(RadioButton)view.findViewById(R.id.edit_order_rbt_credito);
@@ -217,6 +219,13 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         if (categoria==3){
             mbutton_entrega.setVisibility(View.GONE);
         }
+
+        if (mCliente.getContadocredito()==1){
+            linearContadoCredito.setVisibility(View.GONE);
+        }else{
+            linearContadoCredito.setVisibility(View.VISIBLE);
+        }
+
         if(mPedido.getTipocobro()==2){
             rCredito.setChecked(true);
             tvTotalPago.setText(ShareMethods.ObtenerDecimalToString(mPedido.getTotalcredito(),2));
@@ -466,17 +475,17 @@ public void VerficarStockDisponible(int tipo){
         }
 
     }
-    if (b==true){
+   /* if (b==true){*/
         if (tipo==1){
             Saveoffline();
         }else{
             SaveOffLineEntregar();
         }
 
-    }else{  //Existen productos sin stock
+    /*}else{  //Existen productos sin stock
         Reconstruir();
         ShowMessageResult("Existen Productos que ya no Cuentan con el Stock ingresado");
-    }
+    }*/
 
 
 }

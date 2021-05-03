@@ -51,7 +51,16 @@ public class ClientesAdapter extends ArrayAdapter<ClienteEntity> {
             TextView client_direccion=(TextView) view.findViewById(R.id.row_cliente_direccion);
             TextView client_telefono=(TextView) view.findViewById(R.id.row_cliente_telefono);
             TextView cliente_debe=(TextView)view.findViewById(R.id.row_cliente_debe);
+            TextView clienteTipo=(TextView)view.findViewById(R.id.row_TipoContadoCredito);
             //imageView.setImageResource(client.getImageUrl());
+
+            if (client.getContadocredito() ==1){ ///1=Contado
+                clienteTipo.setText("CONTADO");
+
+            }else{
+                clienteTipo.setText("CREDITO");
+            }
+
             cliente_Name.setText(client.getNamecliente());
             client_direccion .setText(client.getDireccion());
             client_telefono.setText(client.getTelefono());

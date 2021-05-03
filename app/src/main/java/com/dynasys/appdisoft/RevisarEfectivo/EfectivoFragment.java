@@ -241,9 +241,15 @@ public void iniciarParametroFecha(){
              ef.setIdCliente(ped.getOaccli());
              ef.setIdPedido(ped.getOanumi());
              ef.setMonto(ped.getTotal());
+             ef.setObservacion(ped.getOaobs());
              ef.setTipo(1);
-             Ventas+=ped.getTotal();
-                listNewEfectivo.add(ef);
+
+
+             if (ped.getTipocobro() !=2 && ped.getOaest()==3){
+                 Ventas+=ped.getTotal();
+                 listNewEfectivo.add(ef);
+             }
+
 
          //   }
         }
@@ -258,6 +264,7 @@ public void iniciarParametroFecha(){
                 ef.setIdCliente("1");
                 ef.setIdPedido(""+cob.getPedidoId());
                 ef.setMonto(cob.getMontoAPagar());
+                ef.setObservacion(""+cob.getOaobs() );
                 ef.setTipo(2);
                 Pagos+=cob.getMontoAPagar();
                 listNewEfectivo.add(ef);

@@ -64,7 +64,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/primary_text"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                                android:textSize="15sp"
+                                android:textSize="13sp"
                                 android:textStyle="bold"
                                 android:text="Pedido"/>
                         </LinearLayout>
@@ -78,7 +78,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/primary_text"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                                android:textSize="15sp"
+                                android:textSize="13sp"
                                 android:textStyle="bold"
                                 android:text="Fecha"/>
                         </LinearLayout>
@@ -92,7 +92,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/primary_text"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                                android:textSize="15sp"
+                                android:textSize="13sp"
                                 android:textStyle="bold"
                                 android:text="Cliente"/>
                         </LinearLayout>
@@ -106,7 +106,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/primary_text"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                                android:textSize="15sp"
+                                android:textSize="13sp"
                                 android:textStyle="bold"
                                 android:text="Monto"/>
                         </LinearLayout>
@@ -120,9 +120,9 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/primary_text"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                                android:textSize="15sp"
+                                android:textSize="13sp"
                                 android:textStyle="bold"
-                                android:text="P/V"/>
+                                android:text="Factura"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -326,7 +326,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:text="Pagos:"/>
                         <TextView
@@ -334,7 +334,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/primary_text"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:paddingLeft="5dp"
                             android:id="@+id/view_info_efectivo_pagos"
                             android:text="2500"/>
@@ -349,7 +349,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:text="Ventas:"/>
                         <TextView
@@ -357,7 +357,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/primary_text"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:paddingLeft="5dp"
                             android:id="@+id/view_info_efectivo_ventas"
                             android:text="10.000"/>
@@ -372,7 +372,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorAccent"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:text="General:"/>
                         <TextView
@@ -380,7 +380,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/primary_text"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:paddingLeft="5dp"
                             android:id="@+id/view_info_efectivo_general"
                             android:text="6.500"/>

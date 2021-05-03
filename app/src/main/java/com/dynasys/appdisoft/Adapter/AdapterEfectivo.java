@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.util.ColorGenerator;
@@ -55,11 +56,43 @@ private Activity act;
         clientesViewHolder.tvMonto.setText(ShareMethods.ObtenerDecimalToString(listaPedidos.get(i).getMonto(),2));
 
         if (listaPedidos.get(i).getTipo()==1){
-            clientesViewHolder.tvTipo.setText("V");
+
+
+            if (listaPedidos.get(i).getObservacion().contains(",")&& listaPedidos.get(i).getObservacion().length()>1){
+
+                String string = listaPedidos.get(i).getObservacion();
+                String[] parts = string.split(",");
+                if (parts.length>0){
+                    clientesViewHolder.tvTipo.setText(""+parts[0]);
+                }else{
+                    clientesViewHolder.tvTipo.setText("0");
+                }
+
+
+
+            }else{
+                clientesViewHolder.tvTipo.setText("0");
+            }
+
 
             clientesViewHolder.tvTipo.setBackground(act.getResources().getDrawable(R.drawable.animation_riple_maps));
+            //clientesViewHolder.lyEfectivo.setBackground(act.getResources().getColor(R.color.amarillo));
         }else{
-            clientesViewHolder.tvTipo.setText("P");
+            if (listaPedidos.get(i).getObservacion().contains(",")&& listaPedidos.get(i).getObservacion().length()>1){
+
+                String string = listaPedidos.get(i).getObservacion();
+                String[] parts = string.split(",");
+                if (parts.length>0){
+                    clientesViewHolder.tvTipo.setText(""+parts[0]);
+                }else{
+                    clientesViewHolder.tvTipo.setText("0");
+                }
+
+
+
+            }else{
+                clientesViewHolder.tvTipo.setText("0");
+            }
             clientesViewHolder.tvTipo.setBackground(act.getResources().getDrawable(R.drawable.animation_riple_edit));
         }
 
@@ -86,6 +119,8 @@ private Activity act;
         protected TextView tvCliente;
         protected TextView tvMonto;
         protected TextView tvTipo;
+
+        protected LinearLayout lyEfectivo;
         public PedidosViewHolder(View v) {
             super(v);
 
@@ -94,6 +129,8 @@ private Activity act;
             tvCliente = (TextView) v.findViewById(R.id.view_detalle_efectivo_cliente);
             tvMonto=(TextView)v.findViewById(R.id.view_detalle_efectivo_monto);
             tvTipo=(TextView)v.findViewById(R.id.view_detalle_efectivo_tipo);
+            lyEfectivo=(LinearLayout)v.findViewById(R.id.layout_item_efectivo);
+
         }
     }
 

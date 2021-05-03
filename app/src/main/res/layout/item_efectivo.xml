@@ -18,6 +18,8 @@
         android:paddingTop="5dp"
         android:paddingLeft="5dp"
         android:paddingBottom="1dp"
+        android:id="@+id/layout_item_efectivo"
+
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,14 +104,14 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
+                    android:layout_weight="0.7"
                     >
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:textSize="13sp"
+                        android:textSize="10sp"
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:id="@+id/view_detalle_efectivo_tipo"

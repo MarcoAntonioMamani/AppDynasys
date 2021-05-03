@@ -41,6 +41,7 @@
         android:layout_below="@id/row_cliente_direccion"
         android:layout_toRightOf="@id/row_cliente_img"
         android:layout_marginTop="5dp"
+        android:id="@+id/prueba"
         >
         <LinearLayout
             android:layout_width="0dp"
@@ -89,11 +90,54 @@
 
 
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/prueba"
+        android:layout_toRightOf="@id/row_cliente_img"
+        android:layout_marginTop="2dp"
+        android:id="@+id/Tipo"
+        >
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tipo Definido:"
+
+                    android:textColor="@color/primary_text"
+                    android:textStyle="bold"
+                    android:textSize="10sp" />
+                <TextView
+                    android:id="@+id/row_TipoContadoCredito"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Credito"
+                    android:paddingLeft="5dp"
+                    android:textColor="@color/gray_dark"
+                    android:textSize="10sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/row_cliente_img"
+        android:layout_below="@+id/Tipo"
 
         android:background="@color/colorAccent"></View>
 </RelativeLayout>

@@ -25,7 +25,17 @@ public class CobranzaDetalleEntity {
     int estado;
     @ColumnInfo(name = "cliente")
     String cliente;
+    @ColumnInfo(name = "oaobs")
+    String oaobs;
     public CobranzaDetalleEntity() {
+    }
+
+    public String getOaobs() {
+        return oaobs;
+    }
+
+    public void setOaobs(String oaobs) {
+        this.oaobs = oaobs;
     }
 
     public String getCliente() {

@@ -1279,12 +1279,12 @@ if (UtilShare.mActivity!=null){
                 p.setEstadoUpdate(pedido.getEstadoUpdate());
                 p.setReclamo(pedido.getReclamo());
                 ///Validamos Stock
-                Boolean TieneStock=VerficarStockDisponible(Detalle);
+               /* Boolean TieneStock=VerficarStockDisponible(Detalle);
                 if (TieneStock==false){
                     pedido.setEstadoStock(2);
                     viewModelPedidos .updatePedido(pedido);
                     return;
-                }
+                }*/
 
 
 
@@ -1377,12 +1377,12 @@ if (UtilShare.mActivity!=null){
                     p.setEstadoUpdate(pedido.getEstadoUpdate());
                     p.setReclamo(pedido.getReclamo());
                     ///Validamos Stock
-                    Boolean TieneStock=VerficarStockDisponible(Detalle);
+                    /*Boolean TieneStock=VerficarStockDisponible(Detalle);
                     if (TieneStock==false){
                        // pedido.setEstadoStock(2);
                        // viewModelPedidos .updatePedido(pedido);
                         return;
-                    }
+                    }*/
 
 
 

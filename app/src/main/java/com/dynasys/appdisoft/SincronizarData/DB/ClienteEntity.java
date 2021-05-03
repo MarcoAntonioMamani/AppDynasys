@@ -43,10 +43,19 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
     double limite;
     @ColumnInfo(name = "deuda")
     double  deuda;
-
+    @ColumnInfo(name = "contadocredito")
+    int contadocredito;
     //razon_social
     public ClienteEntity(){
 
+    }
+
+    public int getContadocredito() {
+        return contadocredito;
+    }
+
+    public void setContadocredito(int contadocredito) {
+        this.contadocredito = contadocredito;
     }
 
     public double getLimite() {

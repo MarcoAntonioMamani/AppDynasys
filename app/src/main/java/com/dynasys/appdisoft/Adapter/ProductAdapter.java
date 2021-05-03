@@ -61,7 +61,9 @@ public void setLista(List<ProductoEntity> items){
 
             int stock= DataPreferences.getPrefInt("stock",context);
             if (stock==0){
-                producto_stock.setVisibility(View.GONE);
+              //  producto_stock.setVisibility(View.GONE);
+                producto_stock.setVisibility(View.VISIBLE);
+                producto_stock.setTextColor(context.getResources().getColor(R.color.intro_slide_5_dark));
             }else{
                 producto_stock.setVisibility(View.VISIBLE);
                 producto_stock.setTextColor(context.getResources().getColor(R.color.intro_slide_5_dark));
