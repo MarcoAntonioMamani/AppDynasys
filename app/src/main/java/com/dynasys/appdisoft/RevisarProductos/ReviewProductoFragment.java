@@ -242,7 +242,8 @@ public class ReviewProductoFragment extends Fragment implements SearchView.OnQue
             double cantidad=0.0;
             for (int j = 0; j < listPedidos.size(); j++) {
                 PedidoEntity ped=listPedidos.get(j);
-               // if (ped.getOafdoc().getTime()>=fechaDesde && ped.getOafdoc().getTime()<=fechaHasta){
+                if (ped.getOaest()==3){
+                    // if (ped.getOafdoc().getTime()>=fechaDesde && ped.getOafdoc().getTime()<=fechaHasta){
                     List<DetalleEntity> listDet=viewModelPedidoDetalle.getDetalle(ped.getOanumi());
                     for (int k = 0; k < listDet.size(); k++) {
                         DetalleEntity detalle=listDet.get(k);
@@ -251,11 +252,13 @@ public class ReviewProductoFragment extends Fragment implements SearchView.OnQue
                         }
                     }
 
-                //}
+                    //}
+                }
+
 
             }
             lisAlmacen.get(i).setVenta(cantidad);
-            lisAlmacen.get(i).setSaldo(lisAlmacen.get(i).getIngreso()-cantidad);
+            lisAlmacen.get(i).setSaldo((lisAlmacen.get(i).getIngreso()+lisAlmacen.get(i).getInicial())-cantidad);
         }
 
 

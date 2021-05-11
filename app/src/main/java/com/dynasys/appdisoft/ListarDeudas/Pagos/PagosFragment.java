@@ -487,7 +487,7 @@ public double MontoTotalCobrar(){
         DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
 
         String code = df.format(Calendar.getInstance().getTime());
-        code=""+codigoRepartidor+","+code+"V2.5";
+        code=""+codigoRepartidor+","+code+"VA1.0";
 
         CobranzaRequest cobranza=new CobranzaRequest();
 
