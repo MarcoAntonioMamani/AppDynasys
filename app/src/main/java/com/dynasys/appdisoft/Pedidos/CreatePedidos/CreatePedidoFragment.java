@@ -256,7 +256,12 @@ private PedidoEntity mPedido;
         mPedido.setLatitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLatitude());
         mPedido.setLongitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLongitude());
         mPedido.setTotal(_prObtenerTotal());
-        mPedido.setTipocobro(1);
+        if (mCliente.getContadocredito()!=1){
+            mPedido.setTipocobro(2);
+        }else{
+            mPedido.setTipocobro(1);
+        }
+
         mPedido.setTotalcredito(0.0);
         mPedido.setEstado(0);
         mPedido.setReclamo(EtReclamo.getText().toString());

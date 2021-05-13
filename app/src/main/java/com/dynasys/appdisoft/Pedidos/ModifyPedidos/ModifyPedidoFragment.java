@@ -271,7 +271,8 @@ public void Saveoffline(){
             pedi.setOafdoc(mFecha);
             pedi.setTotal(ObtenerTotal());
 
-            if (rCredito.isChecked()==true){
+           // if (rCredito.isChecked()==true){
+             if (mCliente.getContadocredito()!=1){
                 pedi.setTipocobro(2);
                 pedi.setTotalcredito(Double.parseDouble(tvTotalPago.getText().toString()));
             }else{
@@ -721,9 +722,12 @@ return null;
                 pedi.setOaobs(tvObservacion.getText().toString());
                 pedi.setOafdoc(mFecha);
                 pedi.setTotal(ObtenerTotal());
-                if (rCredito.isChecked()==true){
+
+
+                //if (rCredito.isChecked()==true){
+                    if (mCliente.getContadocredito()!=1){
                     pedi.setTipocobro(2);
-                    pedi.setTotalcredito(Double.parseDouble(tvTotalPago.getText().toString()));
+                    pedi.setTotalcredito(ObtenerTotal());
                 }else{
                     pedi.setTipocobro(1);
                     pedi.setTotalcredito(0.0);
