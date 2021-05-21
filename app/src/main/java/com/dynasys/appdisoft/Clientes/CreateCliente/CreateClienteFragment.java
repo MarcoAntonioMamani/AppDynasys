@@ -720,7 +720,7 @@ return false;
                         cliente.setRazon_social(tilRazonSocial.getEditText().getText().toString());
                         cliente.setLatitud(mapa.getCameraPosition().target.latitude);
                         cliente.setLongitud(mapa.getCameraPosition().target.longitude);
-
+                        cliente.setContadocredito(1);
                         cliente.setCccat(2);
                         int idZonas= DataPreferences.getPrefInt("Zonas",mContext);
                         if (idZonas==-1){
