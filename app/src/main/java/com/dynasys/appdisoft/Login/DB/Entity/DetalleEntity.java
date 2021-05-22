@@ -34,10 +34,49 @@ public class DetalleEntity  implements Cloneable{
 
     @ColumnInfo(name = "stock")
     double stock;
+
+    //cajas
+    @ColumnInfo(name = "cajas")
+    double cajas;
+    @ColumnInfo(name = "conversion")
+    double conversion;
     public DetalleEntity(){
 
     }
 
+    public DetalleEntity(int id, String obnumi, int obcprod, String cadesc, double obpcant, double obpbase, double obptot, double descuento, double total, int familia, boolean estado, int obupdate, double stock, double cajas, double conversion) {
+        this.id = id;
+        this.obnumi = obnumi;
+        this.obcprod = obcprod;
+        this.cadesc = cadesc;
+        this.obpcant = obpcant;
+        this.obpbase = obpbase;
+        this.obptot = obptot;
+        this.descuento = descuento;
+        this.total = total;
+        this.familia = familia;
+        this.estado = estado;
+        this.obupdate = obupdate;
+        this.stock = stock;
+        this.cajas = cajas;
+        this.conversion = conversion;
+    }
+
+    public double getConversion() {
+        return conversion;
+    }
+
+    public void setConversion(double conversion) {
+        this.conversion = conversion;
+    }
+
+    public double getCajas() {
+        return cajas;
+    }
+
+    public void setCajas(double cajas) {
+        this.cajas = cajas;
+    }
 
     public int getId() {
         return id;

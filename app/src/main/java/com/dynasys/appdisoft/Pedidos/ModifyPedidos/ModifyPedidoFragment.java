@@ -132,6 +132,9 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     LottieAlertDialog alertDialog;
     LinearLayout linearViewCredito;
     EditText EtReclamo;
+
+    Boolean BanderaCaja=false;
+    Boolean BanderaCantidad=false;
     @Override
     public void onResume() {
         super.onResume();
@@ -276,6 +279,7 @@ public void Saveoffline(){
 
                         detalle.setObpcant(NewValor.getObpcant());
                         detalle.setObupdate(NewValor.getObupdate());
+                        detalle.setCajas(NewValor.getCajas());
                         detalle.setObptot(NewValor.getObptot());
                         detalle.setDescuento(NewValor.getDescuento());
                         detalle.setTotal(NewValor.getTotal());
@@ -302,6 +306,7 @@ public void Saveoffline(){
                     if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
                         detalle.setObpcant(NewValor.getObpcant());
                         detalle.setObupdate(NewValor.getObupdate());
+                        detalle.setCajas(NewValor.getCajas());
                         detalle.setObptot(NewValor.getObptot());
                         detalle.setDescuento(NewValor.getDescuento());
                         detalle.setTotal(NewValor.getTotal());
@@ -339,6 +344,7 @@ public void Saveoffline(){
                     if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0 &&detalle.getId()>0){
                         detalle.setObpcant(NewValor.getObpcant());
                         detalle.setObupdate(NewValor.getObupdate());
+                        detalle.setCajas(NewValor.getCajas());
                         detalle.setObptot(NewValor.getObptot());
                         detalle.setObnumi(pedi.getCodigogenerado());
                         detalle.setDescuento(NewValor.getDescuento());
@@ -707,6 +713,7 @@ return null;
                         double cant=detalle.getObpcant();
                         if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==2){
                             detalle.setObpcant(NewValor.getObpcant());
+                            detalle.setCajas(NewValor.getCajas());
                             detalle.setObupdate(NewValor.getObupdate());
                             detalle.setObptot(NewValor.getObptot());
                             detalle.setDescuento(NewValor.getDescuento());
@@ -733,6 +740,7 @@ return null;
                         if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==-1){
                             detalle.setObpcant(NewValor.getObpcant());
                             detalle.setObupdate(NewValor.getObupdate());
+                            detalle.setCajas(NewValor.getCajas());
                             detalle.setObptot(NewValor.getObptot());
                             detalle.setDescuento(NewValor.getDescuento());
                             detalle.setTotal(NewValor.getTotal());
@@ -767,6 +775,7 @@ return null;
                         if (NewValor.getObcprod()==detalle.getObcprod() && NewValor.getObupdate()==0){
                             detalle.setObpcant(NewValor.getObpcant());
                             detalle.setObupdate(NewValor.getObupdate());
+                            detalle.setCajas(NewValor.getCajas());
                             detalle.setObptot(NewValor.getObptot());
                             detalle.setObnumi(pedi.getCodigogenerado());
                             detalle.setDescuento(NewValor.getDescuento());
@@ -984,6 +993,29 @@ return null;
                                         detalle.setObptot(item.getPrecio());
                                         detalle.setTotal(item.getPrecio());
                                         detalle.setStock(item.getStock());
+                                        double CantCajaValue =0;
+                                        if (item.getConversion()==1.0){
+
+                                            CantCajaValue=1;
+                                        }else{
+                                            double Conversion=item.getConversion();
+                                            int CantCaja= (int) (1/Conversion);
+                                            int Residuo =(int)(1 %Conversion);
+                                            String ValuesCaja="";
+                                            if (Residuo>9){
+                                                ValuesCaja=CantCaja+"."+Residuo;
+                                            }else{
+                                                ValuesCaja=CantCaja+".0"+Residuo;
+                                            }
+
+
+                                            CantCajaValue=Double.parseDouble(ValuesCaja);
+                                        }
+
+
+                                        detalle.setCajas(CantCajaValue);
+                                        detalle.setConversion(item.getConversion());
+
                                         detalle.setEstado(false);
                                         detalle.setObupdate(0);
                                         mDetalleItem.add(detalle);
@@ -1001,6 +1033,28 @@ return null;
                                             DetalleEntity  detalle = ItemDetalle.clone();
                                             mDetalleItem.remove(ItemDetalle);
                                             detalle.setObpcant(1.0);
+                                            double CantCajaValue =0;
+                                            if (item.getConversion()==1.0){
+
+                                                CantCajaValue=1;
+                                            }else{
+                                                double Conversion=item.getConversion();
+                                                int CantCaja= (int) (1/Conversion);
+                                                int Residuo =(int)(1 %Conversion);
+                                                String ValuesCaja="";
+                                                if (Residuo>9){
+                                                    ValuesCaja=CantCaja+"."+Residuo;
+                                                }else{
+                                                    ValuesCaja=CantCaja+".0"+Residuo;
+                                                }
+
+
+                                                CantCajaValue=Double.parseDouble(ValuesCaja);
+                                            }
+
+
+                                            detalle.setCajas(CantCajaValue);
+                                            detalle.setConversion(item.getConversion());
                                             mDetalleItem.add(detalle);
                                             if (detalle.getObupdate()==-1){
                                                 detalle.setObupdate(2);
@@ -1129,63 +1183,235 @@ return null;
     }
 
     @Override
-    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad,LinearLayout fondo) {
-        double cantidad=0.0;
-        if (isDouble(value)){
-            cantidad=Double.parseDouble(value);
-        }
+    public void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad,LinearLayout fondo, EditText eCatidadCajas) {
+        BanderaCantidad=true;
+        if (BanderaCaja==false){
+            double cantidad=0.0;
+            if (isDouble(value)){
+                cantidad=Double.parseDouble(value);
+            }
 
-        int stock= DataPreferences.getPrefInt("stock",context);
-        if (stock>0){
-            int posicion =obtenerPosicionItem(item);
-            if (posicion>=0){
-                if(cantidad> item.getStock()){
-                    hideKeyboard();
-                    // getActivity().onBackPressed();
-                    ShowMessageResult("La cantidad es Superior al Stock Disponible = "+item.getStock());
-                    cantidad=1;
-                    eCantidad.setText("1");
+            int stock= DataPreferences.getPrefInt("stock",context);
+            if (stock>0){
+                int posicion =obtenerPosicionItem(item);
+                if (posicion>=0){
+                    if(cantidad> item.getStock()){
+                        hideKeyboard();
+                        // getActivity().onBackPressed();
+                        ShowMessageResult("La cantidad es Superior al Stock Disponible = "+item.getStock());
+                        cantidad=1;
+                        eCantidad.setText("1");
+
+                        ////////////Caja Logica//////////////////////
+                        double CantCajaValue =0;
+                        if (item.getConversion()==1.0){
+                            eCatidadCajas.setText(""+String.format("%.2f",cantidad));
+                            CantCajaValue=cantidad;
+                        }else{
+                            double Conversion=item.getConversion();
+                            int CantCaja= (int) (cantidad/Conversion);
+                            int Residuo =(int)(cantidad %Conversion);
+                            String ValuesCaja="";
+                            if (Residuo>9){
+                                ValuesCaja=CantCaja+"."+Residuo;
+                            }else{
+                                ValuesCaja=CantCaja+".0"+Residuo;
+                            }
+
+                            eCatidadCajas.setText(ValuesCaja);
+                            CantCajaValue=Double.parseDouble(ValuesCaja);
+                        }
+
+
+                        ////////////Caja Logica////////////////////////////////
+
+                        DetalleEntity detalle= mDetalleItem.get(posicion);
+                        detalle.setObpcant(cantidad);
+                        detalle.setCajas(CantCajaValue);
+                        detalle.setObptot(cantidad*detalle.getObpbase());
+                        detalle.setTotal(cantidad*detalle.getObpbase());
+                        double total=cantidad*mDetalleItem.get(posicion).getObpbase();
+                        tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
+                        if (mDetalleItem.get(posicion).getObupdate()>=1){
+                            detalle.setObupdate(2);
+                        }
+                        // tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                        calcularTotal();
+                    }else{
+                        ////////////Caja Logica//////////////////////
+                        double CantCajaValue =0;
+                        if (item.getConversion()==1.0){
+                            eCatidadCajas.setText(""+String.format("%.2f",cantidad));
+                            CantCajaValue=cantidad;
+                        }else{
+                            double Conversion=item.getConversion();
+                            int CantCaja= (int) (cantidad/Conversion);
+                            int Residuo =(int)(cantidad %Conversion);
+                            String ValuesCaja="";
+                            if (Residuo>9){
+                                ValuesCaja=CantCaja+"."+Residuo;
+                            }else{
+                                ValuesCaja=CantCaja+".0"+Residuo;
+                            }
+
+                            eCatidadCajas.setText(ValuesCaja);
+                            CantCajaValue=Double.parseDouble(ValuesCaja);
+                        }
+                        ////////////Caja Logica//////////////////////
+
+                        fondo.setBackgroundColor(getActivity().getResources().getColor(R.color.marfil));
+                        DetalleEntity detalle= mDetalleItem.get(posicion);
+                        detalle.setObpcant(cantidad);
+                        detalle.setCajas(CantCajaValue);
+                        detalle.setObptot(cantidad*detalle.getObpbase());
+                        detalle.setTotal(cantidad*detalle.getObpbase());
+                        double total=cantidad*mDetalleItem.get(posicion).getObpbase();
+                        tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
+                        if (mDetalleItem.get(posicion).getObupdate()>=1){
+                            detalle.setObupdate(2);
+                        }
+                        //tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                        calcularTotal();
+                    }
+
+                }
+            }else{
+                int posicion =obtenerPosicionItem(item);
+                if (posicion>=0){
+                    ////////////Caja Logica//////////////////////
+                    double CantCajaValue =0;
+                    if (item.getConversion()==1.0){
+                        eCatidadCajas.setText(""+String.format("%.2f",cantidad));
+                        CantCajaValue=cantidad;
+                    }else{
+                        double Conversion=item.getConversion();
+                        int CantCaja= (int) (cantidad/Conversion);
+                        int Residuo =(int)(cantidad %Conversion);
+                        String ValuesCaja="";
+                        if (Residuo>9){
+                            ValuesCaja=CantCaja+"."+Residuo;
+                        }else{
+                            ValuesCaja=CantCaja+".0"+Residuo;
+                        }
+
+                        eCatidadCajas.setText(ValuesCaja);
+                        CantCajaValue=Double.parseDouble(ValuesCaja);
+                    }
+                    ////////////Caja Logica//////////////////////
+
                     DetalleEntity detalle= mDetalleItem.get(posicion);
                     detalle.setObpcant(cantidad);
+                    detalle.setCajas(CantCajaValue);
                     detalle.setObptot(cantidad*detalle.getObpbase());
                     detalle.setTotal(cantidad*detalle.getObpbase());
-                    double total=cantidad*mDetalleItem.get(posicion).getObpbase();
-                    tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
+                    tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                    calcularTotal();
                     if (mDetalleItem.get(posicion).getObupdate()>=1){
                         detalle.setObupdate(2);
                     }
-                    // tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
-                    calcularTotal();
+                }
+            }
+
+        }
+        BanderaCantidad=false;
+
+
+    }
+    @Override
+    public void ModifyItemCaja(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad,LinearLayout fondo, EditText eCatidadCajas) {
+
+        if (BanderaCantidad==false){
+            BanderaCaja=true;
+            double cantidad=0.0;
+            if (isDouble(value)){
+
+                int ParteEnteraCaja=(int)Double.parseDouble(value);
+                int CantUnitCaja=(int)(ParteEnteraCaja*item.getConversion());
+
+                int decNumberInt =0;
+                if (value.contains(".") && value.length()>2) {
+                    decNumberInt = Integer.parseInt(value.substring(value.indexOf('.') + 1));
                 }else{
-                    fondo.setBackgroundColor(getActivity().getResources().getColor(R.color.marfil));
-                    DetalleEntity detalle= mDetalleItem.get(posicion);
-                    detalle.setObpcant(cantidad);
-                    detalle.setObptot(cantidad*detalle.getObpbase());
-                    detalle.setTotal(cantidad*detalle.getObpbase());
-                    double total=cantidad*mDetalleItem.get(posicion).getObpbase();
-                    tvsubtotal.setText(""+ ShareMethods.redondearDecimales(total,2));
-                    if (mDetalleItem.get(posicion).getObupdate()>=1){
-                        detalle.setObupdate(2);
-                    }
-                    //tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
-                    calcularTotal();
+                    decNumberInt=0;
                 }
 
+                cantidad=CantUnitCaja+decNumberInt;
+
+            }else{
+                value="0.00";
             }
-        }else{
+
             int posicion =obtenerPosicionItem(item);
-            if (posicion>=0){
+
+            if (mDetalleItem.get(posicion).getObupdate()>=1){
                 DetalleEntity detalle= mDetalleItem.get(posicion);
-                detalle.setObpcant(cantidad);
-                detalle.setObptot(cantidad*detalle.getObpbase());
-                detalle.setTotal(cantidad*detalle.getObpbase());
-                tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
-                calcularTotal();
-                if (mDetalleItem.get(posicion).getObupdate()>=1){
-                    detalle.setObupdate(2);
+                detalle.setObupdate(2);
+            }
+
+            int stock= DataPreferences.getPrefInt("stock",context);
+            if (stock>0){
+                if (posicion>=0){
+                    if(cantidad> item.getStock()){
+                        hideKeyboard();
+                        // getActivity().onBackPressed();
+                        ShowMessageResult("La cantidad es Superior al Stock Disponible = "+item.getStock());
+                        cantidad=1;
+                        eCantidad.setText("1");
+
+                        ////////////Caja Logica//////////////////////
+                        double CantCajaValue =0;
+                        if (item.getConversion()==1.0){
+
+                            CantCajaValue=cantidad;
+                        }else{
+                            double Conversion=item.getConversion();
+                            int CantCaja= (int) (cantidad/Conversion);
+                            int Residuo =(int)(cantidad %Conversion);
+                            String ValuesCaja="";
+                            if (Residuo>9){
+                                ValuesCaja=CantCaja+"."+Residuo;
+                            }else{
+                                ValuesCaja=CantCaja+".0"+Residuo;
+                            }
+
+                            eCatidadCajas.setText(ValuesCaja);
+                            CantCajaValue=Double.parseDouble(ValuesCaja);
+                        }
+
+                        ////////////Caja Logica////////////////////////////////
+                        DetalleEntity detalle= mDetalleItem.get(posicion);
+                        detalle.setObpcant(cantidad);
+                        detalle.setCajas(CantCajaValue);
+                        detalle.setObptot(cantidad*detalle.getObpbase());
+                        tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                        calcularTotal();
+                    }else{
+                        eCantidad.setText(""+String.format("%.2f", (cantidad)));
+                        DetalleEntity detalle= mDetalleItem.get(posicion);
+                        detalle.setObpcant(cantidad);
+                        detalle.setCajas(Double.parseDouble(value));
+                        detalle.setObptot(cantidad*detalle.getObpbase());
+                        tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                        calcularTotal();
+                    }
+
+                }
+            }else{
+                if (posicion>=0){
+
+                    eCantidad.setText(""+String.format("%.2f", (cantidad)));
+                    ////////////Caja Logica//////////////////////
+                    DetalleEntity detalle= mDetalleItem.get(posicion);
+                    detalle.setObpcant(cantidad);
+                    detalle.setCajas(Double.parseDouble(value));
+                    detalle.setObptot(cantidad*detalle.getObpbase());
+                    tvsubtotal.setText(""+String.format("%.2f", (cantidad*mDetalleItem.get(posicion).getObpbase())));
+                    calcularTotal();
                 }
             }
+            BanderaCaja=false;
         }
+        BanderaCaja=false;
 
     }
 

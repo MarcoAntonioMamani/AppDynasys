@@ -17,9 +17,9 @@ import android.widget.TextView;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoMvp;
-import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
-import com.pdfjet.Line;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,35 +29,37 @@ import java.util.List;
  */
 public class DetalleAdaptader
         extends RecyclerView.Adapter<DetalleAdaptader.ViewHolder> {
-ViewGroup viewgroup;
+    ViewGroup viewgroup;
     private CreatePedidoMvp.View mView;
     private List<DetalleEntity> items;
     Context context;
     Activity activity;
     public DetalleAdaptader(Context ctx,Activity activity) {
-        this.context = ctx;this.activity=activity;
+        this.context = ctx;
+        this.activity=activity;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView nombre;
-        public TextView price;
+        public EditText price;
         public TextView subtotal;
         public EditText cantidad;
-        public ImageView img_delete;
-        public TextView stock;
+        public EditText caja;
+        public TextView img_delete;
         public LinearLayout fondo;
-          public ViewHolder(View v) {
+        public ViewHolder(View v) {
             super(v);
 
             nombre = (TextView) v.findViewById(R.id.id_detalle_name);
-              price = (TextView) v.findViewById(R.id.id_detalle_price);
-              subtotal=(TextView)v.findViewById(R.id.id_detalle_subtotal);
-              stock=(TextView)v.findViewById(R.id.id_detalle_stock);
-              cantidad=(EditText)v.findViewById(R.id.id_detalle_cantidad);
-              img_delete=(ImageView)v.findViewById(R.id.id_detalle_remove);
-              fondo=(LinearLayout)v.findViewById(R.id.detail_content);
-                     }
+            price = (EditText) v.findViewById(R.id.id_detalle_price);
+            subtotal=(TextView)v.findViewById(R.id.id_detalle_subtotal);
+            cantidad=(EditText)v.findViewById(R.id.id_detalle_cantidad);
+            caja=(EditText)v.findViewById(R.id.id_detalle_Caja);
+            img_delete=(TextView)v.findViewById(R.id.id_detalle_remove);
+            fondo=(LinearLayout)v.findViewById(R.id.detail_content);
+
+        }
     }
 
 
@@ -89,22 +91,27 @@ ViewGroup viewgroup;
         final DetalleEntity item;
         final TextView tvsubtotal;
         final EditText tvCantidad;
+        final EditText tvCantidadCajas;
+        final EditText tvPrecio;
         final LinearLayout fondo;
-        final TextView  tvPrecio;
-        final TextView  tvStock;
-            item = items.get(i);
-            viewHolder.nombre.setText(item.getObcprod()+" "+item.getCadesc());
-            viewHolder.img_delete.setTag(item);
-            viewHolder.price.setText(""+item.getObpbase());
-        double total=item.getObpcant()*item.getObpbase();
-        viewHolder.subtotal.setText(""+(""+ ShareMethods.redondearDecimales(total,2)));
-            viewHolder.cantidad.setText(""+item.getObpcant());
-            viewHolder.cantidad.setTag(item);
-            viewHolder.stock.setText("Stock: "+item.getStock());
-             tvsubtotal=viewHolder.subtotal;
+        item = items.get(i);
+        viewHolder.nombre.setText(item.getCadesc());
+        viewHolder.img_delete.setTag(item);
+
+        viewHolder.img_delete.setText("Conv. = "+item.getConversion()+"  Eliminar");
+        viewHolder.price.setText(""+item.getObpbase());
+        viewHolder.subtotal.setText(""+(String.format("%.2f",item.getObpcant()*item.getObpbase())));
+        viewHolder.cantidad.setText(""+item.getObpcant());
+        viewHolder.caja.setText(""+item.getCajas());
+        viewHolder.cantidad.setTag(item);
+        tvsubtotal=viewHolder.subtotal;
         tvCantidad=viewHolder.cantidad;
-        fondo=viewHolder.fondo;
         tvPrecio=viewHolder.price;
+        tvCantidadCajas=viewHolder.caja;
+        fondo=viewHolder.fondo;
+        if (i== items.size()-1){
+            viewHolder.caja.requestFocus();
+        }
         if(item.getObpcant()>item.getStock()){
             viewHolder.fondo.setBackgroundColor(activity.getResources().getColor(R.color.state_canceledclaro));
 
@@ -112,50 +119,87 @@ ViewGroup viewgroup;
             viewHolder.fondo.setBackgroundColor(activity.getResources().getColor(R.color.marfil));
         }
 
+        viewHolder.caja.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            if (i== items.size()-1){
-                viewHolder.cantidad.requestFocus();
             }
-            viewHolder.cantidad.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int pos =ObtenerPosicionElemento(item);
+                if (pos>=0){
+                    mView.ModifyItemCaja(pos,s.toString(),item,tvsubtotal,tvCantidad,fondo,tvCantidadCajas);
+                }
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int i=0;
+            }
+        });
+
+        viewHolder.cantidad.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int pos =ObtenerPosicionElemento(item);
+                if (pos>=0){
+                    mView.ModifyItem(pos,s.toString(),item,tvsubtotal,tvCantidad,fondo,tvCantidadCajas);
+                }
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int i=0;
+            }
+        });
+
+        viewHolder.price.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                int pos =ObtenerPosicionElemento(item);
+                if (pos>=0){
+                    mView.ModifyItemPrecio(pos,charSequence.toString(),item,tvsubtotal,tvPrecio);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        viewHolder.img_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView img=(TextView)view;
+                DetalleEntity obj =(DetalleEntity) img.getTag();
+                int pos=ObtenerPosicionElemento(obj);
+                if (pos>=0){
+                    items.remove(pos);
+                    mView.DeleteAndModifyDetailOrder(obj,pos);
+                    notifyItemRemoved(pos);
 
                 }
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    int pos =ObtenerPosicionElemento(item);
-                    if (pos>=0){
-                        mView.ModifyItem(pos,s.toString(),item,tvsubtotal,tvCantidad,fondo);
-                    }
 
 
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                 int i=0;
-                }
-            });
-
-
-            viewHolder.img_delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ImageView img=(ImageView)view;
-                    DetalleEntity obj =(DetalleEntity) img.getTag();
-                    int pos=ObtenerPosicionElemento(obj);
-                    if (pos>=0){
-                        items.remove(pos);
-                        mView.DeleteAndModifyDetailOrder(obj,pos);
-                        notifyItemRemoved(pos);
-
-                    }
-
-
-
-                }
-            });
+            }
+        });
 
 
 
@@ -168,9 +212,9 @@ ViewGroup viewgroup;
         }
         return -1;
     }
-public void setFilter(List<DetalleEntity> ListaFiltrada){
-    this.items =new ArrayList<>();
-    this.items.addAll(ListaFiltrada);
-    notifyDataSetChanged();
-}
+    public void setFilter(List<DetalleEntity> ListaFiltrada){
+        this.items =new ArrayList<>();
+        this.items.addAll(ListaFiltrada);
+        notifyDataSetChanged();
+    }
 }
