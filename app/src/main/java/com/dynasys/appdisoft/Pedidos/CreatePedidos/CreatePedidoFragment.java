@@ -269,7 +269,7 @@ private PedidoEntity mPedido;
         //cliente.setCodigogenerado();
         DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
         String code = df.format(Calendar.getInstance().getTime());
-        code=""+codigoRepartidor+","+code+"VA1.0";
+        code=""+codigoRepartidor+","+code+"VA1.1";
         mPedido.setCodigogenerado(code);
         mPedido.setOanumi(code);
         _prModificarNumi(code);
