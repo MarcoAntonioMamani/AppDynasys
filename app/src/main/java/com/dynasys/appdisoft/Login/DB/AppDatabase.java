@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dynasys.appdisoft.Login.DB.Converter.DateConverter;
+import com.dynasys.appdisoft.Login.DB.Dao.CategoriaPrecioDao;
 import com.dynasys.appdisoft.Login.DB.Dao.DescuentosDao;
 import com.dynasys.appdisoft.Login.DB.Dao.DetalleDao;
 import com.dynasys.appdisoft.Login.DB.Dao.PedidoDao;
@@ -32,7 +33,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
  * Created by ravi on 05/02/18.
  */
 
-@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, ProductoEntity.class, PedidoEntity.class, DetalleEntity.class, StockEntity.class, ZonasEntity.class, DescuentosEntity.class}, version = 8)
+@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, ProductoEntity.class, PedidoEntity.class, DetalleEntity.class, StockEntity.class, ZonasEntity.class, DescuentosEntity.class}, version = 20)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -45,6 +46,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract StockDao stockDao();
     public abstract zonasDao ZonasDao();
     public abstract DescuentosDao DescuentoDao();
+    public abstract CategoriaPrecioDao categoriaPrecioDao();
     public static AppDatabase INSTANCE;
 
    public  static AppDatabase getDatabase(final Context context) {
