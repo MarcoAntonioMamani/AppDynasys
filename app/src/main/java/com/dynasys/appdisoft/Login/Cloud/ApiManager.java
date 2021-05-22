@@ -3,6 +3,7 @@ package com.dynasys.appdisoft.Login.Cloud;
 import android.content.Context;
 import android.widget.EditText;
 
+import com.dynasys.appdisoft.Login.DB.Entity.CategoriaPrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
@@ -121,4 +122,9 @@ private static Context mcontext;
         Call<List<StockEntity>> userCall = service.ObtenerStocks(idRepartidor);
         userCall.enqueue(callback);
     }
+    public void ObtenerPreciosCategoria(Callback<List<CategoriaPrecioEntity>> callback) {
+        Call<List<CategoriaPrecioEntity>> userCall = service.ObtenerPrecioCategoria();
+        userCall.enqueue(callback);
+    }
+
 }

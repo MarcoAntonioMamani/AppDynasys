@@ -197,9 +197,27 @@
                                 </RadioGroup>
                             </RelativeLayout>
                         </LinearLayout>
+
                     </LinearLayout>
 
                 </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAccent"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:text="Categoria Precio"/>
+                <Spinner
+                    android:id="@+id/id_CategoriaPrecioModificacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/keyline_1"
+                    android:entries="@array/tipocliente_array"
+
+                    android:paddingTop="11dp"
+                    />
                 <AutoCompleteTextView
                     android:id="@+id/edit_buscar_producto"
                     android:drawableLeft="@drawable/ic_searchorder"

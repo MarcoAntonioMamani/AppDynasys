@@ -5,8 +5,10 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity(tableName = "CategoriaPrecio")
-public class CategoriaPrecioEntity {
+public class CategoriaPrecioEntity  implements Serializable {
 
     @PrimaryKey()
     int Id;
@@ -27,7 +29,10 @@ public class CategoriaPrecioEntity {
     public String getNombreCategoria() {
         return NombreCategoria;
     }
-
+    @Override
+    public String toString() {
+        return NombreCategoria;
+    }
     public void setNombreCategoria(String nombreCategoria) {
         NombreCategoria = nombreCategoria;
     }

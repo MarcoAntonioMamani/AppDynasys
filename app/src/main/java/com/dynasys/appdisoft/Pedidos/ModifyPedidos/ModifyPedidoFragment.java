@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -35,6 +36,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Adapter.ClientesAdapter;
@@ -44,8 +46,10 @@ import com.dynasys.appdisoft.Clientes.MapClientActivity;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
+import com.dynasys.appdisoft.Login.DB.CategoriaPrecioListViewModel;
 import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.Entity.CategoriaPrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
@@ -132,7 +136,10 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     LottieAlertDialog alertDialog;
     LinearLayout linearViewCredito;
     EditText EtReclamo;
-
+    private CategoriaPrecioListViewModel viewModelCategoriaPrecio;
+    List<CategoriaPrecioEntity> listCategoriaPrecio;
+    private CategoriaPrecioEntity categoriaPrecioSelected;
+    private Spinner listaSpinnerCategoriaPrecio;
     Boolean BanderaCaja=false;
     Boolean BanderaCantidad=false;
     @Override
@@ -178,8 +185,10 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         ObFecha=(ImageButton)view.findViewById(R.id.edit_obtener_fecha);
         linearViewCredito=view.findViewById(R.id.modify_viewCredito);
         tvObservacion=(EditText)view.findViewById(R.id.edit_view_observacion) ;
+        listaSpinnerCategoriaPrecio=(Spinner)view.findViewById(R.id.id_CategoriaPrecioModificacion);
         rEfectivo=(RadioButton)view.findViewById(R.id.edit_order_rbt_efectivo) ;
         rCredito=(RadioButton)view.findViewById(R.id.edit_order_rbt_credito);
+        viewModelCategoriaPrecio=ViewModelProviders.of(getActivity()).get(CategoriaPrecioListViewModel.class);
         mbutton_update = (Button)view.findViewById(R.id.edit_viewdata_btnUpdatePedido);
         mbutton_entrega=(Button)view.findViewById(R.id.edit_viewdata_btnEntregar);
         mbutton_viewcliente=(Button)view.findViewById(R.id.edit_viewdata_btnVerCliente);
@@ -201,12 +210,36 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         onClickEtregar();
         onClickVerCliente();
         OnClickObtenerFecha();
+        CargarCategoriaPrecios();
+
         mFecha=Calendar.getInstance().getTime();
         LocationGeo.getInstance(context,getActivity());
         LocationGeo.iniciarGPS();
 
 
         return view;
+    }
+
+    public void CargarCategoriaPrecios(){
+        listCategoriaPrecio=viewModelCategoriaPrecio.getMCategoriaPrecioAllAsync();
+        ArrayAdapter<CategoriaPrecioEntity> adapter =new ArrayAdapter<CategoriaPrecioEntity>(getContext(), android.R.layout.simple_spinner_item, listCategoriaPrecio);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        listaSpinnerCategoriaPrecio.setAdapter(adapter);
+
+
+////Evento Categroia Precio
+        listaSpinnerCategoriaPrecio.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if (pos>=0 && listCategoriaPrecio.size()>0){
+                    categoriaPrecioSelected = listCategoriaPrecio.get(pos);
+                    mCreatePedidoPresenter.CargarProducto(categoriaPrecioSelected.getId());
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
     }
     public void InterpretarDatos(){
         int categoria =DataPreferences.getPrefInt("CategoriaRepartidor",getContext());
@@ -229,7 +262,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
             }
         });
         mCreatePedidoPresenter.getDetailOrder(mPedido.getCodigogenerado());
-        mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
+        //mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
         ////Para Visualiza la seccion de credito o contado
         int ViewCreditos=DataPreferences.getPrefInt("ViewCredito",getContext());
         if (ViewCreditos ==0){

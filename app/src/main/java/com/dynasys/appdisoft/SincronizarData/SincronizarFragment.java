@@ -32,6 +32,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Clientes.UtilShare;
+import com.dynasys.appdisoft.Login.DB.CategoriaPrecioListViewModel;
 import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
@@ -79,6 +80,8 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
     private DetalleListViewModel viewModelDetalle;
     private StockListViewModel viewModelStock;
     private DescuentosListViewModel viewModelDescuento;
+
+    private CategoriaPrecioListViewModel viewModelCategoriaPrecio;
     LottieAlertDialog alertDialog;
     List<ZonasEntity> listZonas;
     ZonasEntity mZonaSelected;
@@ -118,10 +121,11 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
+        viewModelCategoriaPrecio=ViewModelProviders.of(getActivity()).get(CategoriaPrecioListViewModel.class);
         viewModelZona =ViewModelProviders.of(getActivity()).get(ZonaListViewModel.class);
       /*  NoteEntity note = new NoteEntity(inputNote.getText().toString());
         viewModel.insertNote(note);*/
-        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle,viewModelStock,viewModelDescuento);
+        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle,viewModelStock,viewModelDescuento,viewModelCategoriaPrecio);
 checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

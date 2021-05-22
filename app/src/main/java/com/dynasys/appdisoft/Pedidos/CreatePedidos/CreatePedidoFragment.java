@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -37,6 +38,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Adapter.ClientesAdapter;
@@ -48,13 +50,16 @@ import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.DB.AppDatabase;
+import com.dynasys.appdisoft.Login.DB.CategoriaPrecioListViewModel;
 import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.Entity.CategoriaPrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.DB.StockListViewModel;
@@ -114,6 +119,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private DescuentosListViewModel viewModelDescuento;
     private StockListViewModel viewModelStock;
     private DetalleListViewModel viewModelDetalle;
+    private CategoriaPrecioListViewModel viewModelCategoriaPrecio;
     private List<DetalleEntity> mDetalleItem=new ArrayList<>();
     private CreatePedidoMvp.Presenter mCreatePedidoPresenter;
     private List<ClienteEntity> lisCliente;
@@ -135,9 +141,11 @@ EditText EtReclamo;
     LottieAlertDialog alertDialog;
 private PedidoEntity mPedido;
     private NestedScrollView mscroll;
-
+    private Spinner listaSpinnerCategoriaPrecio;
     Boolean BanderaCaja=false;
     Boolean BanderaCantidad=false;
+    List<CategoriaPrecioEntity> listCategoriaPrecio;
+    private CategoriaPrecioEntity categoriaPrecioSelected;
     public CreatePedidoFragment() {
         // Required empty public constructor
     }
@@ -171,6 +179,7 @@ private PedidoEntity mPedido;
         aProducto=view.findViewById(R.id.pedido_buscar_producto);
         detalle_List=view.findViewById(R.id.id_detalle_listPedido);
         name_total=view.findViewById(R.id.pedido_view_Total);
+        listaSpinnerCategoriaPrecio=(Spinner)view.findViewById(R.id.id_CategoriaPrecio);
         name_descuento=view.findViewById(R.id.pedido_view_Descuento);
         name_descuentoTotal=view.findViewById(R.id.pedido_view_TotalDescuento);
         EtReclamo=view.findViewById(R.id.edit_Reclamo);
@@ -185,6 +194,7 @@ private PedidoEntity mPedido;
         viewModelPedido = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
+        viewModelCategoriaPrecio=ViewModelProviders.of(getActivity()).get(CategoriaPrecioListViewModel.class);
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
         new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock);
         mCreatePedidoPresenter.CargarClientes();
@@ -198,7 +208,30 @@ private PedidoEntity mPedido;
         LocationGeo.iniciarGPS();
         ShowDialogSincronizando();
         CargarDatosclienteMapa();
+        CargarCategoriaPrecios();
         return view;
+    }
+
+    public void CargarCategoriaPrecios(){
+        listCategoriaPrecio=viewModelCategoriaPrecio.getMCategoriaPrecioAllAsync();
+        ArrayAdapter<CategoriaPrecioEntity> adapter =new ArrayAdapter<CategoriaPrecioEntity>(getContext(), android.R.layout.simple_spinner_item, listCategoriaPrecio);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        listaSpinnerCategoriaPrecio.setAdapter(adapter);
+
+
+////Evento Categroia Precio
+        listaSpinnerCategoriaPrecio.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if (pos>=0 && listCategoriaPrecio.size()>0){
+                    categoriaPrecioSelected = listCategoriaPrecio.get(pos);
+                    mCreatePedidoPresenter.CargarProducto(categoriaPrecioSelected.getId());
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
     }
     public void CargarDatosclienteMapa(){
         if (tipoActividad==1){
@@ -377,6 +410,12 @@ private PedidoEntity mPedido;
     }
 
     public void GuardarPedido(){
+
+        if (mCliente==null){
+            ShowMessageResult("Debe Seleccionar un Cliente");
+            return;
+        }
+
         if (mDetalleItem.size()>0){
             if (Grabado ==false){
                 if (M_Uii.trim().equals("")){
@@ -481,7 +520,7 @@ private PedidoEntity mPedido;
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     if ((ClienteEntity) adapterView.getItemAtPosition(i)!=null){
                         mCliente = (ClienteEntity) adapterView.getItemAtPosition(i);
-                        mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
+
                     }
 
 

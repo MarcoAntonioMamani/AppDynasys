@@ -1,5 +1,6 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
+import com.dynasys.appdisoft.Login.DB.Entity.CategoriaPrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
@@ -54,6 +55,8 @@ public interface IUsersApi {
     @GET("/api/stock/{idrepartidor}")
     Call<List<StockEntity>> ObtenerStocks(@Path("idrepartidor") String idRepartidor);
 
+    @GET("/api/precios/categoria")
+    Call<List<CategoriaPrecioEntity>> ObtenerPrecioCategoria();
 
 
     @POST("/api/repartidor/pedidoDetalleCF")

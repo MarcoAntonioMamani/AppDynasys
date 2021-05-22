@@ -10,8 +10,10 @@ import android.support.v4.app.NotificationCompat;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.Bodylogin;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
+import com.dynasys.appdisoft.Login.DB.CategoriaPrecioListViewModel;
 import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.Entity.CategoriaPrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
@@ -45,6 +47,8 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
     private final PedidoListViewModel viewModelPedidos;
     private final DetalleListViewModel viewModelDetalles;
     private final StockListViewModel viewModelStock;
+
+    private final CategoriaPrecioListViewModel viewModelCategoriaPrecio;
     private final Activity activity;
      int cantidadCliente = 0;
     int cantidadProducto=0;
@@ -57,7 +61,7 @@ int ZonaSelected=0;
 
     public SincronizarPresenter(SincronizarMvp.View sincronizarView, Context context, ClientesListViewModel viewModel, Activity activity, PreciosListViewModel
                                 viewModelPrecios, ProductosListViewModel viewModelProductos,PedidoListViewModel viewModelPedidos,
-                                DetalleListViewModel viewModelDetalles,StockListViewModel stock,DescuentosListViewModel descuento){
+                                DetalleListViewModel viewModelDetalles,StockListViewModel stock,DescuentosListViewModel descuento,CategoriaPrecioListViewModel CatPrecio){
         mSincronizarview = Preconditions.checkNotNull(sincronizarView);
         mSincronizarview.setPresenter(this);
         this.viewModel=viewModel;
@@ -69,6 +73,7 @@ int ZonaSelected=0;
         this.viewModelDetalles=viewModelDetalles;
         this.viewModelStock=stock;
         this.viewModelDescuentos =descuento;
+        this.viewModelCategoriaPrecio=CatPrecio;
          cantidadCliente = 0;
        cantidadProducto=0;
          cantidadPrecio=0;
@@ -308,6 +313,9 @@ int ZonaSelected=0;
             }
         });
     }
+
+
+
     public void _DescargarStock(final String idRepartidor){
         ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.ObtenerStock(new Callback<List<StockEntity>>() {
@@ -323,7 +331,7 @@ int ZonaSelected=0;
                         viewModelStock.deleteAllStocks();
 viewModelStock.insertListStock(responseUser);
 
-
+                    _DescargarCategoriaPrecio();
 
                 } else {
                     // mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
@@ -335,6 +343,36 @@ viewModelStock.insertListStock(responseUser);
 
             }
         },idRepartidor);
+    }
+
+    public void _DescargarCategoriaPrecio(){
+        ApiManager apiManager=ApiManager.getInstance(mContext);
+        apiManager.ObtenerPreciosCategoria(new Callback<List<CategoriaPrecioEntity>>() {
+            @Override
+            public void onResponse(Call<List<CategoriaPrecioEntity>> call, Response<List<CategoriaPrecioEntity>> response) {
+                final List<CategoriaPrecioEntity> responseUser = (List<CategoriaPrecioEntity>) response.body();
+                if (response.code() == 404) {
+                    // mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+
+                    viewModelCategoriaPrecio.deleteAllCategoriaPrecios();
+                    viewModelCategoriaPrecio.insertListCategoriaPrecio(responseUser);
+
+
+
+
+                } else {
+                    // mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Productos");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CategoriaPrecioEntity>> call, Throwable t) {
+
+            }
+        });
     }
     public void _DecargarPedidos(final String idRepartidor){
         ApiManager apiManager=ApiManager.getInstance(mContext);
