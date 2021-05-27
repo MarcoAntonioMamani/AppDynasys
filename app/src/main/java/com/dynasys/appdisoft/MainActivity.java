@@ -446,12 +446,12 @@ public class MainActivity extends AppCompatActivity {
             menucli.setVisible(true);
             menuped.setVisible(true);
             menuMapa.setVisible(true);
-        menuAddPedido.setVisible(true);
-        menuFisicoProducto.setVisible(true);
+        menuAddPedido.setVisible(false);
+        menuFisicoProducto.setVisible(false);
         menupedEntregados.setVisible(true);
         menuCobranza.setVisible(true);
         menuEfectivo.setVisible(true);
-        menuReviewProducto.setVisible(true);
+        menuReviewProducto.setVisible(false);
     }
 
     @Override

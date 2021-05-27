@@ -220,11 +220,11 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
             mbutton_entrega.setVisibility(View.GONE);
         }
 
-        if (mCliente.getContadocredito()==1){
+       // if (mCliente.getContadocredito()==1){
             linearContadoCredito.setVisibility(View.GONE);
-        }else{
+        /*}else{
             linearContadoCredito.setVisibility(View.VISIBLE);
-        }
+        }*/
 
         if(mPedido.getTipocobro()==2){
             rCredito.setChecked(true);
@@ -245,11 +245,11 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
         ////Para Visualiza la seccion de credito o contado
         int ViewCreditos=DataPreferences.getPrefInt("ViewCredito",getContext());
-        if (ViewCreditos ==0){
-            linearViewCredito.setVisibility(View.GONE);
-        }else{
+       // if (ViewCreditos ==0){
+        //    linearViewCredito.setVisibility(View.GONE);
+       // }else{
             linearViewCredito.setVisibility(View.VISIBLE);
-        }
+        //}
     }
 public void Saveoffline(){
     try {
@@ -271,8 +271,8 @@ public void Saveoffline(){
             pedi.setOafdoc(mFecha);
             pedi.setTotal(ObtenerTotal());
 
-           // if (rCredito.isChecked()==true){
-             if (mCliente.getContadocredito()!=1){
+           if (rCredito.isChecked()==true){
+            ///if (mCliente.getContadocredito()!=1){
                 pedi.setTipocobro(2);
                 pedi.setTotalcredito(Double.parseDouble(tvTotalPago.getText().toString()));
             }else{
@@ -724,8 +724,8 @@ return null;
                 pedi.setTotal(ObtenerTotal());
 
 
-                //if (rCredito.isChecked()==true){
-                    if (mCliente.getContadocredito()!=1){
+                if (rCredito.isChecked()==true){
+                 //   if (mCliente.getContadocredito()!=1){
                     pedi.setTipocobro(2);
                     pedi.setTotalcredito(ObtenerTotal());
                 }else{
