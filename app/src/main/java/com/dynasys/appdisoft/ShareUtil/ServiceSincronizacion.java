@@ -717,6 +717,8 @@ if (UtilShare.mActivity!=null){
                 p.setOarepa(pedido.getOarepa());
                 p.setOaest(pedido.getOaest());
                 p.setOaobs(pedido.getOaobs());
+                p.setEstadoStock(pedido.getEstadoStock());
+                p.setConcepto(pedido.getConcepto());
                 p.setLatitud(pedido.getLatitud());
                 p.setLongitud(pedido.getLongitud());
                 p.setTotal(pedido.getTotal());

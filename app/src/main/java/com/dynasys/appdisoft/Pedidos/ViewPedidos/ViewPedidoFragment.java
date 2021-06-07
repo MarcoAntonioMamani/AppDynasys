@@ -85,7 +85,12 @@ public class ViewPedidoFragment extends Fragment implements ViewPedidoMvp.View {
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().setTitle("Entregar Pedido");
+        if (mPedido.getConcepto()==1){
+            getActivity().setTitle("Pedido Entregado");
+        }else{
+            getActivity().setTitle("Bonificación Entregado");
+        }
+
     }
 
     @Override
@@ -144,7 +149,11 @@ public void IniciarParametros(){
     if (ViewCreditos ==0){
         LinearViewCredito.setVisibility(View.GONE);
     }else{
-        LinearViewCredito.setVisibility(View.VISIBLE);
+        if (mPedido.getConcepto()==1){
+            LinearViewCredito.setVisibility(View.VISIBLE);
+        }else{
+            LinearViewCredito.setVisibility(View.GONE);
+        }
     }
 }
     public void OnclickMapa(){

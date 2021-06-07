@@ -41,10 +41,27 @@ public class PedidoDetalle {
 
     String reclamo;
     List<DetalleEntity> detalle;
-
+    int estadoStock;
+    int Concepto;
 
     public PedidoDetalle(){
 
+    }
+
+    public int getEstadoStock() {
+        return estadoStock;
+    }
+
+    public void setEstadoStock(int estadoStock) {
+        this.estadoStock = estadoStock;
+    }
+
+    public int getConcepto() {
+        return Concepto;
+    }
+
+    public void setConcepto(int concepto) {
+        Concepto = concepto;
     }
 
     public List<DetalleEntity> getDetalle() {

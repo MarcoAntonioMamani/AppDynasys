@@ -208,6 +208,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                     android:textSize="14sp"
                     android:textStyle="bold"
+                    android:id="@+id/tv_modify_tvcategoriaprecio"
                     android:text="Categoria Precio"/>
                 <Spinner
                     android:id="@+id/id_CategoriaPrecioModificacion"

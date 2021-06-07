@@ -46,9 +46,19 @@ public class PedidoEntity implements Comparable<PedidoEntity> {
     String reclamo;
     @ColumnInfo(name = "estadoStock")
     int estadoStock ;
+    @ColumnInfo(name = "Concepto")
+    int Concepto ;
 public PedidoEntity(){
 
 }
+
+    public int getConcepto() {
+        return Concepto;
+    }
+
+    public void setConcepto(int concepto) {
+        Concepto = concepto;
+    }
 
     public int getEstadoStock() {
         return estadoStock;

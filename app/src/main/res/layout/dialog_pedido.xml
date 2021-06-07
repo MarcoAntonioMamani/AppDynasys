@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/ic_order"
+            android:backgroundTint="@color/white"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Consulta "
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+        <TextView
+            android:id="@+id/dialog_question_pedido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla eu erat tincidunt lacus fermentum rutrum."
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="90dp"
+    android:orientation="horizontal"
+ android:layout_gravity="center"
+
+    >
+    <Button
+        android:id="@+id/dialog_btn_bonificacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:background="@drawable/animation_riple_maps"
+        android:text="Crear Nueva \n Bonificación"
+        android:textSize="11dp"
+        android:textColor="@color/white" />
+    <LinearLayout
+        android:layout_width="20dp"
+        android:layout_height="fill_parent">
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/dialog_btn_pedido"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:textSize="11dp"
+        android:background="@drawable/animation_riple_button"
+        android:text="Crear Nuevo \n Pedido"
+        android:textColor="@color/white" />
+</LinearLayout>
+
+
+    </LinearLayout>
+</LinearLayout>

@@ -46,7 +46,14 @@ private PedidosMvp.View mview;
 
     @Override
     public void onBindViewHolder(PedidosViewHolder clientesViewHolder, final int i) {
-        clientesViewHolder.TvNroPedido.setText((CharSequence) ("Pedido # "+listaPedidos.get(i).getOanumi()));
+
+
+        if (listaPedidos.get(i).getConcepto()==1){
+            clientesViewHolder.TvNroPedido.setText((CharSequence) ("Pedido # "+listaPedidos.get(i).getOanumi()));
+        }else{
+            clientesViewHolder.TvNroPedido.setText((CharSequence) ("Bonificación # "+listaPedidos.get(i).getOanumi()));
+        }
+
         clientesViewHolder.TvNombreCliente.setText((CharSequence) listaPedidos.get(i).getCliente());
         clientesViewHolder.TvDireccionCliente.setText((CharSequence) ObtenerDireccionCliente(listaPedidos.get(i).getOaccli()));
         clientesViewHolder.TvFecha.setText((CharSequence) ShareMethods.ObtenerFecha(listaPedidos.get(i).getOafdoc())+" \n         "+listaPedidos.get(i).getOahora());
@@ -68,7 +75,13 @@ private PedidosMvp.View mview;
             clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_maps ));
         }
         if (listaPedidos.get(i).getEstado()==1 ){
-            clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_button));
+
+            if (listaPedidos.get(i).getConcepto()==1){
+                clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_button));
+            }else{
+                clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_edit));
+            }
+
 
         }
         if (listaPedidos.get(i).getEstado()==2 && listaPedidos.get(i).getEstadoStock() !=2){

@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             String CodeCliente=DataPreferences.getPref("idCliente" ,getApplicationContext()) ;
             try {
                UtilShare.clienteMapa= viewModelClientes.getClientebycode(CodeCliente);
-                Fragment frag = new CreatePedidoFragment(1);
+                Fragment frag = new CreatePedidoFragment(1,1);
                 MainActivity fca = (MainActivity) this;
                 fca.switchFragment(frag,"CREATE_PEDIDOS");
             } catch (ExecutionException e) {
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (UtilShare.tipoAccion==1){
             UtilShare.tipoAccion=0;
-            Fragment frag = new CreatePedidoFragment(1);
+            Fragment frag = new CreatePedidoFragment(1,1);
             MainActivity fca = (MainActivity) this;
             fca.switchFragment(frag,"CREATE_PEDIDOS");
         }else{
@@ -234,6 +234,12 @@ public class MainActivity extends AppCompatActivity {
                             //setFragment(2);
                             drawerLayout.closeDrawer(GravityCompat.START);
                             return true;
+                    case R.id.item_navigation_drawer_nuevo_bonificacion:
+                        setFragment(7);
+                        item.setChecked(true);
+                        //setFragment(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
                     case R.id.item_navigation_drawer_help_and_feedback:
                         item.setChecked(true);
                         setFragment(21);
@@ -281,7 +287,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 6:
                 returnToMain();
-                frag = new CreatePedidoFragment();
+                frag = new CreatePedidoFragment(0,1);
+                tag = Constantes.TAG_PEDIDOS;
+                break;
+            case 7:
+                returnToMain();
+                frag = new CreatePedidoFragment(0,2);
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 21:
@@ -382,6 +393,7 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem menulcv = navigationView.getMenu().findItem(R.id.item_navigation_drawer_sincronizar);
         MenuItem menuAddPedido = navigationView.getMenu().findItem(R.id.item_navigation_drawer_nuevo_pedido );
+        MenuItem menuAddBonificacion = navigationView.getMenu().findItem(R.id.item_navigation_drawer_nuevo_bonificacion);
         MenuItem menucli = navigationView.getMenu().findItem(R.id.item_navigation_drawer_clientes);
         MenuItem menuped = navigationView.getMenu().findItem(R.id.item_navigation_drawer_pedidos);
         MenuItem menuMapa = navigationView.getMenu().findItem(R.id.item_navigation_drawer_mapa);
@@ -392,6 +404,7 @@ public class MainActivity extends AppCompatActivity {
             menuMapa.setVisible(true);
         menuAddPedido.setVisible(true);
         menupedEntregados.setVisible(true);
+        menuAddBonificacion.setVisible(true);
     }
 
     @Override

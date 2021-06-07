@@ -162,6 +162,8 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
         p.setOahora(pedido.getOahora());
         p.setOaccli(pedido.getOaccli());
         p.setOarepa(pedido.getOarepa());
+        p.setEstadoStock(pedido.getEstadoStock());
+        p.setConcepto(pedido.getConcepto());
         p.setOaest(pedido.getOaest());
         p.setOaobs(pedido.getOaobs());
         p.setLatitud(pedido.getLatitud());

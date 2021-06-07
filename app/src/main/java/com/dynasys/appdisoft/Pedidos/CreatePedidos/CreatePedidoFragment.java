@@ -137,6 +137,7 @@ Date mFecha;
 String Hora;
 Double mTotal=0.0;
    int tipoActividad=0;
+   int Concepto =1;  //Concepto 1=Pedido  2=Bonificacion
 EditText EtReclamo;
     LottieAlertDialog alertDialog;
 private PedidoEntity mPedido;
@@ -146,19 +147,29 @@ private PedidoEntity mPedido;
     Boolean BanderaCantidad=false;
     List<CategoriaPrecioEntity> listCategoriaPrecio;
     private CategoriaPrecioEntity categoriaPrecioSelected;
+
+    TextView tvCategoriaPrecio;
     public CreatePedidoFragment() {
         // Required empty public constructor
     }
 
     @SuppressLint("ValidFragment")
-    public CreatePedidoFragment(int tipo) {
+    public CreatePedidoFragment(int tipo,int Concepto) {
         // Required empty public constructor
         this.tipoActividad=tipo;
+        this.Concepto=Concepto;
     }
+
+
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().setTitle("CREAR PEDIDO");
+        if (Concepto==1){
+            getActivity().setTitle("Crear Pedido");
+        }else{
+            getActivity().setTitle("Crear Bonificación");
+        }
+
         context=getContext();
     }
     public void iniciarRecyclerView(){
@@ -179,6 +190,7 @@ private PedidoEntity mPedido;
         aProducto=view.findViewById(R.id.pedido_buscar_producto);
         detalle_List=view.findViewById(R.id.id_detalle_listPedido);
         name_total=view.findViewById(R.id.pedido_view_Total);
+        tvCategoriaPrecio=view.findViewById(R.id.id_textview_categoria);
         listaSpinnerCategoriaPrecio=(Spinner)view.findViewById(R.id.id_CategoriaPrecio);
         name_descuento=view.findViewById(R.id.pedido_view_Descuento);
         name_descuentoTotal=view.findViewById(R.id.pedido_view_TotalDescuento);
@@ -209,6 +221,17 @@ private PedidoEntity mPedido;
         ShowDialogSincronizando();
         CargarDatosclienteMapa();
         CargarCategoriaPrecios();
+
+
+
+        if(Concepto!=1){
+            tvCategoriaPrecio.setVisibility(View.GONE);
+
+            listaSpinnerCategoriaPrecio.setVisibility(View.GONE);
+            categoriaPrecioSelected = listCategoriaPrecio.get(0);
+            mCreatePedidoPresenter.CargarProducto(categoriaPrecioSelected.getId());
+        }
+
         return view;
     }
 
@@ -286,12 +309,19 @@ private PedidoEntity mPedido;
         mPedido.setTipocobro(1);
         mPedido.setTotalcredito(0.0);
         mPedido.setEstado(0);
+
+        if (Concepto==1){
+            mPedido.setConcepto(1);
+        }else{
+            mPedido.setConcepto(2);
+        }
+
         mPedido.setReclamo(EtReclamo.getText().toString());
         int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
         //cliente.setCodigogenerado();
         DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
         String code = df.format(Calendar.getInstance().getTime());
-        code=""+codigoRepartidor+","+code+"V2.6";
+        code=""+codigoRepartidor+","+code+"VSA1.1";
         mPedido.setCodigogenerado(code);
         mPedido.setOanumi(code);
         _prModificarNumi(code);
@@ -532,6 +562,16 @@ private PedidoEntity mPedido;
     @Override
     public void MostrarProductos(List<ProductoEntity> productos) {
         if (productos.size()>0){
+
+            if (Concepto!=1){ // Si es pedido y no es bonificacion
+
+                for (int i = 0; i < productos.size() ; i++) {
+
+                    productos.get(i).setPrecio(0);
+                }
+            }
+
+
             lisProducto = new ArrayList<>();
             lisProducto.addAll(productos);
             aProducto.setThreshold(1);
@@ -1233,7 +1273,7 @@ private PedidoEntity mPedido;
                         MainActivity fca = ((MainActivity) getActivity());
                         fca.removeAllFragments();
                         UtilShare.clienteMapa =mCliente;
-                        Fragment frag = new CreatePedidoFragment(1);
+                        Fragment frag = new CreatePedidoFragment(1,1);
                         fca.switchFragment(frag,"CREATE_PEDIDOS");
                     }
                 }).build();
@@ -1243,6 +1283,13 @@ private PedidoEntity mPedido;
     @Override
     public void showSaveResultOption(int codigo, String id, String mensaje) {
 
+        String titulo ="";
+        if (Concepto==1){
+            titulo="El Pedido";
+        }else{
+            titulo="La Bonificación";
+        }
+
         if (alertDialog.isShowing()){
             alertDialog.dismiss();
         }
@@ -1250,14 +1297,14 @@ private PedidoEntity mPedido;
         switch (codigo){
             case 0:
                 Grabado=true;
-                dialogs= showCustomDialog("El Pedido ha sido guardado localmente con exito. Pero no pudo ser guardado en el servidor por problemas de red"
+                dialogs= showCustomDialog(titulo+" ha sido guardado localmente con exito. Pero no pudo ser guardado en el servidor por problemas de red"
                         ,true);
                 dialogs.setCancelable(false);
                 dialogs.show();
                 break;
             case 1:
                 Grabado=true;
-                dialogs= showCustomDialog("El Pedido Nro:"+id+" ha sido guardado localmente y en el servidor" +
+                dialogs= showCustomDialog(titulo+" Nro:"+id+" ha sido guardado localmente y en el servidor" +
                         " con exito.",true);
                 dialogs.setCancelable(false);
                 dialogs.show();
@@ -1330,9 +1377,16 @@ private PedidoEntity mPedido;
         try
         {
 
-            alertDialog = new LottieAlertDialog.Builder(getContext(), DialogTypes.TYPE_LOADING).setTitle("Pedidos")
-                    .setDescription("Guardando Pedido ...")
-                    .build();
+            if (Concepto==1){
+                alertDialog = new LottieAlertDialog.Builder(getContext(), DialogTypes.TYPE_LOADING).setTitle("Pedidos")
+                        .setDescription("Guardando Pedido ...")
+                        .build();
+            }else{
+                alertDialog = new LottieAlertDialog.Builder(getContext(), DialogTypes.TYPE_LOADING).setTitle("Bonificación")
+                        .setDescription("Guardando Bonificación ...")
+                        .build();
+            }
+
 
             alertDialog.setCancelable(false);
         }catch (Error e){

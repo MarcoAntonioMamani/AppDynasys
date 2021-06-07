@@ -142,10 +142,16 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     private Spinner listaSpinnerCategoriaPrecio;
     Boolean BanderaCaja=false;
     Boolean BanderaCantidad=false;
+    TextView tvTitleCategoriaPrecio;
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().setTitle("ENTREGA PEDIDO");
+        if (mPedido.getConcepto()==1){
+            getActivity().setTitle("Entregar Pedido");
+        }else{
+            getActivity().setTitle("Entregar Bonificación");
+        }
+
         context=getContext();
     }
     public void iniciarRecyclerView(){
@@ -180,6 +186,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         name_total=view.findViewById(R.id.edit_viewdata_MontoTotal);
         name_descuento=view.findViewById(R.id.edit_view_Descuento);
         name_totalDescuento=view.findViewById(R.id.edit_view_TotalDescuento);
+        tvTitleCategoriaPrecio=view.findViewById(R.id.tv_modify_tvcategoriaprecio);
         etFecha=view.findViewById(R.id.edit_viewdata_fecha);
         EtReclamo=view.findViewById(R.id.edit_update_Reclamo);
         ObFecha=(ImageButton)view.findViewById(R.id.edit_obtener_fecha);
@@ -239,6 +246,10 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
             }
         });
 
+        if (mPedido.getConcepto()!=1){
+            categoriaPrecioSelected = listCategoriaPrecio.get(0);
+            mCreatePedidoPresenter.CargarProducto(categoriaPrecioSelected.getId());
+        }
 
     }
     public void InterpretarDatos(){
@@ -268,7 +279,20 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         if (ViewCreditos ==0){
             linearViewCredito.setVisibility(View.GONE);
         }else{
-            linearViewCredito.setVisibility(View.VISIBLE);
+            if (mPedido.getConcepto()==1){
+                linearViewCredito.setVisibility(View.VISIBLE);
+            }else{
+                linearViewCredito.setVisibility(View.GONE);
+            }
+
+        }
+
+        if (mPedido.getConcepto()==1){
+            tvTitleCategoriaPrecio.setVisibility(View.VISIBLE);
+            listaSpinnerCategoriaPrecio.setVisibility(View.VISIBLE);
+        }else{
+            tvTitleCategoriaPrecio.setVisibility(View.GONE);
+            listaSpinnerCategoriaPrecio.setVisibility(View.GONE);
         }
     }
 public void Saveoffline(){
@@ -998,6 +1022,13 @@ return null;
     @Override
     public void MostrarProductos(List<ProductoEntity> productos) {
         if (productos.size()>0){
+
+            if (mPedido.getConcepto()!=1){
+                for (int i = 0; i < productos.size(); i++) {
+                    productos.get(i).setPrecio(0);
+                }
+            }
+
             lisProducto = new ArrayList<>();
             lisProducto.addAll(productos);
             aProducto.setThreshold(1);
@@ -1533,9 +1564,16 @@ return null;
     }
     @Override
     public void showSaveResultOption(int codigo, String id, String mensaje) {
+        String title="";
+        if (mPedido.getConcepto()==1){
+            title="Pedido";
+        }else{
+            title="Bonificación";
+        }
+
         switch (codigo){
             case 0:
-                dialogs= showCustomDialog("Pedido Actualizado Correctamente"
+                dialogs= showCustomDialog(title+" Actualizado Correctamente"
                         ,true);
                 dialogs.setCancelable(false);
                 dialogs.show();
@@ -1567,7 +1605,7 @@ return null;
                         lottieAlertDialog.dismiss();
                         RetornarPrincipal();
                         UtilShare.clienteMapa =mCliente;
-                        Fragment frag = new CreatePedidoFragment(1);
+                        Fragment frag = new CreatePedidoFragment(1,1);
                         MainActivity fca = (MainActivity) getActivity();
                         fca.switchFragment(frag,"CREATE_PEDIDOS");
                     }

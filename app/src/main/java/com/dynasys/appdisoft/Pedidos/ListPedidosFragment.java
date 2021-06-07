@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -63,6 +64,7 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
     ImageButton btnDesde,btnHasta;
     Button btnCargar;
     View view;
+    private AlertDialog dialogs,dialogQuestion;
     public final Calendar c = Calendar.getInstance();
     private static final String CERO = "0";
     private static final String BARRA = "/";
@@ -81,11 +83,13 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
     public ListPedidosFragment() {
         // Required empty public constructor
         FisrtData=false;
+        context=getContext();
     }
     public ListPedidosFragment(int Tip) {
         // Required empty public constructor
     this.Tipo=Tip;
         FisrtData=false;
+        context=getContext();
     }
 
     @Override
@@ -96,7 +100,7 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
         }else{
             getActivity().setTitle("Pedidos Entregados");
         }
-
+        context=getContext();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -125,7 +129,7 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
         onclickObtenerFechaDesde();
         onclickObtenerFechaHasta();
         OnClickCargar();
-
+        context=getContext();
         return view;
     }
     public void OnClickCargar(){
@@ -227,11 +231,53 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
         btnAddPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment frag = new CreatePedidoFragment();
-                MainActivity fca = (MainActivity) getActivity();
-                fca.switchFragment(frag,"CREATE_PEDIDOS");
+
+                dialogQuestion=showDialogQuestion("Seleccione una Opción",true);
+                dialogQuestion.show();
+
             }
         });
+    }
+
+    public AlertDialog showDialogQuestion(String Contenido, Boolean flag) {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        View v = inflater.inflate(R.layout.dialog_pedido , null);
+
+        builder.setView(v);
+        TextView Content =(TextView)v.findViewById(R.id.dialog_question_pedido) ;
+        Button aceptar = (Button) v.findViewById(R.id.dialog_btn_pedido);
+        Button cancelar = (Button) v.findViewById(R.id.dialog_btn_bonificacion);
+        Content.setText(Contenido);
+        aceptar.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Crear Cuenta...
+                        //
+                        dialogQuestion.dismiss();
+
+
+                        Fragment frag = new CreatePedidoFragment(0,1);
+                        MainActivity fca = (MainActivity) getActivity();
+                        fca.switchFragment(frag,"CREATE_PEDIDOS");
+                    }
+                }
+        );
+        cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogQuestion.dismiss();
+                Fragment frag = new CreatePedidoFragment(0,2);
+                MainActivity fca = (MainActivity) getActivity();
+                fca.switchFragment(frag,"CREATE_BONIFICACION");
+            }
+        });
+
+
+        return builder.create();
     }
 public void cargarClientes(){
     try {

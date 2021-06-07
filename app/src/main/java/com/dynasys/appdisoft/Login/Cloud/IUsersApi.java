@@ -59,7 +59,7 @@ public interface IUsersApi {
     Call<List<CategoriaPrecioEntity>> ObtenerPrecioCategoria();
 
 
-    @POST("/api/repartidor/pedidoDetalleCF")
+    @POST("/api/repartidor/pedidoDetalleSalviety")
     Call<ResponseLogin> InsertPedido(@Body PedidoDetalle user);
 
     @PUT("/api/repartidor/pedido")

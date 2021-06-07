@@ -116,6 +116,7 @@ android:background="@color/marfil"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:paddingTop="10dp"
+                    android:id="@+id/id_textview_categoria"
                     android:text="Categoria Precio"/>
                 <Spinner
                     android:id="@+id/id_CategoriaPrecio"
