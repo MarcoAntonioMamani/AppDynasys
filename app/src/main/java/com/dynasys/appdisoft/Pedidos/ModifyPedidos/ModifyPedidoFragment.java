@@ -143,6 +143,8 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     Boolean BanderaCaja=false;
     Boolean BanderaCantidad=false;
     TextView tvTitleCategoriaPrecio;
+
+    Boolean PrecioIniciado=false;  //Esta variable es para que no se limpie el detalle al iniciar la pantalla de modificacion de pedidos con el evento de precio
     @Override
     public void onResume() {
         super.onResume();
@@ -217,6 +219,8 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         onClickEtregar();
         onClickVerCliente();
         OnClickObtenerFecha();
+
+
         CargarCategoriaPrecios();
 
         mFecha=Calendar.getInstance().getTime();
@@ -240,6 +244,33 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
                 if (pos>=0 && listCategoriaPrecio.size()>0){
                     categoriaPrecioSelected = listCategoriaPrecio.get(pos);
                     mCreatePedidoPresenter.CargarProducto(categoriaPrecioSelected.getId());
+
+if (PrecioIniciado==true){
+                     for (int posicionn = 0; posicionn < mDetalleItem.size(); posicionn++) {
+                        int estado=mDetalleItem.get(posicionn).getObupdate();
+                        if (estado>=1){
+                            mDetalleItem.get(posicionn).setObupdate(-1);
+                        }else{
+
+                            // mDetalleItem.remove(item);
+                            mDetalleItem.get(posicionn).setObupdate(-2);
+
+
+                        }
+
+
+                    }
+
+
+                    Reconstruir();
+                    productoAdapter.setLista(GetActualProducts());
+                    productoAdapter.notifyDataSetChanged();
+                    calcularTotal();
+}else{
+    PrecioIniciado=true;
+}
+
+
                 }
             }
             public void onNothingSelected(AdapterView<?> parent) {

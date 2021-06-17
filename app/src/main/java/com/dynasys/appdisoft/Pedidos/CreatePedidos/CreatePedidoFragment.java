@@ -248,6 +248,14 @@ private PedidoEntity mPedido;
                 if (pos>=0 && listCategoriaPrecio.size()>0){
                     categoriaPrecioSelected = listCategoriaPrecio.get(pos);
                     mCreatePedidoPresenter.CargarProducto(categoriaPrecioSelected.getId());
+
+
+                    mDetalleItem=new ArrayList<>() ;
+                     mDetalleAdapter.setFilter(mDetalleItem);
+                    productoAdapter.setLista(GetActualProducts());
+                    productoAdapter.notifyDataSetChanged();
+                    calcularTotal();
+
                 }
             }
             public void onNothingSelected(AdapterView<?> parent) {
