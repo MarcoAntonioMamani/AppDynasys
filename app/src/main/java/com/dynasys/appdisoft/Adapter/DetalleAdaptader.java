@@ -3,6 +3,7 @@ package com.dynasys.appdisoft.Adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +39,7 @@ public class DetalleAdaptader
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView nombre;
-        public EditText price;
+        public TextView price;
         public TextView subtotal;
         public EditText cantidad;
         public EditText caja;
@@ -47,11 +48,14 @@ public class DetalleAdaptader
             super(v);
 
             nombre = (TextView) v.findViewById(R.id.id_detalle_name);
-            price = (EditText) v.findViewById(R.id.id_detalle_price);
+            price = (TextView) v.findViewById(R.id.id_detalle_price);
             subtotal=(TextView)v.findViewById(R.id.id_detalle_subtotal);
             cantidad=(EditText)v.findViewById(R.id.id_detalle_cantidad);
             caja=(EditText)v.findViewById(R.id.id_detalle_Caja);
             img_delete=(TextView)v.findViewById(R.id.id_detalle_remove);
+
+
+
         }
     }
 
@@ -84,7 +88,7 @@ public class DetalleAdaptader
         final TextView tvsubtotal;
         final EditText tvCantidad;
         final EditText tvCantidadCajas;
-        final EditText tvPrecio;
+        final TextView tvPrecio;
         item = items.get(i);
         viewHolder.nombre.setText(item.getCadesc());
         viewHolder.img_delete.setTag(item);
@@ -146,7 +150,7 @@ public class DetalleAdaptader
             }
         });
 
-        viewHolder.price.addTextChangedListener(new TextWatcher() {
+        /*viewHolder.price.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -164,7 +168,7 @@ public class DetalleAdaptader
             public void afterTextChanged(Editable editable) {
 
             }
-        });
+        });*/
 
         viewHolder.img_delete.setOnClickListener(new View.OnClickListener() {
             @Override
