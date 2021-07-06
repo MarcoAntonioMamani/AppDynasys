@@ -13,8 +13,9 @@ public class ResponseLogin {
     int stock;
     int view_credito;
     int cantidad_producto;
+    int accesible ;
 
-    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria, int stock, int view_credito, int cantidad_producto) {
+    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria, int stock, int view_credito, int cantidad_producto, int accesible) {
         this.code = code;
         this.message = message;
         this.token = token;
@@ -27,6 +28,15 @@ public class ResponseLogin {
         this.stock = stock;
         this.view_credito = view_credito;
         this.cantidad_producto = cantidad_producto;
+        this.accesible = accesible;
+    }
+
+    public int getAccesible() {
+        return accesible;
+    }
+
+    public void setAccesible(int accesible) {
+        this.accesible = accesible;
     }
 
     public int getCode() {

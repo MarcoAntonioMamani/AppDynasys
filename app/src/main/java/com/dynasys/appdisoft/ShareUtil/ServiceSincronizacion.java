@@ -26,6 +26,7 @@ import android.util.Log;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.ListarDeudas.Pagos.CobranzaRequest;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
+import com.dynasys.appdisoft.Login.Cloud.Bodylogin;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.AppDatabase;
 import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
@@ -329,6 +330,7 @@ if (UtilShare.mActivity!=null){
                             idRepartidor= DataPreferences.getPrefInt("idrepartidor",mContext);
                             _DecargarPedidos(""+idRepartidor);
                             _DecargarStocks(""+idRepartidor,0);
+                            _ActualizarEstadoAccesible(""+idRepartidor);
                             exportarClientes();
                             UpdateClientes();
                             exportarPedidos(""+idRepartidor);
@@ -347,7 +349,7 @@ if (UtilShare.mActivity!=null){
                     }
                     new ChecarNotificaciones().execute();
 }
-            }, 12*1000);//8
+            }, 15*1000);//8
             super.onPostExecute(result);
         }
     }
@@ -1096,6 +1098,41 @@ if (UtilShare.mActivity!=null){
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void _ActualizarEstadoAccesible(final String idRepartidor){
+        Bodylogin blogin=new Bodylogin(idRepartidor,"-666");
+        ApiManager.apiManager=null;
+        ApiManager apiManager=ApiManager.getInstance(mContext);
+        apiManager.LoginUser(blogin, new Callback<ResponseLogin>() {
+            @Override
+            public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
+                ResponseLogin responseUser = response.body();
+                if (response.code()==404){
+
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+
+                    if (responseUser.getCode()!=4){
+
+
+
+                            DataPreferences.putPrefInteger("Accesible",responseUser.getAccesible(),mContext);
+
+
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseLogin> call, Throwable t) {
+
+            }
+        });
+
     }
 
     public StockEntity ObtenerProducto(List<StockEntity>  lista,int codProducto){

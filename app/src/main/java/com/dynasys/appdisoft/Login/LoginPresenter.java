@@ -64,20 +64,29 @@ public class LoginPresenter implements LoginMvp.Presenter {
                             if (responseUser.getCode()==4){
                                 mLoginView.ShowMessageResult(responseUser.getMessage());
                             }else{
-                                DataPreferences.putPrefLogin("isLogin",true,mContext);
-                                DataPreferences.putPref("repartidor",responseUser.getToken(),mContext);
-                                DataPreferences.putPrefInteger("idrepartidor",responseUser.getId(),mContext);
-                                DataPreferences.putPrefInteger("zona",responseUser.getZona(),mContext);
-                                DataPreferences.putPrefInteger("EditarPedidos",responseUser.getPedido(),mContext);
-                                DataPreferences.putPrefInteger("ViewRuta",responseUser.getMapa(),mContext);
-                                DataPreferences.putPrefInteger("UpdateCliente",responseUser.getUpdate_cliente(),mContext);
-                                DataPreferences.putPrefInteger("CategoriaRepartidor",responseUser.getCategoria(),mContext);
-                                DataPreferences.putPrefInteger("stock",responseUser.getStock(),mContext);
-                                DataPreferences.putPrefInteger("ViewCredito",responseUser.getView_credito() ,mContext);
-                                DataPreferences.putPrefInteger("CantidadProducto",responseUser.getCantidad_producto(),mContext);
 
-                                _DescargarZonas(""+responseUser.getId());
-                                mLoginView.LoginSuccesfull();
+
+                                if (responseUser.getAccesible() == 1) {
+                                    DataPreferences.putPrefLogin("isLogin",true,mContext);
+
+                                    DataPreferences.putPref("repartidor",responseUser.getToken(),mContext);
+                                    DataPreferences.putPrefInteger("idrepartidor",responseUser.getId(),mContext);
+                                    DataPreferences.putPrefInteger("zona",responseUser.getZona(),mContext);
+                                    DataPreferences.putPrefInteger("EditarPedidos",responseUser.getPedido(),mContext);
+                                    DataPreferences.putPrefInteger("ViewRuta",responseUser.getMapa(),mContext);
+                                    DataPreferences.putPrefInteger("UpdateCliente",responseUser.getUpdate_cliente(),mContext);
+                                    DataPreferences.putPrefInteger("CategoriaRepartidor",responseUser.getCategoria(),mContext);
+                                    DataPreferences.putPrefInteger("stock",responseUser.getStock(),mContext);
+                                    DataPreferences.putPrefInteger("ViewCredito",responseUser.getView_credito() ,mContext);
+                                    DataPreferences.putPrefInteger("CantidadProducto",responseUser.getCantidad_producto(),mContext);
+                                    DataPreferences.putPrefInteger("Accesible",responseUser.getAccesible(),mContext);
+                                    _DescargarZonas(""+responseUser.getId());
+                                    mLoginView.LoginSuccesfull();
+                                }else{
+                                    mLoginView.ShowMessageResult("El usuario no puede acceder a la APP, Revise si tiene Conciliación Abierta o si es usuario activo en el sistema");
+                                }
+
+
                             }
 
                         } else {

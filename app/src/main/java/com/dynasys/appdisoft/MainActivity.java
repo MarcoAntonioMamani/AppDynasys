@@ -372,21 +372,74 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void switchFragment(final Fragment frag, final String tag){
-        switchHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    FragmentManager fm = getSupportFragmentManager();
-                    FragmentTransaction ft = fm.beginTransaction();
-                    if (tag!=Constantes.TAG_CLIENTES  && tag!=Constantes.TAG_PEDIDOS ){
-                        ft.setCustomAnimations(R.transition.left_in,R.transition.left_out);
-                    }
-                    ft.addToBackStack(tag)
-                            .replace(R.id.fragment, frag,tag)
-                            .commit();
-                }catch(Exception e){}
-            }
-        }, 100);
+
+        int Accesible= DataPreferences.getPrefInt("Accesible",getApplicationContext());
+
+        if (Accesible==1){
+            switchHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        FragmentManager fm = getSupportFragmentManager();
+                        FragmentTransaction ft = fm.beginTransaction();
+                        if (tag!=Constantes.TAG_CLIENTES  && tag!=Constantes.TAG_PEDIDOS ){
+                            ft.setCustomAnimations(R.transition.left_in,R.transition.left_out);
+                        }
+                        ft.addToBackStack(tag)
+                                .replace(R.id.fragment, frag,tag)
+                                .commit();
+                    }catch(Exception e){}
+                }
+            }, 100);
+        }else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            builder
+                    .setTitle("Disoft")
+                    .setMessage("Su cuenta es Inacesible Debe Cerrar Sesión de Forma Obligatoria.")
+                    .setIcon(R.drawable.ic_iinfo)
+                    .setPositiveButton(mContext.getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            if (ShareMethods.IsServiceRunning(mContext, ServiceSincronizacion.class)){
+                                Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
+                                //mContext.stopService(intent);
+                                ServiceSincronizacion.getInstance().onDestroy();
+                            }
+                            DataPreferences.putPrefLogin("isLogin",false,getApplicationContext());
+
+                            DataPreferences.putPrefInteger("idrepartidor",0,mContext);
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                                    finish();
+                                }
+                            });
+                        }
+                    })
+                    .setNegativeButton(mContext.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            if (ShareMethods.IsServiceRunning(mContext, ServiceSincronizacion.class)){
+                                Intent intent = new Intent(mContext,ServiceSincronizacion.getInstance().getClass());
+                                //mContext.stopService(intent);
+                                ServiceSincronizacion.getInstance().onDestroy();
+                            }
+                            DataPreferences.putPrefLogin("isLogin",false,getApplicationContext());
+
+                            DataPreferences.putPrefInteger("idrepartidor",0,mContext);
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                                    finish();
+                                }
+                            });
+                        }
+                    })
+                    .show();
+        }
+
     }
 
     private void setupUserBox() {
