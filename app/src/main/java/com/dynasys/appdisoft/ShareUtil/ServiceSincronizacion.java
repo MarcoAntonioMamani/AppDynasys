@@ -974,7 +974,7 @@ if (UtilShare.mActivity!=null){
                 final String CodeGenerado=pedido.getCodigogenerado();
 
                 ApiManager apiManager=ApiManager.getInstance(mContext);
-                apiManager.UpdatePedido(pedido, new Callback<ResponseLogin>() {
+                apiManager.UpdatePedidoIncluirAnular(pedido, new Callback<ResponseLogin>() {
                     @Override
                     public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                         ResponseLogin responseUser = response.body();
@@ -991,7 +991,11 @@ if (UtilShare.mActivity!=null){
                                         mPedido.setEstado(1);
                                         mPedido.setEstadoUpdate(1);
                                         List<DetalleEntity> list=viewModelDetalle.getDetalle(CodeGenerado);
-                                        UpdateDetalleServicio(responseUser.getToken(),list,mPedido,CodeGenerado);
+
+                                        if (mPedido.getOaap()==1){
+                                            UpdateDetalleServicio(responseUser.getToken(),list,mPedido,CodeGenerado);
+                                        }
+
                                         //showSaveResultOption(1,""+mcliente.getNumi(),"");
 
                                     //viewModelPedidos.updatePedido(mPedido);

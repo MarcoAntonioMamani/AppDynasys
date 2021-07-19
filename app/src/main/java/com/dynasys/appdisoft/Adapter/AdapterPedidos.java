@@ -59,25 +59,35 @@ private PedidosMvp.View mview;
                 mview.recyclerViewListClicked(v, listaPedidos.get(i));
             }
         });
-        if (listaPedidos.get(i).getEstado()==0 && listaPedidos.get(i).getEstadoStock() !=2){  // EstadoStock= 2 Quiere Decir que no se sincronizo por stock
-            clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_bottoncancelrojo));
 
-        }
-        if (listaPedidos.get(i).getEstado()==0 && listaPedidos.get(i).getEstadoStock() ==2){  // EstadoStock= 2 Quiere Decir que no se sincronizo por stock
-           //Aqui Entra si el pedido es nuevo pero ya no existe el stock en server
-            clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_maps ));
-        }
-        if (listaPedidos.get(i).getEstado()==1 ){
-            clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_button));
 
-        }
-        if (listaPedidos.get(i).getEstado()==2 && listaPedidos.get(i).getEstadoStock() !=2){
+        if (listaPedidos.get(i).getOaap()==2){
+            clientesViewHolder.TvNroPedido.setText((CharSequence) ("Pedido # "+listaPedidos.get(i).getOanumi()+"  Anulado"));
             clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_bottoncancelrojo));
+        }else{
+            if (listaPedidos.get(i).getEstado()==0 && listaPedidos.get(i).getEstadoStock() !=2){  // EstadoStock= 2 Quiere Decir que no se sincronizo por stock
+                clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_bottoncancelrojo));
+
+            }
+            if (listaPedidos.get(i).getEstado()==0 && listaPedidos.get(i).getEstadoStock() ==2){  // EstadoStock= 2 Quiere Decir que no se sincronizo por stock
+                //Aqui Entra si el pedido es nuevo pero ya no existe el stock en server
+                clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_maps ));
+            }
+            if (listaPedidos.get(i).getEstado()==1 && listaPedidos.get(i).getOaap()==1){
+                clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_button));
+            }
+
+
+            if (listaPedidos.get(i).getEstado()==2 && listaPedidos.get(i).getEstadoStock() !=2){
+                clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_bottoncancelrojo));
+            }
+            if (listaPedidos.get(i).getEstado()==2 && listaPedidos.get(i).getEstadoStock() ==2){
+                //Aqui entra si ha sido modificado, pero ya no existe stock en el servidor
+                clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_maps));
+            }
         }
-        if (listaPedidos.get(i).getEstado()==2 && listaPedidos.get(i).getEstadoStock() ==2){
-            //Aqui entra si ha sido modificado, pero ya no existe stock en el servidor
-            clientesViewHolder.TvNroPedido.setBackground(context.getResources().getDrawable(R.drawable.animation_riple_maps));
-        }
+
+
     }
 public String ObtenerDireccionCliente(String numi){
     for (int i = 0; i < listClientes.size(); i++) {

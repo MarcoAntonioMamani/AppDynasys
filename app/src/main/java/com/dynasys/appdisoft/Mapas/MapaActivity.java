@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.model.Step;
 import com.akexorcist.googledirection.util.DirectionConverter;
+import com.dynasys.appdisoft.Clientes.CustomInfoWindowAdapter;
 import com.dynasys.appdisoft.Clientes.TipoMapa;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
@@ -79,6 +81,7 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
     GoogleMap mapa;
     private List<Marker> originMarkers = new ArrayList<>();
     private List<ClienteEntity> lisClientes = new ArrayList<>();
+    private List<ClientePedidos> listClientePedidos=new ArrayList<>();
     private List<ClienteEntity> lisClientesBackup = new ArrayList<>();
     private ClientesListViewModel viewModelCliente;
     private List<PedidoEntity> listPedidos=new ArrayList<>();
@@ -89,6 +92,8 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button btnCargar;
     private Location Dlocation=null;
     private ProgressDialog progresdialog;
+
+    LinearLayout linearMapaPedidos;
     private int tipoAccion=0;
     private Handler switchHandler = new Handler();
     public boolean BanderGps =false;
@@ -98,6 +103,7 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_mapa);
         listaTipos =findViewById(R.id.id_lista_Tipos);
         btnCargar=findViewById(R.id.btnFindPathall);
+        linearMapaPedidos=findViewById(R.id.mapa_pedidos);
         viewModelCliente = ViewModelProviders.of(this).get(ClientesListViewModel.class);
         viewModelPedido = ViewModelProviders.of(this).get(PedidoListViewModel.class);
         _CargarTipos();
@@ -169,8 +175,9 @@ void ValidarButtonVisible(){
     public void _CargarTipos(){
         List<TipoMapa> list=new ArrayList<>();
         list.add(new TipoMapa(1,"Ver Clientes"));
-        list.add(new TipoMapa(2,"Ver Pedidos Pendientes"));
-        list.add(new TipoMapa(3,"Ver Pedidos Entregados"));
+        list.add(new TipoMapa(2,"Ver Solo Pedidos Pendientes"));
+        list.add(new TipoMapa(3,"Ver Solo Pedidos Entregados"));
+        list.add(new TipoMapa(4,"Ver Todos Los Pedidos"));
 
         ArrayAdapter<TipoMapa> adapter =new ArrayAdapter<TipoMapa>(getApplicationContext(), android.R.layout.simple_spinner_item, list);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -179,13 +186,21 @@ void ValidarButtonVisible(){
     }
 
     public void CargarClientes(int tipo){
-
+        List<ClientePedidos> listClientePed=new ArrayList<>();
         if (tipo==0){
+            linearMapaPedidos.setVisibility(View.GONE);
             try {
                 tipoAccion=0;
                 //lisClientes=FiltarByZona(viewModelCliente.getMAllCliente(0));
                 lisClientes=viewModelCliente.getMAllCliente(0);
-                UtilShare.ListClientes=lisClientes;
+
+                listClientePed.clear();
+
+                for (int i = 0; i < lisClientes.size(); i++) {
+                    listClientePed.add(new ClientePedidos(lisClientes.get(i),1,1));
+                }
+                UtilShare.ListClientesPedidos=listClientePed;
+                listClientePedidos=listClientePed;
                 dibujarClientes();
             } catch (ExecutionException e) {
 
@@ -194,19 +209,26 @@ void ValidarButtonVisible(){
             }
         }
         if (tipo==1){
+            linearMapaPedidos.setVisibility(View.GONE);
             try {
                 tipoAccion=1;
                 lisClientesBackup=viewModelCliente.getMAllCliente(0);
                 lisClientes=new ArrayList<>();
                 listPedidos=viewModelPedido.getMAllPedido(0);
+
+                listClientePed.clear();
                 for (int i = 0; i < listPedidos.size(); i++) {
                     PedidoEntity pedi=listPedidos.get(i);
                     if (pedi.getOaest()!=3){
                         ClienteEntity cliente=obtenerCliente(pedi);
                         lisClientes.add(cliente);
+
+                        listClientePed.add(new ClientePedidos(cliente,pedi.getOaest(),pedi.getOaap()));
                     }
                 }
                 UtilShare.ListClientes=lisClientes;
+                UtilShare.ListClientesPedidos=listClientePed;
+                listClientePedidos=listClientePed;
                 dibujarClientes();
 
 
@@ -218,20 +240,53 @@ void ValidarButtonVisible(){
         }
 
         if (tipo==2){
+            linearMapaPedidos.setVisibility(View.GONE);
             try {
                 tipoAccion=2;
                 lisClientesBackup=viewModelCliente.getMAllCliente(0);
                 lisClientes=new ArrayList<>();
                 listPedidos=viewModelPedido.getMAllPedido(0);
+                listClientePed.clear();
                 for (int i = 0; i < listPedidos.size(); i++) {
                     PedidoEntity pedi=listPedidos.get(i);
                     if (pedi.getOaest()==3){
                         ClienteEntity cliente=obtenerCliente(pedi);
+                        listClientePed.add(new ClientePedidos(cliente,pedi.getOaest(),pedi.getOaap()));
+
                         lisClientes.add(cliente);
                     }
                 }
                 UtilShare.ListClientes=lisClientes;
+                listClientePedidos=listClientePed;
+                UtilShare.ListClientesPedidos=listClientePed;
                 dibujarClientes();
+            } catch (ExecutionException e) {
+
+            } catch (InterruptedException e) {
+
+            }
+        }
+        if (tipo==3){
+            linearMapaPedidos.setVisibility(View.VISIBLE);
+            try {
+                tipoAccion=3;
+                lisClientesBackup=viewModelCliente.getMAllCliente(0);
+                lisClientes=new ArrayList<>();
+                listPedidos=viewModelPedido.getMAllPedido(0);
+                listClientePed.clear();
+                for (int i = 0; i < listPedidos.size(); i++) {
+                    PedidoEntity pedi=listPedidos.get(i);
+
+                        ClienteEntity cliente=obtenerCliente(pedi);
+                        listClientePed.add(new ClientePedidos(cliente,pedi.getOaest(),pedi.getOaap()));
+
+                        lisClientes.add(cliente);
+
+                }
+                UtilShare.ListClientes=lisClientes;
+                UtilShare.ListClientesPedidos=listClientePed;
+                listClientePedidos=listClientePed;
+                dibujarClientesEstadoPedido();
             } catch (ExecutionException e) {
 
             } catch (InterruptedException e) {
@@ -281,21 +336,24 @@ void ValidarButtonVisible(){
                 }
             }
         });
-        for (int i = 0; i < lisClientes.size(); i++) {
+        for (int i = 0; i < listClientePedidos.size(); i++) {
 
-            ClienteEntity mov=lisClientes.get(i);
-            if (mov!=null){
-                if (mov.getLongitud()!=null){
-                    if (mov.getLongitud()!=0){
+            ClienteEntity mov=listClientePedidos.get(i).getCliente();
+            if (listClientePedidos.get(i).getAnulado()==1){///Anulado = 1  quiere decir que esta activo
+                if (mov!=null){
+                    if (mov.getLongitud()!=null){
+                        if (mov.getLongitud()!=0){
                /* originMarkers.add(mapa.addMarker(new MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient02 ))
                         .title(""+i)
                         .position(new LatLng(mov.getLatitud(),mov.getLongitud()))));*/
-                        mClusterManager.addItem(new StringClusterItem("" + (i), new LatLng(mov.getLatitud(),mov.getLongitud())));
+                            mClusterManager.addItem(new StringClusterItem("" + (i), new LatLng(mov.getLatitud(),mov.getLongitud())));
 
+                        }
                     }
                 }
             }
+
 
 
         }
@@ -339,6 +397,153 @@ void ValidarButtonVisible(){
             }
 
         } );
+
+    }
+
+    public void dibujarClientesEstadoPedido(){
+        if (mapa==null){
+            return;
+        }
+        mapa.clear();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mapa.setMyLocationEnabled(true);
+
+
+        mClusterManager = new ClusterManager<>(this, mapa);
+        // mapa.setOnCameraChangeListener( mClusterManager);
+        final CameraPosition[] mPreviousCameraPosition = {null};
+/*
+        mapa.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+                CameraPosition position = mapa.getCameraPosition();
+                if(mPreviousCameraPosition[0] == null || mPreviousCameraPosition[0].zoom != position.zoom) {
+                    mPreviousCameraPosition[0] = mapa.getCameraPosition();
+                    mClusterManager.cluster();
+                }
+            }
+        });*/
+
+
+
+        for (int i = 0; i < listClientePedidos.size(); i++) {
+
+            ClienteEntity mov=listClientePedidos.get(i).getCliente();
+            if (mov!=null){
+                if (mov.getLongitud()!=null){
+                    if (mov.getLongitud()!=0){
+               /* originMarkers.add(mapa.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient02 ))
+                        .title(""+i)
+                        .position(new LatLng(mov.getLatitud(),mov.getLongitud()))));*/
+
+                        /*
+                        mClusterManager.addItem(new StringClusterItem("" + (i), new LatLng(mov.getLatitud(),mov.getLongitud())));
+*/
+
+                        MarkerOptions marker = new MarkerOptions().position(new LatLng(mov.getLatitud(),mov.getLongitud()));
+
+// Changing marker icon
+                        if (listClientePedidos.get(i).getAnulado()==2){
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient01));
+                        }else{
+                            if (listClientePedidos.get(i).getEstadoPedido() ==2){
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient03));
+                            }else{
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient02));
+                            }
+
+                        }
+
+
+                        Marker mm= mapa.addMarker(marker);
+
+                        mm.setTag(mov);
+
+                    }
+                }
+            }
+
+
+        }
+
+        mapa.setInfoWindowAdapter(new CustomInfoWindowAdapter(LayoutInflater.from(this)));
+        mapa.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                ClienteEntity obj=(ClienteEntity) marker.getTag();
+                UtilShare.clienteMapa=obj;
+                UtilShare.tipoAccion=tipoAccion;
+                DataPreferences.putPrefInteger("Accion",1,getApplicationContext());
+                DataPreferences.putPref("idCliente",obj.getCodigogenerado() ,getApplicationContext());
+                if (tipoAccion==0){
+                    DataPreferences.putPrefInteger("Accion",1,getApplicationContext());
+                    DataPreferences.putPref("idCliente",obj.getCodigogenerado() ,getApplicationContext());
+                           /* Fragment frag = new CreatePedidoFragment(1);
+                            switchFragment(frag,"CREATE_PEDIDOS");*/
+
+                    onBackPressed();
+                }
+                if (tipoAccion==1){
+                    DataPreferences.putPrefInteger("Accion",2,getApplicationContext());
+                    DataPreferences.putPref("idCliente",obj.getCodigogenerado() ,getApplicationContext());
+                           /* Fragment frag = new CreatePedidoFragment(1);
+                            switchFragment(frag,"CREATE_PEDIDOS");*/
+                    onBackPressed();
+                }
+            }
+
+        });
+      //  mClusterManager.cluster();
+        if (lisClientes.size()>0){
+            //mapa.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lisClientes.get(0).getLatitud(),lisClientes.get(0).getLongitud()), 15));
+            LatLng ubicacion=ObtenerUbicacion();
+            mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(ubicacion, 15));
+        }
+
+       /* final CustomClusterRenderer renderer = new CustomClusterRenderer(this, mapa, mClusterManager);
+        mClusterManager.setRenderer(renderer);
+        mClusterManager.getMarkerCollection()
+                .setOnInfoWindowAdapter(new CustomInfoWindowAdapterMapa(LayoutInflater.from(this)));
+
+        mapa.setInfoWindowAdapter(mClusterManager.getMarkerManager());
+        mapa.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener()
+        {
+            @Override
+            public void onInfoWindowClick(Marker arg0) {
+
+                ClienteEntity obj=(ClienteEntity) arg0.getTag();
+                UtilShare.clienteMapa=obj;
+                UtilShare.tipoAccion=tipoAccion;
+                DataPreferences.putPrefInteger("Accion",1,getApplicationContext());
+                DataPreferences.putPref("idCliente",obj.getCodigogenerado() ,getApplicationContext());
+                if (tipoAccion==0){
+                    DataPreferences.putPrefInteger("Accion",1,getApplicationContext());
+                    DataPreferences.putPref("idCliente",obj.getCodigogenerado() ,getApplicationContext());
+                           /* Fragment frag = new CreatePedidoFragment(1);
+                            switchFragment(frag,"CREATE_PEDIDOS");*/
+        /*
+                    onBackPressed();
+                }
+                if (tipoAccion==1){
+                    DataPreferences.putPrefInteger("Accion",2,getApplicationContext());
+                    DataPreferences.putPref("idCliente",obj.getCodigogenerado() ,getApplicationContext());
+                           /* Fragment frag = new CreatePedidoFragment(1);
+                            switchFragment(frag,"CREATE_PEDIDOS");*//*
+                    onBackPressed();
+                }
+            }
+
+        } );*/
 
     }
 

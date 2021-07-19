@@ -24,6 +24,11 @@
             android:icon="@drawable/ic_entregados"
             android:visible="true"/>
         <item
+            android:id="@+id/item_navigation_drawer_Efectivo"
+            android:icon="@drawable/ic_cobranza"
+            android:title="Revisar Efectivo"
+            android:visible="true"/>
+        <item
             android:id="@+id/item_navigation_drawer_mapa"
             android:title="Ver Ubicación"
             android:icon="@drawable/ic_map"

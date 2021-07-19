@@ -62,6 +62,9 @@ public interface IUsersApi {
     @PUT("/api/repartidor/pedido")
     Call<ResponseLogin> UpdatePedido(@Body PedidoEntity user);
 
+    @PUT("/api/repartidor/pedidoV2")
+    Call<ResponseLogin> UpdatePedidoIncluirAnular(@Body PedidoEntity user);
+
     @POST("/api/repartidor/detalle/{oanumi}")
     Call<ResponseLogin> InsertDetalle(@Body List<DetalleEntity> listDetalle,@Path("oanumi") String oanumi);
 

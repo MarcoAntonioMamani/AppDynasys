@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/ic_information" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Confirme Acción a Seguir"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Debe Seleccionar una Opción para Continuar"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:paddingLeft ="10dp"
+            android:paddingRight="10dp"
+            android:gravity="center"
+            >
+            <Button
+                android:id="@+id/dialog_Pedido_btn_Modificar"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/animation_riple_button"
+                android:text="Modificar"
+                android:textSize="11dp"
+                android:textColor="@color/white" />
+
+            <LinearLayout
+                android:layout_width="10dp"
+                android:layout_height="fill_parent">
+
+            </LinearLayout>
+
+
+
+            <Button
+                android:id="@+id/dialog_Pedido_btn_Entregar"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:textSize="11dp"
+                android:background="@drawable/animation_riple_edit"
+                android:text="Entregar"
+                android:textColor="@color/white" />
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:paddingLeft ="10dp"
+            android:paddingRight="10dp"
+            android:gravity="center"
+            >
+            <Button
+                android:id="@+id/dialog_pedido_btn_anular"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="11dp"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/animation_bottoncancelrojo"
+                android:text="Anular"
+                android:textColor="@color/white" />
+
+            <LinearLayout
+                android:layout_width="10dp"
+                android:layout_height="fill_parent">
+
+            </LinearLayout>
+            <Button
+                android:id="@+id/dialog_pedido_btn_cancel"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="1dp"
+                android:textSize="11dp"
+                android:background="@drawable/animation_riple_maps"
+                android:text="Cancelar"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

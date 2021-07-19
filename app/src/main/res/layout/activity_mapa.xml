@@ -14,75 +14,158 @@
         android:layout_weight="9"
 
         />
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.1"
-        android:orientation="horizontal"
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="5dp"
+        android:paddingTop="10dp"
         >
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.1"
             android:orientation="horizontal"
+
             >
-
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_weight="2"
-                android:paddingLeft="10dp"
+                android:orientation="horizontal"
                 >
-                 <LinearLayout
-                     android:layout_width="fill_parent"
-                     android:layout_height="fill_parent"
-                     android:gravity="center"
 
-android:orientation="vertical"
-                     >
-                     <Spinner
-                         android:id="@+id/id_lista_Tipos"
-                         android:layout_width="fill_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_marginBottom="@dimen/keyline_1"
-                         android:entries="@array/tipocliente_array"
-                         android:background="@drawable/animation_riple_maps"
-                         android:layout_gravity="center"
-                         android:gravity="center"
-
-                         />
-                 </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1.4"
-                android:padding="5dp"
-                >
                 <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-android:gravity="center"
-                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="2"
+                    android:paddingLeft="10dp"
                     >
-                    <Button
+                    <LinearLayout
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Crear Ruta"
-                        android:id="@+id/btnFindPathall"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
-                        android:background="@drawable/animation_riple_button"
-                        />
+                        android:layout_height="fill_parent"
+                        android:gravity="center"
+
+                        android:orientation="vertical"
+                        >
+                        <Spinner
+                            android:id="@+id/id_lista_Tipos"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/keyline_1"
+                            android:entries="@array/tipocliente_array"
+                            android:background="@drawable/animation_riple_maps"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+
+                            />
+                    </LinearLayout>
+
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.4"
+                    android:padding="5dp"
+                    >
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        >
+                        <Button
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Crear Ruta"
+                            android:id="@+id/btnFindPathall"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:background="@drawable/animation_riple_button"
+                            />
+                    </LinearLayout>
+
+                </LinearLayout>
             </LinearLayout>
+
+
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/mapa_pedidos"
+            android:orientation="horizontal"
+            >
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                >
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_mapclient02"
+
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cliente Con Pedidos Entregados"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:textSize="10dp"
+
+
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                >
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_mapclient03"
+
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cliente Con Pedidos No Entregados"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:textSize="10dp"
+
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                >
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_mapclient01"
+
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cliente Rechazado"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:textSize="10dp"
+                    />
+            </LinearLayout>
+
+
         </LinearLayout>
 
-
-
-
     </LinearLayout>
+
 </LinearLayout>

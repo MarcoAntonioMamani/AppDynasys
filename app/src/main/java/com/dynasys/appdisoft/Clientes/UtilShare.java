@@ -3,6 +3,7 @@ package com.dynasys.appdisoft.Clientes;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
+import com.dynasys.appdisoft.Mapas.ClientePedidos;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class UtilShare {
 
     public static ClienteEntity cliente=null;
     public static List<ClienteEntity> ListClientes=new ArrayList<>();
+    public static List<ClientePedidos> ListClientesPedidos=new ArrayList<>();
     public static FragmentActivity mActivity=null;
     public static ClienteEntity clienteMapa=null;
     public static int tipoAccion=0;

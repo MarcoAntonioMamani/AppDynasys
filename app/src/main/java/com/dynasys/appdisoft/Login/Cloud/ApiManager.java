@@ -77,6 +77,11 @@ private static Context mcontext;
         Call<ResponseLogin> userCall = service.UpdatePedido(user);
         userCall.enqueue(callback);
     }
+    public void UpdatePedidoIncluirAnular(PedidoEntity user, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.UpdatePedidoIncluirAnular(user);
+        userCall.enqueue(callback);
+    }
+
     public void InsertDetalle(List<DetalleEntity> user,String oanumi, Callback<ResponseLogin> callback) {
         Call<ResponseLogin> userCall = service.InsertDetalle(user,oanumi);
         userCall.enqueue(callback);

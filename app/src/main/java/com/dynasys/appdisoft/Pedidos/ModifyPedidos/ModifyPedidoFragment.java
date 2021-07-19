@@ -67,6 +67,7 @@ import com.dynasys.appdisoft.ShareUtil.Pdf.TemplatePDF;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
+
 import com.google.common.base.Preconditions;
 import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
@@ -104,7 +105,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     private EditText acliente;
     private AutoCompleteTextView aProducto;
     private AlertDialog dialogs,dialogQuestion;
-    private Button mbutton_update,mbutton_entrega,mbutton_viewcliente;
+    private Button mbutton_update,mbutton_viewcliente;
 
     private ImageButton ObFecha;
     private ClientesListViewModel viewModelCliente;
@@ -136,6 +137,8 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     private ImageButton btnImprimir;
     Boolean BanderaCaja=false;
     Boolean BanderaCantidad=false;
+
+    Boolean AnularPedido=false;   ///BAndera para saver si haique anular el pedido
     @Override
     public void onResume() {
         super.onResume();
@@ -183,7 +186,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         rEfectivo=(RadioButton)view.findViewById(R.id.edit_order_rbt_efectivo) ;
         rCredito=(RadioButton)view.findViewById(R.id.edit_order_rbt_credito);
         mbutton_update = (Button)view.findViewById(R.id.edit_viewdata_btnUpdatePedido);
-        mbutton_entrega=(Button)view.findViewById(R.id.edit_viewdata_btnEntregar);
+
         mbutton_viewcliente=(Button)view.findViewById(R.id.edit_viewdata_btnVerCliente);
         mscroll=view.findViewById(R.id.edit_order_scroll);
         tvTotalPago=(EditText)view.findViewById(R.id.edit_view_totalpago);
@@ -200,7 +203,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         onclickObtenerFecha();
         onClickModificar();
         InterpretarDatos();
-        onClickEtregar();
+
         onClickVerCliente();
         onClickImprimir();
         OnClickObtenerFecha();
@@ -208,7 +211,9 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         LocationGeo.getInstance(context,getActivity());
         LocationGeo.iniciarGPS();
 
-
+if (mPedido.getOaap()!=1){
+    mbutton_update.setVisibility(View.GONE);
+}
         return view;
     }
     public void onClickImprimir(){
@@ -283,10 +288,8 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
 
     }
     public void InterpretarDatos(){
-        int categoria =DataPreferences.getPrefInt("CategoriaRepartidor",getContext());
-        if (categoria==3){
-            mbutton_entrega.setVisibility(View.GONE);
-        }
+
+
         if(mPedido.getTipocobro()==2){
             rCredito.setChecked(true);
             tvTotalPago.setText(ShareMethods.ObtenerDecimalToString(mPedido.getTotalcredito(),2));
@@ -314,6 +317,9 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     }
 public void Saveoffline(){
     try {
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
+        }
 
 
         if (ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
@@ -327,6 +333,12 @@ public void Saveoffline(){
             if (mPedido.getEstado()==1){
                 pedi.setEstado(2);
             }
+
+            if (AnularPedido==true){
+               pedi.setOaap(2) ;
+            }
+
+
             pedi.setReclamo(EtReclamo.getText().toString());
             pedi.setOaobs(tvObservacion.getText().toString());
             pedi.setOafdoc(mFecha);
@@ -545,6 +557,10 @@ public void VerficarStockDisponible(int tipo){
 
     }else{  //Existen productos sin stock
         Reconstruir();
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
+        }
+
         ShowMessageResult("Existen Productos que ya no Cuentan con el Stock ingresado");
     }
 
@@ -560,6 +576,29 @@ public DetalleEntity ObtenerDetail(List<DetalleEntity> list,DetalleEntity d){
     }
 return null;
 }
+
+    private void ShowDialogSincronizando(){
+
+        try
+        {
+
+            alertDialog = new LottieAlertDialog.Builder(getContext(), DialogTypes.TYPE_LOADING).setTitle("Pedido")
+                    .setDescription("Modificando Pedido .....")
+                    .build();
+
+            alertDialog.setCancelable(false);
+        }catch (Error e){
+
+            String d=e.getMessage();
+
+        }
+
+    }
+
+    public void showDialogs() {
+        ShowDialogSincronizando();
+        alertDialog.show();
+    }
     public void Verificaronline(){
         int idRepartidor=DataPreferences.getPrefInt("idrepartidor",context);
 
@@ -706,10 +745,129 @@ return null;
             }
         },""+idRepartidor);
     }
+
+    public AlertDialog showDialogQuestion(String Contenido, Boolean flag) {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
+
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        View v = inflater.inflate(R.layout.dialog_save , null);
+
+        builder.setView(v);
+
+        Button modificar = (Button) v.findViewById(R.id.dialog_Pedido_btn_Modificar);
+        Button Entregar = (Button) v.findViewById(R.id.dialog_Pedido_btn_Entregar);
+        Button Anular = (Button) v.findViewById(R.id.dialog_pedido_btn_anular);
+        Button Cancelar = (Button) v.findViewById(R.id.dialog_pedido_btn_cancel);
+
+        //Anular
+
+        Anular.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogQuestion.dismiss();
+                if (rCredito.isChecked()==true){
+                    if (tvTotalPago.getText().toString()==""){
+                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                        return;
+                    }
+                    if (ObtenerTotal()<Double.parseDouble(tvTotalPago.getText().toString())){
+                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                        return;
+                    }
+                }
+                AnularPedido=true;
+                showDialogs();
+                if (isOnline()){
+                    Verificaronline();
+
+                }else{
+                    Saveoffline();
+                }
+            }
+        });
+        int categoria =DataPreferences.getPrefInt("CategoriaRepartidor",getContext());
+        if (categoria==3){
+            Entregar.setVisibility(View.GONE);
+        }
+        modificar.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        dialogQuestion.dismiss();
+                        if (rCredito.isChecked()==true){
+                            if (tvTotalPago.getText().toString()==""){
+                                ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                                return;
+                            }
+                            if (ObtenerTotal()<Double.parseDouble(tvTotalPago.getText().toString())){
+                                ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                                return;
+                            }
+                        }
+                        showDialogs();
+                        if (isOnline()){
+                            Verificaronline();
+
+                        }else{
+                            Saveoffline();
+                        }
+
+
+
+                    }
+                }
+        );
+
+        Entregar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogQuestion.dismiss();
+                if (rCredito.isChecked()==true){
+                    if (tvTotalPago.getText().toString()==""){
+                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                        return;
+                    }
+                    if (ObtenerTotal()<Double.parseDouble(tvTotalPago.getText().toString())){
+                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                        return;
+                    }
+                }
+                showDialogs();
+                if (isOnline()){
+                    VerificarOnlineEntregar();
+
+                }else{
+                    SaveOffLineEntregar();
+                }
+
+            }
+
+        });
+        Cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogQuestion.dismiss();
+
+            }
+        });
+
+
+        return builder.create();
+    }
     public void onClickModificar(){
         // private Button mbutton_update,mbutton_entrega,mbutton_viewcliente;
 
+
         mbutton_update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogQuestion=showDialogQuestion("",true);
+                dialogQuestion.show();
+            }
+        });
+      /*  mbutton_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (rCredito.isChecked()==true){
@@ -733,7 +891,7 @@ return null;
 
 
             }
-        });
+        });*/
     }
     private boolean isOnline() {
         ConnectivityManager cm =
@@ -744,6 +902,10 @@ return null;
     }
 
     public void SaveOffLineEntregar(){
+        if (alertDialog.isShowing()){
+            alertDialog.dismiss();
+        }
+
         if (ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
             UtilShare.mActivity=getActivity();
             Intent intent = new Intent(getContext(),ServiceSincronizacion.getInstance().getClass());
@@ -932,33 +1094,7 @@ return null;
             }
         }
     }
-    public void onClickEtregar(){
-        mbutton_entrega.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                if (rCredito.isChecked()==true){
-                    if (tvTotalPago.getText().toString()==""){
-                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
-                        return;
-                    }
-                    if (ObtenerTotal()<Double.parseDouble(tvTotalPago.getText().toString())){
-                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
-                        return;
-                    }
-                }
-
-                if (isOnline()){
-                    VerificarOnlineEntregar();
-
-                }else{
-                    SaveOffLineEntregar();
-                }
-
-                    }
-                });
-
-    }
     public void OnClickObtenerFecha(){
     ObFecha.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -1494,7 +1630,10 @@ return null;
                         }else{
                             RetornarPrincipal();
                         }*/
-                        PreguntarImpresionPedido("Desea Generar Documento De Impresión?");
+                        if (AnularPedido!=true){
+                            PreguntarImpresionPedido("Desea Generar Documento De Impresión?");
+                        }
+
 
                         //  finish();
                     }

@@ -254,6 +254,7 @@ private PedidoEntity mPedido;
         mPedido.setTipocobro(1);
         mPedido.setTotalcredito(0.0);
         mPedido.setEstado(0);
+        mPedido.setOaap(1);
         mPedido.setReclamo(EtReclamo.getText().toString());
         int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
         //cliente.setCodigogenerado();
