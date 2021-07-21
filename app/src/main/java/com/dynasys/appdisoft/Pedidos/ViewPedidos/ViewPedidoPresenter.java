@@ -3,11 +3,8 @@ package com.dynasys.appdisoft.Pedidos.ViewPedidos;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 
-import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
-import com.dynasys.appdisoft.Login.ProductosListViewModel;
-import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoMvp;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.android.gms.common.internal.Preconditions;
 
 import java.util.List;

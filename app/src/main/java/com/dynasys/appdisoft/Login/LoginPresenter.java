@@ -6,17 +6,13 @@ import android.net.NetworkInfo;
 
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.Bodylogin;
-import com.dynasys.appdisoft.Login.Cloud.MainApplication;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
-import com.dynasys.appdisoft.Login.DB.ZonaListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.ZonaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.google.common.base.Preconditions;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Callback;

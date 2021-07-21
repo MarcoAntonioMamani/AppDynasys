@@ -5,11 +5,8 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
-import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
-import com.dynasys.appdisoft.Login.DB.ProductoRepository;
-import com.dynasys.appdisoft.Login.DB.UserRepository;
+import com.dynasys.appdisoft.Login.DB.Repository.ProductoRepository;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

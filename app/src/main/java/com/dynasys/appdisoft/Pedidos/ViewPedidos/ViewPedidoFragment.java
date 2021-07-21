@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -28,15 +27,13 @@ import com.dynasys.appdisoft.Adapter.viewOrdersAdaptader;
 import com.dynasys.appdisoft.Clientes.MapClientActivity;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
-import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
-import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
-import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
-import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosPresenter;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
@@ -45,7 +42,6 @@ import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * A simple {@link Fragment} subclass.

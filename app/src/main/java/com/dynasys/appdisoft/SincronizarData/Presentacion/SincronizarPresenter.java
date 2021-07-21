@@ -1,26 +1,20 @@
 package com.dynasys.appdisoft.SincronizarData.Presentacion;
 
 import android.app.Activity;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.Observer;
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
-import com.dynasys.appdisoft.Login.Cloud.Bodylogin;
-import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
-import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
-import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.DescuentosListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
-import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
-import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
-import com.dynasys.appdisoft.Login.DB.StockListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PreciosListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;

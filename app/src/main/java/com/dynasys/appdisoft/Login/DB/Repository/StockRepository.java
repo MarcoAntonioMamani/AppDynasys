@@ -1,13 +1,12 @@
-package com.dynasys.appdisoft.Login.DB;
+package com.dynasys.appdisoft.Login.DB.Repository;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.os.Handler;
 
-import com.dynasys.appdisoft.Clientes.UtilShare;
+import com.dynasys.appdisoft.Login.DB.AppDatabase;
 import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
-import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 
 import java.util.ArrayList;

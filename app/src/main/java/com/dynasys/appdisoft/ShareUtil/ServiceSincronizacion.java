@@ -1,21 +1,17 @@
 package com.dynasys.appdisoft.ShareUtil;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -26,19 +22,16 @@ import android.util.Log;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
-import com.dynasys.appdisoft.Login.DB.AppDatabase;
-import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
-import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
-import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
-import com.dynasys.appdisoft.Login.DB.StockListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
-import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Stopwatch;
@@ -53,7 +46,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.app.Notification.VISIBILITY_PRIVATE;
-import static android.app.Notification.VISIBILITY_PUBLIC;
 
 public class ServiceSincronizacion extends Service {
     int counter = 0;

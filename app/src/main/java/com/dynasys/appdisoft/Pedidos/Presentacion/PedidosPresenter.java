@@ -1,6 +1,5 @@
 package com.dynasys.appdisoft.Pedidos.Presentacion;
 
-import android.app.Activity;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -9,14 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
-import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
-import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.google.android.gms.common.internal.Preconditions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class PedidosPresenter implements PedidosMvp.Presenter {

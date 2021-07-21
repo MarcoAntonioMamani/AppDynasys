@@ -1,15 +1,13 @@
-package com.dynasys.appdisoft.Login.DB;
+package com.dynasys.appdisoft.Login.DB.ListViewmodel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
+import com.dynasys.appdisoft.Login.DB.Repository.StockRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 

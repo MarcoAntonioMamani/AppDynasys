@@ -1,9 +1,10 @@
-package com.dynasys.appdisoft.Login.DB;
+package com.dynasys.appdisoft.Login.DB.Repository;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
+import com.dynasys.appdisoft.Login.DB.AppDatabase;
 import com.dynasys.appdisoft.Login.DB.Dao.DetalleDao;
 import com.dynasys.appdisoft.Login.DB.Dao.PedidoDao;
 import com.dynasys.appdisoft.Login.DB.Dao.StockDao;

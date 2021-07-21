@@ -6,7 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
-import com.dynasys.appdisoft.Login.DB.UserRepository;
+import com.dynasys.appdisoft.Login.DB.Repository.UserRepository;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

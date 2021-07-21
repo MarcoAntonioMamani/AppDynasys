@@ -4,27 +4,20 @@ package com.dynasys.appdisoft.Pedidos.CreatePedidos;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,35 +28,27 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Adapter.ClientesAdapter;
 import com.dynasys.appdisoft.Adapter.DetalleAdaptader;
 import com.dynasys.appdisoft.Adapter.ProductAdapter;
-import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
-import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
-import com.dynasys.appdisoft.Login.DB.AppDatabase;
-import com.dynasys.appdisoft.Login.DB.DescuentosListViewModel;
-import com.dynasys.appdisoft.Login.DB.DetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.DescuentosListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
-import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
-import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
-import com.dynasys.appdisoft.Login.DB.StockListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
-import com.dynasys.appdisoft.Login.LoginActivity;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
-import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
@@ -77,7 +62,6 @@ import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.security.Guard;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -524,7 +508,7 @@ private PedidoEntity mPedido;
                                 detalle.setObptot(item.getPrecio());
                                 detalle.setEstado(false);
                                 detalle.setStock(item.getStock());
-
+                                detalle.setFamilia(item.getFamilia());
                                 double CantCajaValue =0;
                                 if (item.getConversion()==1.0){
 
@@ -558,8 +542,10 @@ private PedidoEntity mPedido;
                                 ShowMessageResult("No Existe Stock para seleccionar el producto");
                             }
                         }else{
+
                             DetalleEntity detalle=new DetalleEntity();
                             detalle.setObnumi("-1");
+                            detalle.setFamilia(item.getFamilia());
                             detalle.setObcprod(item.getNumi());
                             detalle.setCadesc(item.getProducto());
                             detalle.setObpcant(1.0);

@@ -5,10 +5,6 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
-import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
-import com.dynasys.appdisoft.Login.DB.UserRepository;
-import com.google.android.gms.common.api.Api;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 

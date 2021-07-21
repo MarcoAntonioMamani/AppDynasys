@@ -20,16 +20,12 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Adapter.AdapterPedidos;
-import com.dynasys.appdisoft.Clientes.Adapter.AdapterClientes;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
-import com.dynasys.appdisoft.Login.DB.PedidoListViewModel;
-import com.dynasys.appdisoft.Login.DB.PreciosListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
-import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoFragment;
 import com.dynasys.appdisoft.Pedidos.ModifyPedidos.ModifyPedidoFragment;

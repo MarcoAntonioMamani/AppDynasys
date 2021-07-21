@@ -1,4 +1,4 @@
-package com.dynasys.appdisoft.Login.DB;
+package com.dynasys.appdisoft.Login.DB.ListViewmodel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -6,7 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
+import com.dynasys.appdisoft.Login.DB.Repository.DetalleRepository;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
