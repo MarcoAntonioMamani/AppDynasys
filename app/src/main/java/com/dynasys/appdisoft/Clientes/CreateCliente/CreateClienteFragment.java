@@ -704,7 +704,7 @@ return false;
                         DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
                         String code = df.format(Calendar.getInstance().getTime());
                         code=""+codigoRepartidor+","+code;
-                        cliente.setCodigogenerado(code+"V2.6");
+                        cliente.setCodigogenerado(code+"V2.7");
                         cliente.setNumi(0);
                         cliente.setFechaingreso(Calendar.getInstance().getTime());
                         cliente.setDireccion(tilDireccion.getEditText().getText().toString());
