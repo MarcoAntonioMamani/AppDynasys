@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
+import com.dynasys.appdisoft.ListaProductos.ListadoProductoFragment;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
@@ -250,6 +251,13 @@ public class MainActivity extends AppCompatActivity {
                         //setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
+
+                    case R.id.item_navigation_drawer_listado:
+                        setFragment(9);
+                        item.setChecked(true);
+                        //setFragment(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
                 }
                 return true;
             }
@@ -298,6 +306,12 @@ public class MainActivity extends AppCompatActivity {
             case 8:
                 returnToMain();
                 frag = new EfectivoFragment();
+                tag = Constantes.TAG_PEDIDOS;
+                break;
+
+            case 9:
+                returnToMain();
+                frag = new ListadoProductoFragment();
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 21:
@@ -403,9 +417,11 @@ public class MainActivity extends AppCompatActivity {
         MenuItem menuMapa = navigationView.getMenu().findItem(R.id.item_navigation_drawer_mapa);
         MenuItem menupedEntregados = navigationView.getMenu().findItem(R.id.item_navigation_drawer_entregados);
         MenuItem menuEfectivo=navigationView.getMenu().findItem(R.id.item_navigation_drawer_Efectivo);
+        MenuItem menuListado=navigationView.getMenu().findItem(R.id.item_navigation_drawer_listado);
             menulcv.setVisible(true);
             menucli.setVisible(true);
             menuped.setVisible(true);
+        menuListado.setVisible(true);
             menuMapa.setVisible(true);
         menuAddPedido.setVisible(true);
         menuEfectivo.setVisible(true);

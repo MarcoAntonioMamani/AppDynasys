@@ -28,6 +28,12 @@
             android:icon="@drawable/ic_cobranza"
             android:title="Revisar Efectivo"
             android:visible="true"/>
+
+        <item
+            android:id="@+id/item_navigation_drawer_listado"
+            android:icon="@drawable/ic_producto"
+            android:title="Listado Producto"
+            android:visible="true"/>
         <item
             android:id="@+id/item_navigation_drawer_mapa"
             android:title="Ver Ubicación"

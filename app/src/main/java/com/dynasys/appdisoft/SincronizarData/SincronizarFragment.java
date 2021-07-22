@@ -31,6 +31,7 @@ import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PreciosListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.ProductoViewListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.ZonaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
@@ -71,6 +72,7 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
     private DetalleListViewModel viewModelDetalle;
     private StockListViewModel viewModelStock;
     private DescuentosListViewModel viewModelDescuento;
+    private ProductoViewListViewModel viewModelListadoProducto;
     LottieAlertDialog alertDialog;
     List<ZonasEntity> listZonas;
     ZonasEntity mZonaSelected;
@@ -111,9 +113,10 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
         viewModelZona =ViewModelProviders.of(getActivity()).get(ZonaListViewModel.class);
+        viewModelListadoProducto=ViewModelProviders.of(getActivity()).get(ProductoViewListViewModel.class);
       /*  NoteEntity note = new NoteEntity(inputNote.getText().toString());
         viewModel.insertNote(note);*/
-        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle,viewModelStock,viewModelDescuento);
+        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle,viewModelStock,viewModelDescuento,viewModelListadoProducto);
 checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

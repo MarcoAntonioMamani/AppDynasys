@@ -14,16 +14,14 @@
         >
 
 
-
         <SearchView
-            android:id = "@+id/simpleSearchView"
-            android:layout_width = "fill_parent"
-            android:layout_height = "wrap_content"
+            android:id="@+id/simpleSearchView"
+            android:layout_width="fill_parent"
+            android:layout_height="33dp"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:queryHint = "Buscar aquí"
             android:background="@color/blanco"
-            />
+            android:gravity="center"
+            android:queryHint="Buscar aquí" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/Client_CardList"

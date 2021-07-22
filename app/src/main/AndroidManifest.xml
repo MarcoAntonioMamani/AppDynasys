@@ -25,7 +25,6 @@
         android:roundIcon="@mipmap/ic_disoft"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ListaProductos.ListaProductosActivity"></activity>
         <activity android:name=".Mapas.TestActivity" />
         <activity
             android:name=".Mapas.MapaActivity"

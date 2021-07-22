@@ -63,6 +63,8 @@ private List<ClienteEntity> lisClientes=new ArrayList<>();
     public void onResume() {
         super.onResume();
         getActivity().setTitle("Clientes");
+        simpleSearchView.setQuery("", false);
+        view.requestFocus();
     }
 
     @Override
@@ -93,6 +95,7 @@ private List<ClienteEntity> lisClientes=new ArrayList<>();
             Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
             getContext().startService(intent);
         }
+
         return view;
     }
 public void _OnClickBtnAddCliente(){

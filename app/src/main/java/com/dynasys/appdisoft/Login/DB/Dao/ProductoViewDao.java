@@ -15,7 +15,9 @@ import java.util.List;
 @Dao
 public interface ProductoViewDao {
 
-    @Query("SELECT * FROM ProductoView ORDER BY ProductoId DESC")
+    @Query("SELECT  id,productoid,nombreProducto,cantInicial,cantFinal,precio,(select r.cantidad  from (select  MAx(st.id),st.cantidad   from stock as st where st.codigoProducto=productoId) as r ) as stock,entrada," +
+            "xentrada,rebote,aut,saldo" +
+            " FROM ProductoView ORDER BY ProductoId DESC ")
     LiveData<List<ProductoViewEntity>> getAllProductoView();
 
     @Query("SELECT * FROM ProductoView WHERE ProductoId=:id")
@@ -39,6 +41,7 @@ public interface ProductoViewDao {
     @Query("DELETE FROM ProductoView")
     void deleteAll();
 
-    @Query("SELECT * FROM ProductoView")
+    @Query("SELECT id,productoid,nombreProducto,cantInicial,cantFinal,precio,(select r.cantidad  from (select  MAx(st.id),st.cantidad   from stock as st where st.codigoProducto=productoId) as r ) as stock,entrada," +
+            "xentrada,rebote,aut,saldo FROM ProductoView")
     List<ProductoViewEntity> getProductoViewMAll();
 }

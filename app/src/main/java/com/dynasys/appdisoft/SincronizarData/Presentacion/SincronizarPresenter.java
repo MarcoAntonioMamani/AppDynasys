@@ -2,8 +2,10 @@ package com.dynasys.appdisoft.SincronizarData.Presentacion;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
+import com.dynasys.appdisoft.Login.DB.Entity.ProductoViewEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
@@ -14,6 +16,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PreciosListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.ProductoViewListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
@@ -39,6 +42,7 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
     private final PedidoListViewModel viewModelPedidos;
     private final DetalleListViewModel viewModelDetalles;
     private final StockListViewModel viewModelStock;
+    private final ProductoViewListViewModel viewmodelListProducto;
     private final Activity activity;
      int cantidadCliente = 0;
     int cantidadProducto=0;
@@ -51,7 +55,7 @@ int ZonaSelected=0;
 
     public SincronizarPresenter(SincronizarMvp.View sincronizarView, Context context, ClientesListViewModel viewModel, Activity activity, PreciosListViewModel
                                 viewModelPrecios, ProductosListViewModel viewModelProductos,PedidoListViewModel viewModelPedidos,
-                                DetalleListViewModel viewModelDetalles,StockListViewModel stock,DescuentosListViewModel descuento){
+                                DetalleListViewModel viewModelDetalles,StockListViewModel stock,DescuentosListViewModel descuento,ProductoViewListViewModel viewmodelListProducto){
         mSincronizarview = Preconditions.checkNotNull(sincronizarView);
         mSincronizarview.setPresenter(this);
         this.viewModel=viewModel;
@@ -61,6 +65,7 @@ int ZonaSelected=0;
         this.viewModelProductos=viewModelProductos;
         this.viewModelPedidos=viewModelPedidos;
         this.viewModelDetalles=viewModelDetalles;
+        this.viewmodelListProducto=viewmodelListProducto;
         this.viewModelStock=stock;
         this.viewModelDescuentos =descuento;
          cantidadCliente = 0;
@@ -87,7 +92,7 @@ int ZonaSelected=0;
         int idRepartidor=DataPreferences.getPrefInt("idrepartidor",mContext);
         CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:0)+(pedidos==true? 1:0);
         String Mensaje="";
-
+        _DecargarListadoProducto(""+idRepartidor);
         if (cliente==true ){
             _DescargarClientes(""+idRepartidor);
         }
@@ -410,6 +415,8 @@ viewModelStock.insertListStock(responseUser);
         },idRepartidor,ZonaSelected);
     }
 
+
+
     public void _DecargarDetalles(String idRepartidor){
         ApiManager apiManager=ApiManager.getInstance(mContext);
         apiManager.ObtenerDetalles( new Callback<List<DetalleEntity>>() {
@@ -487,6 +494,37 @@ viewModelStock.insertListStock(responseUser);
             }
         }
         return false;
+    }
+
+
+    public void _DecargarListadoProducto(String idRepartidor){
+        ApiManager apiManager=ApiManager.getInstance(mContext);
+        apiManager.ObtenerListadoProductos( new Callback<List<ProductoViewEntity>>() {
+            @Override
+            public void onResponse(Call<List<ProductoViewEntity>> call, Response<List<ProductoViewEntity>> response) {
+                final List<ProductoViewEntity> responseUser = (List<ProductoViewEntity>) response.body();
+                if (response.code() == 404) {
+                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. " + response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+
+
+
+                    viewmodelListProducto.deleteAllProductoViews();
+
+                    viewmodelListProducto.insertListProductoView(responseUser);
+                } else {
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza" + response.message());
+
+                }
+            }
+            @Override
+            public void onFailure(Call<List<ProductoViewEntity>> call, Throwable t) {
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio."+ t.getMessage());
+                Log.d("Listado Productos=>", t.getMessage());
+            }
+        },idRepartidor);
     }
 
 }

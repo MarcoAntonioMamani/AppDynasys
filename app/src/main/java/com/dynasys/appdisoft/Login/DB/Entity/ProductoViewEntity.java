@@ -5,8 +5,10 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+
 @Entity(tableName = "ProductoView")
-public class ProductoViewEntity {
+public class ProductoViewEntity implements Comparable<ProductoViewEntity> {
 
     @PrimaryKey(autoGenerate = true)
     int id;
@@ -150,5 +152,12 @@ public class ProductoViewEntity {
 
     public void setSaldo(double saldo) {
         this.saldo = saldo;
+    }
+
+    @Override
+    public int compareTo( ProductoViewEntity cliente) {
+        String a=new String(String.valueOf(this.getNombreProducto()));
+        String b=new String(String.valueOf(cliente.getNombreProducto()));
+        return a.compareTo(b);
     }
 }

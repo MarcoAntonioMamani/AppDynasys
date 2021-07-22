@@ -6,6 +6,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.ProductoViewEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
@@ -48,6 +49,11 @@ public interface IUsersApi {
 
     @GET("/api/repartidor/pedidos/{idrepartidor}/{idZona}")
     Call<List<PedidoEntity>> ObtenerPedidos(@Path("idrepartidor") String idRepartidor,@Path("idZona") int idZona);
+
+    @GET("/api/repartidor/listado/{idrepartidor}")
+    Call<List<ProductoViewEntity>> ObtenerListadoProductos(@Path("idrepartidor") String idRepartidor);
+
+
     @GET("/api/repartidor/detalles/{idrepartidor}")
     Call<List<DetalleEntity>> ObtenerDetalles(@Path("idrepartidor") String idRepartidor);
 
