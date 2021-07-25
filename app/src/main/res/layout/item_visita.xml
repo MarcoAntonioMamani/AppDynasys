@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView android:id="@+id/id_cardview_visita"
+    android:layout_width="match_parent"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_height="wrap_content"
+    android:background="@color/marfil"
+    app:cardCornerRadius="5dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:elevation="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    >
+
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+
+    android:paddingRight="2dp"
+    >
+
+    <ImageView
+        android:id="@+id/row_visita_img"
+        android:layout_width="55dp"
+        android:layout_height="80dp"
+        android:layout_margin="5dp"
+        android:src="@mipmap/ic_launcher_round" />
+
+    <TextView
+        android:id="@+id/row_visita_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:paddingTop="2dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/row_visita_img"
+        android:maxLength="120"
+        android:maxLines="2"
+        android:paddingLeft="10dp"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:textStyle="bold"
+        android:background="@drawable/animation_riple_button"
+        android:textColor="@color/white"
+
+        android:text="Visita # 0001 - Marco Antonio Mamani" />
+
+    <TextView
+        android:id="@+id/row_visita_direccion"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/row_visita_name"
+
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/row_visita_img"
+        android:maxEms="2"
+        android:paddingLeft="10dp"
+        android:maxLines="2"
+        android:text="Barrio las americas"
+        android:textColor="@color/colorText" />
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_below="@id/row_visita_direccion"
+        android:layout_toRightOf="@id/row_visita_img"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha: "
+            android:paddingLeft="10dp"
+            style="@style/TextAppearance.AppCompat.Caption"
+            android:textColor="#000"/>
+
+
+
+        <TextView
+            android:id="@+id/row_visita_telefono"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/row_visita_direccion"
+            android:layout_toRightOf="@id/row_visita_img"
+            android:text="25/07/2021 8:50"
+            android:textColor="@color/colorText"
+            style="@style/TextAppearance.AppCompat.Caption" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+         android:layout_gravity="right"
+            android:gravity="right"
+
+            >
+            <Button
+                android:id="@+id/visita_btnwhatsapp"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                 android:text="Whatsapp"
+
+                android:textSize="10dp"
+                android:textStyle="bold"
+                android:background="@drawable/animation_riple_edit"
+                android:scaleType="fitCenter"
+                android:textColor="@color/white"
+
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/row_visita_img"
+     android:visibility="gone"
+        android:background="@color/colorAccent"></View>
+</RelativeLayout>
+
+</android.support.v7.widget.CardView>

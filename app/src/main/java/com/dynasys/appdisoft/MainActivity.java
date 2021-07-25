@@ -50,6 +50,7 @@ import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.dynasys.appdisoft.SincronizarData.SincronizarFragment;
+import com.dynasys.appdisoft.Visitas.ListaVisitasFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -258,6 +259,12 @@ public class MainActivity extends AppCompatActivity {
                         //setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
+                    case R.id.item_navigation_drawer_visitas:
+                        setFragment(10);
+                        item.setChecked(true);
+                        //setFragment(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
                 }
                 return true;
             }
@@ -312,6 +319,11 @@ public class MainActivity extends AppCompatActivity {
             case 9:
                 returnToMain();
                 frag = new ListadoProductoFragment();
+                tag = Constantes.TAG_PEDIDOS;
+                break;
+            case 10:
+                returnToMain();
+                frag = new ListaVisitasFragment();
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 21:
@@ -418,6 +430,7 @@ public class MainActivity extends AppCompatActivity {
         MenuItem menupedEntregados = navigationView.getMenu().findItem(R.id.item_navigation_drawer_entregados);
         MenuItem menuEfectivo=navigationView.getMenu().findItem(R.id.item_navigation_drawer_Efectivo);
         MenuItem menuListado=navigationView.getMenu().findItem(R.id.item_navigation_drawer_listado);
+        MenuItem menuVisita=navigationView.getMenu().findItem(R.id.item_navigation_drawer_visitas);
             menulcv.setVisible(true);
             menucli.setVisible(true);
             menuped.setVisible(true);
@@ -426,6 +439,7 @@ public class MainActivity extends AppCompatActivity {
         menuAddPedido.setVisible(true);
         menuEfectivo.setVisible(true);
         menupedEntregados.setVisible(true);
+        menuVisita.setVisible(true);
     }
 
     @Override

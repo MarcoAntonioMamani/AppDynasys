@@ -35,6 +35,11 @@
             android:title="Listado Producto"
             android:visible="true"/>
         <item
+            android:id="@+id/item_navigation_drawer_visitas"
+            android:icon="@drawable/ic_client"
+            android:title="Visitas"
+            android:visible="false"/>
+        <item
             android:id="@+id/item_navigation_drawer_mapa"
             android:title="Ver Ubicación"
             android:icon="@drawable/ic_map"

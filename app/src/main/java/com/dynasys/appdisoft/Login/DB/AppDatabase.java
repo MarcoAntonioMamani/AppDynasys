@@ -16,6 +16,7 @@ import com.dynasys.appdisoft.Login.DB.Dao.ProductoDao;
 import com.dynasys.appdisoft.Login.DB.Dao.ProductoViewDao;
 import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.Dao.UserDao;
+import com.dynasys.appdisoft.Login.DB.Dao.VisitaDao;
 import com.dynasys.appdisoft.Login.DB.Dao.zonasDao;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
@@ -25,6 +26,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoViewEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
@@ -34,7 +36,8 @@ import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
  * Created by ravi on 05/02/18.
  */
 
-@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, ProductoEntity.class, PedidoEntity.class, DetalleEntity.class, StockEntity.class, ZonasEntity.class, DescuentosEntity.class, ProductoViewEntity.class}, version = 21)
+@Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, ProductoEntity.class, PedidoEntity.class,
+        DetalleEntity.class, StockEntity.class, ZonasEntity.class, DescuentosEntity.class, ProductoViewEntity.class, VisitaEntity.class}, version = 22)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -48,6 +51,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract zonasDao ZonasDao();
     public abstract DescuentosDao DescuentoDao();
     public abstract ProductoViewDao productoViewDao();
+    public abstract VisitaDao visitaDao();
     public static AppDatabase INSTANCE;
 
    public  static AppDatabase getDatabase(final Context context) {
