@@ -6,8 +6,13 @@ import android.os.AsyncTask;
 import android.os.Handler;
 
 import com.dynasys.appdisoft.Login.DB.AppDatabase;
+import com.dynasys.appdisoft.Login.DB.Dao.PedidoDao;
 import com.dynasys.appdisoft.Login.DB.Dao.VisitaDao;
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
+import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.SincronizarData.DB.ClienteRepository;
+import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +41,12 @@ public class VisitaRepository {
     public List<VisitaEntity> getMVisitaAll(int clienteId) throws ExecutionException, InterruptedException {
         return new VisitaRepository.getMVisitaAllAsync(mVisitaDao).execute(clienteId).get();
     }
+    public List<VisitaEntity> getMVisitaAllState(int clienteId) throws ExecutionException, InterruptedException {
+        return new getVisitaAllStateAsync(mVisitaDao).execute(clienteId).get();
+    }
+    public List<VisitaEntity> getVisitaAllAsync(int clienteId) throws ExecutionException, InterruptedException {
+        return new getVisitaAllAsync(mVisitaDao).execute(clienteId).get();
+    }
 
     public void insertVisita(VisitaEntity user) {
         new VisitaRepository.insertVisitaAsync(mVisitaDao).execute(user);
@@ -44,6 +55,10 @@ public class VisitaRepository {
     public void updateVisita(VisitaEntity user) {
         new VisitaRepository.updateVisitaAsync(mVisitaDao).execute(user);
     }
+
+    public List<VisitaEntity> getMVisitaAllStateUpdate(int clienteId) throws ExecutionException, InterruptedException {
+        return new getVisitaAllStateUpdateAsync(mVisitaDao).execute(clienteId).get();
+    }
     public void InsertVisitaList(List<VisitaEntity > list){
 
         new VisitaRepository.insertListVisitaAsync(mVisitaDao).execute(list);
@@ -51,10 +66,20 @@ public class VisitaRepository {
     public void deleteVisita(VisitaEntity user) {
         new VisitaRepository.deleteVisitaAsync(mVisitaDao).execute(user);
     }
+    public List<VisitaEntity> getVisitaByClients(String noteId) throws ExecutionException, InterruptedException {
+        return new VisitaRepository.getVisitasByClienteAsync(mVisitaDao).execute(noteId).get();
+    }
 
     public void deleteAllVisita() {
         new VisitaRepository.deleteAllVisitaAsync(mVisitaDao).execute();
     }
+    public VisitaEntity getVisitabyCode(String code) throws ExecutionException, InterruptedException {
+        return new VisitaRepository.getVisitaCodeAsync(mVisitaDao).execute(code).get();
+    }
+    public VisitaEntity getVisitabyPedidoId(String code) throws ExecutionException, InterruptedException {
+        return new VisitaRepository.getVisitaPedidoIdAsync(mVisitaDao).execute(code).get();
+    }
+
 
     /**
      * NOTE: all write operations should be done in background thread,
@@ -104,7 +129,89 @@ public class VisitaRepository {
         }
     }
 
+    private static class getVisitaAllStateAsync extends AsyncTask<Integer, Void, List<VisitaEntity>> {
 
+        private VisitaDao mClienteDaoAsync;
+
+        getVisitaAllStateAsync(VisitaDao clienteDao) {
+            mClienteDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected List<VisitaEntity> doInBackground(Integer... ids) {
+            return mClienteDaoAsync.getVisitaAllState();
+        }
+    }
+    private static class getVisitaAllAsync extends AsyncTask<Integer, Void, List<VisitaEntity>> {
+
+        private VisitaDao mClienteDaoAsync;
+
+        getVisitaAllAsync(VisitaDao clienteDao) {
+            mClienteDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected List<VisitaEntity> doInBackground(Integer... ids) {
+            return mClienteDaoAsync.getVisitaAll();
+        }
+    }
+
+
+    private static class getVisitaCodeAsync extends AsyncTask<String, Void, VisitaEntity> {
+
+        private VisitaDao mClienteDaoAsync;
+
+        getVisitaCodeAsync(VisitaDao clienteDao) {
+            mClienteDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected VisitaEntity doInBackground(String... code) {
+            return mClienteDaoAsync.getVisitaByCode(code[0]);
+        }
+    }
+
+    private static class getVisitaPedidoIdAsync extends AsyncTask<String, Void, VisitaEntity> {
+
+        private VisitaDao mClienteDaoAsync;
+
+        getVisitaPedidoIdAsync(VisitaDao clienteDao) {
+            mClienteDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected VisitaEntity doInBackground(String... code) {
+            return mClienteDaoAsync.getVisitaByPedidoId(code[0]);
+        }
+    }
+
+
+    private static class getVisitasByClienteAsync extends AsyncTask<String, Void, List<VisitaEntity>> {
+
+        private VisitaDao mPedidoDaoAsync;
+
+        getVisitasByClienteAsync(VisitaDao animalDao) {
+            mPedidoDaoAsync = animalDao;
+        }
+
+        @Override
+        protected List<VisitaEntity> doInBackground(String... ids) {
+            return mPedidoDaoAsync.getVisitaByIdCliente(ids[0]);
+        }
+    }
+    private static class getVisitaAllStateUpdateAsync extends AsyncTask<Integer, Void, List<VisitaEntity>> {
+
+        private VisitaDao mClienteDaoAsync;
+
+        getVisitaAllStateUpdateAsync(VisitaDao clienteDao) {
+            mClienteDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected List<VisitaEntity> doInBackground(Integer... ids) {
+            return mClienteDaoAsync.getVisitaAllStateUpdate();
+        }
+    }
     private static class getMVisitaAllAsync extends AsyncTask<Integer, Void, List<VisitaEntity>> {
 
         private VisitaDao mPedidoDaoAsync;

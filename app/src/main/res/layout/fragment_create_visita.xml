@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/id_scrollVisita"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Visitas.Create.CreateVisitaFragment">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        >
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/keyline_1"
+            android:layout_marginLeft="@dimen/keyline_1"
+            android:layout_marginRight="@dimen/keyline_1"
+            android:layout_marginTop="@dimen/keyline_1"
+            app:contentPaddingBottom="@dimen/keyline_1_minus_8dp"
+            app:contentPaddingLeft="@dimen/keyline_1"
+            app:contentPaddingRight="@dimen/keyline_1"
+            app:contentPaddingTop="@dimen/keyline_1"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorAccent"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:text="Cliente:"/>
+
+                    <AutoCompleteTextView
+                        android:id="@+id/visita_buscar_cliente"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/animation_editext"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:hint="Buscar Cliente"
+                        android:maxLines="1"
+                        android:paddingLeft="10dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textColor="@color/primary_text"
+                        android:textColorHint="@color/secondary_text"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilvisita_detalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/keyline_1">
+                    <EditText
+                        android:id="@+id/visita_txt_detalle"
+                        style="@style/Widget.AppCompat.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="15dp"
+                        android:inputType="textCapCharacters|textMultiLine"
+                        android:hint="Detalle" />
+                </android.support.design.widget.TextInputLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+                    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:id="@+id/map_visita"
+                        android:name="com.dynasys.appdisoft.Clientes.CreateCliente.MySupportMapFragment">
+
+                    </fragment>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    >
+                    <Button
+                        android:id="@+id/id_btnVisita_ObtenerGps"
+                        android:background="@drawable/animation_riple_maps"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/white"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:paddingBottom="@dimen/keyline_1"
+                        android:paddingTop="@dimen/keyline_1"
+                        android:text="Obtener Ubicación"/>
+                </LinearLayout>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/bottom_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+
+            >
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="horizontal"
+
+                    >
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+
+                        android:layout_weight="1">
+                        <Button
+                            android:id="@+id/id_btnVisita_cancelar"
+                            android:background="@drawable/animation_bottoncancel"
+                            android:layout_width="fill_parent"
+
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textColor="@color/colorAccent"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:paddingBottom="@dimen/keyline_1"
+                            android:paddingTop="@dimen/keyline_1"
+                            android:text="Salir" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1">
+                        <Button
+                            android:id="@+id/id_btnVisita_guardar"
+                            android:background="@drawable/animation_riple_button"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textColor="@color/white"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:paddingBottom="@dimen/keyline_1"
+                            android:paddingTop="@dimen/keyline_1"
+                            android:text="GUARDAR"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

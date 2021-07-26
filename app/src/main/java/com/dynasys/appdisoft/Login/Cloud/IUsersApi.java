@@ -4,11 +4,13 @@ import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PointEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoViewEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.strongloop.android.loopback.User;
@@ -29,8 +31,14 @@ public interface IUsersApi {
     @POST("/api/repartidor/clients/{idrepartidor}")
     Call<ResponseLogin> InsertUser(@Body ClienteEntity user,@Path("idrepartidor") String idRepartidor);
 
+    @POST("/api/repartidor/visita")
+    Call<ResponseLogin> InsertVisita(@Body VisitaEntity user);
+
     @PUT("/api/repartidor/clients")
     Call<ResponseLogin> UpdateUser(@Body ClienteEntity user);
+
+    @PUT("/api/repartidor/visita")
+    Call<ResponseLogin> UpdateVisita(@Body VisitaEntity user);
 
     @GET("/api/repartidor/clientes/{idrepartidor}/{idZona}")
     Call<List<ClienteEntity>> ObtenerClientes(@Path("idrepartidor") String idRepartidor,@Path("idZona") int idZona);
@@ -52,6 +60,12 @@ public interface IUsersApi {
 
     @GET("/api/repartidor/listado/{idrepartidor}")
     Call<List<ProductoViewEntity>> ObtenerListadoProductos(@Path("idrepartidor") String idRepartidor);
+
+    @GET("/api/repartidor/visitas/{idrepartidor}")
+    Call<List<VisitaEntity>> ObtenerListadoVisitas(@Path("idrepartidor") String idRepartidor);
+
+    @GET("/api/repartidor/points/{idrepartidor}")
+    Call<List<PointEntity>> ObtenerListadoPoints(@Path("idrepartidor") String idRepartidor);
 
 
     @GET("/api/repartidor/detalles/{idrepartidor}")

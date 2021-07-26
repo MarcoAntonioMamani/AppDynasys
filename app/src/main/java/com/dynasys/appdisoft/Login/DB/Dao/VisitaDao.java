@@ -8,7 +8,9 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
+import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 
 import java.util.List;
 
@@ -21,7 +23,24 @@ public interface VisitaDao {
     @Query("SELECT * FROM Visita WHERE id=:id")
     VisitaEntity getVisitaProducto(int id);
 
+    @Query("SELECT * FROM visita WHERE IdSincronizacion=:code")
+    VisitaEntity getVisitaByCode(String code);
 
+    @Query("SELECT * FROM visita WHERE PedidoId=:code")
+    VisitaEntity getVisitaByPedidoId(String code);
+
+    @Query("SELECT * FROM visita WHERE ClienteId=:numi")
+    List<VisitaEntity> getVisitaByIdCliente(String numi);
+
+
+    @Query("SELECT * FROM visita where Sincronizado=2")
+    List<VisitaEntity> getVisitaAllStateUpdate();
+
+    @Query("SELECT * FROM visita where Sincronizado=0")
+    List<VisitaEntity> getVisitaAllState();
+
+    @Query("SELECT * FROM visita ")
+    List<VisitaEntity> getVisitaAll();
 
     @Insert
     long insert(VisitaEntity Visita);

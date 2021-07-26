@@ -46,6 +46,17 @@ public class PedidoListViewModel extends AndroidViewModel {
         }
         return null;
     }
+    public PedidoEntity getPedidoCodeGenerado(String id) {
+        try {
+            return mRepository.getPedidoCodeGenerado(id);
+        } catch (ExecutionException e) {
+
+        } catch (InterruptedException e) {
+
+        }
+        return null;
+    }
+
     public List<PedidoEntity> getPedidoState(String id) throws ExecutionException, InterruptedException {
         return mRepository.getPedidoState(id);
     }

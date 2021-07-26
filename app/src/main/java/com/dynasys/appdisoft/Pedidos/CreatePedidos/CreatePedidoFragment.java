@@ -45,6 +45,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
@@ -98,6 +99,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private PedidoListViewModel viewModelPedido;
     private DescuentosListViewModel viewModelDescuento;
     private StockListViewModel viewModelStock;
+    private VisitaListViewModel viewModelVisita;
     private DetalleListViewModel viewModelDetalle;
     private List<DetalleEntity> mDetalleItem=new ArrayList<>();
     private CreatePedidoMvp.Presenter mCreatePedidoPresenter;
@@ -170,8 +172,9 @@ private PedidoEntity mPedido;
         viewModelPedido = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
+        viewModelVisita=ViewModelProviders.of(getActivity()).get(VisitaListViewModel.class);
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
-        new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock);
+        new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock,viewModelVisita);
         mCreatePedidoPresenter.CargarClientes();
         iniciarRecyclerView();
         onclickObtenerFecha();
@@ -250,7 +253,7 @@ private PedidoEntity mPedido;
         _prModificarNumi(code);
 
         List<StockEntity> st=viewModelStock.getMStockAllAsync();
-        mCreatePedidoPresenter.GuardarDatos(mDetalleItem,mPedido);
+        mCreatePedidoPresenter.GuardarDatos(mDetalleItem,mPedido,mCliente);
 
     }
     public void Verificaronline(){

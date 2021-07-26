@@ -5,6 +5,8 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.util.Date;
+
 @Entity(tableName = "visita")
 public class VisitaEntity {
 
@@ -15,9 +17,9 @@ public class VisitaEntity {
     @ColumnInfo(name = "RepartidorId")
     int RepartidorId;
     @ColumnInfo(name = "PedidoId")
-    int PedidoId;
+    String PedidoId;
     @ColumnInfo(name = "ClienteId")
-    int ClienteId;
+    String ClienteId;
     @ColumnInfo(name = "NombreCliente")
     String NombreCliente;
     @ColumnInfo(name = "Direccion")
@@ -37,13 +39,22 @@ public class VisitaEntity {
     @ColumnInfo(name = "IdSincronizacion")
     String IdSincronizacion;
     @ColumnInfo(name = "fecha")
-    String fecha;
-
-    public String getFecha() {
+    Date fecha;
+    @ColumnInfo(name = "Hora")
+    String Hora;
+    public Date getFecha() {
         return fecha;
     }
 
-    public void setFecha(String fecha) {
+    public String getHora() {
+        return Hora;
+    }
+
+    public void setHora(String hora) {
+        Hora = hora;
+    }
+
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 
@@ -103,19 +114,19 @@ public class VisitaEntity {
         RepartidorId = repartidorId;
     }
 
-    public int getPedidoId() {
+    public String getPedidoId() {
         return PedidoId;
     }
 
-    public void setPedidoId(int pedidoId) {
+    public void setPedidoId(String pedidoId) {
         PedidoId = pedidoId;
     }
 
-    public int getClienteId() {
+    public String getClienteId() {
         return ClienteId;
     }
 
-    public void setClienteId(int clienteId) {
+    public void setClienteId(String clienteId) {
         ClienteId = clienteId;
     }
 

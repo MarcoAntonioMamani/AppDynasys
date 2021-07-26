@@ -37,6 +37,9 @@ public interface PedidoDao {
     @Query("SELECT * FROM pedido WHERE oanumi=:numi")
     PedidoEntity getPedidoById(String numi);
 
+    @Query("SELECT * FROM pedido WHERE codigogenerado=:numi")
+    PedidoEntity getPedidoByCodeGenerado(String numi);
+
     @Query("SELECT * FROM pedido WHERE oaccli=:numi")
     List<PedidoEntity> getPedidoByIdCliente(String numi);
 

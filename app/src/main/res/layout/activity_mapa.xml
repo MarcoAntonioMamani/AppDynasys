@@ -110,14 +110,15 @@
                     android:src="@mipmap/ic_mapclient02"
 
                     />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cliente Con Pedidos Entregados"
-                    android:textColor="@color/black"
                     android:layout_gravity="center"
+                    android:text=""
+                    android:textColor="@color/black"
                     android:textSize="10dp"
-
+                    android:id="@+id/lb01"
 
                     />
             </LinearLayout>
@@ -135,10 +136,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cliente Con Pedidos No Entregados"
+                    android:text=""
                     android:textColor="@color/black"
                     android:layout_gravity="center"
                     android:textSize="10dp"
+                    android:id="@+id/lb2"
 
                     />
             </LinearLayout>
@@ -156,10 +158,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cliente Rechazado"
+                    android:text=""
                     android:textColor="@color/black"
                     android:layout_gravity="center"
                     android:textSize="10dp"
+                    android:id="@+id/lb03"
                     />
             </LinearLayout>
 

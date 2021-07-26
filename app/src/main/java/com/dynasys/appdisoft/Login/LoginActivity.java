@@ -26,6 +26,7 @@ import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.ZonaListViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.R;
@@ -59,6 +60,7 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
     private DetalleListViewModel viewModelDetalle;
     private StockListViewModel viewModelStock;
     private ZonaListViewModel viewModelZona;
+    private VisitaListViewModel viewModelVisita;
     private DescuentosListViewModel viewModelDescuentos;
     LottieAlertDialog alertDialog;
     @Override
@@ -80,6 +82,7 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
         viewModelDetalle = ViewModelProviders.of(this).get(DetalleListViewModel.class);
         viewModelStock = ViewModelProviders.of(this).get(StockListViewModel.class);
         viewModelZona= ViewModelProviders.of(this).get(ZonaListViewModel.class);
+        viewModelVisita= ViewModelProviders.of(this).get(VisitaListViewModel.class);
         viewModelDescuentos=ViewModelProviders.of(this).get(DescuentosListViewModel.class);
         mCodigo.addTextChangedListener(new TextWatcherLabel(textCodigo));
         mNroDocumento.addTextChangedListener(new TextWatcherLabel(textNroDocumento));
@@ -107,6 +110,7 @@ public class LoginActivity extends AppCompatActivity implements LoginMvp.View {
             viewModel.deleteAllClientes();
             viewModelStock.deleteAllStocks();
             viewModelZona.deleteAllZonas();
+            viewModelVisita.deleteAllVisitas();
             viewModelDescuentos.deleteAllDescuentos();
         }catch(Exception e){
 

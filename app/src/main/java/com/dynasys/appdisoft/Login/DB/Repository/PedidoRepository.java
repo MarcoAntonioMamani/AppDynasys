@@ -50,6 +50,10 @@ public class PedidoRepository {
     public PedidoEntity getPedido(String noteId) throws ExecutionException, InterruptedException {
         return new getPedidosAsync(mPedidoDao).execute(noteId).get();
     }
+    public PedidoEntity getPedidoCodeGenerado(String noteId) throws ExecutionException, InterruptedException {
+        return new getPedidosCodeAsync(mPedidoDao).execute(noteId).get();
+    }
+
 
     public List<PedidoEntity> getPedidoState(String noteId) throws ExecutionException, InterruptedException {
         return new getPedidosStateAsync(mPedidoDao).execute(noteId).get();
@@ -158,6 +162,20 @@ try {
             return mPedidoDaoAsync.getPedidoById(ids[0]);
         }
     }
+    private static class getPedidosCodeAsync extends AsyncTask<String, Void, PedidoEntity> {
+
+        private PedidoDao mPedidoDaoAsync;
+
+        getPedidosCodeAsync(PedidoDao animalDao) {
+            mPedidoDaoAsync = animalDao;
+        }
+
+        @Override
+        protected PedidoEntity doInBackground(String... ids) {
+            return mPedidoDaoAsync.getPedidoByCodeGenerado(ids[0]);
+        }
+    }
+
 
     private static class getPedidosStateAsync extends AsyncTask<String, Void, List<PedidoEntity>> {
 

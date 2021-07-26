@@ -22,6 +22,7 @@ import android.util.Log;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
+import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
@@ -30,6 +31,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
@@ -57,6 +59,7 @@ public class ServiceSincronizacion extends Service {
     private Stopwatch stopwatch = Stopwatch.createStarted();
     private Context mContext;
     private  ClientesListViewModel viewModelClientes;
+    private VisitaListViewModel viewModelVisita;
     private PedidoListViewModel viewModelPedidos;
     private StockListViewModel viewModelStock;
     private DetalleListViewModel viewModelDetalle;
@@ -112,6 +115,7 @@ if (UtilShare.mActivity!=null){
     viewModelStock= ViewModelProviders.of(UtilShare.mActivity).get(StockListViewModel.class);
     viewModelDetalle=ViewModelProviders.of(UtilShare.mActivity).get(DetalleListViewModel.class);
     viewModelProducto=ViewModelProviders.of(UtilShare.mActivity).get(ProductosListViewModel.class);
+    viewModelVisita=ViewModelProviders.of(UtilShare.mActivity).get(VisitaListViewModel.class);
 }
 
     }
@@ -141,7 +145,83 @@ if (UtilShare.mActivity!=null){
         new ChecarNotificaciones().execute();
         return START_STICKY;
     }
+//UpdateVisita
 
+    private void UpdateVisitas(){
+//        Looper.prepare();
+        try {
+            if (viewModelVisita==null){
+                return;
+            }
+            Boolean IsLogeado=DataPreferences.getPrefLogin("isLogin",getApplicationContext());
+
+            if (IsLogeado==false){
+                onDestroy();
+                return ;
+            }
+            List<VisitaEntity> listCliente = viewModelVisita.getMAllStateVisitaUpdate(1);
+
+            List<VisitaEntity> listClienteNuevos = viewModelVisita.getMAllStateVisita(1);
+            if (listCliente==null){
+                return;
+            }
+            if (listClienteNuevos==null){
+                return;
+            }
+            if (listClienteNuevos.size()>0){
+                return;
+            }
+            if (listCliente.size()>0){
+
+                for (int i = 0; i < listCliente.size(); i++) {
+
+                    final VisitaEntity cliente=listCliente.get(i);
+                    ApiManager apiManager=ApiManager.getInstance(this);
+                    apiManager.UpdateVisita(cliente, new Callback<ResponseLogin>() {
+                        @Override
+                        public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
+                            ResponseLogin responseUser = response.body();
+                            if (response.code()==404){
+
+                                return;
+                            }
+                            try{
+                                if (responseUser!=null){
+                                    if (responseUser.getCode()==0){
+
+                                        if (cliente!=null){
+
+                                            cliente.setSincronizado(1);
+                                           // viewModelClientes.updateCliente(cliente);
+                                            viewModelVisita.updateVisita(cliente);
+                                            Log.d(TAG, "Visita Guardado en El servidor = "+ cliente.getNombreCliente());
+                                            return;
+                                        }
+                                    }
+                                }
+                            }catch (Exception e){
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseLogin> call, Throwable t) {
+
+                            //ShowMessageResult("Error al guardar el pedido");
+                        }
+                    });
+                }
+            }else{
+                Log.d(TAG, "No Hay Datos Para Exportar");
+            }
+        } catch (ExecutionException e) {
+            Log.d(TAG, "Error: "+e.getMessage());
+        } catch (InterruptedException e) {
+            Log.d(TAG, "Error: "+e.getMessage());
+        }
+
+    }
     private void UpdateClientes(){
 //        Looper.prepare();
         try {
@@ -242,6 +322,9 @@ if (UtilShare.mActivity!=null){
                                     if (responseUser.getCode()==0){
                                         ClienteEntity mcliente=   viewModelClientes.getClientebycode(CodeGenerado);
                                         List<PedidoEntity> listPedido=viewModelPedidos.getPedidobyCliente(CodeGenerado);
+                                        List<VisitaEntity> listVisita=viewModelVisita.getVisitabyCliente(CodeGenerado);
+
+
                                         if (mcliente!=null){
                                             mcliente.setNumi(Integer.parseInt(responseUser.getToken()));
                                             mcliente.setCodigogenerado(responseUser.getToken());
@@ -253,7 +336,105 @@ if (UtilShare.mActivity!=null){
                                                 viewModelPedidos.updatePedido(pedido);
                                             }
 
+                                            for (int j = 0; j < listVisita.size(); j++) {
+                                                VisitaEntity pedido=listVisita.get(j);
+                                                pedido.setClienteId(responseUser.getToken());
+                                                viewModelVisita.updateVisita(pedido);
+                                            }
                                             Log.d(TAG, "Cliente Guardado en El servidor = "+ mcliente.getNamecliente());
+                                            return;
+                                        }
+                                    }
+                                }
+                            }catch (Exception e){
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseLogin> call, Throwable t) {
+
+                            //ShowMessageResult("Error al guardar el pedido");
+                        }
+                    });
+                }
+            }else{
+                Log.d(TAG, "No Hay Datos Para Exportar");
+            }
+        } catch (ExecutionException e) {
+            Log.d(TAG, "Error: "+e.getMessage());
+        } catch (InterruptedException e) {
+            Log.d(TAG, "Error: "+e.getMessage());
+        }
+
+    }
+
+    private void exportarVisitas(){
+//        Looper.prepare();
+        try {
+            if (viewModelVisita==null){
+                return;
+            }
+            Boolean IsLogeado=DataPreferences.getPrefLogin("isLogin",getApplicationContext());
+
+            if (IsLogeado==false){
+                onDestroy();
+                return ;
+            }
+            List<PedidoEntity> listPedido=viewModelPedidos.getMAllPedidoState(1);
+            List<VisitaEntity> listCliente = viewModelVisita.getMAllStateVisita(1);
+            List<ClienteEntity> listC =viewModelClientes.getMAllStateCliente(1);
+            if (listC.size()>0){
+                return;
+            }
+            if (listPedido.size()>0){
+                return;
+            }
+
+            if (listCliente==null){
+                return;
+            }
+            if (listCliente.size()>0){
+
+                for (int i = 0; i < listCliente.size(); i++) {
+
+                    VisitaEntity cliente=listCliente.get(i);
+                    final String CodeGenerado=cliente.getIdSincronizacion();
+                    int idRepartidor=DataPreferences.getPrefInt("idrepartidor",getApplicationContext());
+                    ApiManager apiManager=ApiManager.getInstance(this);
+                    apiManager.InsertVisita(cliente, new Callback<ResponseLogin>() {
+                        @Override
+                        public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
+                            ResponseLogin responseUser = response.body();
+                            if (response.code()==404){
+
+                                return;
+                            }
+                            try{
+                                if (responseUser!=null){
+                                    if (responseUser.getCode()==0){
+                                        VisitaEntity mcliente=   viewModelVisita.getVisitabycode(CodeGenerado);
+
+                                        if (mcliente!=null){
+                                            mcliente.setId(Integer.parseInt(responseUser.getToken()));
+                                            mcliente.setIdSincronizacion(responseUser.getToken());
+                                            mcliente.setEstado(1);
+                                            mcliente.setSincronizado(1);
+
+                                            if (mcliente.getPedidoId().length()>0){
+
+                                                PedidoEntity ped=viewModelPedidos.getPedidoCodeGenerado(mcliente.getPedidoId());
+                                                if (ped!=null){
+                                                    mcliente.setPedidoId(ped.getOanumi());
+                                                }
+                                            }
+
+
+                                            viewModelVisita.updateVisita(mcliente);
+
+
+                                            Log.d(TAG, "Visita Guardado en El servidor = "+ mcliente.getNombreCliente());
                                             return;
                                         }
                                     }
@@ -304,7 +485,9 @@ if (UtilShare.mActivity!=null){
                             _DecargarPedidos(""+idRepartidor);
                             _DecargarStocks(""+idRepartidor,0);
                             exportarClientes();
+                            exportarVisitas();
                             UpdateClientes();
+                            UpdateVisitas();
                             exportarPedidos(""+idRepartidor);
                             exportarPedidosEstados();
                         }catch (Exception e){
@@ -743,10 +926,23 @@ if (UtilShare.mActivity!=null){
                                 if (responseUser.getCode()==0){
                                     PedidoEntity mPedido= viewModelPedidos.getPedido(pedido.getOanumi());
                                     if (mPedido!=null){
+                                        String CodigoGeneradoPedido =mPedido.getCodigogenerado();
+
+                                        VisitaEntity vi=viewModelVisita.getVisitabyPedidoId(CodigoGeneradoPedido);
+
+                                        if (vi!=null){
+                                          vi.setPedidoId(responseUser.getToken());
+                                          vi.setSincronizado(0);
+                                          viewModelVisita.updateVisita(vi);
+                                        }
+
                                         mPedido.setOanumi(responseUser.getToken());
                                         mPedido.setEstado(1);
                                         mPedido.setEstadoUpdate(1);
                                         mPedido.setCodigogenerado(responseUser.getToken());
+
+
+
                                         // viewModelPedidos.updatePedido(mPedido);
                                         List<DetalleEntity> listDetalle= viewModelDetalle.getDetalle(CodeGenerado);
                                         if (listDetalle!=null) {

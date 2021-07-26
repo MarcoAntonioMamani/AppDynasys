@@ -69,6 +69,8 @@ public class ListadoProductoFragment extends Fragment implements SearchView.OnQu
     public void onResume() {
         super.onResume();
         getActivity().setTitle("Lista Producto");
+        simpleSearchView.setQuery("", false);
+        view.requestFocus();
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,7 +91,7 @@ public class ListadoProductoFragment extends Fragment implements SearchView.OnQu
         simpleSearchView.setIconifiedByDefault(false);
 
         try {
-            hideKeyboard();
+
             cargarDatos();
         } catch (ExecutionException e) {
 
@@ -175,6 +177,9 @@ public class ListadoProductoFragment extends Fragment implements SearchView.OnQu
 
         }
 
+        simpleSearchView.setQuery("", false);
+        view.requestFocus();
+
     }
 
     @Override
@@ -182,6 +187,7 @@ public class ListadoProductoFragment extends Fragment implements SearchView.OnQu
         if (alertDialog.isShowing()){
             alertDialog.dismiss();
         }
+
     }
 
     private class ChecarNotificaciones extends AsyncTask<String, String, String> {

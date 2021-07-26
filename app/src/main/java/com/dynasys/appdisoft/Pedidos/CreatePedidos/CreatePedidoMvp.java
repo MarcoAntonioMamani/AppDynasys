@@ -31,7 +31,7 @@ public interface CreatePedidoMvp {
     interface Presenter{
         void CargarClientes();
         void CargarProducto(int idCLiente);
-        void GuardarDatos(List<DetalleEntity> list,PedidoEntity pedido);
+        void GuardarDatos(List<DetalleEntity> list,PedidoEntity pedido,ClienteEntity cli);
         void getDetailOrder(String numiOrder);
     }
 }

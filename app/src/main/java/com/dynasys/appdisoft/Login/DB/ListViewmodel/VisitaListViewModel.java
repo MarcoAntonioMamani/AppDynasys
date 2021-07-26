@@ -5,8 +5,10 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
+import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.Repository.VisitaRepository;
+import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -48,12 +50,29 @@ public class VisitaListViewModel extends AndroidViewModel {
         return mRepository.getVisita(id);
 
     }
+    public VisitaEntity getVisitabycode(String code) throws ExecutionException, InterruptedException {
+        return mRepository.getVisitabyCode(code);
+    }
+    public VisitaEntity getVisitabyPedidoId(String code) throws ExecutionException, InterruptedException {
+        return mRepository.getVisitabyPedidoId(code);
+    }
 
     public void insertVisita(VisitaEntity user) {
         mRepository.insertVisita(user);
     }
+    public List<VisitaEntity> getMAllStateVisita(int code) throws ExecutionException, InterruptedException {
+        return mRepository.getMVisitaAllState(code);
+    }
+    public List<VisitaEntity> getVisitaAllAsync(int code) throws ExecutionException, InterruptedException {
+        return mRepository.getVisitaAllAsync(code);
+    }
 
-
+    public List<VisitaEntity> getVisitabyCliente(String id) throws ExecutionException, InterruptedException {
+        return mRepository.getVisitaByClients(id);
+    }
+    public List<VisitaEntity> getMAllStateVisitaUpdate(int code) throws ExecutionException, InterruptedException {
+        return mRepository.getMVisitaAllStateUpdate(code);
+    }
 
     public void updateVisita(VisitaEntity user) {
         mRepository.updateVisita(user);

@@ -7,11 +7,13 @@ import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PointEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoViewEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.R;
@@ -61,10 +63,22 @@ private static Context mcontext;
         Call<ResponseLogin> userCall = service.InsertUser(user,idRepartidor);
         userCall.enqueue(callback);
     }
+
+    public void InsertVisita(VisitaEntity user, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.InsertVisita(user);
+        userCall.enqueue(callback);
+    }
     public void UpdateUser(ClienteEntity user, Callback<ResponseLogin> callback) {
         Call<ResponseLogin> userCall = service.UpdateUser(user);
         userCall.enqueue(callback);
     }
+
+    //UpdateVisita
+    public void UpdateVisita(VisitaEntity user, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.UpdateVisita(user);
+        userCall.enqueue(callback);
+    }
+
     public void InsertTracking(BodyLocation user, Callback<ResponseLogin> callback) {
         Call<ResponseLogin> userCall = service.InsertTracking(user);
         userCall.enqueue(callback);
@@ -120,6 +134,15 @@ private static Context mcontext;
     }
     public void ObtenerListadoProductos( Callback<List<ProductoViewEntity>> callback,String idRepartidor) {
         Call<List<ProductoViewEntity>> userCall = service.ObtenerListadoProductos(idRepartidor);
+        userCall.enqueue(callback);
+    }
+    public void ObtenerListadoVisitas( Callback<List<VisitaEntity>> callback,String idRepartidor) {
+        Call<List<VisitaEntity>> userCall = service.ObtenerListadoVisitas(idRepartidor);
+        userCall.enqueue(callback);
+    }
+
+    public void ObtenerListadoPoints( Callback<List<PointEntity>> callback,String idRepartidor) {
+        Call<List<PointEntity>> userCall = service.ObtenerListadoPoints(idRepartidor);
         userCall.enqueue(callback);
     }
 

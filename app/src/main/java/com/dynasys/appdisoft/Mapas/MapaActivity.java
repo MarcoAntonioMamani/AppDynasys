@@ -29,6 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -46,7 +47,13 @@ import com.dynasys.appdisoft.Clientes.TipoMapa;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PointEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PointListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.ZonaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
@@ -64,6 +71,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -75,9 +85,14 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
     GoogleMap mapa;
     private List<Marker> originMarkers = new ArrayList<>();
     private List<ClienteEntity> lisClientes = new ArrayList<>();
+
+    private List<VisitaEntity> listVisitados=new ArrayList<>();
     private List<ClientePedidos> listClientePedidos=new ArrayList<>();
     private List<ClienteEntity> lisClientesBackup = new ArrayList<>();
+    private ZonaListViewModel viewModelZonas;
+    private PointListViewModel viewmodelPoint;
     private ClientesListViewModel viewModelCliente;
+    private VisitaListViewModel viewModelVisita;
     private List<PedidoEntity> listPedidos=new ArrayList<>();
     private PedidoListViewModel viewModelPedido;
     private String serverKey = "AIzaSyDRwwdFpU2VpMvsfw6igVL61iZj7eP5NJQ";
@@ -86,6 +101,8 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button btnCargar;
     private Location Dlocation=null;
     private ProgressDialog progresdialog;
+
+    private TextView tvlb01,tvlb02,tvlb03;
 
     LinearLayout linearMapaPedidos;
     private int tipoAccion=0;
@@ -98,8 +115,14 @@ public class MapaActivity extends AppCompatActivity implements OnMapReadyCallbac
         listaTipos =findViewById(R.id.id_lista_Tipos);
         btnCargar=findViewById(R.id.btnFindPathall);
         linearMapaPedidos=findViewById(R.id.mapa_pedidos);
+        tvlb01=findViewById(R.id.lb01);
+        tvlb02=findViewById(R.id.lb2);
+        tvlb03=findViewById(R.id.lb03);
         viewModelCliente = ViewModelProviders.of(this).get(ClientesListViewModel.class);
         viewModelPedido = ViewModelProviders.of(this).get(PedidoListViewModel.class);
+        viewModelZonas=ViewModelProviders.of(this).get(ZonaListViewModel.class);
+        viewmodelPoint=ViewModelProviders.of(this).get(PointListViewModel.class);
+        viewModelVisita=ViewModelProviders.of(this).get(VisitaListViewModel.class);
         _CargarTipos();
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map_todos);
@@ -172,6 +195,7 @@ void ValidarButtonVisible(){
         list.add(new TipoMapa(2,"Ver Solo Pedidos Pendientes"));
         list.add(new TipoMapa(3,"Ver Solo Pedidos Entregados"));
         list.add(new TipoMapa(4,"Ver Todos Los Pedidos"));
+        list.add(new TipoMapa(5,"Ver Visitados"));
 
         ArrayAdapter<TipoMapa> adapter =new ArrayAdapter<TipoMapa>(getApplicationContext(), android.R.layout.simple_spinner_item, list);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -262,6 +286,9 @@ void ValidarButtonVisible(){
         }
         if (tipo==3){
             linearMapaPedidos.setVisibility(View.VISIBLE);
+            tvlb01.setText("Cliente Con Pedidos Entregados");
+            tvlb02.setText("Cliente Con Pedidos No Entregados");
+            tvlb03.setText("Cliente Rechazado");
             try {
                 tipoAccion=3;
                 lisClientesBackup=viewModelCliente.getMAllCliente(0);
@@ -287,6 +314,53 @@ void ValidarButtonVisible(){
 
             }
         }
+        if (tipo==4){
+            linearMapaPedidos.setVisibility(View.VISIBLE);
+            tvlb01.setText("Cliente No Visitados");
+            tvlb02.setText("Cliente Visitado Sin Pedido");
+            tvlb03.setText("Cliente Visitado Con Pedido");
+            try {
+                tipoAccion=3;
+                lisClientesBackup=viewModelCliente.getMAllCliente(0);
+                listVisitados=viewModelVisita.getVisitaAllAsync(1);
+
+                lisClientes=new ArrayList<>();
+                listPedidos=viewModelPedido.getMAllPedido(0);
+                listClientePed.clear();
+
+                for (int i = 0; i < lisClientesBackup.size(); i++) {
+                    if (!obtenerClienteVisita(lisClientesBackup.get(i))&& !obtenerClientePedido(lisClientesBackup.get(i))){
+                        listClientePed.add(new ClientePedidos(lisClientesBackup.get(i),0,1));//0= No visitados y sin pedidos
+
+                    }
+
+                    lisClientes.add(lisClientesBackup.get(i));
+                }
+
+                for (int i = 0; i < listVisitados.size(); i++) {
+                    VisitaEntity pedi=listVisitados.get(i);
+
+                    ClienteEntity cliente=obtenerClienteVisita(pedi);
+
+                    if (!obtenerClientePedido(cliente)&&obtenerClienteVisita(cliente) ){
+                        listClientePed.add(new ClientePedidos(cliente,1,1));  //Visitado sin pedidos
+                    }
+                    if (obtenerClientePedido(cliente)&&obtenerClienteVisita(cliente) ){
+                        listClientePed.add(new ClientePedidos(cliente,2,1));  // Visitados con pedidos
+                    }
+
+
+                }
+                UtilShare.ListClientes=lisClientes;
+                UtilShare.ListClientesPedidos=listClientePed;
+                listClientePedidos=listClientePed;
+                dibujarClientesEstadoVisitas();
+            } catch (ExecutionException e) {
+
+            } catch (InterruptedException e) {
+
+            }
+        }
     }
 
     public ClienteEntity obtenerCliente(PedidoEntity pedido){
@@ -297,6 +371,36 @@ void ValidarButtonVisible(){
             }
         }
         return null;
+    }
+
+    public ClienteEntity obtenerClienteVisita(VisitaEntity pedido){
+        for (int i = 0; i < lisClientesBackup.size(); i++) {
+            ClienteEntity client=lisClientesBackup.get(i);
+            if (pedido.getClienteId().trim().equals((""+client.getNumi()).trim())){
+                return client;
+            }
+        }
+        return null;
+    }
+
+    public Boolean obtenerClienteVisita(ClienteEntity pedido){
+        for (int i = 0; i < listVisitados .size(); i++) {
+            VisitaEntity client=listVisitados.get(i);
+            if (pedido.getCodigogenerado().trim().equals((""+client.getClienteId()).trim())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Boolean obtenerClientePedido(ClienteEntity pedido){
+        for (int i = 0; i < listPedidos .size(); i++) {
+            PedidoEntity client=listPedidos.get(i);
+            if (pedido.getCodigogenerado().trim().equals((""+client.getOaccli()).trim())&&client.getOaap()==1){
+                return true;
+            }
+        }
+        return false;
     }
     public void dibujarClientes(){
         if (mapa==null){
@@ -394,7 +498,7 @@ void ValidarButtonVisible(){
 
     }
 
-    public void dibujarClientesEstadoPedido(){
+   public void dibujarClientesEstadoPedido(){
         if (mapa==null){
             return;
         }
@@ -415,18 +519,6 @@ void ValidarButtonVisible(){
         mClusterManager = new ClusterManager<>(this, mapa);
         // mapa.setOnCameraChangeListener( mClusterManager);
         final CameraPosition[] mPreviousCameraPosition = {null};
-/*
-        mapa.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-            @Override
-            public void onCameraIdle() {
-                CameraPosition position = mapa.getCameraPosition();
-                if(mPreviousCameraPosition[0] == null || mPreviousCameraPosition[0].zoom != position.zoom) {
-                    mPreviousCameraPosition[0] = mapa.getCameraPosition();
-                    mClusterManager.cluster();
-                }
-            }
-        });*/
-
 
 
         for (int i = 0; i < listClientePedidos.size(); i++) {
@@ -445,8 +537,6 @@ void ValidarButtonVisible(){
 */
 
                         MarkerOptions marker = new MarkerOptions().position(new LatLng(mov.getLatitud(),mov.getLongitud()));
-
-// Changing marker icon
                         if (listClientePedidos.get(i).getAnulado()==2){
                             marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient01));
                         }else{
@@ -457,6 +547,9 @@ void ValidarButtonVisible(){
                             }
 
                         }
+// Changing marker icon
+
+
 
 
                         Marker mm= mapa.addMarker(marker);
@@ -503,19 +596,85 @@ void ValidarButtonVisible(){
             LatLng ubicacion=ObtenerUbicacion();
             mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(ubicacion, 15));
         }
+       Dibujarzonas();
 
-       /* final CustomClusterRenderer renderer = new CustomClusterRenderer(this, mapa, mClusterManager);
-        mClusterManager.setRenderer(renderer);
-        mClusterManager.getMarkerCollection()
-                .setOnInfoWindowAdapter(new CustomInfoWindowAdapterMapa(LayoutInflater.from(this)));
+    }
 
-        mapa.setInfoWindowAdapter(mClusterManager.getMarkerManager());
-        mapa.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener()
-        {
+    public void dibujarClientesEstadoVisitas(){
+
+
+
+        if (mapa==null){
+            return;
+        }
+        mapa.clear();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mapa.setMyLocationEnabled(true);
+
+
+        mClusterManager = new ClusterManager<>(this, mapa);
+        // mapa.setOnCameraChangeListener( mClusterManager);
+        final CameraPosition[] mPreviousCameraPosition = {null};
+
+
+
+
+        for (int i = 0; i < listClientePedidos.size(); i++) {
+
+            ClienteEntity mov=listClientePedidos.get(i).getCliente();
+            if (mov!=null){
+                if (mov.getLongitud()!=null){
+                    if (mov.getLongitud()!=0){
+               /* originMarkers.add(mapa.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient02 ))
+                        .title(""+i)
+                        .position(new LatLng(mov.getLatitud(),mov.getLongitud()))));*/
+
+                        /*
+                        mClusterManager.addItem(new StringClusterItem("" + (i), new LatLng(mov.getLatitud(),mov.getLongitud())));
+*/
+
+                        MarkerOptions marker = new MarkerOptions().position(new LatLng(mov.getLatitud(),mov.getLongitud()));
+
+// Changing marker icon
+                        if (listClientePedidos.get(i).getEstadoPedido()==0){
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient02));
+                        }
+                        if (listClientePedidos.get(i).getEstadoPedido() ==1){
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient03));
+                        }
+                        if (listClientePedidos.get(i).getEstadoPedido()==2){
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mapclient01));
+                        }
+
+
+
+
+                        Marker mm= mapa.addMarker(marker);
+
+                        mm.setTag(mov);
+
+                    }
+                }
+            }
+
+
+        }
+
+        mapa.setInfoWindowAdapter(new CustomInfoWindowAdapter(LayoutInflater.from(this)));
+        mapa.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
-            public void onInfoWindowClick(Marker arg0) {
-
-                ClienteEntity obj=(ClienteEntity) arg0.getTag();
+            public void onInfoWindowClick(Marker marker) {
+                ClienteEntity obj=(ClienteEntity) marker.getTag();
                 UtilShare.clienteMapa=obj;
                 UtilShare.tipoAccion=tipoAccion;
                 DataPreferences.putPrefInteger("Accion",1,getApplicationContext());
@@ -525,22 +684,82 @@ void ValidarButtonVisible(){
                     DataPreferences.putPref("idCliente",obj.getCodigogenerado() ,getApplicationContext());
                            /* Fragment frag = new CreatePedidoFragment(1);
                             switchFragment(frag,"CREATE_PEDIDOS");*/
-        /*
+
                     onBackPressed();
                 }
                 if (tipoAccion==1){
                     DataPreferences.putPrefInteger("Accion",2,getApplicationContext());
                     DataPreferences.putPref("idCliente",obj.getCodigogenerado() ,getApplicationContext());
                            /* Fragment frag = new CreatePedidoFragment(1);
-                            switchFragment(frag,"CREATE_PEDIDOS");*//*
+                            switchFragment(frag,"CREATE_PEDIDOS");*/
                     onBackPressed();
                 }
             }
 
-        } );*/
+        });
+        //  mClusterManager.cluster();
+        if (lisClientes.size()>0){
+            //mapa.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lisClientes.get(0).getLatitud(),lisClientes.get(0).getLongitud()), 15));
+            LatLng ubicacion=ObtenerUbicacion();
+            mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(ubicacion, 15));
+        }
+
 
     }
 
+    public void Dibujarzonas(){
+        int idRepartidor=DataPreferences.getPrefInt("idrepartidor",this);
+        try {
+            List<ZonasEntity> lisZona=viewModelZonas.getZonaByRepartidor(idRepartidor);
+
+            for (int i = 0; i < lisZona.size(); i++) {
+
+                List<PointEntity> lisPoint=viewmodelPoint.getPoint(lisZona.get(i).getLanumi());
+                if (lisPoint.size()>0){
+                    final List<LatLng> latLngList = new ArrayList<>();
+                    for (int j = 0; j < lisPoint.size(); j++) {
+
+                        latLngList.add(new LatLng(lisPoint.get(i).getLatitud(),lisPoint.get(i).getLongitud()));
+
+                    }
+                    Polygon polygon = null;
+                    if (polygon != null ) polygon.remove(); // remove the previously drawn polygon
+
+                 /*   PolylineOptions options = new PolylineOptions().width(5).color(Color.RED).geodesic(true);
+                    for (int z = 0; z < latLngList.size(); z++) {
+                        LatLng point = latLngList.get(z);
+                        options.add(point);
+                    }
+                    mapa.addPolyline(options);*/
+
+
+
+                  Polyline polyline = mapa.addPolyline(new PolylineOptions()
+                            .addAll(latLngList)
+                            .width(10)
+                            .color(Color.BLUE)
+                            .geodesic(true));
+                    CameraPosition cameraPosition;
+                   // cameraPosition = new CameraPosition.Builder().target(new LatLng(-27.457,153.040)).zoom(15).build();
+
+                   cameraPosition = new CameraPosition.Builder().target(new LatLng(latLngList.get(0).latitude,latLngList.get(0).longitude)).zoom(15).build();
+                    mapa.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                   // polygon.setTag("alpha");
+
+                   /* mapa.setOnPolylineClickListener(polyline1);
+                    mapa.setOnPolygonClickListener(polyline1);*/
+                }
+            }
+
+
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
     public void switchFragment(final Fragment frag, final String tag){
         switchHandler.postDelayed(new Runnable() {
             @Override

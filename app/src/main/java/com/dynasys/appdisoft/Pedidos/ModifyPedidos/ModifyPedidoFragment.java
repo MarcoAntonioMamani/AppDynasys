@@ -48,6 +48,7 @@ import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
@@ -106,6 +107,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     private PedidoListViewModel viewModelPedido;
     private DetalleListViewModel viewModelDetalle;
     private DescuentosListViewModel viewModelDescuento;
+    private VisitaListViewModel viewModelVisita;
     private  StockListViewModel viewModelStock;
     private List<DetalleEntity> mDetalleItem=new ArrayList<>();
     private CreatePedidoMvp.Presenter mCreatePedidoPresenter;
@@ -189,7 +191,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
-        new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock);
+        new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock,viewModelVisita);
         iniciarRecyclerView();
         acliente.setText(mCliente.getNamecliente());
         acliente.setEnabled(false);

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
+import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.Visitas.VisitaMvp;
 
@@ -55,7 +56,10 @@ private VisitaMvp.View mview;
 
         }
       VisitasViewHolder.TvAdapterDireccion.setText((CharSequence) listaVisita.get(i).getDireccion());
-        VisitasViewHolder.TvAdapterFecha.setText((CharSequence)listaVisita.get(i).getTelefono());
+
+        VisitasViewHolder.TvAdapterFecha.setText((CharSequence) ShareMethods.ObtenerFecha(listaVisita.get(i).getFecha())+"  "+listaVisita.get(i).getHora());
+
+
         VisitasViewHolder.TvAdapterNombre.setTag(listaVisita.get(i));
         ColorGenerator generator = ColorGenerator.MATERIAL;
         int color = generator.getColor(listaVisita.get(i).getNombreCliente());
@@ -67,8 +71,8 @@ private VisitaMvp.View mview;
                 mview.recyclerViewListClicked(v, listaVisita.get(i));
             }
         });
-        if (listaVisita.get(i).getEstado()==1){
-            VisitasViewHolder.TvAdapterNombre.setTextColor(Color.BLACK);
+        if (listaVisita.get(i).getSincronizado()==1){
+            VisitasViewHolder.TvAdapterNombre.setTextColor(Color.WHITE);
         }else{
             VisitasViewHolder.TvAdapterNombre.setTextColor(Color.RED);
         }

@@ -30,9 +30,11 @@ import com.dynasys.appdisoft.Login.DB.ListViewmodel.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PointListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.ProductoViewListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.ZonaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
@@ -73,6 +75,8 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
     private StockListViewModel viewModelStock;
     private DescuentosListViewModel viewModelDescuento;
     private ProductoViewListViewModel viewModelListadoProducto;
+    private VisitaListViewModel viewModelVisita;
+    private PointListViewModel viewModelPoint;
     LottieAlertDialog alertDialog;
     List<ZonasEntity> listZonas;
     ZonasEntity mZonaSelected;
@@ -114,9 +118,11 @@ public class SincronizarFragment extends Fragment implements SincronizarMvp.View
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
         viewModelZona =ViewModelProviders.of(getActivity()).get(ZonaListViewModel.class);
         viewModelListadoProducto=ViewModelProviders.of(getActivity()).get(ProductoViewListViewModel.class);
+        viewModelVisita=ViewModelProviders.of(getActivity()).get(VisitaListViewModel.class);
+        viewModelPoint=ViewModelProviders.of(getActivity()).get(PointListViewModel.class);
       /*  NoteEntity note = new NoteEntity(inputNote.getText().toString());
         viewModel.insertNote(note);*/
-        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle,viewModelStock,viewModelDescuento,viewModelListadoProducto);
+        new SincronizarPresenter(this,getContext(),viewModel,getActivity(),viewModelPrecio,viewModelProducto,viewModelPedidos,viewModelDetalle,viewModelStock,viewModelDescuento,viewModelListadoProducto,viewModelVisita,viewModelPoint);
 checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

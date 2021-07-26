@@ -5,7 +5,9 @@ import android.content.Context;
 import android.util.Log;
 
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
+import com.dynasys.appdisoft.Login.DB.Entity.PointEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoViewEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
@@ -15,9 +17,11 @@ import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PointListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PreciosListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.ProductoViewListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
@@ -43,6 +47,8 @@ public class SincronizarPresenter implements SincronizarMvp.Presenter {
     private final DetalleListViewModel viewModelDetalles;
     private final StockListViewModel viewModelStock;
     private final ProductoViewListViewModel viewmodelListProducto;
+    private final VisitaListViewModel viewModelVisita;
+    private final PointListViewModel viewModelPoint;
     private final Activity activity;
      int cantidadCliente = 0;
     int cantidadProducto=0;
@@ -55,7 +61,8 @@ int ZonaSelected=0;
 
     public SincronizarPresenter(SincronizarMvp.View sincronizarView, Context context, ClientesListViewModel viewModel, Activity activity, PreciosListViewModel
                                 viewModelPrecios, ProductosListViewModel viewModelProductos,PedidoListViewModel viewModelPedidos,
-                                DetalleListViewModel viewModelDetalles,StockListViewModel stock,DescuentosListViewModel descuento,ProductoViewListViewModel viewmodelListProducto){
+                                DetalleListViewModel viewModelDetalles,StockListViewModel stock,DescuentosListViewModel descuento,ProductoViewListViewModel viewmodelListProducto,
+                                VisitaListViewModel viewModelVisita,PointListViewModel viewModelPoint){
         mSincronizarview = Preconditions.checkNotNull(sincronizarView);
         mSincronizarview.setPresenter(this);
         this.viewModel=viewModel;
@@ -68,6 +75,8 @@ int ZonaSelected=0;
         this.viewmodelListProducto=viewmodelListProducto;
         this.viewModelStock=stock;
         this.viewModelDescuentos =descuento;
+        this.viewModelVisita=viewModelVisita;
+        this.viewModelPoint=viewModelPoint;
          cantidadCliente = 0;
        cantidadProducto=0;
          cantidadPrecio=0;
@@ -93,6 +102,8 @@ int ZonaSelected=0;
         CantidadPenticiones=(producto==true? 1:0)+(precio==true? 1:0)+(cliente==true? 1:0)+(pedidos==true? 1:0);
         String Mensaje="";
         _DecargarListadoProducto(""+idRepartidor);
+        _DecargarVisitas(""+idRepartidor);
+        _DecargarVPoints(""+idRepartidor);
         if (cliente==true ){
             _DescargarClientes(""+idRepartidor);
         }
@@ -521,6 +532,63 @@ viewModelStock.insertListStock(responseUser);
             }
             @Override
             public void onFailure(Call<List<ProductoViewEntity>> call, Throwable t) {
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio."+ t.getMessage());
+                Log.d("Listado Productos=>", t.getMessage());
+            }
+        },idRepartidor);
+    }
+
+    public void _DecargarVisitas(String idRepartidor){
+        ApiManager apiManager=ApiManager.getInstance(mContext);
+        apiManager.ObtenerListadoVisitas( new Callback<List<VisitaEntity>>() {
+            @Override
+            public void onResponse(Call<List<VisitaEntity>> call, Response<List<VisitaEntity>> response) {
+                final List<VisitaEntity> responseUser = (List<VisitaEntity>) response.body();
+                if (response.code() == 404) {
+                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. " + response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+
+
+                    viewModelVisita.deleteAllVisitas();
+                    viewModelVisita.insertListVisita(responseUser);
+
+                } else {
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza" + response.message());
+
+                }
+            }
+            @Override
+            public void onFailure(Call<List<VisitaEntity>> call, Throwable t) {
+                mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio."+ t.getMessage());
+                Log.d("Listado Productos=>", t.getMessage());
+            }
+        },idRepartidor);
+    }
+    public void _DecargarVPoints(String idRepartidor){
+        ApiManager apiManager=ApiManager.getInstance(mContext);
+        apiManager.ObtenerListadoPoints( new Callback<List<PointEntity>>() {
+            @Override
+            public void onResponse(Call<List<PointEntity>> call, Response<List<PointEntity>> response) {
+                final List<PointEntity> responseUser = (List<PointEntity>) response.body();
+                if (response.code() == 404) {
+                    mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio. " + response.message());
+                    return;
+                }
+                if (response.isSuccessful() && responseUser != null) {
+
+
+                    viewModelPoint.deleteAllPoints();
+                    viewModelPoint.insertListPoint(responseUser);
+
+                } else {
+                    mSincronizarview.ShowMessageResult("No se pudo Obtener Datos del Servidor para Cobranza" + response.message());
+
+                }
+            }
+            @Override
+            public void onFailure(Call<List<PointEntity>> call, Throwable t) {
                 mSincronizarview.ShowMessageResult("No es posible conectarse con el servicio."+ t.getMessage());
                 Log.d("Listado Productos=>", t.getMessage());
             }

@@ -37,6 +37,7 @@ import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
+import com.dynasys.appdisoft.Visitas.Create.CreateVisitaFragment;
 
 
 import java.util.ArrayList;
@@ -126,7 +127,7 @@ public class ListaVisitasFragment extends Fragment implements SearchView.OnQuery
         btnAddVisita.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment frag = new CreateClienteFragment();
+                Fragment frag = new CreateVisitaFragment();
                 MainActivity fca = (MainActivity) getActivity();
                 fca.switchFragment(frag,"CREATE_VISITA");
             }
@@ -206,11 +207,11 @@ public class ListaVisitasFragment extends Fragment implements SearchView.OnQuery
              /* MainActivity fca = ((MainActivity) getActivity());
               fca.startActivity(new Intent(getActivity(), MapClientActivity .class));
               fca.overridePendingTransition(R.transition.left_in, R.transition.left_out);*/
-        /*    int isUpdate= DataPreferences.getPrefInt("UpdateVisita",getContext());
+            int isUpdate=DataPreferences.getPrefInt("UpdateCliente",getContext());
 
-            Fragment frag = new CreateClienteFragment(1,cliente,isUpdate);
+            Fragment frag = new CreateVisitaFragment(1,cliente,isUpdate);
             MainActivity fca = (MainActivity) getActivity();
-            fca.switchFragment(frag,"UpdateClientes");*/
+            fca.switchFragment(frag,"UpdateClientes");
         }
     }
 
