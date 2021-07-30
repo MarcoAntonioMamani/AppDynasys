@@ -37,6 +37,7 @@ import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PointEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
@@ -60,6 +61,9 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.clustering.ClusterManager;
 import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
@@ -69,6 +73,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
@@ -94,7 +99,8 @@ public class CreateVisitaFragment extends Fragment  implements OnMapReadyCallbac
     private AutoCompleteTextView acliente;
     private ClientesListViewModel viewModelCliente;
     private VisitaListViewModel viewModelVisita;
-
+    private ZonaListViewModel viewModelZonas;
+    private PointListViewModel viewmodelPoint;
 
     private Context mContext;
     VisitaEntity mVisita;
@@ -142,7 +148,8 @@ public class CreateVisitaFragment extends Fragment  implements OnMapReadyCallbac
         btnAtras=(Button)view.findViewById(R.id.id_btnVisita_cancelar);
         btnGuardar=(Button)view.findViewById(R.id.id_btnVisita_guardar);
         acliente=view.findViewById(R.id.visita_buscar_cliente);
-
+        viewModelZonas=ViewModelProviders.of(this).get(ZonaListViewModel.class);
+        viewmodelPoint=ViewModelProviders.of(this).get(PointListViewModel.class);
 
         tilDetalle=(TextInputLayout)view.findViewById(R.id.tilvisita_detalle);
 
@@ -262,12 +269,19 @@ public class CreateVisitaFragment extends Fragment  implements OnMapReadyCallbac
                             if (LocationGeo.getLocationActual()==null){
                                 ShowMessageResult("No hay Datos GPS Haga Clic en Obteber Gps");
                             }else{
-                                if (mcliente==null && tipo==0){
-                                    ShowMessageResult("Seleccione un Cliente");
+                         //Validando Zonas
+                                if (ValidarClienteEnzona()) {
+                                    if (mcliente==null && tipo==0){
+                                        ShowMessageResult("Seleccione un Cliente");
+                                    }else{
+                                        showDialogs();
+                                        new ChecarNotificaciones().execute();
+                                    }
                                 }else{
-                                    showDialogs();
-                                    new ChecarNotificaciones().execute();
+                                    ShowMessageResult("El Cliente Visitado no Se Encuentra dentro de la zona");
                                 }
+
+
 
                             }
 
@@ -287,6 +301,57 @@ public class CreateVisitaFragment extends Fragment  implements OnMapReadyCallbac
         });
     }
 
+    public boolean ValidarClienteEnzona(){
+        int idRepartidor=DataPreferences.getPrefInt("idrepartidor",getActivity());
+        List<ZonasEntity> lisZona= null;
+        Boolean bandera=false;
+        try {
+            lisZona = viewModelZonas.getZonaByRepartidor(idRepartidor);
+            for (int i = 0; i < lisZona.size(); i++) {
+
+                List<LatLng> lista=ObtenerListaPuntos(lisZona.get(i).getLanumi());
+
+                LatLng punto=new LatLng(LocationGeo.getLocationActual().getLatitude(),LocationGeo.getLocationActual().getLongitude());
+
+                if (LocationGeo.Encontrado(lista,punto)){
+                    return true;
+                }
+
+            }
+
+
+        } catch (ExecutionException e) {
+
+        } catch (InterruptedException e) {
+
+        }
+
+       return false;
+
+    }
+
+    public List<LatLng> ObtenerListaPuntos(int IdZona ){
+
+        List<PointEntity> lisPoint= null;
+        final List<LatLng> latLngList = new ArrayList<>();
+        try {
+            lisPoint = viewmodelPoint.getPoint(IdZona);
+            if (lisPoint.size()>0) {
+
+                for (int j = 0; j < lisPoint.size(); j++) {
+
+                    latLngList.add(new LatLng(lisPoint.get(j).getLatitud(), lisPoint.get(j).getLongitud()));
+
+                }
+            }
+
+        } catch (ExecutionException e) {
+
+        } catch (InterruptedException e) {
+
+        }
+        return latLngList;
+    }
     public void showDialogs() {
         ShowDialogSincronizando();
         alertDialog.show();

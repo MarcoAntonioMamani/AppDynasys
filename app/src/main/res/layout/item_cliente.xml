@@ -80,14 +80,38 @@
 
         <TextView
             android:id="@+id/row_cliente_telefono"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/row_cliente_direccion"
             android:layout_toRightOf="@id/row_cliente_img"
             android:text="Telf: 78140596"
+            android:paddingRight="10dp"
             android:layout_marginTop="2dp"
             android:textColor="@color/colorText"
             style="@style/TextAppearance.AppCompat.Caption" />
+
+        <LinearLayout
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:gravity="right"
+
+
+            >
+            <Button
+                android:id="@+id/cliente_btnwhatsapp"
+                android:layout_width="80dp"
+                android:layout_height="25dp"
+                android:text="Whatsapp"
+
+                android:textSize="10dp"
+                android:textStyle="bold"
+                android:background="@drawable/animation_riple_edit"
+                android:scaleType="fitCenter"
+                android:textColor="@color/white"
+
+                />
+        </LinearLayout>
 
     </LinearLayout>
 

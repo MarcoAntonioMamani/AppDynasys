@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -66,6 +67,12 @@ private ClienteMvp.View mview;
         }else{
             clientesViewHolder.TvAdapterNombre.setTextColor(Color.RED);
         }
+        clientesViewHolder.btnWhatsapp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mview.WhatsappClicked(view,listaCliente.get(i));
+            }
+        });
 
     }
 
@@ -87,6 +94,7 @@ private ClienteMvp.View mview;
         protected TextView TvAdapterDireccion;
         protected TextView TvAdapterTelefono;
         protected CardView cardCliente;
+        protected Button btnWhatsapp;
         public ClientesViewHolder(View v) {
             super(v);
             ivAdapterImg = (ImageView) v.findViewById(R.id.row_cliente_img);
@@ -94,6 +102,9 @@ private ClienteMvp.View mview;
             TvAdapterDireccion=(TextView) v.findViewById(R.id.row_cliente_direccion);
             TvAdapterTelefono = (TextView) v.findViewById(R.id.row_cliente_telefono);
             cardCliente=(CardView)v.findViewById(R.id.id_cardview_cliente);
+            btnWhatsapp=(Button) v.findViewById(R.id.cliente_btnwhatsapp);
+
+
         }
     }
 

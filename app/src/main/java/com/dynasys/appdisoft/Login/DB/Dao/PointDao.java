@@ -17,7 +17,7 @@ public interface PointDao {
     @Query("SELECT * FROM point ORDER BY idzona DESC")
     LiveData<List<PointEntity>> getAllpoint();
 
-    @Query("SELECT * FROM point WHERE idzona=:id")
+    @Query("SELECT * FROM point WHERE idzona=:id order by id asc")
     List<PointEntity> getpointProducto(int id);
 
 

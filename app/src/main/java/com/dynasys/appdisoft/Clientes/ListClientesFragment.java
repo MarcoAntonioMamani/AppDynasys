@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -220,6 +221,17 @@ public void _OnClickBtnAddCliente(){
               fca.switchFragment(frag,"UpdateClientes");
         }
     }
+
+    @Override
+    public void WhatsappClicked(View v, ClienteEntity Visita) {
+        if (!Visita.getTelefono().toString() .isEmpty()){
+            String url="https://api.whatsapp.com/send?phone=591"+Visita.getTelefono()+"&text="+" ";
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        }
+    }
+
     public void ShowMessageResult(String message) {
         Snackbar snackbar= Snackbar.make(recList, message, Snackbar.LENGTH_LONG);
         View snackbar_view=snackbar.getView();

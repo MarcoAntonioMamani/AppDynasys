@@ -716,47 +716,69 @@ void ValidarButtonVisible(){
 
                 List<PointEntity> lisPoint=viewmodelPoint.getPoint(lisZona.get(i).getLanumi());
                 if (lisPoint.size()>0){
-                    final List<LatLng> latLngList = new ArrayList<>();
+                     List<LatLng> latLngList = new ArrayList<>();
                     for (int j = 0; j < lisPoint.size(); j++) {
 
                         latLngList.add(new LatLng(lisPoint.get(i).getLatitud(),lisPoint.get(i).getLongitud()));
 
                     }
+                    latLngList.add(new LatLng(lisPoint.get(0).getLatitud(),lisPoint.get(0).getLongitud()));
                     Polygon polygon = null;
                     if (polygon != null ) polygon.remove(); // remove the previously drawn polygon
 
-                 /*   PolylineOptions options = new PolylineOptions().width(5).color(Color.RED).geodesic(true);
-                    for (int z = 0; z < latLngList.size(); z++) {
-                        LatLng point = latLngList.get(z);
-                        options.add(point);
+                  /* Polygon polygon1 = mapa.addPolygon(new PolygonOptions()
+                            .add(new LatLng(lisPoint.get(0).getLatitud(), lisPoint.get(0).getLongitud()),
+                                    new LatLng(lisPoint.get(1).getLatitud(), lisPoint.get(1).getLongitud()),
+                                    new LatLng(lisPoint.get(2).getLatitud(), lisPoint.get(2).getLongitud()),
+                                    new LatLng(lisPoint.get(3).getLatitud(), lisPoint.get(3).getLongitud()),
+                                    new LatLng(lisPoint.get(4).getLatitud(), lisPoint.get(4).getLongitud()),
+                                    new LatLng(lisPoint.get(5).getLatitud(), lisPoint.get(5).getLongitud()),
+                                    new LatLng(lisPoint.get(6).getLatitud(), lisPoint.get(6).getLongitud()),
+                                    new LatLng(lisPoint.get(7).getLatitud(), lisPoint.get(7).getLongitud()),
+                                    new LatLng(lisPoint.get(8).getLatitud(), lisPoint.get(8).getLongitud()))
+                            .strokeColor(Color.RED)
+                            .fillColor(Color.BLUE));*/
+
+
+                    PolygonOptions polygonOptions = new PolygonOptions();
+
+                    for (int j = 0; j < lisPoint.size(); j++) {
+                        polygonOptions.add(new LatLng(lisPoint.get(j).getLatitud(),lisPoint.get(j).getLongitud()));
+
                     }
-                    mapa.addPolyline(options);*/
+
+
+                   polygonOptions.strokeColor(Color.RED);
+                    //polygonOptions.fillColor(0x7F00FF00);
+                    polygonOptions.fillColor(Color.argb(30, 50, 0, 255));
+                    polygonOptions.strokeWidth(4);
+                    Polygon polygon1 = mapa.addPolygon(polygonOptions);
 
 
 
-                  Polyline polyline = mapa.addPolyline(new PolylineOptions()
+
+                 /* Polyline polyline = mapa.addPolyline(new PolylineOptions()
                             .addAll(latLngList)
                             .width(10)
                             .color(Color.BLUE)
-                            .geodesic(true));
+                            .geodesic(true));*/
                     CameraPosition cameraPosition;
                    // cameraPosition = new CameraPosition.Builder().target(new LatLng(-27.457,153.040)).zoom(15).build();
 
+
+
                    cameraPosition = new CameraPosition.Builder().target(new LatLng(latLngList.get(0).latitude,latLngList.get(0).longitude)).zoom(15).build();
                     mapa.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                   // polygon.setTag("alpha");
 
-                   /* mapa.setOnPolylineClickListener(polyline1);
-                    mapa.setOnPolygonClickListener(polyline1);*/
                 }
             }
 
 
 
         } catch (ExecutionException e) {
-            e.printStackTrace();
+
         } catch (InterruptedException e) {
-            e.printStackTrace();
+
         }
 
     }

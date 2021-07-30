@@ -1627,6 +1627,12 @@ return null;
                         }*/
                         if (AnularPedido!=true){
                             PreguntarImpresionPedido("Desea Generar Documento De Impresión?");
+                        }else{
+
+
+                            RetornarPrincipal();
+
+
                         }
 
 
