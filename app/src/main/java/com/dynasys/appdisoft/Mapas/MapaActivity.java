@@ -719,7 +719,7 @@ void ValidarButtonVisible(){
                      List<LatLng> latLngList = new ArrayList<>();
                     for (int j = 0; j < lisPoint.size(); j++) {
 
-                        latLngList.add(new LatLng(lisPoint.get(i).getLatitud(),lisPoint.get(i).getLongitud()));
+                        latLngList.add(new LatLng(lisPoint.get(j).getLatitud(),lisPoint.get(j).getLongitud()));
 
                     }
                     latLngList.add(new LatLng(lisPoint.get(0).getLatitud(),lisPoint.get(0).getLongitud()));
