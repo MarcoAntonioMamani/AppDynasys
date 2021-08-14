@@ -33,9 +33,12 @@ import android.widget.TextView;
 import com.dynasys.appdisoft.Adapter.ClientesAdapter;
 import com.dynasys.appdisoft.Adapter.DetalleAdaptader;
 import com.dynasys.appdisoft.Adapter.ProductAdapter;
+import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
+import com.dynasys.appdisoft.Login.DB.Entity.PointEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
@@ -44,8 +47,10 @@ import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PointListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.ZonaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
@@ -56,6 +61,7 @@ import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.Pdf.TemplatePDF;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.common.base.Preconditions;
 import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
@@ -108,7 +114,10 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private ClienteEntity mCliente=null;
     private RecyclerView detalle_List;
     ClientesAdapter clientAdapter;
+
+    private ZonaListViewModel viewModelZonas;
     ProductAdapter productoAdapter;
+    private PointListViewModel viewmodelPoint;
     private String M_Uii="";
     Boolean Grabado=false;
 DetalleAdaptader mDetalleAdapter;
@@ -165,11 +174,13 @@ private PedidoEntity mPedido;
         ObFecha=(ImageButton)view.findViewById(R.id.ib_obtener_fecha);
         tvObservacion=(EditText)view.findViewById(R.id.pedido_view_observacion) ;
         mbutton_guardar = (Button)view.findViewById(R.id.id_btn_guardarPedido);
+        viewModelZonas=ViewModelProviders.of(this).get(ZonaListViewModel.class);
         mbutton_cancelar=(Button)view.findViewById(R.id.id_btn_cancelarPedido);
         mscroll=view.findViewById(R.id.id_order_scroll);
         viewModelCliente = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
         viewModelProducto = ViewModelProviders.of(getActivity()).get(ProductosListViewModel.class);
         viewModelPedido = ViewModelProviders.of(getActivity()).get(PedidoListViewModel.class);
+        viewmodelPoint=ViewModelProviders.of(this).get(PointListViewModel.class);
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
         viewModelVisita=ViewModelProviders.of(getActivity()).get(VisitaListViewModel.class);
@@ -365,18 +376,86 @@ private PedidoEntity mPedido;
 
     }
 
+    public List<LatLng> ObtenerListaPuntos(int IdZona ){
+
+        List<PointEntity> lisPoint= null;
+        final List<LatLng> latLngList = new ArrayList<>();
+        try {
+            lisPoint = viewmodelPoint.getPoint(IdZona);
+            if (lisPoint.size()>0) {
+
+                for (int j = 0; j < lisPoint.size(); j++) {
+
+                    latLngList.add(new LatLng(lisPoint.get(j).getLatitud(), lisPoint.get(j).getLongitud()));
+
+                }
+            }
+
+        } catch (ExecutionException e) {
+
+        } catch (InterruptedException e) {
+
+        }
+        return latLngList;
+    }
+    public boolean ValidarClienteEnzona(){
+        int idRepartidor=DataPreferences.getPrefInt("idrepartidor",getActivity());
+        List<ZonasEntity> lisZona= null;
+        Boolean bandera=false;
+                List<LatLng> lista=ObtenerListaPuntos(mCliente.getCczona());
+
+                LatLng punto=new LatLng(LocationGeo.getLocationActual().getLatitude(),LocationGeo.getLocationActual().getLongitude());
+                if (lista.size()>0){
+                    if (LocationGeo.Encontrado(lista,punto)){
+                        return true;
+                    }
+
+                }
+
+        return false;
+
+    }
+
     public void GuardarPedido(){
         if (mDetalleItem.size()>0){
             if (Grabado ==false){
                 if (M_Uii.trim().equals("")){
+                    int ValidarZona=DataPreferences.getPrefInt("ValidarZona",getActivity());
+                    if (ValidarZona==1){
+
+                        if (mCliente!=null){
+                            if (ValidarClienteEnzona()){
+                                showDialogs();
+                                new ChecarNotificaciones().execute();
+                            }else{
+                                ShowMessageResult("No puede Crear el Pedido por que no se Encuentra dentro de su Zona asignada");
+                                return;
+                            }
+                        }else{
+                            ShowMessageResult("Seleccione un cliente");
+                            return;
+                        }
+
+
+
+                    }else{
+                        showDialogs();
+                        new ChecarNotificaciones().execute();
+                        return;
+                    }
+
+
                     showDialogs();
                     new ChecarNotificaciones().execute();
+                    return;
                 }else{
                     ShowMessageResult("El pedido ya ha sido guardado localmente, por favor vuelva hacia atras");
+                    return;
                 }
 
             }else{
                 ShowMessageResult("El pedido ya ha sido guardado localmente, por favor vuelva hacia atras");
+                return;
             }
 
 
@@ -386,6 +465,7 @@ private PedidoEntity mPedido;
 
         }else{
             ShowMessageResult("No Existen Productos Seleccionados");
+            return;
         }
     }
     public void _prModificarNumi(String Numi){
@@ -1124,9 +1204,12 @@ private PedidoEntity mPedido;
 
     @Override
     public void ShowMessageResult(String message) {
-        if (alertDialog.isShowing()){
-            alertDialog.dismiss();
+        if (alertDialog!=null){
+            if (alertDialog.isShowing()){
+                alertDialog.dismiss();
+            }
         }
+
         alertDialog=new LottieAlertDialog.Builder(getContext(),DialogTypes.TYPE_WARNING)
                 .setTitle("Advertencia")
                 .setDescription(message)

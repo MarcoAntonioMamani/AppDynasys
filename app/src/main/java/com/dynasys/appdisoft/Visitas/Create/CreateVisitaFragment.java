@@ -269,17 +269,14 @@ public class CreateVisitaFragment extends Fragment  implements OnMapReadyCallbac
                             if (LocationGeo.getLocationActual()==null){
                                 ShowMessageResult("No hay Datos GPS Haga Clic en Obteber Gps");
                             }else{
-                         //Validando Zonas
-                                if (ValidarClienteEnzona()) {
+
                                     if (mcliente==null && tipo==0){
                                         ShowMessageResult("Seleccione un Cliente");
                                     }else{
                                         showDialogs();
                                         new ChecarNotificaciones().execute();
                                     }
-                                }else{
-                                    ShowMessageResult("El Cliente Visitado no Se Encuentra dentro de la zona");
-                                }
+
 
 
 

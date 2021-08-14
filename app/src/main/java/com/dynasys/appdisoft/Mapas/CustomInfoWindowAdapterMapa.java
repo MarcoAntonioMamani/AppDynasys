@@ -32,7 +32,10 @@ public class CustomInfoWindowAdapterMapa implements GoogleMap.InfoWindowAdapter,
         //Carga layout personalizado.
         String posicion =m.getSnippet();
         View v = inflater.inflate(R.layout.info_windows_layout, null);
+
+
         mclient=UtilShare.ListClientes.get(Integer.parseInt(posicion));
+
         panel=(RelativeLayout)v.findViewById(R.id.info_cliente);
         img=(ImageView) v.findViewById(R.id.id_img_client);
 

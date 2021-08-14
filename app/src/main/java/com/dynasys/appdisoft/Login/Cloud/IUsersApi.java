@@ -12,7 +12,9 @@ import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
+import com.dynasys.appdisoft.Login.FechaCaducidad;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+import com.google.gson.JsonArray;
 import com.strongloop.android.loopback.User;
 
 import java.util.List;
@@ -27,6 +29,9 @@ import retrofit2.http.Path;
 public interface IUsersApi {
     @POST("/api/repartidor/login")
     Call<ResponseLogin> LoginUser(@Body Bodylogin user);
+
+    @GET("macros/s/{idrepartidor}")
+    Call<List<FechaCaducidad>> ObtenerFechaCaducidad(@Path("idrepartidor") String idRepartidor);
 
     @POST("/api/repartidor/clients/{idrepartidor}")
     Call<ResponseLogin> InsertUser(@Body ClienteEntity user,@Path("idrepartidor") String idRepartidor);

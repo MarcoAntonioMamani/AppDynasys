@@ -209,6 +209,7 @@ void ValidarButtonVisible(){
             linearMapaPedidos.setVisibility(View.GONE);
             try {
                 tipoAccion=0;
+
                 //lisClientes=FiltarByZona(viewModelCliente.getMAllCliente(0));
                 lisClientes=viewModelCliente.getMAllCliente(0);
 
@@ -216,7 +217,9 @@ void ValidarButtonVisible(){
 
                 for (int i = 0; i < lisClientes.size(); i++) {
                     listClientePed.add(new ClientePedidos(lisClientes.get(i),1,1));
+
                 }
+                UtilShare.ListClientes=lisClientes;
                 UtilShare.ListClientesPedidos=listClientePed;
                 listClientePedidos=listClientePed;
                 dibujarClientes();
@@ -245,6 +248,7 @@ void ValidarButtonVisible(){
                     }
                 }
                 UtilShare.ListClientes=lisClientes;
+
                 UtilShare.ListClientesPedidos=listClientePed;
                 listClientePedidos=listClientePed;
                 dibujarClientes();
@@ -361,6 +365,8 @@ void ValidarButtonVisible(){
 
             }
         }
+
+        Dibujarzonas();
     }
 
     public ClienteEntity obtenerCliente(PedidoEntity pedido){
@@ -384,6 +390,9 @@ void ValidarButtonVisible(){
     }
 
     public Boolean obtenerClienteVisita(ClienteEntity pedido){
+        if (pedido==null){
+            return false;
+        }
         for (int i = 0; i < listVisitados .size(); i++) {
             VisitaEntity client=listVisitados.get(i);
             if (pedido.getCodigogenerado().trim().equals((""+client.getClienteId()).trim())){
@@ -596,7 +605,7 @@ void ValidarButtonVisible(){
             LatLng ubicacion=ObtenerUbicacion();
             mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(ubicacion, 15));
         }
-       Dibujarzonas();
+
 
     }
 
@@ -711,6 +720,23 @@ void ValidarButtonVisible(){
         int idRepartidor=DataPreferences.getPrefInt("idrepartidor",this);
         try {
             List<ZonasEntity> lisZona=viewModelZonas.getZonaByRepartidor(idRepartidor);
+            int idZonas= DataPreferences.getPrefInt("Zonas",this);
+            List<ZonasEntity> lisZonaBackup=new ArrayList<>();
+            if (idZonas==-1){  //Todas zonas
+                lisZonaBackup=lisZona;
+            }else{
+
+                for (int i = 0; i < lisZona.size(); i++) {
+
+                    if (lisZona.get(i).getLanumi()==idZonas){
+                        lisZonaBackup.add(lisZona.get(i));
+                    }
+
+                }
+
+            }
+
+            lisZona=lisZonaBackup;
 
             for (int i = 0; i < lisZona.size(); i++) {
 
@@ -726,47 +752,18 @@ void ValidarButtonVisible(){
                     Polygon polygon = null;
                     if (polygon != null ) polygon.remove(); // remove the previously drawn polygon
 
-                  /* Polygon polygon1 = mapa.addPolygon(new PolygonOptions()
-                            .add(new LatLng(lisPoint.get(0).getLatitud(), lisPoint.get(0).getLongitud()),
-                                    new LatLng(lisPoint.get(1).getLatitud(), lisPoint.get(1).getLongitud()),
-                                    new LatLng(lisPoint.get(2).getLatitud(), lisPoint.get(2).getLongitud()),
-                                    new LatLng(lisPoint.get(3).getLatitud(), lisPoint.get(3).getLongitud()),
-                                    new LatLng(lisPoint.get(4).getLatitud(), lisPoint.get(4).getLongitud()),
-                                    new LatLng(lisPoint.get(5).getLatitud(), lisPoint.get(5).getLongitud()),
-                                    new LatLng(lisPoint.get(6).getLatitud(), lisPoint.get(6).getLongitud()),
-                                    new LatLng(lisPoint.get(7).getLatitud(), lisPoint.get(7).getLongitud()),
-                                    new LatLng(lisPoint.get(8).getLatitud(), lisPoint.get(8).getLongitud()))
-                            .strokeColor(Color.RED)
-                            .fillColor(Color.BLUE));*/
-
-
                     PolygonOptions polygonOptions = new PolygonOptions();
 
                     for (int j = 0; j < lisPoint.size(); j++) {
                         polygonOptions.add(new LatLng(lisPoint.get(j).getLatitud(),lisPoint.get(j).getLongitud()));
 
                     }
-
-
                    polygonOptions.strokeColor(Color.RED);
                     //polygonOptions.fillColor(0x7F00FF00);
                     polygonOptions.fillColor(Color.argb(30, 50, 0, 255));
                     polygonOptions.strokeWidth(4);
                     Polygon polygon1 = mapa.addPolygon(polygonOptions);
-
-
-
-
-                 /* Polyline polyline = mapa.addPolyline(new PolylineOptions()
-                            .addAll(latLngList)
-                            .width(10)
-                            .color(Color.BLUE)
-                            .geodesic(true));*/
                     CameraPosition cameraPosition;
-                   // cameraPosition = new CameraPosition.Builder().target(new LatLng(-27.457,153.040)).zoom(15).build();
-
-
-
                    cameraPosition = new CameraPosition.Builder().target(new LatLng(latLngList.get(0).latitude,latLngList.get(0).longitude)).zoom(15).build();
                     mapa.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 

@@ -31,8 +31,10 @@ import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PointEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.PointListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.ZonaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.MainActivity;
@@ -55,6 +57,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
@@ -82,9 +85,10 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
     private  ClientesListViewModel viewModel;
     private ZonaListViewModel viewModelZona;
     private PedidoListViewModel viewModelPedidos;
-    private ZonasEntity zonaSelected;
+    private ZonasEntity zonaSelected=null;
     private List<ZonasEntity> listZonas;
     private Context mContext;
+    private PointListViewModel viewmodelPoint;
     ClienteEntity mCliente;
     private Spinner listaSpinnerZona;
     private String M_Uii="";
@@ -131,6 +135,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
         tilNombre = (TextInputLayout) view.findViewById(R.id.til_nombre);
         tilTelefono = (TextInputLayout) view.findViewById(R.id.til_telefono);
         tilDireccion = (TextInputLayout) view.findViewById(R.id.til_direccion);
+        viewmodelPoint=ViewModelProviders.of(this).get(PointListViewModel.class);
         tilRazonSocial=(TextInputLayout)view.findViewById(R.id.til_razonSocial);
         tilNit = (TextInputLayout) view.findViewById(R.id.til_nit);
         viewModel = ViewModelProviders.of(getActivity()).get(ClientesListViewModel.class);
@@ -229,6 +234,57 @@ public void onClickAtras(){
         }
     });
 }
+    public List<LatLng> ObtenerListaPuntos(int IdZona ){
+
+        List<PointEntity> lisPoint= null;
+        final List<LatLng> latLngList = new ArrayList<>();
+        try {
+            lisPoint = viewmodelPoint.getPoint(IdZona);
+            if (lisPoint.size()>0) {
+
+                for (int j = 0; j < lisPoint.size(); j++) {
+
+                    latLngList.add(new LatLng(lisPoint.get(j).getLatitud(), lisPoint.get(j).getLongitud()));
+
+                }
+            }
+
+        } catch (ExecutionException e) {
+
+        } catch (InterruptedException e) {
+
+        }
+        return latLngList;
+    }
+    public boolean ValidarClienteEnzona(){
+        int idRepartidor=DataPreferences.getPrefInt("idrepartidor",getActivity());
+        List<ZonasEntity> lisZona= null;
+        Boolean bandera=false;
+        int Zona;
+        int idZonas= DataPreferences.getPrefInt("Zonas",mContext);
+        if (idZonas==-1){
+            Zona=zonaSelected.getLanumi();
+        }else{
+            Zona=idZonas;
+        }
+
+                List<LatLng> lista=ObtenerListaPuntos(Zona);
+
+                LatLng punto=new LatLng(LocationGeo.getLocationActual().getLatitude(),LocationGeo.getLocationActual().getLongitude());
+
+                if (lista.size()>0){
+                    if (LocationGeo.Encontrado(lista,punto)){
+                        return true;
+                    }
+
+                }
+
+
+
+
+        return false;
+
+    }
     public void onClickGrabar(){
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,13 +295,51 @@ public void onClickAtras(){
 
                     if (validarDatos()){
 
-                        showDialogs();
-                        new ChecarNotificaciones().execute();
+
+                        int ValidarZona=DataPreferences.getPrefInt("ValidarZona",getActivity());
+                        if (tipo==0 && ValidarZona==1){
+                            int idZonas= DataPreferences.getPrefInt("Zonas",mContext);
+                            if (idZonas!=-1){
+                                if (ValidarClienteEnzona()){
+                                    showDialogs();
+                                    new ChecarNotificaciones().execute();
+                                    return;
+                                }else{
+                                    ShowMessageResult("No puede Crear el Cliente por que no se Encuentra dentro de su Zona asignada");
+                                    return;
+                                }
+                            }else{
+                                if (zonaSelected!=null){
+                                    if (ValidarClienteEnzona()){
+                                        showDialogs();
+                                        new ChecarNotificaciones().execute();
+                                        return;
+                                    }else{
+                                        ShowMessageResult("No puede Crear el Cliente por que no se Encuentra dentro de su Zona asignada");
+                                        return;
+                                    }
+                                }else{
+                                    ShowMessageResult("Seleccione una Zona");
+                                    return;
+                                }
+                            }
+
+
+
+
+                        }else{
+                            showDialogs();
+                            new ChecarNotificaciones().execute();
+                            return;
+                        }
+
+
                     }else{
                         M_Uii="";
                     }
                 }else{
                     ShowMessageResult("El cliente ya ha sido guardado localmente, por favor vuelva hacia atras");
+                    return;
                 }
 
 
@@ -644,10 +738,12 @@ return false;
     }
     public void ShowMessageResult(String message) {
 
+if (alertDialog!=null){
+    if (alertDialog.isShowing()){
+        alertDialog.dismiss();
+    }
+}
 
-        if (alertDialog.isShowing()){
-            alertDialog.dismiss();
-        }
         alertDialog=new LottieAlertDialog.Builder(getContext(),DialogTypes.TYPE_WARNING)
                 .setTitle("Advertencia")
                 .setDescription(message)
