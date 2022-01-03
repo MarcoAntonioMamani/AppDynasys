@@ -16,9 +16,10 @@ import android.support.v7.app.AlertDialog;
 
 
 import com.dynasys.appdisoft.MainActivity;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
-
+import java.lang.*;
 public class LocationGeo {
 
     private static LocationGeo INSTANCE;
@@ -44,7 +45,53 @@ private static Activity activity;
         }
         return INSTANCE;
     }
+    private final Boolean Encontrar(List<LatLng> points, LatLng punto) {
+        int counter = 0;
+        int i;
+        Double xinters;
+        LatLng P1 = new LatLng(0, 0);
+        LatLng P2 = new LatLng(0, 0);
+        int n = points.size();
+        P1 = points.get(0);
+        int restod;
+        for (i = 1; (i <= n); i++) {
+            restod = (i % n);
+            P2 = points.get(restod);
+            if ((punto.longitude > Math.min(P1.longitude, P2.longitude))) {
+                if ((punto.longitude <= Math.min(P1.longitude, P2.longitude))) {
+                    if ((punto.latitude <= Math.min(P1.latitude, P2.latitude))) {
+                        if ((P1.longitude != P2.longitude)) {
+                            xinters = (((punto.longitude - P1.longitude)
+                                    * ((P2.latitude - P1.latitude)
+                                    / (P2.longitude - P1.longitude)))
+                                    + P1.latitude);
+                            if (((P1.latitude == P2.latitude)
+                                    || (punto.latitude <= xinters))) {
+                                counter = (counter + 1);
+                            }
 
+                        }
+
+                    }
+
+                }
+
+            }
+
+            P1 = P2;
+        }
+
+        if (((counter % 2)
+                == 0)) {
+            //MsgBox("Fuera");
+            return false;
+        }
+        else {
+            return true;
+            //MsgBox("Dentro");
+        }
+
+    }
     public static void cerrarGPS() {
         if (providersActivos == null || providersActivos.size() <= 0) {
             return;
