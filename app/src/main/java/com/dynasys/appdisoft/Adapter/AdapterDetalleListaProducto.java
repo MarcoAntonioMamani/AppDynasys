@@ -62,10 +62,7 @@ public class AdapterDetalleListaProducto extends RecyclerView.Adapter<AdapterDet
         clientesViewHolder.tvPrecio.setText(ShareMethods.ObtenerDecimalToString(listaProductos.get(i).getPrecio(),2));
         clientesViewHolder.tvStock .setText(ShareMethods.ObtenerDecimalToString(listaProductos.get(i).getStock(),2));
 
-if (i==listaProductos.size()-1){
-    mView.StopDialog();
 
-}
 
 
 

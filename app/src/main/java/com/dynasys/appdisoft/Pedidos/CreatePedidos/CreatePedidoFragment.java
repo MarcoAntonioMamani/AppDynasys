@@ -258,7 +258,7 @@ private PedidoEntity mPedido;
         //cliente.setCodigogenerado();
         DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
         String code = df.format(Calendar.getInstance().getTime());
-        code=""+codigoRepartidor+","+code+"V2.6";
+        code=""+codigoRepartidor+","+code+"P1.2";
         mPedido.setCodigogenerado(code);
         mPedido.setOanumi(code);
         _prModificarNumi(code);
@@ -445,9 +445,6 @@ private PedidoEntity mPedido;
                     }
 
 
-                    showDialogs();
-                    new ChecarNotificaciones().execute();
-                    return;
                 }else{
                     ShowMessageResult("El pedido ya ha sido guardado localmente, por favor vuelva hacia atras");
                     return;

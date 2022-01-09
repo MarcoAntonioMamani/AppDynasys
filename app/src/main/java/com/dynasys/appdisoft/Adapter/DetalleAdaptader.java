@@ -104,7 +104,7 @@ public class DetalleAdaptader
         tvPrecio=viewHolder.price;
         tvCantidadCajas=viewHolder.caja;
         if (i== items.size()-1){
-            viewHolder.caja.requestFocus();
+            viewHolder.cantidad.requestFocus();
         }
         viewHolder.caja.addTextChangedListener(new TextWatcher() {
             @Override

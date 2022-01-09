@@ -165,13 +165,20 @@ public void setLista(List<ProductoEntity> items){
         }
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            ArrayList<ProductoEntity> tempValues = (ArrayList<ProductoEntity>) filterResults.values;
+
             if (filterResults != null && filterResults.count > 0) {
+                ArrayList<ProductoEntity> tempValues = (ArrayList<ProductoEntity>) filterResults.values;
+
+                ArrayList<ProductoEntity> tempValues02= (ArrayList<ProductoEntity>) tempValues.clone();
                 clear();
-                for (ProductoEntity itemObj : tempValues) {
+
+
+                for (ProductoEntity itemObj : tempValues02) {
                     add(itemObj);
-                    notifyDataSetChanged();
+
                 }
+
+                notifyDataSetChanged();
             } else {
                 clear();
                 notifyDataSetChanged();

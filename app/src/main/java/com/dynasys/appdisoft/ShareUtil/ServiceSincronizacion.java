@@ -483,7 +483,7 @@ if (UtilShare.mActivity!=null){
                         try{
                             idRepartidor= DataPreferences.getPrefInt("idrepartidor",mContext);
                             _DecargarPedidos(""+idRepartidor);
-                            _DecargarStocks(""+idRepartidor,0);
+                            //_DecargarStocks(""+idRepartidor,0);
                             exportarClientes();
                             exportarVisitas();
                             UpdateClientes();
@@ -498,7 +498,7 @@ if (UtilShare.mActivity!=null){
                     }
                     new ChecarNotificaciones().execute();
 }
-            }, 12*1000);//8
+            }, 30*1000);//8
             super.onPostExecute(result);
         }
     }
@@ -844,7 +844,40 @@ if (UtilShare.mActivity!=null){
 
 
     private void exportarPedidos(String IdRepartidor){
-        _DecargarStocks(IdRepartidor,1);
+
+        if (viewModelClientes==null){
+            return;
+        }
+        List<ClienteEntity> listCliente = null;
+        try {
+            listCliente = viewModelClientes.getMAllStateCliente(1);
+            List<ClienteEntity>   listClienteUpdate = viewModelClientes.getMAllStateClienteUpdate(1);
+            List<PedidoEntity> listPedidos=viewModelPedidos.getMAllPedidoState(1);
+            List<DetalleEntity>listDetalle=viewModelDetalle.getMAllDetalleState(1);
+            List<PedidoEntity>listPedidoSinStock=viewModelPedidos.getMAllPedidoSinStock(1);
+            if (listCliente==null){
+                return;
+            }
+            if (listClienteUpdate==null){
+                return;
+            }
+            if (listPedidos==null){
+                return;
+            }
+            if (listDetalle==null){
+                return;
+            }
+            if (listCliente.size()==0 && listClienteUpdate.size()==0 && listPedidos.size()>0){
+                _DecargarStocks(IdRepartidor,1);
+            }
+
+        } catch (ExecutionException e) {
+
+        } catch (InterruptedException e) {
+
+        }
+
+
 
 
     }

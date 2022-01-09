@@ -110,8 +110,9 @@ public class ClientesAdapter extends ArrayAdapter<ClienteEntity> {
         }
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            ArrayList<ClienteEntity> tempValues = (ArrayList<ClienteEntity>) filterResults.values;
+
             if (filterResults != null && filterResults.count > 0) {
+                ArrayList<ClienteEntity> tempValues = (ArrayList<ClienteEntity>) filterResults.values;
                 clear();
                 for (ClienteEntity clientObj : tempValues) {
                     add(clientObj);

@@ -68,6 +68,7 @@ public class ListadoProductoFragment extends Fragment implements SearchView.OnQu
     @Override
     public void onResume() {
         super.onResume();
+        context=getContext();
         getActivity().setTitle("Lista Producto");
         simpleSearchView.setQuery("", false);
         view.requestFocus();
@@ -76,6 +77,7 @@ public class ListadoProductoFragment extends Fragment implements SearchView.OnQu
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        context=getContext();
     }
 
     @Override
@@ -89,7 +91,7 @@ public class ListadoProductoFragment extends Fragment implements SearchView.OnQu
         viewModelProducto = ViewModelProviders.of(getActivity()).get(ProductoViewListViewModel.class);
         simpleSearchView.setOnQueryTextListener((SearchView.OnQueryTextListener) this);
         simpleSearchView.setIconifiedByDefault(false);
-
+        context=getContext();
         try {
 
             cargarDatos();
@@ -164,21 +166,25 @@ public class ListadoProductoFragment extends Fragment implements SearchView.OnQu
     }
 
     public void CargarRecycler(List<ProductoViewEntity> listEfectivo){
+
+
         if (listEfectivo!=null){
-            adapterPerfil = new AdapterDetalleListaProducto(context,listProductos,this);
+
+            List<ProductoViewEntity> lli=new ArrayList<>();
+            adapterPerfil = new AdapterDetalleListaProducto(context,lli,this);
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
-            final LayoutAnimationController controller =
+            /*final LayoutAnimationController controller =
                     AnimationUtils.loadLayoutAnimation(getActivity().getApplicationContext(), R.anim.layout_animation_fall_down);
-            recList.setLayoutAnimation(controller);
+            recList.setLayoutAnimation(controller);*/
             recList.setLayoutManager(llm);
             recList.setAdapter(adapterPerfil);
+            //StopDialog();
+            adapterPerfil.setFilter(listEfectivo);
 
-
+            StopDialog();
         }
 
-        simpleSearchView.setQuery("", false);
-        view.requestFocus();
 
     }
 
@@ -187,7 +193,9 @@ public class ListadoProductoFragment extends Fragment implements SearchView.OnQu
         if (alertDialog.isShowing()){
             alertDialog.dismiss();
         }
-
+        simpleSearchView.setQuery("", false);
+        view.requestFocus();
+        hideKeyboard();
     }
 
     private class ChecarNotificaciones extends AsyncTask<String, String, String> {
