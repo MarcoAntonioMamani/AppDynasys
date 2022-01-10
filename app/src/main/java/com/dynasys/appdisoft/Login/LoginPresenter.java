@@ -134,7 +134,7 @@ String SPREAD_SHEET_ID = "1jBtXZdoxIYJlEAnJ8YbQ3NbUmPrBFqgtSbmMHMIQMck";
                         DataPreferences.putPrefInteger("ViewCredito",responseUser.getView_credito() ,mContext);
                         DataPreferences.putPrefInteger("CantidadProducto",responseUser.getCantidad_producto(),mContext);
                         DataPreferences.putPrefInteger("ValidarZona",responseUser.getValidarZona(),mContext);
-
+                        DataPreferences.putPrefInteger("precio",responseUser.getPrecio(),mContext);
                         _DescargarZonas(""+responseUser.getId());
                         mLoginView.LoginSuccesfull();
                     }

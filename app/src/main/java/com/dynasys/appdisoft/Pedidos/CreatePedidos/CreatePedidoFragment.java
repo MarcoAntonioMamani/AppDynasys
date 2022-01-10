@@ -150,7 +150,7 @@ private PedidoEntity mPedido;
         context=getContext();
     }
     public void iniciarRecyclerView(){
-        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this);
+        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this, DataPreferences.getPrefInt("precio",getActivity()));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         detalle_List.setLayoutManager(llm);
@@ -671,7 +671,7 @@ private PedidoEntity mPedido;
     }
     public void Reconstruir(){
         mDetalleAdapter=null;
-        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this);
+        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this, DataPreferences.getPrefInt("precio",getActivity()));
         detalle_List.setAdapter(mDetalleAdapter);
     }
     @Override

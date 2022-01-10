@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
+import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoMvp;
 import com.dynasys.appdisoft.R;
 
@@ -32,14 +33,19 @@ public class DetalleAdaptader
     private CreatePedidoMvp.View mView;
     private List<DetalleEntity> items;
     Context context;
+
     public DetalleAdaptader(Context ctx) {
         this.context = ctx;
+
+
     }
+
+    int HabilitadoPrecio;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView nombre;
-        public TextView price;
+        public EditText price;
         public TextView subtotal;
         public EditText cantidad;
         public EditText caja;
@@ -48,7 +54,7 @@ public class DetalleAdaptader
             super(v);
 
             nombre = (TextView) v.findViewById(R.id.id_detalle_name);
-            price = (TextView) v.findViewById(R.id.id_detalle_price);
+            price = (EditText) v.findViewById(R.id.id_detalle_price);
             subtotal=(TextView)v.findViewById(R.id.id_detalle_subtotal);
             cantidad=(EditText)v.findViewById(R.id.id_detalle_cantidad);
             caja=(EditText)v.findViewById(R.id.id_detalle_Caja);
@@ -64,11 +70,14 @@ public class DetalleAdaptader
         this.items = items;
         this.context=s;
         this.viewgroup=v;
+
     }
-    public DetalleAdaptader(Context ctx, List<DetalleEntity> s, CreatePedidoMvp.View mView) {
+    public DetalleAdaptader(Context ctx, List<DetalleEntity> s, CreatePedidoMvp.View mView,int HabilitadoPrecio ) {
         this.context = ctx;
         this.items = s;
         this.mView=mView;
+        this.HabilitadoPrecio=HabilitadoPrecio;
+
     }
     @Override
     public int getItemCount() {
@@ -88,7 +97,7 @@ public class DetalleAdaptader
         final TextView tvsubtotal;
         final EditText tvCantidad;
         final EditText tvCantidadCajas;
-        final TextView tvPrecio;
+        final EditText tvPrecio;
         item = items.get(i);
         viewHolder.nombre.setText(item.getCadesc());
         viewHolder.img_delete.setTag(item);
@@ -150,7 +159,8 @@ public class DetalleAdaptader
             }
         });
 
-        /*viewHolder.price.addTextChangedListener(new TextWatcher() {
+if (HabilitadoPrecio==1){
+        viewHolder.price.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -168,7 +178,15 @@ public class DetalleAdaptader
             public void afterTextChanged(Editable editable) {
 
             }
-        });*/
+        });
+
+}else{
+    viewHolder.price.setKeyListener(null);
+    viewHolder.price.setEnabled(false);
+}
+
+
+
 
         viewHolder.img_delete.setOnClickListener(new View.OnClickListener() {
             @Override

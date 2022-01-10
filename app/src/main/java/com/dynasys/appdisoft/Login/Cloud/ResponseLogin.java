@@ -14,8 +14,9 @@ public class ResponseLogin {
     int view_credito;
     int cantidad_producto;
     int ValidarZona;
+    int precio;
 
-    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria, int stock, int view_credito, int cantidad_producto, int validarZona) {
+    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria, int stock, int view_credito, int cantidad_producto, int validarZona, int precio) {
         this.code = code;
         this.message = message;
         this.token = token;
@@ -29,6 +30,15 @@ public class ResponseLogin {
         this.view_credito = view_credito;
         this.cantidad_producto = cantidad_producto;
         ValidarZona = validarZona;
+        this.precio = precio;
+    }
+
+    public int getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(int precio) {
+        this.precio = precio;
     }
 
     public int getValidarZona() {

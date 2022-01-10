@@ -138,7 +138,7 @@
                         android:textColor="@color/secondary_text"
                         />
 
-                    <TextView
+                    <EditText
                         android:id="@+id/id_detalle_price"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

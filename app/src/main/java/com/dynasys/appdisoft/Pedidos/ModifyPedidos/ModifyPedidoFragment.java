@@ -141,7 +141,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         context=getContext();
     }
     public void iniciarRecyclerView(){
-        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this);
+        mDetalleAdapter = new DetalleAdaptader(context, mDetalleItem,this, DataPreferences.getPrefInt("precio",getActivity()));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         detalle_List.setLayoutManager(llm);
@@ -1896,7 +1896,7 @@ return null;
     }
     public void Reconstruir(){
         mDetalleAdapter=null;
-        mDetalleAdapter = new DetalleAdaptader(context, ObtenerProductosDisponibles(),this);
+        mDetalleAdapter = new DetalleAdaptader(context, ObtenerProductosDisponibles(),this, DataPreferences.getPrefInt("precio",getActivity()));
         detalle_List.setAdapter(mDetalleAdapter);
     }
     public List<DetalleEntity> ObtenerProductosDisponibles(){
