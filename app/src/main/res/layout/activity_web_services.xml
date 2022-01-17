@@ -5,10 +5,11 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="center"
-    android:background="@color/colorAccent"
+    android:background="@drawable/login"
     tools:context=".Login.WebServicesActivity">
 
     <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="7dp"
@@ -18,7 +19,7 @@
         android:elevation="5dp"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
-
+        card_view:cardBackgroundColor="@android:color/transparent"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,7 +27,7 @@
             android:orientation="vertical"
             android:layout_gravity="center"
             android:gravity="center"
-            android:background="@color/white"
+
 
             >
             <LinearLayout
@@ -44,9 +45,9 @@
                     android:paddingLeft="10sp"
                     android:paddingRight="10sp"
                     android:textStyle="bold"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/PrimariLight"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                    android:text="Direccion de Servicio Actual" />
+                    android:text="Dirección IP Servidor" />
             </LinearLayout>
 
 
@@ -60,6 +61,8 @@
                 android:hint="Direccion del Servicio"
                 android:paddingLeft="10sp"
                 android:paddingRight="10sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
                 android:singleLine="true" />
              <LinearLayout
                  android:layout_width="fill_parent"
@@ -72,7 +75,7 @@
 
                      android:paddingLeft="10sp"
                      android:paddingRight="10sp"
-                     android:background="@drawable/animation_riple_button"
+                     android:background="@drawable/animation_riple_maps"
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:layout_gravity="center"

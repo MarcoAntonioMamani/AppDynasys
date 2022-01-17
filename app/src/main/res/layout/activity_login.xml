@@ -15,8 +15,8 @@
 >
     <ImageView
         android:id="@+id/id_login_logo"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="false"
         android:layout_centerHorizontal="true"
@@ -148,10 +148,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Servicio Web"
+                android:text="Ruta Servidor"
                 android:textAlignment="textEnd"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@color/white"
+                android:textColor="@color/colorAccentAmarrillo"
                 android:textSize="14sp" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
