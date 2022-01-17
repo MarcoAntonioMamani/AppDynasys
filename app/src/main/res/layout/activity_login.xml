@@ -38,6 +38,8 @@
         app:cardElevation="10dp"
         app:cardUseCompatPadding="true"
 
+        android:outlineAmbientShadowColor="@color/colorAccentAmarrillo"
+        android:outlineSpotShadowColor="@color/white"
         app:contentPadding="16dp">
         <LinearLayout
             android:layout_width="match_parent"
