@@ -217,8 +217,8 @@ public void CambiarActividad(){
         try
         {
 
-            alertDialog = new LottieAlertDialog.Builder(this, DialogTypes.TYPE_LOADING).setTitle("Verificando Usuario")
-                    .setDescription("Por Favor Espere ...")
+            alertDialog = new LottieAlertDialog.Builder(this, DialogTypes.TYPE_LOADING).setTitle("Validando Datos")
+                    .setDescription("Consultando con el servidor ...")
                     .build();
 
             alertDialog.setCancelable(false);

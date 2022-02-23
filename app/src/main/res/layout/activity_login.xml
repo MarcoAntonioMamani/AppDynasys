@@ -24,14 +24,13 @@
         android:layout_marginTop="50dp" />
 
     <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/id_login_form_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/id_login_logo"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        card_view:cardBackgroundColor="@android:color/transparent"
+        app:cardBackgroundColor="@android:color/transparent"
         android:layout_marginStart="0dp"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="60dp"
@@ -59,8 +58,8 @@
                 android:textColorHint="@color/white"
                 android:outlineAmbientShadowColor="@color/white"
                 android:outlineSpotShadowColor="@color/white"
-                card_view:boxBackgroundColor="@color/white"
-                card_view:boxStrokeColor="@color/white"
+                app:boxBackgroundColor="@color/white"
+                app:boxStrokeColor="@color/white"
                 android:gravity="center">
 
                 <android.support.design.widget.TextInputEditText
@@ -70,7 +69,8 @@
                     android:hint="Codigo"
                     android:imeOptions="actionNext"
                     android:inputType="number"
-                    android:textSize="@dimen/font_size_buttons_body"
+                    style="@style/CodeFontLogo"
+                    android:textSize="19dp"
                     app:theme="@style/my_custom_style"
                     android:outlineSpotShadowColor="@color/white"
                     android:outlineAmbientShadowColor="@color/white"
@@ -79,7 +79,7 @@
                     android:textColorHint="@color/white"
                     android:textColorLink="@color/white"
                     android:textColorHighlight="@color/white"
-                    android:fontFamily="sans-serif"/>
+                   />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -90,8 +90,8 @@
                android:textColorHint="@color/white"
                 android:outlineAmbientShadowColor="@color/white"
                 android:outlineSpotShadowColor="@color/white"
-                card_view:boxBackgroundColor="@color/white"
-                card_view:boxStrokeColor="@color/white"
+                app:boxBackgroundColor="@color/white"
+                app:boxStrokeColor="@color/white"
                 app:theme="@style/my_custom_style"
                 android:layout_marginBottom="8dp">
 
@@ -103,7 +103,8 @@
                     android:imeOptions="actionNext"
                     app:theme="@style/my_custom_style"
                     android:inputType="number"
-                    android:textSize="@dimen/font_size_buttons_body"
+                    style="@style/CodeFontLogo"
+                    android:textSize="19dp"
                     android:outlineSpotShadowColor="@color/white"
                     android:outlineAmbientShadowColor="@color/white"
                     android:textColor="@color/white"
@@ -111,8 +112,9 @@
                     android:textColorHint="@color/white"
                     android:textColorLink="@color/white"
                     android:textColorHighlight="@color/white"
+/>
 
-                    android:fontFamily="sans-serif"/>
+
             </android.support.design.widget.TextInputLayout>
 
             <ProgressBar
@@ -132,30 +134,32 @@
                 android:background="@drawable/animation_riple_maps"
                 android:layout_marginTop="@dimen/margin"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_size_buttons_body"
+                style="@style/StyleNegocios"
+                android:textSize="15dp"
                 android:layout_marginBottom="30dp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"/>
+                android:textStyle="bold"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/id_login_lbl_Service"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ruta Servidor"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/colorAccentAmarrillo"
+                    style="@style/StyleNegocios"
+                    android:textSize="14dp"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="bottom"
-
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/id_login_lbl_Service"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Ruta Servidor"
-                android:textAlignment="textEnd"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@color/colorAccentAmarrillo"
-                android:textSize="14sp" />
-        </LinearLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

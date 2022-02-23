@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="192dp"
+    android:layout_height="176dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="bottom"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="174dp"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="20dp"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         android:background="@drawable/login"
-        android:scaleType="centerCrop" />
+        android:layout_gravity="center"
+        >
 
-    <ImageView
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="20dp"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:scaleType="centerCrop"
 
-        android:src="@drawable/sanbituser" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:contentDescription="Navigation header"
+            app:srcCompat="@drawable/user_menu"
+            android:scaleType="fitXY"
+            />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,7 +47,8 @@
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="Marco Antonio Mamani"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textSize="16dp"
+            style="@style/CodeFontLogo"
             android:textColor="@color/white" />
 
         <TextView
@@ -47,9 +58,17 @@
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="thedahnark@gmail.com"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            style="@style/CodeFontLogo"
+            android:textSize="13dp"
             android:textColor="@color/white" />
 
     </LinearLayout>
-
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="5dp"
+        android:background="@color/colorPrimary"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        />
 </FrameLayout>
