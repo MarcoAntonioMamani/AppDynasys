@@ -593,7 +593,7 @@ public void OnClickGps(){
     }
     private boolean esTelefonoValido(String telefono) {
        // if (!Patterns.PHONE.matcher(telefono).matches()) {
-         if (telefono.length()<=7){
+         if (telefono.length()==0){
             tilTelefono.setError("Teléfono inválido");
             return false;
         } else {
@@ -611,10 +611,10 @@ public void OnClickGps(){
         boolean a = esNombreValido(nombre);
         boolean b = esTelefonoValido(telefono);
         boolean c = esDireccionValido(direccion);
-        boolean d = esNitValido(nit);
-        boolean e=esRazonSocialValido(tilRazonSocial.getEditText().getText().toString());
+      /*  boolean d = esNitValido(nit);
+        boolean e=esRazonSocialValido(tilRazonSocial.getEditText().getText().toString());*/
 
-        if (a && b && c && d && e) {
+        if (a && b && c ) {
             return true;
         }
 return false;

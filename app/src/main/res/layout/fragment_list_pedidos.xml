@@ -59,6 +59,16 @@
                         android:id="@+id/list_tvcantidad"
                         style="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/colorAccent" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/list_tvcantidad"
+                        android:paddingRight="10dp"
+                        android:text="Total : 25145.25 Bs"
+                        android:id="@+id/list_tvtotalEfectivoP"
+                        style="@style/TextAppearance.AppCompat.Small"
+                        android:textColor="@color/colorAccent" />
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -117,7 +127,7 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingTop="7dp"
+                            android:paddingTop="15dp"
                             >
                             <TextView
                                 android:layout_width="wrap_content"

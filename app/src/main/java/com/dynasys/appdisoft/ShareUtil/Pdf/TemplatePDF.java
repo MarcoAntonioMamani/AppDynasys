@@ -107,6 +107,18 @@ try{
         }
 
     }
+
+    public void addParagraph0Detalle(String text){
+        try{
+            paragraph=new Paragraph(text,fText );
+            paragraph.setAlignment(Element.ALIGN_RIGHT);
+            paragraph.setSpacingAfter(2);
+            document.add(paragraph);
+        }catch (Exception e){
+
+        }
+
+    }
     public void addParagraphTotales(String text){
         try{
             paragraph=new Paragraph(text,fText );
@@ -136,6 +148,18 @@ try{
             //paragraph.setSpacingAfter(5);
             paragraph.setSpacingBefore(5);
             paragraph.setAlignment(Element.ALIGN_CENTER);
+            document.add(paragraph);
+        }catch (Exception e){
+
+        }
+
+    }
+    public void addParagraphTitleDetalle(String text){
+        try{
+            paragraph=new Paragraph(text,fSubtitle );
+            //paragraph.setSpacingAfter(5);
+
+            paragraph.setAlignment(Element.ALIGN_LEFT);
             document.add(paragraph);
         }catch (Exception e){
 

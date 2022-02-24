@@ -55,7 +55,7 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
 
     private List<ClienteEntity> lisClientes=new ArrayList<>();
     private List<PedidoEntity> listPedidos=new ArrayList<>();
-    TextView tvDesde,tvHasta,tvCantidad;
+    TextView tvDesde,tvHasta,tvCantidad,tvTotalEf;
     ImageButton btnDesde,btnHasta;
     Button btnCargar;
     View view;
@@ -104,6 +104,7 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
         tvDesde=(TextView)view.findViewById(R.id.id_tvfecha_desde);
         tvHasta=(TextView)view.findViewById(R.id.id_tvfecha_hasta);
         tvCantidad=(TextView)view.findViewById(R.id.list_tvcantidad);
+        tvTotalEf=(TextView)view.findViewById(R.id.list_tvtotalEfectivoP);
         tvDesde.setEnabled(false);
         tvHasta.setEnabled(false);
         btnDesde=(ImageButton) view.findViewById(R.id.ib_btn_desde);
@@ -323,6 +324,18 @@ public ClienteEntity obtenerCliente(PedidoEntity pedido){
     public void MostrarPedidos(List<PedidoEntity> clientes) {
         listPedidos=clientes;
         tvCantidad.setText("Cantidad: "+clientes.size());
+        Double TotalEfectivo=0.0;
+
+        for (int i = 0; i < clientes.size(); i++) {
+          if (clientes.get(i).getEstado()>=0){
+
+              TotalEfectivo+=clientes.get(i).getTotal();
+          }
+
+
+        }
+        tvTotalEf.setText("Total Efectivo = "+ShareMethods.ObtenerDecimalToString(TotalEfectivo,2)+" Bs");
+
         CargarRecycler(listPedidos);
     }
 

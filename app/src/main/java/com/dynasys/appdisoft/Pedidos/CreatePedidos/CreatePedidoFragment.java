@@ -705,9 +705,25 @@ private PedidoEntity mPedido;
         templatePDF.addParagraph02("Senor(es): "+mCliente.getNamecliente());
         templatePDF.addParagraph02("Contacto: "+mCliente.getTelefono());
 //templatePDF.addParagraph(longText);
-        templatePDF.createTable(header,getclients());
+      //  templatePDF.createTable(header,getclients());
+        templatePDF.addParagraph02("------------------------------------------------------------");
+        templatePDF.addParagraphTitleDetalle("Detalle               Cantidad      Precio        Monto ");
+        for (int i = 0; i < mDetalleItem.size(); i++) {
 
+            DetalleEntity det =mDetalleItem.get(i);
+            if (det.getObupdate()>=0){
+             /*   rows.add(new String[]{det.getCadesc(),ShareMethods.ObtenerDecimalToString(det.getObpcant(),2) ,ShareMethods.ObtenerDecimalToString(det.getObpbase(),2)
+                        ,ShareMethods.ObtenerDecimalToString(det.getObptot(),2)});*/
 
+                templatePDF.addParagraph02(""+det.getCadesc());
+               templatePDF.addParagraph0Detalle(""+ShareMethods.ObtenerDecimalToString(det.getObpcant(),2)+"           "
+                       +ShareMethods.ObtenerDecimalToString(det.getObpbase() ,2)+"           "+ShareMethods.ObtenerDecimalToString(det.getObptot(),2));
+
+            }
+
+        }
+
+        templatePDF.addParagraph02("------------------------------------------------------------");
         double descuentoTotal=0.0;
         double Total=ObtenerTotal();
         for (int i = 0; i < mDetalleItem.size(); i++) {
