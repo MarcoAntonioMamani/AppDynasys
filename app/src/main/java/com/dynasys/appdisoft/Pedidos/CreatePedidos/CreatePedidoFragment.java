@@ -258,7 +258,7 @@ private PedidoEntity mPedido;
         //cliente.setCodigogenerado();
         DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
         String code = df.format(Calendar.getInstance().getTime());
-        code=""+codigoRepartidor+","+code+"P1.2";
+        code=""+codigoRepartidor+","+code+"P1.3";
         mPedido.setCodigogenerado(code);
         mPedido.setOanumi(code);
         _prModificarNumi(code);
@@ -749,7 +749,7 @@ private PedidoEntity mPedido;
         double total=0.0;
         for (int i = 0; i < mDetalleItem.size(); i++) {
             if (mDetalleItem.get(i).getObupdate()>=0){
-                total+=mDetalleItem.get(i).getTotal();
+                total+=mDetalleItem.get(i).getObptot();
             }
 
         }

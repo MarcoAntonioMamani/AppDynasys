@@ -248,7 +248,7 @@ if (mPedido.getOaap()!=1){
 
 
         double descuentoTotal=0.0;
-        double Total=ObtenerTotal();
+        double Total=ObtenerTotalImpresion();
         for (int i = 0; i < mDetalleItem.size(); i++) {
             if (mDetalleItem.get(i).getObupdate()>=0){
                 descuentoTotal+=(mDetalleItem.get(i).getDescuento());
@@ -1751,6 +1751,23 @@ return null;
         for (int i = 0; i < mDetalleItem.size(); i++) {
             if (mDetalleItem.get(i).getObupdate()>=0){
                 total+=mDetalleItem.get(i).getTotal();
+            }
+
+        }
+        total-=descuento;
+        if (total<0.0){
+            total=0.0;
+        }
+        return total;
+    }
+
+    public double ObtenerTotalImpresion(){
+        double descuento=0;
+
+        double total=0.0;
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            if (mDetalleItem.get(i).getObupdate()>=0){
+                total+=mDetalleItem.get(i).getObptot();
             }
 
         }
