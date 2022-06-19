@@ -91,16 +91,29 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
         return listClie;
     }
     @Override
-    public void CargarProducto(int idCLiente) {
+    public void CargarProducto(int idCLiente,int VentaDirecta) {
         try {
-           List<ProductoEntity>list= viewModelProductos.getProductoByCliente(idCLiente);
-            mPedidoView.MostrarProductos(list);
+
+
+           List<ProductoEntity>list;
+
+           if (VentaDirecta==0){  //Quiere decir que es solo pedido normal y debe mostrar el stock general
+               list= viewModelProductos.getProductoByClienteVentaDirecta(idCLiente);
+
+           }else{
+               list= viewModelProductos.getProductoByCliente(idCLiente);
+           }
+
+
+           mPedidoView.MostrarProductos(list);
         } catch (ExecutionException e) {
            // e.printStackTrace();
         } catch (InterruptedException e) {
            // e.printStackTrace();
         }
     }
+
+
     public void GuardarVisita(PedidoEntity ped,ClienteEntity cli){
 
         try {
@@ -223,6 +236,7 @@ public class CreatePedidoPresenter implements CreatePedidoMvp.Presenter {
         p.setOahora(pedido.getOahora());
         p.setOaccli(pedido.getOaccli());
         p.setOarepa(pedido.getOarepa());
+        p.setVentaDirecta(pedido.getVentaDirecta());
         p.setOaest(pedido.getOaest());
         p.setOaobs(pedido.getOaobs());
         p.setLatitud(pedido.getLatitud());

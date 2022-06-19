@@ -301,7 +301,7 @@ if (mPedido.getOaap()!=1){
             }
         });
         mCreatePedidoPresenter.getDetailOrder(mPedido.getCodigogenerado());
-        mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
+        mCreatePedidoPresenter.CargarProducto(mCliente.getCccat(),0);
         ////Para Visualiza la seccion de credito o contado
         int ViewCreditos=DataPreferences.getPrefInt("ViewCredito",getContext());
         if (ViewCreditos ==0){
@@ -1591,7 +1591,7 @@ return null;
                         lottieAlertDialog.dismiss();
                         RetornarPrincipal();
                         UtilShare.clienteMapa =mCliente;
-                        Fragment frag = new CreatePedidoFragment(1);
+                        Fragment frag = new CreatePedidoFragment(1,0);
                         MainActivity fca = (MainActivity) getActivity();
                         fca.switchFragment(frag,"CREATE_PEDIDOS");
                     }

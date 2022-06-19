@@ -934,7 +934,16 @@ if (UtilShare.mActivity!=null){
                 p.setEstadoUpdate(pedido.getEstadoUpdate());
                 p.setReclamo(pedido.getReclamo());
                 ///Validamos Stock
-                Boolean TieneStock=VerficarStockDisponible(Detalle);
+
+
+                Boolean TieneStock;
+                if (pedido.getVentaDirecta()==1){
+                    TieneStock=VerficarStockDisponible(Detalle,1);
+                }else{
+                    TieneStock=VerficarStockDisponible(Detalle,0);
+                }
+
+
                 if (TieneStock==false){
                     pedido.setEstadoStock(2);
                     viewModelPedidos .updatePedido(pedido);
@@ -1045,7 +1054,13 @@ if (UtilShare.mActivity!=null){
                     p.setEstadoUpdate(pedido.getEstadoUpdate());
                     p.setReclamo(pedido.getReclamo());
                     ///Validamos Stock
-                    Boolean TieneStock=VerficarStockDisponible(Detalle);
+                    Boolean TieneStock;
+                    if (pedido.getVentaDirecta()==1){
+                        TieneStock=VerficarStockDisponible(Detalle,1);
+                    }else{
+                        TieneStock=VerficarStockDisponible(Detalle,0);
+                    }
+
                     if (TieneStock==false){
                        // pedido.setEstadoStock(2);
                        // viewModelPedidos .updatePedido(pedido);
@@ -1131,13 +1146,22 @@ if (UtilShare.mActivity!=null){
 
     }
 
-    public Boolean VerficarStockDisponible(List<DetalleEntity> mDetalleItem){
+    public Boolean VerficarStockDisponible(List<DetalleEntity> mDetalleItem,int VentaDirecta){
         // viewModelProducto.getMProductoByStock();
         for (int i = 0; i < mDetalleItem.size(); i++) {
 
             DetalleEntity detail=mDetalleItem.get(i);
             try {
-                ProductoEntity p =viewModelProducto.getMProductoByStock(detail.getObcprod());
+
+                ProductoEntity p =null;
+                if (VentaDirecta==0){// si es pedido se valida con el almacen general
+                    p=viewModelProducto.getMProductoByStockDirecta(detail.getObcprod());
+                }else{  // si no se valida con el camion
+                    p=viewModelProducto.getMProductoByStock(detail.getObcprod());
+                }
+
+
+
                 if (p!=null){
 
                     mDetalleItem.get(i).setStock(p.getStock());

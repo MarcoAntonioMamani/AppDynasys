@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             String CodeCliente=DataPreferences.getPref("idCliente" ,getApplicationContext()) ;
             try {
                UtilShare.clienteMapa= viewModelClientes.getClientebycode(CodeCliente);
-                Fragment frag = new CreatePedidoFragment(1);
+                Fragment frag = new CreatePedidoFragment(1,0);
                 MainActivity fca = (MainActivity) this;
                 fca.switchFragment(frag,"CREATE_PEDIDOS");
             } catch (ExecutionException e) {
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (UtilShare.tipoAccion==1){
             UtilShare.tipoAccion=0;
-            Fragment frag = new CreatePedidoFragment(1);
+            Fragment frag = new CreatePedidoFragment(1,0);
             MainActivity fca = (MainActivity) this;
             fca.switchFragment(frag,"CREATE_PEDIDOS");
         }else{
@@ -265,6 +265,13 @@ public class MainActivity extends AppCompatActivity {
                         //setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
+
+                    case R.id.item_navigation_drawer_nuevo_ventaDirecta :
+                        setFragment(11);
+                        item.setChecked(true);
+                        //setFragment(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
                 }
                 return true;
             }
@@ -307,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 6:
                 returnToMain();
-                frag = new CreatePedidoFragment();
+                frag = new CreatePedidoFragment(0,0);
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 8:
@@ -324,6 +331,12 @@ public class MainActivity extends AppCompatActivity {
             case 10:
                 returnToMain();
                 frag = new ListaVisitasFragment();
+                tag = Constantes.TAG_PEDIDOS;
+                break;
+
+            case 11:
+                returnToMain();
+                frag = new CreatePedidoFragment(0,1);
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 21:
@@ -431,6 +444,7 @@ public class MainActivity extends AppCompatActivity {
         MenuItem menuEfectivo=navigationView.getMenu().findItem(R.id.item_navigation_drawer_Efectivo);
         MenuItem menuListado=navigationView.getMenu().findItem(R.id.item_navigation_drawer_listado);
         MenuItem menuVisita=navigationView.getMenu().findItem(R.id.item_navigation_drawer_visitas);
+        MenuItem menuVentaDirecta=navigationView.getMenu().findItem(R.id.item_navigation_drawer_nuevo_ventaDirecta);
             menulcv.setVisible(true);
             menucli.setVisible(true);
             menuped.setVisible(true);
@@ -440,6 +454,7 @@ public class MainActivity extends AppCompatActivity {
         menuEfectivo.setVisible(true);
         menupedEntregados.setVisible(true);
         menuVisita.setVisible(true);
+        menuVentaDirecta.setVisible(true);
     }
 
     @Override

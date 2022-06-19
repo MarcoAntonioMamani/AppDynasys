@@ -47,9 +47,19 @@ public class ProductoRepository {
     public ProductoEntity getMProductoStock(int clienteId) throws ExecutionException, InterruptedException {
         return new getMProductobyStockAsync(mProductoDao).execute(clienteId).get();
     }
+    public ProductoEntity getMProductoStockVentaDirecta(int clienteId) throws ExecutionException, InterruptedException {
+        return new getMProductobyStockVentaDirectaAsync(mProductoDao).execute(clienteId).get();
+    }
+
     public List<ProductoEntity> getMProductoByCliente(int clienteId) throws ExecutionException, InterruptedException {
         return new getMProductobyClienteAsync(mProductoDao).execute(clienteId).get();
     }
+    public List<ProductoEntity> getMProductoByClienteVentaDirecta(int clienteId) throws ExecutionException, InterruptedException {
+        return new getMProductobyClienteVentaDirectaAsync(mProductoDao).execute(clienteId).get();
+    }
+
+
+
     public void insertProducto(ProductoEntity user) {
         new insertProductosAsync(mProductoDao).execute(user);
     }
@@ -116,6 +126,22 @@ public class ProductoRepository {
             return mProductoDaoAsync.getProductoByStockId(ids[0]);
         }
     }
+    private static class getMProductobyStockVentaDirectaAsync extends AsyncTask<Integer, Void, ProductoEntity> {
+
+        private ProductoDao mProductoDaoAsync;
+
+        getMProductobyStockVentaDirectaAsync(ProductoDao clienteDao) {
+            mProductoDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected ProductoEntity doInBackground(Integer... ids) {
+            return mProductoDaoAsync.getProductoByStockIdVentaDirecta(ids[0]);
+        }
+    }
+
+
+
     private static class getMProductobyClienteAsync extends AsyncTask<Integer, Void, List<ProductoEntity>> {
 
         private ProductoDao mProductoDaoAsync;
@@ -129,6 +155,21 @@ public class ProductoRepository {
             return mProductoDaoAsync.getProductoByCliente(ids[0]);
         }
     }
+    private static class getMProductobyClienteVentaDirectaAsync extends AsyncTask<Integer, Void, List<ProductoEntity>> {
+
+        private ProductoDao mProductoDaoAsync;
+
+        getMProductobyClienteVentaDirectaAsync(ProductoDao clienteDao) {
+            mProductoDaoAsync = clienteDao;
+        }
+
+        @Override
+        protected List<ProductoEntity> doInBackground(Integer... ids) {
+            return mProductoDaoAsync.getProductoByClienteVentaDirecta(ids[0]);
+        }
+    }
+
+
     private static class insertProductosAsync extends AsyncTask<ProductoEntity, Void, Long> {
 
         private ProductoDao mProductoDaoAsync;

@@ -65,7 +65,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_below="@+id/list_tvcantidad"
                         android:paddingRight="10dp"
-                        android:text="Total : 25145.25 Bs"
+                        android:text="Total : 0 Bs"
                         android:id="@+id/list_tvtotalEfectivoP"
                         style="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/colorAccent" />

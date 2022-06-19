@@ -134,19 +134,29 @@ private PedidoEntity mPedido;
     private NestedScrollView mscroll;
     Boolean BanderaCaja=false;
     Boolean BanderaCantidad=false;
+
+    int VentaDirectaOPedido =0;  /// VentaDirecta = 1   Pedido=0
+
     public CreatePedidoFragment() {
         // Required empty public constructor
     }
 
     @SuppressLint("ValidFragment")
-    public CreatePedidoFragment(int tipo) {
+    public CreatePedidoFragment(int tipo,int TipoVentaDirecta) {
         // Required empty public constructor
         this.tipoActividad=tipo;
+        this.VentaDirectaOPedido=TipoVentaDirecta;
     }
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().setTitle("CREAR PEDIDO");
+
+        if (VentaDirectaOPedido==0){
+            getActivity().setTitle("CREAR PEDIDO");
+        }else{
+            getActivity().setTitle("VENTA DIRECTA");
+        }
+
         context=getContext();
     }
     public void iniciarRecyclerView(){
@@ -203,7 +213,7 @@ private PedidoEntity mPedido;
         if (tipoActividad==1){
             mCliente = UtilShare .clienteMapa;
             acliente.setText(mCliente.getNamecliente());
-            mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
+            mCreatePedidoPresenter.CargarProducto(mCliente.getCccat(),VentaDirectaOPedido);
         }
     }
     public void onclickGuardar(){
@@ -244,7 +254,12 @@ private PedidoEntity mPedido;
         mPedido.setCliente(mCliente.getNamecliente());
         int idRepartidor= DataPreferences.getPrefInt("idrepartidor",getContext());
         mPedido.setOarepa(idRepartidor);
-        mPedido.setOaest(2);
+        if (VentaDirectaOPedido==0){
+            mPedido.setOaest(2);
+        }else{
+            mPedido.setOaest(3);
+        }
+
         mPedido.setOaobs(tvObservacion.getText().toString());
         mPedido.setLatitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLatitude());
         mPedido.setLongitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLongitude());
@@ -253,6 +268,7 @@ private PedidoEntity mPedido;
         mPedido.setTotalcredito(0.0);
         mPedido.setEstado(0);
         mPedido.setOaap(1);
+        mPedido.setVentaDirecta(VentaDirectaOPedido);
         mPedido.setReclamo(EtReclamo.getText().toString());
         int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
         //cliente.setCodigogenerado();
@@ -341,7 +357,14 @@ private PedidoEntity mPedido;
 
             DetalleEntity detail=mDetalleItem.get(i);
             try {
-                ProductoEntity p =viewModelProducto.getMProductoByStock(detail.getObcprod());
+                ProductoEntity p;
+                if (VentaDirectaOPedido==0){  //Es pedido entonces debe mostrar todos los de almacen -1
+                    p=viewModelProducto.getMProductoByStockDirecta(detail.getObcprod());
+                }else{   //Es Venta Directa
+                    p=viewModelProducto.getMProductoByStock(detail.getObcprod());
+                }
+
+
                 if (p!=null){
 
                         mDetalleItem.get(i).setStock(p.getStock());
@@ -526,14 +549,30 @@ private PedidoEntity mPedido;
 
             MainActivity fca = ((MainActivity) getActivity());
             fca.removeAllFragments();
-            Fragment frag = new  ListPedidosFragment(1);
-            //fca.switchFragment(frag,"LISTAR_PEDIDOS");
-            fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
+
+            if (VentaDirectaOPedido==0){  ///Si es pedido listado pedidos pendientes
+                Fragment frag = new  ListPedidosFragment(1);
+
+
+                //fca.switchFragment(frag,"LISTAR_PEDIDOS");
+                fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
+            }else{  // si es venta directa nos vamos a pedidos entregados
+                Fragment frag = new  ListPedidosFragment(3);
+
+
+                //fca.switchFragment(frag,"LISTAR_PEDIDOS");
+                fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
+            }
+
+
+
 
 
 
 
     }
+
+
     @Override
     public void MostrarClientes(List<ClienteEntity> clientes) {
             if (clientes.size()>0){
@@ -547,7 +586,7 @@ private PedidoEntity mPedido;
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         if ((ClienteEntity) adapterView.getItemAtPosition(i)!=null){
                             mCliente = (ClienteEntity) adapterView.getItemAtPosition(i);
-                            mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
+                            mCreatePedidoPresenter.CargarProducto(mCliente.getCccat(),VentaDirectaOPedido);
                         }
 
 
@@ -1263,7 +1302,7 @@ private PedidoEntity mPedido;
                         MainActivity fca = ((MainActivity) getActivity());
                         fca.removeAllFragments();
                         UtilShare.clienteMapa =mCliente;
-                        Fragment frag = new CreatePedidoFragment(1);
+                        Fragment frag = new CreatePedidoFragment(1,VentaDirectaOPedido);
                         fca.switchFragment(frag,"CREATE_PEDIDOS");
                     }
                 }).build();
