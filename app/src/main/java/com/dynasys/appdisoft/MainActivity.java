@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.dynasys.appdisoft.Clientes.ListClientesFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.ListaProductos.ListadoProductoFragment;
+import com.dynasys.appdisoft.ListarDeudas.ListDeudasFragment;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
@@ -44,6 +45,7 @@ import com.dynasys.appdisoft.Pedidos.ModifyPedidos.ModifyPedidoFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.Pedidos.ViewPedidos.ViewPedidoFragment;
 import com.dynasys.appdisoft.RevisarEfectivo.EfectivoFragment;
+import com.dynasys.appdisoft.RevisarProductos.ReviewProductoFragment;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
@@ -241,11 +243,18 @@ public class MainActivity extends AppCompatActivity {
                             //setFragment(2);
                             drawerLayout.closeDrawer(GravityCompat.START);
                             return true;
+                    case R.id.item_navigation_drawer_Deudas:
+                        setFragment(7);
+                        item.setChecked(true);
+                        //setFragment(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
                     case R.id.item_navigation_drawer_help_and_feedback:
                         item.setChecked(true);
                         setFragment(21);
                         drawerLayout.closeDrawer(GravityCompat.START);
                         return true;
+
                     case R.id.item_navigation_drawer_Efectivo:
                         setFragment(8);
                         item.setChecked(true);
@@ -255,6 +264,12 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.item_navigation_drawer_listado:
                         setFragment(9);
+                        item.setChecked(true);
+                        //setFragment(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
+                    case R.id.item_navigation_drawer_ReviewProducto:
+                        setFragment(12);
                         item.setChecked(true);
                         //setFragment(2);
                         drawerLayout.closeDrawer(GravityCompat.START);
@@ -317,6 +332,12 @@ public class MainActivity extends AppCompatActivity {
                 frag = new CreatePedidoFragment(0,0);
                 tag = Constantes.TAG_PEDIDOS;
                 break;
+            case 7:
+                returnToMain();
+                frag = new ListDeudasFragment();
+                tag = Constantes.TAG_PEDIDOS;
+                break;
+
             case 8:
                 returnToMain();
                 frag = new EfectivoFragment();
@@ -326,6 +347,11 @@ public class MainActivity extends AppCompatActivity {
             case 9:
                 returnToMain();
                 frag = new ListadoProductoFragment();
+                tag = Constantes.TAG_PEDIDOS;
+                break;
+            case 12:
+                returnToMain();
+                frag = new ReviewProductoFragment();
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 10:
@@ -445,7 +471,13 @@ public class MainActivity extends AppCompatActivity {
         MenuItem menuListado=navigationView.getMenu().findItem(R.id.item_navigation_drawer_listado);
         MenuItem menuVisita=navigationView.getMenu().findItem(R.id.item_navigation_drawer_visitas);
         MenuItem menuVentaDirecta=navigationView.getMenu().findItem(R.id.item_navigation_drawer_nuevo_ventaDirecta);
-            menulcv.setVisible(true);
+
+        MenuItem menuCobranza = navigationView.getMenu().findItem(R.id.item_navigation_drawer_Deudas);
+
+        MenuItem menuReviewProducto=navigationView.getMenu().findItem(R.id.item_navigation_drawer_ReviewProducto);
+
+
+        menulcv.setVisible(true);
             menucli.setVisible(true);
             menuped.setVisible(true);
         menuListado.setVisible(true);
@@ -455,6 +487,10 @@ public class MainActivity extends AppCompatActivity {
         menupedEntregados.setVisible(true);
         menuVisita.setVisible(true);
         menuVentaDirecta.setVisible(true);
+
+        menuCobranza.setVisible(true);
+        menuEfectivo.setVisible(true);
+        menuReviewProducto.setVisible(true);
     }
 
     @Override

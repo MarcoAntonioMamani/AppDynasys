@@ -3,6 +3,7 @@ package com.dynasys.appdisoft.Clientes;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
+import com.dynasys.appdisoft.Login.DB.Entity.DeudaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Mapas.ClientePedidos;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
@@ -20,5 +21,6 @@ public class UtilShare {
     public static ClienteEntity clienteMapa=null;
     public static int tipoAccion=0;
     public static TextView tvZona;
-
+    public static  int IdCLiente;
+    public static DeudaEntity deuda;
 }

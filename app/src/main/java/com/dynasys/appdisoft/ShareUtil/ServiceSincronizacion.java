@@ -20,15 +20,24 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.dynasys.appdisoft.Clientes.UtilShare;
+import com.dynasys.appdisoft.ListarDeudas.Pagos.CobranzaRequest;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
+import com.dynasys.appdisoft.Login.DB.Entity.AlmacenEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.CobranzaEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.DeudaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.AlmacenListaViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.CobranzaDetalleListViewModel;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.CobranzaListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
+import com.dynasys.appdisoft.Login.DB.ListViewmodel.DeudaListaViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
@@ -64,6 +73,10 @@ public class ServiceSincronizacion extends Service {
     private StockListViewModel viewModelStock;
     private DetalleListViewModel viewModelDetalle;
     private ProductosListViewModel viewModelProducto;
+    private CobranzaListViewModel viewModelCobranza;
+    private DeudaListaViewModel viewModelDeuda;
+    private CobranzaDetalleListViewModel viewModelCobranzaDetalle;
+    private AlmacenListaViewModel viewModelAlmacen;
     public static ServiceSincronizacion mInstance;
     public Runnable runnable = null;
     FragmentActivity activity;
@@ -116,6 +129,10 @@ if (UtilShare.mActivity!=null){
     viewModelDetalle=ViewModelProviders.of(UtilShare.mActivity).get(DetalleListViewModel.class);
     viewModelProducto=ViewModelProviders.of(UtilShare.mActivity).get(ProductosListViewModel.class);
     viewModelVisita=ViewModelProviders.of(UtilShare.mActivity).get(VisitaListViewModel.class);
+    viewModelCobranza =ViewModelProviders.of(UtilShare.mActivity).get(CobranzaListViewModel.class);
+    viewModelCobranzaDetalle=ViewModelProviders.of(UtilShare.mActivity).get(CobranzaDetalleListViewModel.class);
+    viewModelDeuda=ViewModelProviders.of(UtilShare.mActivity).get(DeudaListaViewModel.class);
+    viewModelAlmacen=ViewModelProviders.of(UtilShare.mActivity).get(AlmacenListaViewModel.class);
 }
 
     }
@@ -490,6 +507,11 @@ if (UtilShare.mActivity!=null){
                             UpdateVisitas();
                             exportarPedidos(""+idRepartidor);
                             exportarPedidosEstados();
+                            _PostInsertarCobranza();
+                            _DecargarAlmacen(""+idRepartidor);
+                            _DecargarDeudas(""+idRepartidor);
+                            _DecargarCobranza(""+idRepartidor);
+                            _DecargarCobranzaDetalle(""+idRepartidor);
                         }catch (Exception e){
                             Log.d(TAG, "Error" + e.getMessage());
                             new ChecarNotificaciones().execute();
@@ -500,6 +522,423 @@ if (UtilShare.mActivity!=null){
 }
             }, 30*1000);//8
             super.onPostExecute(result);
+        }
+    }
+    public void _DecargarCobranza(String idRepartidor){
+
+        List<ClienteEntity> listCliente = null;
+        List<CobranzaEntity> listCobranza=null;
+        try {
+            listCliente = viewModelClientes.getMAllStateCliente(1);
+            List<ClienteEntity>   listClienteUpdate = viewModelClientes.getMAllStateClienteUpdate(1);
+            List<PedidoEntity> listPedidos=viewModelPedidos.getMAllPedidoState(1);
+            List<DetalleEntity>listDetalle=viewModelDetalle.getMAllDetalleState(1);
+            List<PedidoEntity> listPedidoModificados=viewModelPedidos.getMAllPedidoState02(2);
+            listCobranza=viewModelCobranza.getMCobranzaNoSincronizadas();
+            if (listCliente==null){
+                return;
+            }
+            if (listPedidos==null){
+                return;
+            }
+            if (listClienteUpdate==null){
+                return;
+            }
+            if (listPedidoModificados==null){
+                return;
+            }
+            if (listDetalle==null){
+                return;
+            }
+            Boolean IsLogeado=DataPreferences.getPrefLogin("isLogin",getApplicationContext());
+
+            if (IsLogeado==false){
+                onDestroy();
+                return ;
+            }
+
+            if (listCliente.size()==0 &&listClienteUpdate.size()==0 && listPedidos.size()==0 && listPedidoModificados.size()==0 &&
+                    listDetalle.size()==0 && listCobranza.size()==0) {
+
+                ApiManager apiManager = ApiManager.getInstance(mContext);
+                apiManager.ObtenerCobranza(idRepartidor, new Callback<List<CobranzaEntity>>() {
+                    @Override
+                    public void onResponse(Call<List<CobranzaEntity>> call, Response<List<CobranzaEntity>> response) {
+                        final List<CobranzaEntity> responseUser = (List<CobranzaEntity>) response.body();
+                        if (response.code()==404){
+
+                            return;
+                        }
+                        if (response.isSuccessful() && responseUser != null) {
+                            try {
+                                List<CobranzaEntity> listCliente = viewModelCobranza.getMCobranzaAllAsync();
+                                if (listCliente.size() <= 0) {
+                                    for (int i = 0; i < responseUser.size(); i++) {
+                                        CobranzaEntity precio = responseUser.get(i);
+                                        viewModelCobranza.insertCobranza(precio);
+                                    }
+                                    //cantidadPrecio+=responseUser.size();
+                                    // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                                }else{
+                                    viewModelCobranza.deleteAllCobranzas();
+                                    List<CobranzaEntity> listupdate=new ArrayList<>();
+                                    for (int i = 0; i < responseUser.size(); i++) {
+                                        CobranzaEntity precio = responseUser.get(i);
+                                        //viewModel.insertCliente(cliente);
+                                        CobranzaEntity dbprecio=viewModelCobranza.getCobranza(precio.getTenumi());
+                                        if (dbprecio==null){
+                                            viewModelCobranza.insertCobranza(precio);
+                                        }else{
+
+                                            listupdate.add(precio);
+                                            //viewModelPrecios.updatePrecio(precio);
+                                        }
+
+                                    }
+
+                                    //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                                }
+
+
+                            } catch (ExecutionException e) {
+                                //e.printStackTrace();
+
+                            } catch (InterruptedException e) {
+                                //   e.printStackTrace();
+
+                            }
+
+
+
+                        } else {
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<CobranzaEntity>> call, Throwable t) {
+
+                    }
+                });
+
+            }   } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void _DecargarCobranzaDetalle(String idRepartidor){
+
+        List<ClienteEntity> listCliente = null;
+        List<CobranzaEntity> listCobranza=null;
+        try {
+            listCliente = viewModelClientes.getMAllStateCliente(1);
+            List<ClienteEntity>   listClienteUpdate = viewModelClientes.getMAllStateClienteUpdate(1);
+            List<PedidoEntity> listPedidos=viewModelPedidos.getMAllPedidoState(1);
+            List<DetalleEntity>listDetalle=viewModelDetalle.getMAllDetalleState(1);
+            List<PedidoEntity> listPedidoModificados=viewModelPedidos.getMAllPedidoState02(2);
+            listCobranza=viewModelCobranza.getMCobranzaNoSincronizadas();
+            if (listCliente==null){
+                return;
+            }
+            if (listPedidos==null){
+                return;
+            }
+            if (listClienteUpdate==null){
+                return;
+            }
+            if (listPedidoModificados==null){
+                return;
+            }
+            if (listDetalle==null){
+                return;
+            }
+            Boolean IsLogeado=DataPreferences.getPrefLogin("isLogin",getApplicationContext());
+
+            if (IsLogeado==false){
+                onDestroy();
+                return ;
+            }
+
+            if (listCliente.size()==0 &&listClienteUpdate.size()==0 && listPedidos.size()==0 && listPedidoModificados.size()==0 &&
+                    listDetalle.size()==0 && listCobranza.size()==0) {
+
+                ApiManager apiManager = ApiManager.getInstance(mContext);
+                apiManager.ObtenerCobranzaDetalle(idRepartidor, new Callback<List<CobranzaDetalleEntity>>() {
+                    @Override
+                    public void onResponse(Call<List<CobranzaDetalleEntity>> call, Response<List<CobranzaDetalleEntity>> response) {
+                        final List<CobranzaDetalleEntity> responseUser = (List<CobranzaDetalleEntity>) response.body();
+                        if (response.code()==404){
+
+                            return;
+                        }
+                        if (response.isSuccessful() && responseUser != null) {
+
+                            List<CobranzaDetalleEntity> listCliente = viewModelCobranzaDetalle.getMCobranzaDetalleAllAsync();
+                            if (listCliente.size() <= 0) {
+                                for (int i = 0; i < responseUser.size(); i++) {
+                                    CobranzaDetalleEntity precio = responseUser.get(i);
+                                    viewModelCobranzaDetalle.insertCobranzaDetalle(precio);
+                                }
+                                //cantidadPrecio+=responseUser.size();
+                                // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                            }else{
+                                viewModelCobranzaDetalle.deleteAllCobranzaDetalles();
+
+                                for (int i = 0; i < responseUser.size(); i++) {
+                                    CobranzaDetalleEntity precio = responseUser.get(i);
+
+                                    viewModelCobranzaDetalle.insertCobranzaDetalle(precio);
+
+
+                                }
+
+                                //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                            }
+
+
+
+
+
+
+                        } else {
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<CobranzaDetalleEntity>> call, Throwable t) {
+
+                    }
+                });
+
+            }   } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void _DecargarDeudas(String idRepartidor){
+
+        List<ClienteEntity> listCliente = null;
+        List<CobranzaEntity> listCobranza=null;
+        try {
+            listCliente = viewModelClientes.getMAllStateCliente(1);
+            List<ClienteEntity>   listClienteUpdate = viewModelClientes.getMAllStateClienteUpdate(1);
+            List<PedidoEntity> listPedidos=viewModelPedidos.getMAllPedidoState(1);
+            List<DetalleEntity>listDetalle=viewModelDetalle.getMAllDetalleState(1);
+            List<PedidoEntity> listPedidoModificados=viewModelPedidos.getMAllPedidoState02(2);
+            listCobranza=viewModelCobranza.getMCobranzaNoSincronizadas();
+            if (listCliente==null){
+                return;
+            }
+            if (listPedidos==null){
+                return;
+            }
+            if (listClienteUpdate==null){
+                return;
+            }
+            if (listPedidoModificados==null){
+                return;
+            }
+            if (listDetalle==null){
+                return;
+            }
+            Boolean IsLogeado=DataPreferences.getPrefLogin("isLogin",getApplicationContext());
+
+            if (IsLogeado==false){
+                onDestroy();
+                return ;
+            }
+
+            if (listCliente.size()==0 &&listClienteUpdate.size()==0 && listPedidos.size()==0 && listPedidoModificados.size()==0 &&
+                    listDetalle.size()==0 && listCobranza.size()==0) {
+
+                ApiManager apiManager = ApiManager.getInstance(mContext);
+                apiManager.ObtenerDeudas(idRepartidor, new Callback<List<DeudaEntity>>() {
+                    @Override
+                    public void onResponse(Call<List<DeudaEntity>> call, Response<List<DeudaEntity>> response) {
+                        final List<DeudaEntity> responseUser = (List<DeudaEntity>) response.body();
+                        if (response.code()==404){
+
+                            return;
+                        }
+                        if (response.isSuccessful() && responseUser != null) {
+                            try {
+                                List<DeudaEntity> listCliente = viewModelDeuda.getMDeudaAllAsync();
+                                if (listCliente.size() <= 0) {
+                                    for (int i = 0; i < responseUser.size(); i++) {
+                                        DeudaEntity precio = responseUser.get(i);
+                                        viewModelDeuda.insertDeuda(precio);
+                                    }
+                                    //cantidadPrecio+=responseUser.size();
+                                    // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                                }else{
+
+
+
+                                    // viewModelDeuda.deleteAllDeudas();
+                                    List<DeudaEntity> listupdate=new ArrayList<>();
+                                    Boolean BanderaCobranza=false;
+                                    for (int i = 0; i < responseUser.size(); i++) {
+                                        DeudaEntity precio = responseUser.get(i);
+
+                                        //viewModel.insertCliente(cliente);
+                                        DeudaEntity dbprecio=viewModelDeuda.getDeuda(precio.getPedidoId());
+                                        if (dbprecio==null){
+                                            viewModelDeuda.insertDeuda(precio);
+                                        }else{
+                                            if (dbprecio.getPendiente()!=precio.getPendiente()){
+                                                BanderaCobranza=true;
+                                            }
+
+                                        }
+
+                                    }
+                                    if (BanderaCobranza==true){
+                                        viewModelDeuda.deleteAllDeudas();
+                                        for (int i = 0; i < responseUser.size(); i++) {
+                                            DeudaEntity precio = responseUser.get(i);
+                                            viewModelDeuda.insertDeuda(precio);
+                                        }
+                                    }
+
+
+                                    //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                                }
+
+
+                            } catch (ExecutionException e) {
+                                //e.printStackTrace();
+
+                            } catch (InterruptedException e) {
+                                //   e.printStackTrace();
+
+                            }
+
+
+
+                        } else {
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<DeudaEntity>> call, Throwable t) {
+
+                    }
+                });
+
+            }   } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void _DecargarAlmacen(String idRepartidor){
+
+        List<ClienteEntity> listCliente = null;
+        List<CobranzaEntity> listCobranza=null;
+        try {
+            listCliente = viewModelClientes.getMAllStateCliente(1);
+            List<ClienteEntity>   listClienteUpdate = viewModelClientes.getMAllStateClienteUpdate(1);
+            List<PedidoEntity> listPedidos=viewModelPedidos.getMAllPedidoState(1);
+            List<DetalleEntity>listDetalle=viewModelDetalle.getMAllDetalleState(1);
+            List<PedidoEntity> listPedidoModificados=viewModelPedidos.getMAllPedidoState02(2);
+            listCobranza=viewModelCobranza.getMCobranzaNoSincronizadas();
+            if (listCliente==null){
+                return;
+            }
+            if (listPedidos==null){
+                return;
+            }
+            if (listClienteUpdate==null){
+                return;
+            }
+            if (listPedidoModificados==null){
+                return;
+            }
+            if (listDetalle==null){
+                return;
+            }
+            Boolean IsLogeado=DataPreferences.getPrefLogin("isLogin",getApplicationContext());
+
+            if (IsLogeado==false){
+                onDestroy();
+                return ;
+            }
+
+            if (listCliente.size()==0 &&listClienteUpdate.size()==0 && listPedidos.size()==0 && listPedidoModificados.size()==0 &&
+                    listDetalle.size()==0 && listCobranza.size()==0) {
+
+                ApiManager apiManager = ApiManager.getInstance(mContext);
+                apiManager.ObtenerProductosAlmacen(idRepartidor, new Callback<List<AlmacenEntity>>() {
+                    @Override
+                    public void onResponse(Call<List<AlmacenEntity>> call, Response<List<AlmacenEntity>> response) {
+                        final List<AlmacenEntity> responseUser = (List<AlmacenEntity>) response.body();
+                        if (response.code()==404){
+
+                            return;
+                        }
+                        if (response.isSuccessful() && responseUser != null) {
+                            try {
+                                List<AlmacenEntity> listCliente = viewModelAlmacen.getMAlmacenAllAsync();
+                                if (listCliente.size() <= 0) {
+                                    for (int i = 0; i < responseUser.size(); i++) {
+                                        AlmacenEntity precio = responseUser.get(i);
+                                        viewModelAlmacen.insertAlmacen(precio);
+                                    }
+                                    //cantidadPrecio+=responseUser.size();
+                                    // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                                }else{
+                                    viewModelAlmacen.deleteAllAlmacens();
+                                    List<AlmacenEntity> listupdate=new ArrayList<>();
+                                    for (int i = 0; i < responseUser.size(); i++) {
+                                        AlmacenEntity precio = responseUser.get(i);
+                                        //viewModel.insertCliente(cliente);
+                                        AlmacenEntity dbprecio=viewModelAlmacen.getAlmacen(precio.getProductoId());
+                                        if (dbprecio==null){
+                                            viewModelAlmacen.insertAlmacen(precio);
+                                        }else{
+
+                                            listupdate.add(precio);
+                                            //viewModelPrecios.updatePrecio(precio);
+                                        }
+
+                                    }
+
+                                    //  mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");
+                                }
+
+
+                            } catch (ExecutionException e) {
+                                //e.printStackTrace();
+
+                            } catch (InterruptedException e) {
+                                //   e.printStackTrace();
+
+                            }
+
+
+
+                        } else {
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<AlmacenEntity>> call, Throwable t) {
+
+                    }
+                });
+
+            }   } catch (ExecutionException e) {
+
+        } catch (InterruptedException e) {
+
         }
     }
     public void _DecargarPedidos(final String idRepartidor){
@@ -1344,5 +1783,119 @@ if (UtilShare.mActivity!=null){
             }
         }
         return false;
+    }
+
+    public void _PostInsertarCobranza(){
+
+        List<ClienteEntity> listCliente = null;
+        try {
+            listCliente = viewModelClientes.getMAllStateCliente(1);
+            List<ClienteEntity>   listClienteUpdate = viewModelClientes.getMAllStateClienteUpdate(1);
+            List<PedidoEntity> listPedidos=viewModelPedidos.getMAllPedidoState(1);
+            List<DetalleEntity>listDetalle=viewModelDetalle.getMAllDetalleState(1);
+            List<PedidoEntity> listPedidoModificados=viewModelPedidos.getMAllPedidoState02(2);
+            List<CobranzaEntity> listCobranza=viewModelCobranza.getMCobranzaNoSincronizadas();
+            if (listCliente==null){
+                return;
+            }
+            if (listPedidos==null){
+                return;
+            }
+            if (listClienteUpdate==null){
+                return;
+            }
+            if (listPedidoModificados==null){
+                return;
+            }
+            if (listDetalle==null){
+                return;
+            }
+            Boolean IsLogeado=DataPreferences.getPrefLogin("isLogin",getApplicationContext());
+
+            if (IsLogeado==false){
+                onDestroy();
+                return ;
+            }
+
+            if (listCliente.size()==0 &&listClienteUpdate.size()==0 && listPedidos.size()==0 && listPedidoModificados.size()==0&& listDetalle.size()==0
+                    && listCobranza.size()>0) {
+
+                CobranzaEntity cob=listCobranza.get(0);
+                List<CobranzaDetalleEntity>detalle=viewModelCobranzaDetalle.getCobranzaDetalle(cob.getTenumi());
+                final CobranzaRequest cobranza=new CobranzaRequest();
+                cobranza.setTenumi(cob.getTenumi());
+                cobranza.setIdPersonal(cob.getIdPersonal());
+                cobranza.setEstado(cob.getEstado());
+                cobranza.setFecha(cob.getFecha());
+                cobranza.setObservacion(cob.getObservacion());
+                cobranza.setId(cob.getId());
+                cobranza.setListDetalle(detalle);
+                ApiManager apiManager = ApiManager.getInstance(mContext);
+                apiManager.InsertCobranza(cobranza, new Callback<ResponseLogin>() {
+                    @Override
+                    public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
+                        ResponseLogin responseUser = response.body();
+                        if (response.code()==404 || response.code()==500){
+                            return;
+                        }
+                        try{
+                            if (responseUser!=null){
+                                if (responseUser.getCode()==0){
+                                    CobranzaEntity mPedido= viewModelCobranza.getCobranza(cobranza.getTenumi());
+                                    List<DeudaEntity> listdeuda=viewModelDeuda.getMDeudaAllAsync();
+                                    if (mPedido!=null){
+                                        mPedido.setTenumi(responseUser.getToken());
+                                        mPedido.setEstado(1);
+                                        mPedido.setObservacion(responseUser.getToken());
+                                        List<CobranzaDetalleEntity> listDetalle= viewModelCobranzaDetalle.getCobranzaDetalle(cobranza.getTenumi());
+                                        if (listDetalle!=null) {
+                                            for (int i = 0; i < listDetalle.size(); i++) {
+                                                CobranzaDetalleEntity item = listDetalle.get(i);
+                                                item.setCobranzaId(responseUser.getToken());
+                                                item.setEstado(1);
+                                                viewModelCobranzaDetalle.updateCobranzaDetalle(item);
+
+                                            }
+                                            viewModelCobranza.updateCobranza(mPedido);
+
+                                        }
+
+                                        if (listdeuda.size()>0){
+                                            DeudaEntity deud=listdeuda.get(0);
+
+                                            deud.setTotalAPagar(0);
+                                            viewModelDeuda.updateDeuda(deud);
+
+                                        }
+
+
+                                        //showSaveResultOption(1,""+mcliente.getNumi(),"");
+                                        return;
+                                    }
+                                }else{
+
+                                    return;
+                                }
+                            }
+                        }catch (Exception e){
+
+                            return;
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseLogin> call, Throwable t) {
+
+                        return;
+                        //ShowMessageResult("Error al guardar el pedido");
+                    }
+                });
+
+            }   } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
