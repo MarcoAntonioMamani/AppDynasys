@@ -58,7 +58,6 @@ import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
-import com.dynasys.appdisoft.ShareUtil.Pdf.TemplatePDF;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.android.gms.maps.model.LatLng;
@@ -128,7 +127,6 @@ String Hora;
 Double mTotal=0.0;
    int tipoActividad=0;
 EditText EtReclamo;
-    TemplatePDF templatePDF;
     LottieAlertDialog alertDialog;
 private PedidoEntity mPedido;
     private NestedScrollView mscroll;
@@ -681,51 +679,7 @@ private PedidoEntity mPedido;
 
 
     public void Imprimir(String Id){
-        String []header={"Detalle","Cant","Precio","Monto"};
 
-
-        templatePDF=new TemplatePDF(view.getContext());
-        Calendar c2 = Calendar.getInstance();
-
-        templatePDF.openDocument("Pedido"+c2.HOUR+c2.MINUTE+c2.SECOND+c2.MILLISECOND);
-        templatePDF.addMetaData("Clientes","Ventas","Disoft");
-        templatePDF.addTitles("Tienda CodigoFacilito","Clientes","01/01/2021");
-/////////////////////////////////////////////
-        templatePDF.addParagraph02("DISTRIBUIDORA J & L");
-        String nameRepartidor=DataPreferences.getPref("repartidor",view.getContext());
-
-        templatePDF.addParagraph02("Vendedor: "+nameRepartidor);
-
-        templatePDF.addParagraph02("Nro Ticket # "+Id);
-
-        templatePDF.addParagraphTitle("PEDIDO");
-        templatePDF.addParagraphTitle("Tipo Nota: Lacteos");
-        templatePDF.addParagraph02("Fecha: "+ShareMethods.ObtenerFecha02(mPedido.getOafdoc()));
-        templatePDF.addParagraph02("Fecha Entrega: "+ShareMethods.ObtenerFecha02(mPedido.getOafdoc()));
-        templatePDF.addParagraph02("Senor(es): "+mCliente.getNamecliente());
-        templatePDF.addParagraph02("Contacto: "+mCliente.getTelefono());
-//templatePDF.addParagraph(longText);
-        templatePDF.createTable(header,getclients());
-
-
-        double descuentoTotal=0.0;
-        double Total=ObtenerTotal();
-        for (int i = 0; i < mDetalleItem.size(); i++) {
-            if (mDetalleItem.get(i).getObupdate()>=0){
-                descuentoTotal+=(mDetalleItem.get(i).getDescuento());
-            }
-
-        }
-
-        templatePDF.addParagraphTotales("SubTotal -> "+ShareMethods.ObtenerDecimalToString(Total,2));
-        templatePDF.addParagraphTotales("Descuento -> "+ShareMethods.ObtenerDecimalToString(descuentoTotal,2));
-        templatePDF.addParagraphTotalesSinEspacio("TOTAL Bs -> "+ShareMethods.ObtenerDecimalToString(Total-descuentoTotal,2));
-        templatePDF.addParagraph02("");
-        // templatePDF.addParagraph02("Son: Dos Ciento Sesenta 00/100 Bs.");
-        templatePDF.addParagraphTitle("Gracias Por Su Compra!!");
-        templatePDF.closeDocument();
-
-        templatePDF.appviewPDF(getActivity());
     }
     public double ObtenerTotal(){
         double descuento=0;
