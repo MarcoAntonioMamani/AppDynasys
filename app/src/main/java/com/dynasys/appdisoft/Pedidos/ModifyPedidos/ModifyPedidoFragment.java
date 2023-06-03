@@ -59,7 +59,6 @@ import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
-import com.dynasys.appdisoft.ShareUtil.Pdf.TemplatePDF;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
@@ -222,7 +221,7 @@ if (mPedido.getOaap()!=1){
     }
 
     public void Imprimir(){
-        String []header={"Detalle","Cant","Precio","Monto"};
+       /* String []header={"Detalle","Cant","Precio","Monto"};
 
         TemplatePDF templatePDF;
         templatePDF=new TemplatePDF(view.getContext());
@@ -264,7 +263,7 @@ if (mPedido.getOaap()!=1){
         templatePDF.addParagraphTitle("Gracias Por Su Compra!!");
         templatePDF.closeDocument();
 
-        templatePDF.appviewPDF(getActivity());
+        templatePDF.appviewPDF(getActivity());*/
     }
     private ArrayList<String[]> getclients(){
         ArrayList<String[]> rows=new ArrayList<>();
