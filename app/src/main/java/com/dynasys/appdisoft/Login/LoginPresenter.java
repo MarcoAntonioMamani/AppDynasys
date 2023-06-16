@@ -113,7 +113,7 @@ String SPREAD_SHEET_ID = "1jBtXZdoxIYJlEAnJ8YbQ3NbUmPrBFqgtSbmMHMIQMck";
             @Override
             public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                 ResponseLogin responseUser = response.body();
-                if (response.code()==404){
+                if (response.code()>=400 ){
                     mLoginView.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
                     return;
                 }

@@ -201,6 +201,7 @@ public void CambiarActividad(){
                         lottieAlertDialog.dismiss();
                     }
                 }).build();
+
         alertDialog.show();
     }
     private void ShowDialogSincronizando(){
