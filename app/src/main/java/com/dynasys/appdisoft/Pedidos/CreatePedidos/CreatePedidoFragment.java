@@ -132,19 +132,29 @@ private PedidoEntity mPedido;
     private NestedScrollView mscroll;
     Boolean BanderaCaja=false;
     Boolean BanderaCantidad=false;
+
+    int VentaDirectaOPedido =0;  /// VentaDirecta = 1   Pedido=0
+
     public CreatePedidoFragment() {
         // Required empty public constructor
     }
 
     @SuppressLint("ValidFragment")
-    public CreatePedidoFragment(int tipo) {
+    public CreatePedidoFragment(int tipo,int TipoVentaDirecta) {
         // Required empty public constructor
         this.tipoActividad=tipo;
+        this.VentaDirectaOPedido=TipoVentaDirecta;
     }
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().setTitle("CREAR PEDIDO");
+
+        if (VentaDirectaOPedido==0){
+            getActivity().setTitle("CREAR PEDIDO");
+        }else{
+            getActivity().setTitle("VENTA DIRECTA");
+        }
+
         context=getContext();
     }
     public void iniciarRecyclerView(){
@@ -201,7 +211,7 @@ private PedidoEntity mPedido;
         if (tipoActividad==1){
             mCliente = UtilShare .clienteMapa;
             acliente.setText(mCliente.getNamecliente());
-            mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
+            mCreatePedidoPresenter.CargarProducto(mCliente.getCccat(),VentaDirectaOPedido);
         }
     }
     public void onclickGuardar(){
@@ -242,7 +252,12 @@ private PedidoEntity mPedido;
         mPedido.setCliente(mCliente.getNamecliente());
         int idRepartidor= DataPreferences.getPrefInt("idrepartidor",getContext());
         mPedido.setOarepa(idRepartidor);
-        mPedido.setOaest(2);
+        if (VentaDirectaOPedido==0){
+            mPedido.setOaest(2);
+        }else{
+            mPedido.setOaest(3);
+        }
+
         mPedido.setOaobs(tvObservacion.getText().toString());
         mPedido.setLatitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLatitude());
         mPedido.setLongitud((LocationGeo.getLocationActual())==null? 0:LocationGeo.getLocationActual().getLongitude());
@@ -251,12 +266,13 @@ private PedidoEntity mPedido;
         mPedido.setTotalcredito(0.0);
         mPedido.setEstado(0);
         mPedido.setOaap(1);
+        mPedido.setVentaDirecta(VentaDirectaOPedido);
         mPedido.setReclamo(EtReclamo.getText().toString());
         int codigoRepartidor=  DataPreferences.getPrefInt("idrepartidor",getContext());
         //cliente.setCodigogenerado();
         DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
         String code = df.format(Calendar.getInstance().getTime());
-        code=""+codigoRepartidor+","+code+"P1.2";
+        code=""+codigoRepartidor+","+code+"P1.3";
         mPedido.setCodigogenerado(code);
         mPedido.setOanumi(code);
         _prModificarNumi(code);
@@ -339,7 +355,14 @@ private PedidoEntity mPedido;
 
             DetalleEntity detail=mDetalleItem.get(i);
             try {
-                ProductoEntity p =viewModelProducto.getMProductoByStock(detail.getObcprod());
+                ProductoEntity p;
+                if (VentaDirectaOPedido==0){  //Es pedido entonces debe mostrar todos los de almacen -1
+                    p=viewModelProducto.getMProductoByStockDirecta(detail.getObcprod());
+                }else{   //Es Venta Directa
+                    p=viewModelProducto.getMProductoByStock(detail.getObcprod());
+                }
+
+
                 if (p!=null){
 
                         mDetalleItem.get(i).setStock(p.getStock());
@@ -524,14 +547,30 @@ private PedidoEntity mPedido;
 
             MainActivity fca = ((MainActivity) getActivity());
             fca.removeAllFragments();
-            Fragment frag = new  ListPedidosFragment(1);
-            //fca.switchFragment(frag,"LISTAR_PEDIDOS");
-            fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
+
+            if (VentaDirectaOPedido==0){  ///Si es pedido listado pedidos pendientes
+                Fragment frag = new  ListPedidosFragment(1);
+
+
+                //fca.switchFragment(frag,"LISTAR_PEDIDOS");
+                fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
+            }else{  // si es venta directa nos vamos a pedidos entregados
+                Fragment frag = new  ListPedidosFragment(3);
+
+
+                //fca.switchFragment(frag,"LISTAR_PEDIDOS");
+                fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
+            }
+
+
+
 
 
 
 
     }
+
+
     @Override
     public void MostrarClientes(List<ClienteEntity> clientes) {
             if (clientes.size()>0){
@@ -545,7 +584,7 @@ private PedidoEntity mPedido;
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         if ((ClienteEntity) adapterView.getItemAtPosition(i)!=null){
                             mCliente = (ClienteEntity) adapterView.getItemAtPosition(i);
-                            mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
+                            mCreatePedidoPresenter.CargarProducto(mCliente.getCccat(),VentaDirectaOPedido);
                         }
 
 
@@ -680,6 +719,65 @@ private PedidoEntity mPedido;
 
     public void Imprimir(String Id){
 
+
+        templatePDF=new TemplatePDF(view.getContext());
+        Calendar c2 = Calendar.getInstance();
+
+        templatePDF.openDocument("Pedido"+c2.HOUR+c2.MINUTE+c2.SECOND+c2.MILLISECOND);
+        templatePDF.addMetaData("Clientes","Ventas","Disoft");
+        templatePDF.addTitles("Tienda CodigoFacilito","Clientes","01/01/2021");
+/////////////////////////////////////////////
+        templatePDF.addParagraph02("DISTRIBUIDORA J & L");
+        String nameRepartidor=DataPreferences.getPref("repartidor",view.getContext());
+
+        templatePDF.addParagraph02("Vendedor: "+nameRepartidor);
+
+        templatePDF.addParagraph02("Nro Ticket # "+Id);
+
+        templatePDF.addParagraphTitle("PEDIDO");
+        templatePDF.addParagraphTitle("Tipo Nota: Lacteos");
+        templatePDF.addParagraph02("Fecha: "+ShareMethods.ObtenerFecha02(mPedido.getOafdoc()));
+        templatePDF.addParagraph02("Fecha Entrega: "+ShareMethods.ObtenerFecha02(mPedido.getOafdoc()));
+        templatePDF.addParagraph02("Senor(es): "+mCliente.getNamecliente());
+        templatePDF.addParagraph02("Contacto: "+mCliente.getTelefono());
+//templatePDF.addParagraph(longText);
+      //  templatePDF.createTable(header,getclients());
+        templatePDF.addParagraph02("------------------------------------------------------------");
+        templatePDF.addParagraphTitleDetalle("Detalle               Cantidad      Precio        Monto ");
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+
+            DetalleEntity det =mDetalleItem.get(i);
+            if (det.getObupdate()>=0){
+             /*   rows.add(new String[]{det.getCadesc(),ShareMethods.ObtenerDecimalToString(det.getObpcant(),2) ,ShareMethods.ObtenerDecimalToString(det.getObpbase(),2)
+                        ,ShareMethods.ObtenerDecimalToString(det.getObptot(),2)});*/
+
+                templatePDF.addParagraph02(""+det.getCadesc());
+               templatePDF.addParagraph0Detalle(""+ShareMethods.ObtenerDecimalToString(det.getObpcant(),2)+"           "
+                       +ShareMethods.ObtenerDecimalToString(det.getObpbase() ,2)+"           "+ShareMethods.ObtenerDecimalToString(det.getObptot(),2));
+
+            }
+
+        }
+
+        templatePDF.addParagraph02("------------------------------------------------------------");
+        double descuentoTotal=0.0;
+        double Total=ObtenerTotal();
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            if (mDetalleItem.get(i).getObupdate()>=0){
+                descuentoTotal+=(mDetalleItem.get(i).getDescuento());
+            }
+
+        }
+
+        templatePDF.addParagraphTotales("SubTotal -> "+ShareMethods.ObtenerDecimalToString(Total,2));
+        templatePDF.addParagraphTotales("Descuento -> "+ShareMethods.ObtenerDecimalToString(descuentoTotal,2));
+        templatePDF.addParagraphTotalesSinEspacio("TOTAL Bs -> "+ShareMethods.ObtenerDecimalToString(Total-descuentoTotal,2));
+        templatePDF.addParagraph02("");
+        // templatePDF.addParagraph02("Son: Dos Ciento Sesenta 00/100 Bs.");
+        templatePDF.addParagraphTitle("Gracias Por Su Compra!!");
+        templatePDF.closeDocument();
+
+        templatePDF.appviewPDF(getActivity());
     }
     public double ObtenerTotal(){
         double descuento=0;
@@ -687,7 +785,7 @@ private PedidoEntity mPedido;
         double total=0.0;
         for (int i = 0; i < mDetalleItem.size(); i++) {
             if (mDetalleItem.get(i).getObupdate()>=0){
-                total+=mDetalleItem.get(i).getTotal();
+                total+=mDetalleItem.get(i).getObptot();
             }
 
         }
@@ -1201,7 +1299,7 @@ private PedidoEntity mPedido;
                         MainActivity fca = ((MainActivity) getActivity());
                         fca.removeAllFragments();
                         UtilShare.clienteMapa =mCliente;
-                        Fragment frag = new CreatePedidoFragment(1);
+                        Fragment frag = new CreatePedidoFragment(1,VentaDirectaOPedido);
                         fca.switchFragment(frag,"CREATE_PEDIDOS");
                     }
                 }).build();

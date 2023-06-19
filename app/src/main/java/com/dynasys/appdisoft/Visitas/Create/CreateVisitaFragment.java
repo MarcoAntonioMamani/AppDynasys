@@ -194,6 +194,7 @@ public class CreateVisitaFragment extends Fragment  implements OnMapReadyCallbac
             btngps.performClick();
         }
         CargarClientes();
+        btngps.setVisibility(View.GONE);
         return view;
     }
     public void CargarClientes() {
@@ -544,6 +545,9 @@ public class CreateVisitaFragment extends Fragment  implements OnMapReadyCallbac
                 }
             }
         });
+
+      // btngps.setVisibility(View.GONE);
+
     }
 
     public void Dibujar(Location mlocation){
@@ -627,6 +631,7 @@ public class CreateVisitaFragment extends Fragment  implements OnMapReadyCallbac
         location.setLongitude(-63.1822832);
         if (tipo==0){
             sydney = new LatLng(location.getLatitude(),location.getLongitude());
+
         }else{
             if (mVisita.getLatitud()!=0){
                 sydney = new LatLng(mVisita.getLatitud(),mVisita.getLongitud());
@@ -660,6 +665,10 @@ public class CreateVisitaFragment extends Fragment  implements OnMapReadyCallbac
 
         if (tipo!=0){
             mapa.getUiSettings().setScrollGesturesEnabled(false);
+        }
+
+        if (LocationGeo.estaActivoGPS() && tipo==0){
+            btngps.performClick();
         }
     }
 

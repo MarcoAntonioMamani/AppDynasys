@@ -41,10 +41,18 @@ public class PedidoDetalle {
 
     String reclamo;
     List<DetalleEntity> detalle;
-
+    int VentaDirecta;
 
     public PedidoDetalle(){
 
+    }
+
+    public int getVentaDirecta() {
+        return VentaDirecta;
+    }
+
+    public void setVentaDirecta(int ventaDirecta) {
+        VentaDirecta = ventaDirecta;
     }
 
     public List<DetalleEntity> getDetalle() {

@@ -1,7 +1,12 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
+import com.dynasys.appdisoft.ListarDeudas.Pagos.CobranzaRequest;
+import com.dynasys.appdisoft.Login.DB.Entity.AlmacenEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.CobranzaDetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.CobranzaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.DeudaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PointEntity;
@@ -41,6 +46,9 @@ public interface IUsersApi {
 
     @PUT("/api/repartidor/clients")
     Call<ResponseLogin> UpdateUser(@Body ClienteEntity user);
+
+    @POST("/api/repartidor/cobranza")
+    Call<ResponseLogin> InsertCobranza(@Body CobranzaRequest user);
 
     @PUT("/api/repartidor/visita")
     Call<ResponseLogin> UpdateVisita(@Body VisitaEntity user);
@@ -98,4 +106,14 @@ public interface IUsersApi {
 
     @POST("/api/repartidor/tracking")
     Call<ResponseLogin> InsertTracking(@Body BodyLocation user);
+
+    @GET("/api/repartidor/deudas/{idrepartidor}")
+    Call<List<DeudaEntity>> ObtenerDeudas(@Path("idrepartidor") String idRepartidor);
+    @GET("/api/repartidor/Cobranza/{idrepartidor}")
+    Call<List<CobranzaEntity>> ObtenerCobranza(@Path("idrepartidor") String idRepartidor);
+    @GET("/api/repartidor/almacen/{idrepartidor}")
+    Call<List<AlmacenEntity>> ObtenerProductoAlmacen(@Path("idrepartidor") String idRepartidor);
+    @GET("/api/repartidor/CobranzaDetalle/{idrepartidor}")
+
+    Call<List<CobranzaDetalleEntity>> ObtenerCobranzaDetalle(@Path("idrepartidor") String idRepartidor);
 }

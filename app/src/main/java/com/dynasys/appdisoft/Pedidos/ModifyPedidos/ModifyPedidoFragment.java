@@ -247,7 +247,7 @@ if (mPedido.getOaap()!=1){
 
 
         double descuentoTotal=0.0;
-        double Total=ObtenerTotal();
+        double Total=ObtenerTotalImpresion();
         for (int i = 0; i < mDetalleItem.size(); i++) {
             if (mDetalleItem.get(i).getObupdate()>=0){
                 descuentoTotal+=(mDetalleItem.get(i).getDescuento());
@@ -300,7 +300,7 @@ if (mPedido.getOaap()!=1){
             }
         });
         mCreatePedidoPresenter.getDetailOrder(mPedido.getCodigogenerado());
-        mCreatePedidoPresenter.CargarProducto(mCliente.getCccat());
+        mCreatePedidoPresenter.CargarProducto(mCliente.getCccat(),0);
         ////Para Visualiza la seccion de credito o contado
         int ViewCreditos=DataPreferences.getPrefInt("ViewCredito",getContext());
         if (ViewCreditos ==0){
@@ -1590,7 +1590,7 @@ return null;
                         lottieAlertDialog.dismiss();
                         RetornarPrincipal();
                         UtilShare.clienteMapa =mCliente;
-                        Fragment frag = new CreatePedidoFragment(1);
+                        Fragment frag = new CreatePedidoFragment(1,0);
                         MainActivity fca = (MainActivity) getActivity();
                         fca.switchFragment(frag,"CREATE_PEDIDOS");
                     }
@@ -1750,6 +1750,23 @@ return null;
         for (int i = 0; i < mDetalleItem.size(); i++) {
             if (mDetalleItem.get(i).getObupdate()>=0){
                 total+=mDetalleItem.get(i).getTotal();
+            }
+
+        }
+        total-=descuento;
+        if (total<0.0){
+            total=0.0;
+        }
+        return total;
+    }
+
+    public double ObtenerTotalImpresion(){
+        double descuento=0;
+
+        double total=0.0;
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            if (mDetalleItem.get(i).getObupdate()>=0){
+                total+=mDetalleItem.get(i).getObptot();
             }
 
         }

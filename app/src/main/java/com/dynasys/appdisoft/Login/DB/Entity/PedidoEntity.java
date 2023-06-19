@@ -49,9 +49,20 @@ public class PedidoEntity implements Comparable<PedidoEntity> {
 
     @ColumnInfo(name = "oaap")
     int oaap ;
+
+    @ColumnInfo(name = "ventaDirecta")
+    int ventaDirecta ;
 public PedidoEntity(){
 
 }
+
+    public int getVentaDirecta() {
+        return ventaDirecta;
+    }
+
+    public void setVentaDirecta(int ventaDirecta) {
+        this.ventaDirecta = ventaDirecta;
+    }
 
     public int getOaap() {
         return oaap;
