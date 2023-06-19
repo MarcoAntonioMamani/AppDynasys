@@ -20,9 +20,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().setTitle("Disoft");
+        getActivity().setTitle("Sanbit");
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

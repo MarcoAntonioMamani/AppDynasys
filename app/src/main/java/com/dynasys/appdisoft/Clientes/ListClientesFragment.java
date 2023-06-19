@@ -1,6 +1,7 @@
 package com.dynasys.appdisoft.Clientes;
 
 
+import android.app.Activity;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -19,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,6 +79,8 @@ private List<ClienteEntity> lisClientes=new ArrayList<>();
 
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -96,7 +100,6 @@ private List<ClienteEntity> lisClientes=new ArrayList<>();
             Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
             getContext().startService(intent);
         }
-
         return view;
     }
 public void _OnClickBtnAddCliente(){

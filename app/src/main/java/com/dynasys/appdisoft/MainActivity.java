@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder
-                        .setTitle("Disoft")
+                        .setTitle("Sanbit")
                         .setMessage("Está seguro(a) de finalizar la sesión?.")
                         .setIcon(R.drawable.ic_iinfo)
                         .setPositiveButton(mContext.getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
@@ -527,7 +527,6 @@ public class MainActivity extends AppCompatActivity {
         }, 100);
     }
     public  void returnToMain(){
-
         //getSupportFragmentManager().popBackStack("WELCOMEFRAGMENT",0);
         removeAllFragments();
         loadWelcomeFragment();
