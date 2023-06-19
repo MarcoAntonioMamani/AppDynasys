@@ -58,6 +58,7 @@ import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
+import com.dynasys.appdisoft.ShareUtil.Pdf.TemplatePDF;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.google.android.gms.maps.model.LatLng;
@@ -119,16 +120,17 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private PointListViewModel viewmodelPoint;
     private String M_Uii="";
     Boolean Grabado=false;
-DetalleAdaptader mDetalleAdapter;
-TextView name_total,etFecha,name_descuento,name_descuentoTotal;
-EditText tvObservacion;
-Date mFecha;
-String Hora;
-Double mTotal=0.0;
-   int tipoActividad=0;
-EditText EtReclamo;
+    DetalleAdaptader mDetalleAdapter;
+    TextView name_total,etFecha,name_descuento,name_descuentoTotal;
+    EditText tvObservacion;
+    Date mFecha;
+    String Hora;
+    Double mTotal=0.0;
+    int tipoActividad=0;
+    EditText EtReclamo;
+    TemplatePDF templatePDF;
     LottieAlertDialog alertDialog;
-private PedidoEntity mPedido;
+    private PedidoEntity mPedido;
     private NestedScrollView mscroll;
     Boolean BanderaCaja=false;
     Boolean BanderaCantidad=false;
@@ -295,20 +297,20 @@ private PedidoEntity mPedido;
                     return;
                 }
                 if (response.isSuccessful() && responseUser != null) {
-                        viewModelStock.deleteAllStocks();
+                    viewModelStock.deleteAllStocks();
 
                     final List<StockEntity > listStockInsert = new ArrayList<>();
                     for (int i = 0; i < responseUser.size(); i++) {
                         StockEntity stock = responseUser.get(i);  //Obtenemos el registro del server
                         //viewModel.insertCliente(cliente);
 
-                                listStockInsert.add(stock);
+                        listStockInsert.add(stock);
 
-                                // viewModelStock.insertStock(stock);
+                        // viewModelStock.insertStock(stock);
 
 
-                        }
-                     viewModelStock.insertListStock(listStockInsert);
+                    }
+                    viewModelStock.insertListStock(listStockInsert);
                     VerficarStockDisponible(1);
                    /* new Handler().post(new Runnable() {
                         @Override
@@ -365,7 +367,7 @@ private PedidoEntity mPedido;
 
                 if (p!=null){
 
-                        mDetalleItem.get(i).setStock(p.getStock());
+                    mDetalleItem.get(i).setStock(p.getStock());
 
 
                 }
@@ -423,15 +425,15 @@ private PedidoEntity mPedido;
         int idRepartidor=DataPreferences.getPrefInt("idrepartidor",getActivity());
         List<ZonasEntity> lisZona= null;
         Boolean bandera=false;
-                List<LatLng> lista=ObtenerListaPuntos(mCliente.getCczona());
+        List<LatLng> lista=ObtenerListaPuntos(mCliente.getCczona());
 
-                LatLng punto=new LatLng(LocationGeo.getLocationActual().getLatitude(),LocationGeo.getLocationActual().getLongitude());
-                if (lista.size()>0){
-                    if (LocationGeo.Encontrado(lista,punto)){
-                        return true;
-                    }
+        LatLng punto=new LatLng(LocationGeo.getLocationActual().getLatitude(),LocationGeo.getLocationActual().getLongitude());
+        if (lista.size()>0){
+            if (LocationGeo.Encontrado(lista,punto)){
+                return true;
+            }
 
-                }
+        }
 
         return false;
 
@@ -494,7 +496,7 @@ private PedidoEntity mPedido;
     public double _prObtenerTotal(){
         double suma=0;
         for (int i = 0; i < mDetalleItem.size(); i++) {
-           suma=suma+( mDetalleItem.get(i).getTotal());
+            suma=suma+( mDetalleItem.get(i).getTotal());
         }
         return suma;
     }
@@ -545,22 +547,22 @@ private PedidoEntity mPedido;
     }
     public void RetornarPrincipal(){
 
-            MainActivity fca = ((MainActivity) getActivity());
-            fca.removeAllFragments();
+        MainActivity fca = ((MainActivity) getActivity());
+        fca.removeAllFragments();
 
-            if (VentaDirectaOPedido==0){  ///Si es pedido listado pedidos pendientes
-                Fragment frag = new  ListPedidosFragment(1);
-
-
-                //fca.switchFragment(frag,"LISTAR_PEDIDOS");
-                fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
-            }else{  // si es venta directa nos vamos a pedidos entregados
-                Fragment frag = new  ListPedidosFragment(3);
+        if (VentaDirectaOPedido==0){  ///Si es pedido listado pedidos pendientes
+            Fragment frag = new  ListPedidosFragment(1);
 
 
-                //fca.switchFragment(frag,"LISTAR_PEDIDOS");
-                fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
-            }
+            //fca.switchFragment(frag,"LISTAR_PEDIDOS");
+            fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
+        }else{  // si es venta directa nos vamos a pedidos entregados
+            Fragment frag = new  ListPedidosFragment(3);
+
+
+            //fca.switchFragment(frag,"LISTAR_PEDIDOS");
+            fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
+        }
 
 
 
@@ -573,24 +575,24 @@ private PedidoEntity mPedido;
 
     @Override
     public void MostrarClientes(List<ClienteEntity> clientes) {
-            if (clientes.size()>0){
-                lisCliente = new ArrayList<>();
-                lisCliente.addAll(clientes);
-                acliente.setThreshold(1);
-                clientAdapter = new ClientesAdapter(getActivity(), R.layout.row_customer, lisCliente);
-                acliente.setAdapter(clientAdapter);
-                acliente.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        if ((ClienteEntity) adapterView.getItemAtPosition(i)!=null){
-                            mCliente = (ClienteEntity) adapterView.getItemAtPosition(i);
-                            mCreatePedidoPresenter.CargarProducto(mCliente.getCccat(),VentaDirectaOPedido);
-                        }
-
-
+        if (clientes.size()>0){
+            lisCliente = new ArrayList<>();
+            lisCliente.addAll(clientes);
+            acliente.setThreshold(1);
+            clientAdapter = new ClientesAdapter(getActivity(), R.layout.row_customer, lisCliente);
+            acliente.setAdapter(clientAdapter);
+            acliente.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    if ((ClienteEntity) adapterView.getItemAtPosition(i)!=null){
+                        mCliente = (ClienteEntity) adapterView.getItemAtPosition(i);
+                        mCreatePedidoPresenter.CargarProducto(mCliente.getCccat(),VentaDirectaOPedido);
                     }
-                });
-            }
+
+
+                }
+            });
+        }
     }
 
     @Override
@@ -718,6 +720,7 @@ private PedidoEntity mPedido;
 
 
     public void Imprimir(String Id){
+        String []header={"Detalle","Cant","Precio","Monto"};
 
 
         templatePDF=new TemplatePDF(view.getContext());
@@ -741,7 +744,7 @@ private PedidoEntity mPedido;
         templatePDF.addParagraph02("Senor(es): "+mCliente.getNamecliente());
         templatePDF.addParagraph02("Contacto: "+mCliente.getTelefono());
 //templatePDF.addParagraph(longText);
-      //  templatePDF.createTable(header,getclients());
+        //  templatePDF.createTable(header,getclients());
         templatePDF.addParagraph02("------------------------------------------------------------");
         templatePDF.addParagraphTitleDetalle("Detalle               Cantidad      Precio        Monto ");
         for (int i = 0; i < mDetalleItem.size(); i++) {
@@ -752,8 +755,8 @@ private PedidoEntity mPedido;
                         ,ShareMethods.ObtenerDecimalToString(det.getObptot(),2)});*/
 
                 templatePDF.addParagraph02(""+det.getCadesc());
-               templatePDF.addParagraph0Detalle(""+ShareMethods.ObtenerDecimalToString(det.getObpcant(),2)+"           "
-                       +ShareMethods.ObtenerDecimalToString(det.getObpbase() ,2)+"           "+ShareMethods.ObtenerDecimalToString(det.getObptot(),2));
+                templatePDF.addParagraph0Detalle(""+ShareMethods.ObtenerDecimalToString(det.getObpcant(),2)+"           "
+                        +ShareMethods.ObtenerDecimalToString(det.getObpbase() ,2)+"           "+ShareMethods.ObtenerDecimalToString(det.getObptot(),2));
 
             }
 
@@ -1107,20 +1110,20 @@ private PedidoEntity mPedido;
 
                     for (DescuentosEntity descuento:list ) {
 
-                       Date fechaInicio= descuento.getFechaInicio();
-                       Date fechaFin=descuento.getFechaFin();
+                        Date fechaInicio= descuento.getFechaInicio();
+                        Date fechaFin=descuento.getFechaFin();
 
-                       fechaFin.setSeconds(0);
-                       fechaFin.setMinutes(0);
-                       fechaFin.setHours(0);
-                       fechaInicio.setSeconds(0);
-                       fechaInicio.setMinutes(0);
-                       fechaInicio.setHours(0);
+                        fechaFin.setSeconds(0);
+                        fechaFin.setMinutes(0);
+                        fechaFin.setHours(0);
+                        fechaInicio.setSeconds(0);
+                        fechaInicio.setMinutes(0);
+                        fechaInicio.setHours(0);
 
                         if (cant>=descuento.getCantidad1()&& cant<=descuento.getCantidad2()&& FechaActual>=fechaInicio.getTime()
                                 && FechaActual<=fechaFin.getTime() ){
-                        preciod=descuento.getPrecio();
-                        total2=cant*preciod;
+                            preciod=descuento.getPrecio();
+                            total2=cant*preciod;
                         }
                     }
                     if (total2>0){
@@ -1184,7 +1187,7 @@ private PedidoEntity mPedido;
             }
 
         }
-        
+
     }
     public List<ProductoEntity> GetActualProducts()  {
         List <ProductoEntity> lista=new ArrayList<>();

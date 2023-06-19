@@ -25,13 +25,9 @@
        android:textColor="@color/colorPrimary"
        style="@style/TextAppearance.AppCompat.Small"
        android:textStyle="bold"
-<<<<<<< HEAD
-       android:text="Version 01.01-2023"
-=======
-       android:text="Version P1.3"
->>>>>>> CajasEstablePrintPDF
+       android:text="Version 01.01-2023">
 
-       />
+   </TextView>
 </RelativeLayout>
 
 
