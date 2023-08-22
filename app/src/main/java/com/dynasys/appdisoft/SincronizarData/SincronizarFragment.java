@@ -157,10 +157,10 @@ checkTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(
         });
         OnclickButton();
         ShowDialogSincronizando();
-        if (ServicesLocation.getInstance()==null){
+       /* if (ServicesLocation.getInstance()==null){
             Intent intent = new Intent(getContext(), ServicesLocation.class);
             getContext().startService(intent);
-        }
+        }*/
 
         if (ServiceSincronizacion.getInstance()==null){
         UtilShare.mActivity=getActivity();

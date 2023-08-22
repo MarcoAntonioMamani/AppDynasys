@@ -23,11 +23,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Adapter.ClientesAdapter;
@@ -38,6 +40,7 @@ import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.DB.Entity.PointEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.PrecioCategoriaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
@@ -104,6 +107,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private ProductosListViewModel viewModelProducto;
     private PedidoListViewModel viewModelPedido;
     private DescuentosListViewModel viewModelDescuento;
+    PrecioCategoriaEntity precioSelected;
     private StockListViewModel viewModelStock;
     private VisitaListViewModel viewModelVisita;
     private DetalleListViewModel viewModelDetalle;
@@ -118,6 +122,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private ZonaListViewModel viewModelZonas;
     ProductAdapter productoAdapter;
     private PointListViewModel viewmodelPoint;
+
     private String M_Uii="";
     Boolean Grabado=false;
     DetalleAdaptader mDetalleAdapter;
@@ -133,6 +138,8 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private PedidoEntity mPedido;
     private NestedScrollView mscroll;
     Boolean BanderaCaja=false;
+    private Spinner listaSpinnerPrecio;
+    private List<PrecioCategoriaEntity> listPrecio;
     Boolean BanderaCantidad=false;
 
     int VentaDirectaOPedido =0;  /// VentaDirecta = 1   Pedido=0
@@ -171,12 +178,13 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the layout for this fragment id_precioCategoria
         view = inflater.inflate(R.layout.fragment_create_pedido, container, false);
         acliente=view.findViewById(R.id.pedido_buscar_cliente);
         aProducto=view.findViewById(R.id.pedido_buscar_producto);
         detalle_List=view.findViewById(R.id.id_detalle_listPedido);
         name_total=view.findViewById(R.id.pedido_view_Total);
+        listaSpinnerPrecio =(Spinner)view.findViewById(R.id.id_precioCategoria);
         name_descuento=view.findViewById(R.id.pedido_view_Descuento);
         name_descuentoTotal=view.findViewById(R.id.pedido_view_TotalDescuento);
         EtReclamo=view.findViewById(R.id.edit_Reclamo);
@@ -195,6 +203,9 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
         viewModelVisita=ViewModelProviders.of(getActivity()).get(VisitaListViewModel.class);
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
+        listPrecio=new ArrayList<>();
+        listPrecio.add(new PrecioCategoriaEntity(1,"Precio Venta"));
+        listPrecio.add(new PrecioCategoriaEntity(3,"Precio Institucional"));
         new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock,viewModelVisita);
         mCreatePedidoPresenter.CargarClientes();
         iniciarRecyclerView();
@@ -207,13 +218,28 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         LocationGeo.iniciarGPS();
         ShowDialogSincronizando();
         CargarDatosclienteMapa();
+        listaSpinnerPrecio.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if (pos>=0 && listPrecio.size()>0){
+                    precioSelected = listPrecio.get(pos);
+                    mCreatePedidoPresenter.CargarProducto(precioSelected.getId(),VentaDirectaOPedido);
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        ArrayAdapter<PrecioCategoriaEntity> adapter =new ArrayAdapter<PrecioCategoriaEntity>(getContext(), android.R.layout.simple_spinner_item, listPrecio);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        listaSpinnerPrecio.setAdapter(adapter);
+
         return view;
     }
     public void CargarDatosclienteMapa(){
         if (tipoActividad==1){
             mCliente = UtilShare .clienteMapa;
             acliente.setText(mCliente.getNamecliente());
-            mCreatePedidoPresenter.CargarProducto(mCliente.getCccat(),VentaDirectaOPedido);
+
         }
     }
     public void onclickGuardar(){
@@ -363,8 +389,6 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
                 }else{   //Es Venta Directa
                     p=viewModelProducto.getMProductoByStock(detail.getObcprod());
                 }
-
-
                 if (p!=null){
 
                     mDetalleItem.get(i).setStock(p.getStock());
@@ -586,7 +610,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     if ((ClienteEntity) adapterView.getItemAtPosition(i)!=null){
                         mCliente = (ClienteEntity) adapterView.getItemAtPosition(i);
-                        mCreatePedidoPresenter.CargarProducto(mCliente.getCccat(),VentaDirectaOPedido);
+
                     }
 
 

@@ -205,15 +205,7 @@ public void CambiarActividad(){
         alertDialog.show();
     }
     private void ShowDialogSincronizando(){
-        /*progresdialog=new ProgressDialog(this);
-        progresdialog.setCancelable(false);
-        progresdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progresdialog.setIndeterminate(false);
-        Drawable drawable = new ProgressBar(this).getIndeterminateDrawable().mutate();
-        drawable.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent),
-                PorterDuff.Mode.SRC_IN);
-        progresdialog.setIndeterminateDrawable(drawable);
-        progresdialog.setMessage("Consultando Datos .....");*/
+
 
         try
         {

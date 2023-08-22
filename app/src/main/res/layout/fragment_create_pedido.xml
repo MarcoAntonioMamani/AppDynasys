@@ -31,7 +31,7 @@ android:background="@color/marfil"
                 android:orientation="vertical"
                 android:background="@color/marfil"
                 android:paddingTop="10dp"
-                android:paddingBottom="20dp"
+                android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
                 >
                 <LinearLayout
@@ -108,6 +108,39 @@ android:background="@color/marfil"
 
                     </LinearLayout>
                 </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorAccent"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:paddingRight="5dp"
+                        android:text="Precio:"/>
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="10dp"
+                        >
+                        <Spinner
+                            android:id="@+id/id_precioCategoria"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/keyline_1"
+                            android:entries="@array/precio_array"
+                            />
+
+                    </LinearLayout>
+                </LinearLayout>
+
             </LinearLayout>
 
         </android.support.v7.widget.CardView>

@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -30,6 +31,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Adapter.ClientesAdapter;
@@ -39,6 +41,7 @@ import com.dynasys.appdisoft.Clientes.MapClientActivity;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
+import com.dynasys.appdisoft.Login.DB.Entity.PrecioCategoriaEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
 import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
@@ -59,6 +62,7 @@ import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
+import com.dynasys.appdisoft.ShareUtil.Pdf.TemplatePDF;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
 import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
@@ -131,7 +135,9 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     private ImageButton btnImprimir;
     Boolean BanderaCaja=false;
     Boolean BanderaCantidad=false;
-
+    private Spinner listaSpinnerPrecio;
+    private List<PrecioCategoriaEntity> listPrecio;
+    PrecioCategoriaEntity precioSelected;
     Boolean AnularPedido=false;   ///BAndera para saver si haique anular el pedido
     @Override
     public void onResume() {
@@ -163,11 +169,12 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
+//
         view = inflater.inflate(R.layout.fragment_modify_pedido, container, false);
         acliente=view.findViewById(R.id.edit_view_cliente);
         aProducto=view.findViewById(R.id.edit_buscar_producto);
         detalle_List=view.findViewById(R.id.edit_view_RecPedidos);
+        listaSpinnerPrecio =(Spinner)view.findViewById(R.id.ModificaerPEdido_precioCategoria);
         name_total=view.findViewById(R.id.edit_viewdata_MontoTotal);
         name_descuento=view.findViewById(R.id.edit_view_Descuento);
         name_totalDescuento=view.findViewById(R.id.edit_view_TotalDescuento);
@@ -190,6 +197,9 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         viewModelDetalle = ViewModelProviders.of(getActivity()).get(DetalleListViewModel.class);
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
+        listPrecio=new ArrayList<>();
+        listPrecio.add(new PrecioCategoriaEntity(1,"Precio Venta"));
+        listPrecio.add(new PrecioCategoriaEntity(3,"Precio Institucional"));
         new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock,viewModelVisita);
         iniciarRecyclerView();
         acliente.setText(mCliente.getNamecliente());
@@ -208,7 +218,21 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
 if (mPedido.getOaap()!=1){
     mbutton_update.setVisibility(View.GONE);
 }
+        listaSpinnerPrecio.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if (pos>=0 && listPrecio.size()>0){
+                    precioSelected = listPrecio.get(pos);
+                    mCreatePedidoPresenter.CargarProducto(precioSelected.getId(),0);
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        ArrayAdapter<PrecioCategoriaEntity> adapter =new ArrayAdapter<PrecioCategoriaEntity>(getContext(), android.R.layout.simple_spinner_item, listPrecio);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        listaSpinnerPrecio.setAdapter(adapter);
         return view;
+
     }
     public void onClickImprimir(){
         btnImprimir.setOnClickListener(new View.OnClickListener() {
@@ -221,7 +245,7 @@ if (mPedido.getOaap()!=1){
     }
 
     public void Imprimir(){
-       /* String []header={"Detalle","Cant","Precio","Monto"};
+        String []header={"Detalle","Cant","Precio","Monto"};
 
         TemplatePDF templatePDF;
         templatePDF=new TemplatePDF(view.getContext());
@@ -263,7 +287,7 @@ if (mPedido.getOaap()!=1){
         templatePDF.addParagraphTitle("Gracias Por Su Compra!!");
         templatePDF.closeDocument();
 
-        templatePDF.appviewPDF(getActivity());*/
+        templatePDF.appviewPDF(getActivity());
     }
     private ArrayList<String[]> getclients(){
         ArrayList<String[]> rows=new ArrayList<>();
@@ -300,7 +324,7 @@ if (mPedido.getOaap()!=1){
             }
         });
         mCreatePedidoPresenter.getDetailOrder(mPedido.getCodigogenerado());
-        mCreatePedidoPresenter.CargarProducto(mCliente.getCccat(),0);
+
         ////Para Visualiza la seccion de credito o contado
         int ViewCreditos=DataPreferences.getPrefInt("ViewCredito",getContext());
         if (ViewCreditos ==0){
@@ -512,7 +536,14 @@ public void VerficarStockDisponible(int tipo){
 
         DetalleEntity detail=mDetalleItem.get(i);
         try {
-            ProductoEntity p =viewModelProducto.getMProductoByStock(detail.getObcprod());
+            ProductoEntity p;
+            int idConciliacion= DataPreferences.getPrefInt("idConciliacion",getContext());//es un repartidor con conciliacion
+            if (idConciliacion>0) {
+                 p = viewModelProducto.getMProductoByStock(detail.getObcprod());
+            }else{
+                  p=viewModelProducto.getMProductoByStockDirecta(detail.getObcprod());
+            }
+
             if (p!=null){
                 if (mDetalleItem .get(i).getObupdate()>=1){
                    DetalleEntity d1= ObtenerDetail(viewModelDetalle.getMAllDetalle(1),mDetalleItem.get(i));
@@ -651,6 +682,7 @@ return null;
 
 
                         }
+
                         VerficarStockDisponible(1);
 
 
@@ -780,8 +812,8 @@ return null;
                 }
             }
         });
-        int categoria =DataPreferences.getPrefInt("CategoriaRepartidor",getContext());
-        if (categoria==3){
+        int categoria =DataPreferences.getPrefInt("idConciliacion",getContext());
+        if (categoria<=0){
             Entregar.setVisibility(View.GONE);
         }
         modificar.setOnClickListener(
@@ -1181,56 +1213,110 @@ return null;
                         this.obptot = obptot;
                         this.estado = estado;*/
                         DetalleEntity ItemDetalle=ObtenerDetalle(item);
-                        if (ItemDetalle==null){
-                            DetalleEntity detalle=new DetalleEntity();
-                            detalle.setObnumi(mPedido.getCodigogenerado());
-                            detalle.setObcprod(item.getNumi());
-                            detalle.setCadesc(item.getProducto());
-                            detalle.setObpcant(1.0);
-                            detalle.setObpbase(item.getPrecio());
-                            detalle.setObptot(item.getPrecio());
-                            detalle.setEstado(false);
-                            detalle.setStock(item.getStock());
-                            double CantCajaValue =0;
-                            if (item.getConversion()==1.0){
+                        int stock= DataPreferences.getPrefInt("stock",context);
+                        if (stock>0){
+                            if (item.getStock()>0){
+                                if (ItemDetalle==null){
+                                    DetalleEntity detalle=new DetalleEntity();
+                                    detalle.setObnumi(mPedido.getCodigogenerado());
+                                    detalle.setObcprod(item.getNumi());
+                                    detalle.setCadesc(item.getProducto());
+                                    detalle.setObpcant(1.0);
+                                    detalle.setObpbase(item.getPrecio());
+                                    detalle.setObptot(item.getPrecio());
+                                    detalle.setEstado(false);
+                                    detalle.setStock(item.getStock());
+                                    double CantCajaValue =0;
+                                    if (item.getConversion()==1.0){
 
-                                CantCajaValue=1;
+                                        CantCajaValue=1;
+                                    }else{
+                                        double Conversion=item.getConversion();
+                                        double CantCaja= (double) (1/Conversion);
+
+
+
+                                        CantCajaValue=CantCaja;
+                                    }
+
+
+                                    detalle.setCajas(CantCajaValue);
+                                    detalle.setConversion(item.getConversion());
+
+                                    detalle.setObupdate(0);
+                                    mDetalleItem.add(detalle);
+                                    //mDetalleAdapter.setFilter(mDetalleItem);
+                                    Reconstruir();
+                                    calcularTotal();
+                                    aProducto .setText("");
+                                    aProducto.clearFocus();
+                                    mscroll.fullScroll(View.FOCUS_DOWN);
+                                    productoAdapter.setLista(GetActualProducts());
+                                    productoAdapter.notifyDataSetChanged();
+                                }else{
+                                    try {
+
+                                        DetalleEntity  detalle = ItemDetalle.clone();
+                                        mDetalleItem.remove(ItemDetalle);
+                                        detalle.setObpcant(1.0);
+                                        mDetalleItem.add(detalle);
+                                        if (detalle.getObupdate()==-1){
+                                            detalle.setObupdate(2);
+                                        }else{
+                                            detalle.setObupdate(0);
+                                        }
+
+                                        //mDetalleAdapter.setFilter(mDetalleItem);
+                                        Reconstruir();
+                                        calcularTotal();
+                                        aProducto .setText("");
+                                        aProducto.clearFocus();
+                                        mscroll.fullScroll(View.FOCUS_DOWN);
+                                        productoAdapter.setLista(GetActualProducts());
+                                        productoAdapter.notifyDataSetChanged();
+
+                                    } catch (CloneNotSupportedException e) {
+
+                                    }
+
+                                }
                             }else{
-                                double Conversion=item.getConversion();
-                                double CantCaja= (double) (1/Conversion);
+                                hideKeyboard();
 
-
-
-                                CantCajaValue=CantCaja;
+                                aProducto.setText("");
+                                ShowMessageResult("No Existe Stock para seleccionar el producto");
                             }
 
-
-                            detalle.setCajas(CantCajaValue);
-                            detalle.setConversion(item.getConversion());
-
-                            detalle.setObupdate(0);
-                            mDetalleItem.add(detalle);
-                            //mDetalleAdapter.setFilter(mDetalleItem);
-                            Reconstruir();
-                            calcularTotal();
-                            aProducto .setText("");
-                            aProducto.clearFocus();
-                            mscroll.fullScroll(View.FOCUS_DOWN);
-                            productoAdapter.setLista(GetActualProducts());
-                            productoAdapter.notifyDataSetChanged();
                         }else{
-                            try {
-
-                                DetalleEntity  detalle = ItemDetalle.clone();
-                                mDetalleItem.remove(ItemDetalle);
+                            if (ItemDetalle==null){
+                                DetalleEntity detalle=new DetalleEntity();
+                                detalle.setObnumi(mPedido.getCodigogenerado());
+                                detalle.setObcprod(item.getNumi());
+                                detalle.setCadesc(item.getProducto());
                                 detalle.setObpcant(1.0);
-                                mDetalleItem.add(detalle);
-                                if (detalle.getObupdate()==-1){
-                                    detalle.setObupdate(2);
+                                detalle.setObpbase(item.getPrecio());
+                                detalle.setObptot(item.getPrecio());
+                                detalle.setEstado(false);
+                                detalle.setStock(item.getStock());
+                                double CantCajaValue =0;
+                                if (item.getConversion()==1.0){
+
+                                    CantCajaValue=1;
                                 }else{
-                                    detalle.setObupdate(0);
+                                    double Conversion=item.getConversion();
+                                    double CantCaja= (double) (1/Conversion);
+
+
+
+                                    CantCajaValue=CantCaja;
                                 }
 
+
+                                detalle.setCajas(CantCajaValue);
+                                detalle.setConversion(item.getConversion());
+
+                                detalle.setObupdate(0);
+                                mDetalleItem.add(detalle);
                                 //mDetalleAdapter.setFilter(mDetalleItem);
                                 Reconstruir();
                                 calcularTotal();
@@ -1239,12 +1325,35 @@ return null;
                                 mscroll.fullScroll(View.FOCUS_DOWN);
                                 productoAdapter.setLista(GetActualProducts());
                                 productoAdapter.notifyDataSetChanged();
+                            }else{
+                                try {
 
-                            } catch (CloneNotSupportedException e) {
+                                    DetalleEntity  detalle = ItemDetalle.clone();
+                                    mDetalleItem.remove(ItemDetalle);
+                                    detalle.setObpcant(1.0);
+                                    mDetalleItem.add(detalle);
+                                    if (detalle.getObupdate()==-1){
+                                        detalle.setObupdate(2);
+                                    }else{
+                                        detalle.setObupdate(0);
+                                    }
+
+                                    //mDetalleAdapter.setFilter(mDetalleItem);
+                                    Reconstruir();
+                                    calcularTotal();
+                                    aProducto .setText("");
+                                    aProducto.clearFocus();
+                                    mscroll.fullScroll(View.FOCUS_DOWN);
+                                    productoAdapter.setLista(GetActualProducts());
+                                    productoAdapter.notifyDataSetChanged();
+
+                                } catch (CloneNotSupportedException e) {
+
+                                }
 
                             }
-
                         }
+
 
                     }
 
@@ -1419,6 +1528,7 @@ return null;
                         // getActivity().onBackPressed();
                         ShowMessageResult("La cantidad es Superior al Stock Disponible = "+item.getStock());
                         cantidad=1;
+
                         eCantidad.setText("1");
 
                         ////////////Caja Logica//////////////////////

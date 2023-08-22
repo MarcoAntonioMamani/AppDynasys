@@ -75,7 +75,7 @@ public class viewOrdersAdaptader
         item = items.get(i);
      viewHolder.nameProduct.setText(""+item.getCadesc().toString());
      viewHolder.cantidad.setText(ShareMethods.ObtenerDecimalToString(item.getObpcant(),2));
-     viewHolder.price.setText(ShareMethods.ObtenerDecimalToString(item.getObpbase(),2));
+     viewHolder.price.setText(ShareMethods.ObtenerDecimalToString(item.getObpbase(),4));
      viewHolder.subTotal.setText(ShareMethods.ObtenerDecimalToString(item.getObptot(),2));
     }
 

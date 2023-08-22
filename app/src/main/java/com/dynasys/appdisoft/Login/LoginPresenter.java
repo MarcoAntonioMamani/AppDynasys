@@ -135,6 +135,7 @@ String SPREAD_SHEET_ID = "1jBtXZdoxIYJlEAnJ8YbQ3NbUmPrBFqgtSbmMHMIQMck";
                         DataPreferences.putPrefInteger("CantidadProducto",responseUser.getCantidad_producto(),mContext);
                         DataPreferences.putPrefInteger("ValidarZona",responseUser.getValidarZona(),mContext);
                         DataPreferences.putPrefInteger("precio",responseUser.getPrecio(),mContext);
+                        DataPreferences.putPrefInteger("idConciliacion",responseUser.getIdConciliacion(),mContext);
                         _DescargarZonas(""+responseUser.getId());
                         mLoginView.LoginSuccesfull();
                     }

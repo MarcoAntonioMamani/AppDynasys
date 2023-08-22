@@ -102,7 +102,7 @@ public class DetalleAdaptader
         viewHolder.nombre.setText(item.getCadesc());
         viewHolder.img_delete.setTag(item);
 
-        viewHolder.img_delete.setText("Conv. = "+item.getConversion()+"  Eliminar");
+        viewHolder.img_delete.setText("Conv. = "+item.getConversion()+"  Eliminar"+" stock="+item.getStock());
         viewHolder.price.setText(""+item.getObpbase());
         viewHolder.subtotal.setText(""+(String.format("%.2f",item.getObpcant()*item.getObpbase())));
         viewHolder.cantidad.setText(""+item.getObpcant());
@@ -125,7 +125,10 @@ public class DetalleAdaptader
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int pos =ObtenerPosicionElemento(item);
                 if (pos>=0){
+                    viewHolder.caja.removeTextChangedListener(this);
                     mView.ModifyItemCaja(pos,s.toString(),item,tvsubtotal,tvCantidad,tvCantidadCajas);
+                    viewHolder.caja.addTextChangedListener(this);
+
                 }
 
 
@@ -147,7 +150,9 @@ public class DetalleAdaptader
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int pos =ObtenerPosicionElemento(item);
                 if (pos>=0){
+                    viewHolder.cantidad.removeTextChangedListener(this);
                     mView.ModifyItem(pos,s.toString(),item,tvsubtotal,tvCantidad,tvCantidadCajas);
+                    viewHolder.cantidad.addTextChangedListener(this);
                 }
 
 

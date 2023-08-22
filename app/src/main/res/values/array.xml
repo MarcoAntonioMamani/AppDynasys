@@ -46,6 +46,10 @@
         <item>Persona Natural</item>
         <item>Persona Juridica</item>
     </string-array>
+    <string-array name="precio_array">
+        <item>Precio 01</item>
+        <item>Precio 02</item>
+    </string-array>
     <string-array name="tipogenero_array">
         <item>Masculino</item>
         <item>Femenino</item>

@@ -189,10 +189,10 @@ public class MainActivity extends AppCompatActivity {
          return;
 
         }else{
-            if (ServicesLocation.getInstance()==null){
+           /* if (ServicesLocation.getInstance()==null){
                 Intent intent = new Intent(this, ServicesLocation.class);
                 startService(intent);
-            }
+            }*/
         }
         if (ServiceSincronizacion.getInstance2()==null){
             UtilShare.mActivity=this;
@@ -480,17 +480,17 @@ public class MainActivity extends AppCompatActivity {
         menulcv.setVisible(true);
             menucli.setVisible(true);
             menuped.setVisible(true);
-        menuListado.setVisible(true);
+        menuListado.setVisible(false);
             menuMapa.setVisible(true);
         menuAddPedido.setVisible(true);
         menuEfectivo.setVisible(true);
         menupedEntregados.setVisible(true);
-        menuVisita.setVisible(true);
+        menuVisita.setVisible(false);  //ocultando visita
         menuVentaDirecta.setVisible(true);
 
-        menuCobranza.setVisible(true);
+        menuCobranza.setVisible(false);  //ocultado cobranza
         menuEfectivo.setVisible(true);
-        menuReviewProducto.setVisible(true);
+        menuReviewProducto.setVisible(false);  //ocultando revisar producto
     }
 
     @Override
