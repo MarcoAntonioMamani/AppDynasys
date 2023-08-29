@@ -253,7 +253,7 @@ if (mPedido.getOaap()!=1){
         templatePDF.addMetaData("Clientes","Ventas","Disoft");
         templatePDF.addTitles("Tienda CodigoFacilito","Clientes","01/01/2021");
 /////////////////////////////////////////////
-        templatePDF.addParagraph02("DISTRIBUIDORA J & L");
+        templatePDF.addParagraph02("DISTRIBUIDORA DISTRAL KCP");
         String nameRepartidor=DataPreferences.getPref("repartidor",view.getContext());
 
         templatePDF.addParagraph02("Vendedor: "+nameRepartidor);
@@ -261,7 +261,7 @@ if (mPedido.getOaap()!=1){
         templatePDF.addParagraph02("Nro Ticket # "+mPedido.getOanumi());
 
         templatePDF.addParagraphTitle("PEDIDO");
-        templatePDF.addParagraphTitle("Tipo Nota: Lacteos");
+        templatePDF.addParagraphTitle("Nota De Venta");
         templatePDF.addParagraph02("Fecha: "+ShareMethods.ObtenerFecha02(mPedido.getOafdoc()));
         templatePDF.addParagraph02("Fecha Entrega: "+ShareMethods.ObtenerFecha02(mPedido.getOafdoc()));
         templatePDF.addParagraph02("Senor(es): "+mCliente.getNamecliente());
@@ -1224,6 +1224,7 @@ return null;
                                     detalle.setObpcant(1.0);
                                     detalle.setObpbase(item.getPrecio());
                                     detalle.setObptot(item.getPrecio());
+                                    detalle.setTotal(item.getPrecio());
                                     detalle.setEstado(false);
                                     detalle.setStock(item.getStock());
                                     double CantCajaValue =0;
@@ -1609,6 +1610,41 @@ return null;
         }
     }
 
+    @Override
+    public void ModifyItemDescuento(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eDescuento) {
+        double descuento=0.0;
+        if (isDouble(value)){
+            descuento=Double.parseDouble(value);
+        }
+        int posicion =obtenerPosicionItem(item);
+        DetalleEntity detalle= mDetalleItem.get(posicion);
+        int stock= DataPreferences.getPrefInt("stock",context);
+
+        if (posicion>=0 && descuento>=0 && descuento<mDetalleItem.get(posicion).getObptot()){
+
+            detalle.setDescuento(descuento);
+            double total=mDetalleItem.get(posicion).getObpcant()*mDetalleItem.get(posicion).getObpbase();
+
+            detalle.setTotal(total-descuento);
+            tvsubtotal.setText(""+String.format("%.2f", (total-descuento)));
+            calcularTotal();
+
+        }else{
+            if (descuento>=0 && descuento>=mDetalleItem.get(posicion).getObptot()){
+
+                detalle.setDescuento(0);
+                detalle.setTotal(mDetalleItem.get(posicion).getObpcant()*mDetalleItem.get(posicion).getObpbase());
+                tvsubtotal.setText(""+String.format("%.2f", (mDetalleItem.get(posicion).getObpcant()*mDetalleItem.get(posicion).getObpbase())));
+                eDescuento.setText(""+String.format("%.2f", 0.00));
+                calcularTotal();
+            }
+
+        }
+        if (mDetalleItem.get(posicion).getObupdate()>=1){
+            detalle.setObupdate(2);
+        }
+    }
+
 
     @Override
     public void DeleteAndModifyDetailOrder(DetalleEntity item, int pos) {
@@ -1817,6 +1853,8 @@ return null;
         }
         name_totalDescuento.setText(""+ ShareMethods.redondearDecimales(TotalGeneral,2)+" Bs");
 
+        calcularTotal();
+
     }
     public void _prModificarNumi(String Numi){
         for (int i = 0; i < mDetalleItem.size(); i++) {
@@ -1899,14 +1937,19 @@ return null;
         }
         name_total.setText(""+ ShareMethods.redondearDecimales(total,2)+" Bs");
         mTotal=total;
-        CalcularDescuentos();
+       // CalcularDescuentos();
 
         double descuentoTotal=0.0;
+
         for (int i = 0; i < mDetalleItem.size(); i++) {
             descuentoTotal+=(mDetalleItem.get(i).getDescuento());
         }
         name_descuento.setText(""+ ShareMethods.redondearDecimales(descuentoTotal,2)+" Bs");
         double TotalGeneral=0.0;
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            DetalleEntity detalle=mDetalleItem.get(i);
+            detalle.setTotal(detalle.getObptot()-detalle.getDescuento());
+        }
         for (int i = 0; i < mDetalleItem.size(); i++) {
             TotalGeneral+=(mDetalleItem.get(i).getTotal());
         }

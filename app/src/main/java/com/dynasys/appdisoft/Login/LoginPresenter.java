@@ -124,6 +124,7 @@ String SPREAD_SHEET_ID = "1jBtXZdoxIYJlEAnJ8YbQ3NbUmPrBFqgtSbmMHMIQMck";
                     }else{
                         DataPreferences.putPrefLogin("isLogin",true,mContext);
                         DataPreferences.putPref("repartidor",responseUser.getToken(),mContext);
+                        DataPreferences.putPref("tipoNegocios",responseUser.getTipoNegocio(),mContext);
                         DataPreferences.putPrefInteger("idrepartidor",responseUser.getId(),mContext);
                         DataPreferences.putPrefInteger("zona",responseUser.getZona(),mContext);
                         DataPreferences.putPrefInteger("EditarPedidos",responseUser.getPedido(),mContext);

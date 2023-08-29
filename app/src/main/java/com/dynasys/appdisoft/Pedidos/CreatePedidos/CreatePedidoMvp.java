@@ -22,6 +22,7 @@ public interface CreatePedidoMvp {
         void ModifyItem(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad,EditText eCatidadCajas);
         void ModifyItemCaja(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eCantidad,EditText eCatidadCajas);
         void ModifyItemPrecio(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText ePrecio);
+        void ModifyItemDescuento(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eDescuento);
         void DeleteAndModifyDetailOrder(DetalleEntity item,int pos);
         void ShowMessageResult(String message);
         void showSaveResultOption(int codigo, String id, String mensaje);

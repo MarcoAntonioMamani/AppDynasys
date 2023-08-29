@@ -649,6 +649,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
                                 detalle.setObpcant(1.0);
                                 detalle.setObpbase(item.getPrecio());
                                 detalle.setObptot(item.getPrecio());
+                                detalle.setTotal(item.getPrecio());
                                 detalle.setEstado(false);
                                 detalle.setStock(item.getStock());
                                 detalle.setFamilia(item.getFamilia());
@@ -754,7 +755,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         templatePDF.addMetaData("Clientes","Ventas","Disoft");
         templatePDF.addTitles("Tienda CodigoFacilito","Clientes","01/01/2021");
 /////////////////////////////////////////////
-        templatePDF.addParagraph02("DISTRIBUIDORA J & L");
+        templatePDF.addParagraph02("DISTRIBUIDORA DISTRAL KCP");
         String nameRepartidor=DataPreferences.getPref("repartidor",view.getContext());
 
         templatePDF.addParagraph02("Vendedor: "+nameRepartidor);
@@ -762,7 +763,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         templatePDF.addParagraph02("Nro Ticket # "+Id);
 
         templatePDF.addParagraphTitle("PEDIDO");
-        templatePDF.addParagraphTitle("Tipo Nota: Lacteos");
+        templatePDF.addParagraphTitle("Nota de Venta");
         templatePDF.addParagraph02("Fecha: "+ShareMethods.ObtenerFecha02(mPedido.getOafdoc()));
         templatePDF.addParagraph02("Fecha Entrega: "+ShareMethods.ObtenerFecha02(mPedido.getOafdoc()));
         templatePDF.addParagraph02("Senor(es): "+mCliente.getNamecliente());
@@ -1039,6 +1040,38 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         }
 
     }
+
+    @Override
+    public void ModifyItemDescuento(int pos, String value, DetalleEntity item, TextView tvsubtotal, EditText eDescuento) {
+        double descuento=0.0;
+        if (isDouble(value)){
+            descuento=Double.parseDouble(value);
+        }
+        int posicion =obtenerPosicionItem(item);
+        int stock= DataPreferences.getPrefInt("stock",context);
+
+        if (posicion>=0 && descuento>=0 && descuento<mDetalleItem.get(posicion).getObptot()){
+            DetalleEntity detalle= mDetalleItem.get(posicion);
+            detalle.setDescuento(descuento);
+            double total=mDetalleItem.get(posicion).getObpcant()*mDetalleItem.get(posicion).getObpbase();
+
+            detalle.setTotal(total-descuento);
+            tvsubtotal.setText(""+String.format("%.2f", (total-descuento)));
+            calcularTotal();
+
+        }else{
+            if (descuento>=0 && descuento>=mDetalleItem.get(posicion).getObptot()){
+                DetalleEntity detalle= mDetalleItem.get(posicion);
+                detalle.setDescuento(0);
+                detalle.setTotal(mDetalleItem.get(posicion).getObpcant()*mDetalleItem.get(posicion).getObpbase());
+                tvsubtotal.setText(""+String.format("%.2f", (mDetalleItem.get(posicion).getObpcant()*mDetalleItem.get(posicion).getObpbase())));
+                eDescuento.setText(""+String.format("%.2f", 0.00));
+                calcularTotal();
+            }
+
+        }
+    }
+
     @Override
     public void DeleteAndModifyDetailOrder(DetalleEntity item, int pos) {
         if (item !=null){
@@ -1082,7 +1115,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         }
         name_total.setText(""+ ShareMethods.redondearDecimales(total,2)+" Bs");
         mTotal=total;
-        CalcularDescuentos();
+       // CalcularDescuentos();
 
         double descuentoTotal=0.0;
         for (int i = 0; i < mDetalleItem.size(); i++) {
@@ -1090,6 +1123,11 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         }
         name_descuento.setText(""+ ShareMethods.redondearDecimales(descuentoTotal,2)+" Bs");
         double TotalGeneral=0.0;
+        for (int i = 0; i < mDetalleItem.size(); i++) {
+            DetalleEntity detalle=mDetalleItem.get(i);
+            detalle.setTotal(detalle.getObptot()-detalle.getDescuento());
+        }
+
         for (int i = 0; i < mDetalleItem.size(); i++) {
             TotalGeneral+=(mDetalleItem.get(i).getTotal());
         }
@@ -1127,88 +1165,9 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
             DetalleEntity detalle=mDetalleItem.get(i);
             int codigoProducto=detalle.getObcprod();
             double total=detalle.getObptot();
-            try {
-                List<DescuentosEntity> list=viewModelDescuento.getDescuentosByProducto(codigoProducto);
-                cant=detalle.getObpcant();
-                if (detalle.getFamilia()==1){  //Aqui buscamos los que no tienen familia que es el id =1
+            descuentoTotal=detalle.getDescuento();
+            mDetalleItem.get(i).setTotal(total-descuentoTotal);
 
-                    for (DescuentosEntity descuento:list ) {
-
-                        Date fechaInicio= descuento.getFechaInicio();
-                        Date fechaFin=descuento.getFechaFin();
-
-                        fechaFin.setSeconds(0);
-                        fechaFin.setMinutes(0);
-                        fechaFin.setHours(0);
-                        fechaInicio.setSeconds(0);
-                        fechaInicio.setMinutes(0);
-                        fechaInicio.setHours(0);
-
-                        if (cant>=descuento.getCantidad1()&& cant<=descuento.getCantidad2()&& FechaActual>=fechaInicio.getTime()
-                                && FechaActual<=fechaFin.getTime() ){
-                            preciod=descuento.getPrecio();
-                            total2=cant*preciod;
-                        }
-                    }
-                    if (total2>0){
-                        descuentoTotal=total-total2;
-                    }else{
-                        descuentoTotal=0;
-                    }
-                    mDetalleItem.get(i).setDescuento(descuentoTotal);
-                    mDetalleItem.get(i).setTotal(total-descuentoTotal);
-
-                    descuentoTotal=0;
-                    total2=0;
-                }else{
-                    //Cálculo de descuentos por familia
-                    int familia = detalle.getFamilia();
-                    double cantnormal =detalle.getObpcant();
-                    double cantf =0;
-                    for (int j = 0; j < mDetalleItem.size(); j++) {
-                        if(familia==mDetalleItem.get(j).getFamilia()){
-                            cantf+=mDetalleItem.get(j).getObpcant();
-                        }
-                    }
-
-                    for (DescuentosEntity descuento:list ) {
-                        Date fechaInicio= descuento.getFechaInicio();
-                        Date fechaFin=descuento.getFechaFin();
-
-                        fechaFin.setSeconds(0);
-                        fechaFin.setMinutes(0);
-                        fechaFin.setHours(0);
-                        fechaInicio.setSeconds(0);
-                        fechaInicio.setMinutes(0);
-                        fechaInicio.setHours(0);
-                        if (cantf>=descuento.getCantidad1()&& cantf<=descuento.getCantidad2()&& FechaActual>=fechaInicio.getTime()
-                                && FechaActual<=fechaFin.getTime() ){
-                            preciod=descuento.getPrecio();
-                            total2=cantnormal*preciod;
-                        }
-                    }
-                    if (total2>0){
-                        descuentoTotal=total-total2;
-                    }else{
-                        descuentoTotal=0;
-                    }
-                    mDetalleItem.get(i).setDescuento(descuentoTotal);
-                    mDetalleItem.get(i).setTotal(total-descuentoTotal);
-
-                    descuentoTotal=0;
-                    total2=0;
-
-
-
-                }
-
-
-
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
         }
 

@@ -39,11 +39,20 @@ public class ClienteEntity  implements Comparable<ClienteEntity> {
     int cczona;
     @ColumnInfo(name = "razon_social")
     String razon_social;
+    @ColumnInfo(name = "TipoNegocio")
+    String TipoNegocio;
     //razon_social
     public ClienteEntity(){
 
     }
 
+    public String getTipoNegocio() {
+        return TipoNegocio;
+    }
+
+    public void setTipoNegocio(String tipoNegocio) {
+        TipoNegocio = tipoNegocio;
+    }
 
     public String getRazon_social() {
         return razon_social;

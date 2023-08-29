@@ -16,8 +16,9 @@ public class ResponseLogin {
     int ValidarZona;
     int precio;
     int idConciliacion;
+    String TipoNegocio;
 
-    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria, int stock, int view_credito, int cantidad_producto, int validarZona, int precio,int idConciliacion) {
+    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria, int stock, int view_credito, int cantidad_producto, int validarZona, int precio,int idConciliacion,String TipoNegocio) {
         this.code = code;
         this.message = message;
         this.token = token;
@@ -33,6 +34,15 @@ public class ResponseLogin {
         ValidarZona = validarZona;
         this.precio = precio;
         this.idConciliacion=idConciliacion;
+        this.TipoNegocio=TipoNegocio;
+    }
+
+    public String getTipoNegocio() {
+        return TipoNegocio;
+    }
+
+    public void setTipoNegocio(String tipoNegocio) {
+        TipoNegocio = tipoNegocio;
     }
 
     public int getIdConciliacion() {

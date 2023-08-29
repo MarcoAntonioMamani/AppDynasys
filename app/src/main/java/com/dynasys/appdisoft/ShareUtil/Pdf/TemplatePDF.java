@@ -37,7 +37,7 @@ public class TemplatePDF {
     private Font ftitle=new Font(Font.FontFamily.TIMES_ROMAN,20,Font.BOLD);
     private Font fSubtitle=new Font(Font.FontFamily.TIMES_ROMAN,12,Font.BOLD);  //Subtitulo
     private Font fContenidoGrilla=new Font(Font.FontFamily.TIMES_ROMAN ,11,Font.NORMAL);  //Subtitulo
-    private Font fText=new Font(Font.FontFamily.TIMES_ROMAN,12,Font.NORMAL);     // Texto contenido
+    private Font fText=new Font(Font.FontFamily.TIMES_ROMAN,10,Font.NORMAL);     // Texto contenido
     private Font fHighText=new Font(Font.FontFamily.TIMES_ROMAN,15,Font.BOLD, BaseColor.GREEN);  //Resaltado
 
 

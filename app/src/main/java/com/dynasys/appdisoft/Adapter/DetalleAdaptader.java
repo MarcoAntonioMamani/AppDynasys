@@ -48,6 +48,7 @@ public class DetalleAdaptader
         public EditText price;
         public TextView subtotal;
         public EditText cantidad;
+        public EditText descuento;
         public EditText caja;
         public TextView img_delete;
         public ViewHolder(View v) {
@@ -59,8 +60,7 @@ public class DetalleAdaptader
             cantidad=(EditText)v.findViewById(R.id.id_detalle_cantidad);
             caja=(EditText)v.findViewById(R.id.id_detalle_Caja);
             img_delete=(TextView)v.findViewById(R.id.id_detalle_remove);
-
-
+            descuento =(EditText)v.findViewById(R.id.id_detalle_Descuento);
 
         }
     }
@@ -98,20 +98,23 @@ public class DetalleAdaptader
         final EditText tvCantidad;
         final EditText tvCantidadCajas;
         final EditText tvPrecio;
+        final EditText tvDescuento;
         item = items.get(i);
         viewHolder.nombre.setText(item.getCadesc());
         viewHolder.img_delete.setTag(item);
 
         viewHolder.img_delete.setText("Conv. = "+item.getConversion()+"  Eliminar"+" stock="+item.getStock());
-        viewHolder.price.setText(""+item.getObpbase());
-        viewHolder.subtotal.setText(""+(String.format("%.2f",item.getObpcant()*item.getObpbase())));
+        viewHolder.price.setText(""+(String.format("%.2f",item.getObpbase())));
+        viewHolder.subtotal.setText(""+(String.format("%.2f",item.getTotal())));
         viewHolder.cantidad.setText(""+item.getObpcant());
         viewHolder.caja.setText(""+String.format("%.2f",item.getCajas()));
+        viewHolder.descuento.setText(""+String.format("%.2f",item.getDescuento()));
         viewHolder.cantidad.setTag(item);
         tvsubtotal=viewHolder.subtotal;
         tvCantidad=viewHolder.cantidad;
         tvPrecio=viewHolder.price;
         tvCantidadCajas=viewHolder.caja;
+        tvDescuento=viewHolder.descuento;
         if (i== items.size()-1){
             viewHolder.cantidad.requestFocus();
         }
@@ -190,7 +193,25 @@ if (HabilitadoPrecio==1){
     viewHolder.price.setEnabled(false);
 }
 
+        viewHolder.descuento.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                int pos =ObtenerPosicionElemento(item);
+                if (pos>=0){
+                    mView.ModifyItemDescuento(pos,charSequence.toString(),item,tvsubtotal,tvDescuento);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
 
         viewHolder.img_delete.setOnClickListener(new View.OnClickListener() {
