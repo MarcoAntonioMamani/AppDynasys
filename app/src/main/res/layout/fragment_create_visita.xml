@@ -62,7 +62,8 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                         android:textColor="@color/primary_text"
                         android:textColorHint="@color/secondary_text"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:ignore="TouchTargetSizeCheck" />
                 </LinearLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -70,14 +71,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/keyline_1">
+
                     <EditText
                         android:id="@+id/visita_txt_detalle"
                         style="@style/Widget.AppCompat.EditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="15dp"
+                        android:hint="Detalle"
                         android:inputType="textCapCharacters|textMultiLine"
-                        android:hint="Detalle" />
+                        android:textSize="15dp"
+                        tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
                 </android.support.design.widget.TextInputLayout>
 
 

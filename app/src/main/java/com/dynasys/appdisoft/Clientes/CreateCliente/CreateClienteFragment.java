@@ -32,6 +32,7 @@ import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PointEntity;
+import com.dynasys.appdisoft.Login.DB.Entity.TipoNegocioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PointListViewModel;
@@ -49,12 +50,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -86,11 +90,13 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
     private ZonaListViewModel viewModelZona;
     private PedidoListViewModel viewModelPedidos;
     private ZonasEntity zonaSelected=null;
+    private TipoNegocioEntity negocioSelected=null;
     private List<ZonasEntity> listZonas;
+    private List<TipoNegocioEntity> listNegocios;
     private Context mContext;
     private PointListViewModel viewmodelPoint;
     ClienteEntity mCliente;
-    private Spinner listaSpinnerZona;
+    private Spinner listaSpinnerZona,listSpinnerTipoCliente;
     private String M_Uii="";
     private int tipo=0; //// TIpo=0 = Nuevo Cliente ------------------  Tipo = 1 Modificacion Cliente
     private int  isUpdate=0;
@@ -132,6 +138,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
         btnAtras=(Button)view.findViewById(R.id.id_btn_cancelar);
         btnGuardar=(Button)view.findViewById(R.id.id_btn_guardar);
         listaSpinnerZona=(Spinner)view.findViewById(R.id.id_zona);
+        listSpinnerTipoCliente=(Spinner)view.findViewById(R.id.id_TipoNegocio);
         tilNombre = (TextInputLayout) view.findViewById(R.id.til_nombre);
         tilTelefono = (TextInputLayout) view.findViewById(R.id.til_telefono);
         tilDireccion = (TextInputLayout) view.findViewById(R.id.til_direccion);
@@ -181,6 +188,15 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        listSpinnerTipoCliente.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if (pos>=0 && listNegocios.size()>0){
+                    negocioSelected = listNegocios.get(pos);
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         return view;
     }
 
@@ -197,6 +213,18 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
 
         int idRepartidor=DataPreferences.getPrefInt("idrepartidor",mContext);
         try {
+            //// Tipo Negocio
+            Gson gson=new Gson();
+            Type type=new TypeToken<List<TipoNegocioEntity>>(){}.getType();
+            String test=DataPreferences.getPref("tipoNegocios",getContext());
+            listNegocios=gson.fromJson(DataPreferences.getPref("tipoNegocios",getContext()),type);
+
+            ArrayAdapter<TipoNegocioEntity> adapterTipoNegocio =new ArrayAdapter<TipoNegocioEntity>(getContext(), android.R.layout.simple_spinner_item, listNegocios);
+            adapterTipoNegocio.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            listSpinnerTipoCliente.setAdapter(adapterTipoNegocio);
+
+
+            //////Zonas
             listZonas=viewModelZona.getZonaByRepartidor(idRepartidor);
             ArrayAdapter<ZonasEntity> adapter =new ArrayAdapter<ZonasEntity>(getContext(), android.R.layout.simple_spinner_item, listZonas);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -209,6 +237,7 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
                 tilTelefono.getEditText().setText(mCliente.getTelefono());
                 tilRazonSocial.getEditText().setText(mCliente.getRazon_social());
                 listaSpinnerZona.setSelection(ObtenerPosicionListaZona(mCliente.getCczona()));
+                listSpinnerTipoCliente.setSelection(ObtenerPosicionListaNegocio(mCliente.getTipoNegocio()));
             }
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -220,6 +249,15 @@ public class CreateClienteFragment extends Fragment implements OnMapReadyCallbac
 
         for (int i = 0; i < listZonas.size(); i++) {
             if (listZonas.get(i).getLanumi()==idZona){
+                return i;
+            }
+        }
+        return -1;
+    }
+    public int ObtenerPosicionListaNegocio(int idNegocio){
+
+        for (int i = 0; i < listNegocios.size(); i++) {
+            if (listNegocios.get(i).getId()==idNegocio){
                 return i;
             }
         }
@@ -792,6 +830,7 @@ if (alertDialog!=null){
                         cliente.setRazon_social(tilRazonSocial.getEditText().getText().toString());
                         cliente.setLatitud(mapa.getCameraPosition().target.latitude);
                         cliente.setLongitud(mapa.getCameraPosition().target.longitude);
+                        cliente.setTipoNegocio(negocioSelected.getId());
 
                         cliente.setCccat(2);
                         int idZonas= DataPreferences.getPrefInt("Zonas",mContext);
@@ -813,6 +852,7 @@ if (alertDialog!=null){
                         mCliente.setLatitud(mapa.getCameraPosition().target.latitude);
                         mCliente.setLongitud(mapa.getCameraPosition().target.longitude);
                         mCliente.setEstado(2);
+                        mCliente.setTipoNegocio(negocioSelected.getId());
                         int idZonas= DataPreferences.getPrefInt("Zonas",mContext);
                         if (idZonas==-1){
                             mCliente.setCczona(zonaSelected.getLanumi());

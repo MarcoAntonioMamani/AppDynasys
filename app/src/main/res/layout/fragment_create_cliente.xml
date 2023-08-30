@@ -110,7 +110,12 @@
                             android:inputType="textCapCharacters|textMultiLine"
                             android:hint="Dirección" />
                     </android.support.design.widget.TextInputLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Zona:">
 
+                    </TextView>
                     <Spinner
                         android:id="@+id/id_zona"
                         android:layout_width="match_parent"
@@ -120,7 +125,21 @@
                         android:paddingBottom="5dp"
                         android:paddingTop="5dp"
                         />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Tipo Negocio:">
 
+                    </TextView>
+                    <Spinner
+                        android:id="@+id/id_TipoNegocio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/keyline_1"
+                        android:entries="@array/tiponegocio_array"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp"
+                        />
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content">

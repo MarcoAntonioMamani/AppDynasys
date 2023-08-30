@@ -231,6 +231,10 @@ if (mPedido.getOaap()!=1){
         ArrayAdapter<PrecioCategoriaEntity> adapter =new ArrayAdapter<PrecioCategoriaEntity>(getContext(), android.R.layout.simple_spinner_item, listPrecio);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         listaSpinnerPrecio.setAdapter(adapter);
+
+
+        tvTotalPago.setKeyListener(null);
+        tvTotalPago.setEnabled(false);
         return view;
 
     }
@@ -827,7 +831,7 @@ return null;
                                 ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
                                 return;
                             }
-                            if (ObtenerTotal()<Double.parseDouble(tvTotalPago.getText().toString())){
+                            if (ObtenerTotal()+1<Double.parseDouble(tvTotalPago.getText().toString())){
                                 ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
                                 return;
                             }
@@ -1865,7 +1869,7 @@ return null;
         double suma=0;
         for (int i = 0; i < mDetalleItem.size(); i++) {
             if (mDetalleItem.get(i).getObupdate()>=0){
-                suma=suma+( mDetalleItem.get(i).getObpcant()*mDetalleItem.get(i).getObpbase());
+                suma=suma+( mDetalleItem.get(i).getTotal());
             }
 
         }

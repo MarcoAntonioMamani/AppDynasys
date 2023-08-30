@@ -46,6 +46,10 @@
         <item>Persona Natural</item>
         <item>Persona Juridica</item>
     </string-array>
+    <string-array name="tiponegocio_array">
+        <item>Persona Natural</item>
+        <item>Persona Juridica</item>
+    </string-array>
     <string-array name="precio_array">
         <item>Precio 01</item>
         <item>Precio 02</item>
