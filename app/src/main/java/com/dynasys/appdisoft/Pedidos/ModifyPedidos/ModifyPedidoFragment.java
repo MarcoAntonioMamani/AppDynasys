@@ -198,8 +198,9 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
         listPrecio=new ArrayList<>();
-        listPrecio.add(new PrecioCategoriaEntity(1,"Precio Venta"));
+        listPrecio.add(new PrecioCategoriaEntity(1,"Precio Minorista"));
         listPrecio.add(new PrecioCategoriaEntity(3,"Precio Institucional"));
+        listPrecio.add(new PrecioCategoriaEntity(4,"Precio Mayorista"));
         new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock,viewModelVisita);
         iniciarRecyclerView();
         acliente.setText(mCliente.getNamecliente());

@@ -204,8 +204,9 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         viewModelVisita=ViewModelProviders.of(getActivity()).get(VisitaListViewModel.class);
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
         listPrecio=new ArrayList<>();
-        listPrecio.add(new PrecioCategoriaEntity(1,"Precio Venta"));
+        listPrecio.add(new PrecioCategoriaEntity(1,"Precio Minorista"));
         listPrecio.add(new PrecioCategoriaEntity(3,"Precio Institucional"));
+        listPrecio.add(new PrecioCategoriaEntity(4,"Precio Mayorista"));
         new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock,viewModelVisita);
         mCreatePedidoPresenter.CargarClientes();
         iniciarRecyclerView();
@@ -486,9 +487,15 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
 
 
                     }else{
-                        showDialogs();
-                        new ChecarNotificaciones().execute();
-                        return;
+                        if (mCliente!=null){
+                                showDialogs();
+                                new ChecarNotificaciones().execute();
+
+                        }else{
+                            ShowMessageResult("Seleccione un cliente");
+                            return;
+                        }
+
                     }
 
 
