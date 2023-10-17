@@ -1,4 +1,4 @@
-package com.dynasys.appdisoft.SincronizarData.Presentacion;
+package com.dynasys.appdisoft.Visitas.Create.SincronizarData.Presentacion;
 
 import android.app.Activity;
 import android.content.Context;
@@ -32,8 +32,8 @@ import com.dynasys.appdisoft.Login.DB.ListViewmodel.StockListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClientesListViewModel;
 import com.google.android.gms.common.internal.Preconditions;
 
 import java.util.ArrayList;

@@ -81,6 +81,7 @@ public class LoginPresenter implements LoginMvp.Presenter {
                         DataPreferences.putPrefLogin("isLogin",true,mContext);
                         DataPreferences.putPref("repartidor",responseUser.getToken(),mContext);
                         DataPreferences.putPref("tipoNegocios",responseUser.getTipoNegocio(),mContext);
+                        DataPreferences.putPref("categoriasProductos",responseUser.getCategoriasProducts(),mContext);
                         DataPreferences.putPrefInteger("idrepartidor",responseUser.getId(),mContext);
                         DataPreferences.putPrefInteger("zona",responseUser.getZona(),mContext);
                         DataPreferences.putPrefInteger("EditarPedidos",responseUser.getPedido(),mContext);

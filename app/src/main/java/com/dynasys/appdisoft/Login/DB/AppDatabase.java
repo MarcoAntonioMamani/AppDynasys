@@ -5,7 +5,6 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.dynasys.appdisoft.Login.DB.Converter.DateConverter;
 import com.dynasys.appdisoft.Login.DB.Dao.AlmacenDao;
@@ -38,8 +37,8 @@ import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.Dao.ClientesDao;
 
 
 /**
@@ -49,7 +48,7 @@ import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
 @Database(entities = {UserEntity.class, ClienteEntity.class, PrecioEntity.class, ProductoEntity.class, PedidoEntity.class,
         DetalleEntity.class, StockEntity.class, ZonasEntity.class, DescuentosEntity.class, ProductoViewEntity.class,
         VisitaEntity.class, PointEntity.class, AlmacenEntity.class, CobranzaDetalleEntity.class, CobranzaEntity.class, DeudaEntity.class}
-        , version = 27)
+        , version = 29)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 

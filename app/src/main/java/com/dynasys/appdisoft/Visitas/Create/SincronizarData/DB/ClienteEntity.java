@@ -1,9 +1,8 @@
-package com.dynasys.appdisoft.SincronizarData.DB;
+package com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 import java.util.Date;
 

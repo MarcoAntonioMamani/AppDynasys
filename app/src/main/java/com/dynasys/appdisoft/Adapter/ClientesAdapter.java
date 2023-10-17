@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.R;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -36,8 +36,8 @@ import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;

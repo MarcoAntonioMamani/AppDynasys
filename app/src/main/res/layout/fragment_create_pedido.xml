@@ -140,6 +140,106 @@ android:background="@color/marfil"
 
                     </LinearLayout>
                 </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingRight="5dp"
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingLeft="8dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:background="@drawable/animation_riple_button"
+                            android:id="@+id/carrito_btn_Luri"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="LURI"
+                                android:textColor="@color/white"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:textStyle="bold"
+                                style="@style/TextAppearance.AppCompat.Caption"
+                                android:paddingRight="5dp"
+                                android:paddingLeft="10dp"
+                                android:paddingTop="4dp"
+                                android:paddingBottom="4dp"
+                                />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingRight="5dp"
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingLeft="8dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:background="@drawable/animation_bottoncancel"
+                            android:id="@+id/carrito_btn_Unilever"
+
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="UNILEVER"
+                                android:textColor="@color/primary_text"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:textStyle="bold"
+                                style="@style/TextAppearance.AppCompat.Caption"
+                                android:paddingRight="5dp"
+                                android:paddingLeft="10dp"
+                                android:paddingTop="4dp"
+                                android:paddingBottom="4dp"
+                                />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingRight="5dp"
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingLeft="8dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:background="@drawable/animation_riple_button"
+                            android:id="@+id/carrito_btn_Kcp"
+
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="KCP"
+                                android:textColor="@color/white"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:textStyle="bold"
+                                style="@style/TextAppearance.AppCompat.Caption"
+                                android:paddingRight="5dp"
+                                android:paddingLeft="10dp"
+                                android:paddingTop="4dp"
+                                android:paddingBottom="4dp"
+                                />
+                        </LinearLayout>
+                    </LinearLayout>
+                    </LinearLayout>
 
             </LinearLayout>
 
@@ -309,12 +409,11 @@ android:background="@color/marfil"
                                         android:id="@+id/ib_obtener_fecha"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:background="@color/marfil"
-                                        android:src="@drawable/ic_calendario"
-                                        tools:ignore="ContentDescription"
                                         android:layout_marginTop="4dp"
+                                        android:background="@color/marfil"
                                         android:paddingLeft="4dp"
-                                        />
+                                        android:src="@drawable/ic_calendario"
+                                        tools:ignore="ContentDescription,TouchTargetSizeCheck,TouchTargetSizeCheck" />
                                     <TextView
                                         android:id="@+id/et_mostrar_fecha_picker"
                                         android:layout_width="match_parent"
@@ -455,7 +554,7 @@ android:background="@color/marfil"
                                     android:layout_weight="1">
                                     <Button
                                         android:id="@+id/id_btn_guardarPedido"
-                                        android:background="@drawable/animation_riple_button"
+                                        android:background="@drawable/animation_riple_edit"
                                         android:layout_width="fill_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center"

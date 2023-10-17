@@ -24,24 +24,17 @@ import android.widget.TextView;
 
 
 import com.dynasys.appdisoft.Adapter.AdapterVisitas;
-import com.dynasys.appdisoft.Clientes.Adapter.AdapterClientes;
-import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.MainActivity;
-import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
-import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
 import com.dynasys.appdisoft.Visitas.Create.CreateVisitaFragment;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.Unbinder;

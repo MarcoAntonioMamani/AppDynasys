@@ -6,14 +6,7 @@ import android.os.AsyncTask;
 
 import com.dynasys.appdisoft.Login.DB.AppDatabase;
 import com.dynasys.appdisoft.Login.DB.Dao.PrecioDao;
-import com.dynasys.appdisoft.Login.DB.Dao.ProductoDao;
-import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteRepository;
-import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
 
 import java.util.ArrayList;
 import java.util.List;

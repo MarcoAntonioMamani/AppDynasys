@@ -1,4 +1,4 @@
-package com.dynasys.appdisoft.SincronizarData.DB.Dao;
+package com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.Dao;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
@@ -7,9 +7,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
 
 import java.util.List;
 

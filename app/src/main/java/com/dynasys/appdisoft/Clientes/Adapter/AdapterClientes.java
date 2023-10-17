@@ -15,7 +15,7 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.dynasys.appdisoft.Clientes.ClienteMvp;
 import com.dynasys.appdisoft.R;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
 
 
 import java.util.ArrayList;

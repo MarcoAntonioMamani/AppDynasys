@@ -16,7 +16,6 @@ import com.dynasys.appdisoft.Login.Cloud.ApiManager;
 import com.dynasys.appdisoft.Login.Cloud.BodyLocation;
 import com.dynasys.appdisoft.Login.Cloud.ResponseLogin;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;

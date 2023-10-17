@@ -1,7 +1,6 @@
 package com.dynasys.appdisoft.Login.Cloud;
 
 import android.content.Context;
-import android.widget.EditText;
 
 import com.dynasys.appdisoft.ListarDeudas.Pagos.CobranzaRequest;
 import com.dynasys.appdisoft.Login.DB.Entity.AlmacenEntity;
@@ -17,12 +16,10 @@ import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoViewEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.UserEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
-import com.dynasys.appdisoft.R;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
 
 import java.util.List;
 

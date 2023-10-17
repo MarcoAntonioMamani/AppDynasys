@@ -30,7 +30,7 @@ import com.dynasys.appdisoft.Login.DB.ListViewmodel.VisitaListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.ZonaListViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.R;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Preconditions;
 import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;

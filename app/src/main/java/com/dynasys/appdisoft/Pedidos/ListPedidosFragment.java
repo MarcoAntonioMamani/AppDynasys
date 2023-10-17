@@ -33,8 +33,8 @@ import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosMvp;
 import com.dynasys.appdisoft.Pedidos.Presentacion.PedidosPresenter;
 import com.dynasys.appdisoft.Pedidos.ViewPedidos.ViewPedidoFragment;
 import com.dynasys.appdisoft.R;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClientesListViewModel;
 import com.google.common.base.Preconditions;
 
 import java.text.DateFormat;

@@ -20,18 +20,20 @@
             style="@style/StyleTitle"
             android:queryHint = "Buscar aquí"
             android:background="@color/blanco"
+            android:visibility="gone"
             />
         <android.support.v7.widget.RecyclerView
             android:id="@+id/Productos_CardCategoria"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingTop="5dp"
             android:background="@color/colorSplashText"
+            android:paddingBottom="8dp"
 
             />
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/Productos_CardList"
+            android:id="@+id/Productos_CardOrder"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"
@@ -140,7 +142,7 @@
                         android:paddingLeft="5dp"
                         android:text="Ver Carrito"
                         android:textColor="@color/white"
-                        style="@style/TextAppearance.AppCompat.Medium"
+                        style="@style/TextAppearance.AppCompat.Caption"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>

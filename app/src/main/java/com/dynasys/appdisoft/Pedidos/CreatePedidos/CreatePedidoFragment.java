@@ -29,13 +29,13 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Adapter.ClientesAdapter;
 import com.dynasys.appdisoft.Adapter.DetalleAdaptader;
 import com.dynasys.appdisoft.Adapter.ProductAdapter;
-import com.dynasys.appdisoft.Clientes.CreateCliente.CreateClienteFragment;
 import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Constantes;
 import com.dynasys.appdisoft.Login.Cloud.ApiManager;
@@ -44,7 +44,6 @@ import com.dynasys.appdisoft.Login.DB.Entity.PrecioCategoriaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DescuentosListViewModel;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DetalleListViewModel;
-import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
@@ -59,11 +58,12 @@ import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
+import com.dynasys.appdisoft.Pedidos.carrito.ListProductsFragment;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.Pdf.TemplatePDF;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClientesListViewModel;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.base.Preconditions;
 import com.labters.lottiealertdialoglibrary.ClickListener;
@@ -118,6 +118,8 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     private ClienteEntity mCliente=null;
     private RecyclerView detalle_List;
     ClientesAdapter clientAdapter;
+
+    LinearLayout btnLuri,btnUnilever,btnKCP;
 
     private ZonaListViewModel viewModelZonas;
     ProductAdapter productoAdapter;
@@ -203,10 +205,15 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         viewModelDescuento=ViewModelProviders.of(getActivity()).get(DescuentosListViewModel.class);
         viewModelVisita=ViewModelProviders.of(getActivity()).get(VisitaListViewModel.class);
         viewModelStock=ViewModelProviders.of(getActivity()).get(StockListViewModel.class);
+
+        btnLuri=view.findViewById(R.id.carrito_btn_Luri);
+        btnUnilever=view.findViewById(R.id.carrito_btn_Unilever);
+        btnKCP=view.findViewById(R.id.carrito_btn_Kcp);
+
         listPrecio=new ArrayList<>();
-        listPrecio.add(new PrecioCategoriaEntity(1,"Precio Minorista"));
-        listPrecio.add(new PrecioCategoriaEntity(3,"Precio Institucional"));
-        listPrecio.add(new PrecioCategoriaEntity(4,"Precio Mayorista"));
+        listPrecio.add(new PrecioCategoriaEntity(1,"Minorista"));
+        listPrecio.add(new PrecioCategoriaEntity(3,"Institucional"));
+        listPrecio.add(new PrecioCategoriaEntity(4,"Mayorista"));
         new CreatePedidoPresenter(this,getContext(),viewModelCliente,viewModelProducto,getActivity(),viewModelPedido,viewModelDetalle,viewModelStock,viewModelVisita);
         mCreatePedidoPresenter.CargarClientes();
         iniciarRecyclerView();
@@ -233,8 +240,34 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         ArrayAdapter<PrecioCategoriaEntity> adapter =new ArrayAdapter<PrecioCategoriaEntity>(getContext(), android.R.layout.simple_spinner_item, listPrecio);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         listaSpinnerPrecio.setAdapter(adapter);
-
+        onClickVerProductos();
         return view;
+    }
+    public void onClickVerProductos(){
+        btnLuri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment frag = new ListProductsFragment(precioSelected,1,"Luri",VentaDirectaOPedido);
+                MainActivity fca = (MainActivity) getActivity();
+                fca.switchFragment(frag,"CREATE_PEDIDOS");
+            }
+        });
+        btnUnilever.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment frag = new ListProductsFragment(precioSelected,2,"Unilever",VentaDirectaOPedido);
+                MainActivity fca = (MainActivity) getActivity();
+                fca.switchFragment(frag,"PRODUCTOS");
+            }
+        });
+        btnKCP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment frag = new ListProductsFragment(precioSelected,3,"KCP",VentaDirectaOPedido);
+                MainActivity fca = (MainActivity) getActivity();
+                fca.switchFragment(frag,"PRODUCTOS");
+            }
+        });
     }
     public void CargarDatosclienteMapa(){
         if (tipoActividad==1){

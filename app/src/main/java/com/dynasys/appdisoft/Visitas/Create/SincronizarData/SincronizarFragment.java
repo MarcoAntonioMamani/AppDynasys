@@ -1,4 +1,4 @@
-package com.dynasys.appdisoft.SincronizarData;
+package com.dynasys.appdisoft.Visitas.Create.SincronizarData;
 
 
 import android.arch.lifecycle.ViewModelProviders;
@@ -45,10 +45,9 @@ import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
-import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
-import com.dynasys.appdisoft.SincronizarData.Presentacion.SincronizarMvp;
-import com.dynasys.appdisoft.SincronizarData.Presentacion.SincronizarPresenter;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClientesListViewModel;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.Presentacion.SincronizarMvp;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.Presentacion.SincronizarPresenter;
 import com.google.common.base.Preconditions;
 import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;

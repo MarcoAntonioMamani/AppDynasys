@@ -48,10 +48,9 @@ import com.dynasys.appdisoft.RevisarEfectivo.EfectivoFragment;
 import com.dynasys.appdisoft.RevisarProductos.ReviewProductoFragment;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
-import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
-import com.dynasys.appdisoft.SincronizarData.SincronizarFragment;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClientesListViewModel;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.SincronizarFragment;
 import com.dynasys.appdisoft.Visitas.ListaVisitasFragment;
 
 import java.util.ArrayList;

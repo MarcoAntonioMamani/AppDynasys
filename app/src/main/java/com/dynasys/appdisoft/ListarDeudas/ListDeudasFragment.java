@@ -30,8 +30,8 @@ import com.dynasys.appdisoft.Login.DB.ListViewmodel.CobranzaDetalleListViewModel
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.DeudaListaViewModel;
 import com.dynasys.appdisoft.MainActivity;
 import com.dynasys.appdisoft.R;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClientesListViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;

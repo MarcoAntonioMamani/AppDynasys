@@ -1,14 +1,12 @@
 package com.dynasys.appdisoft.Clientes;
 
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.R;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.google.android.gms.common.api.Api;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 

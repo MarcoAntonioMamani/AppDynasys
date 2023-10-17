@@ -5,8 +5,6 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-
 @Entity(tableName = "ProductoView")
 public class ProductoViewEntity implements Comparable<ProductoViewEntity> {
 

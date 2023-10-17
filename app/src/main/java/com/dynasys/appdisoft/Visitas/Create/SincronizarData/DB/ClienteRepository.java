@@ -1,13 +1,11 @@
-package com.dynasys.appdisoft.SincronizarData.DB;
+package com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
 import com.dynasys.appdisoft.Login.DB.AppDatabase;
-import com.dynasys.appdisoft.Login.DB.Dao.StockDao;
-import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.Dao.ClientesDao;
 
 import java.util.ArrayList;
 import java.util.List;

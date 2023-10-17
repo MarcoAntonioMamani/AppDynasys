@@ -3,6 +3,7 @@ package com.dynasys.appdisoft.Login.DB.Entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "producto")
@@ -14,8 +15,10 @@ public class ProductoEntity  implements Cloneable{
     String cod;
     @ColumnInfo(name = "producto")
     String producto;
-    @ColumnInfo(name = "desccorta")
-    String desccorta;
+    @ColumnInfo(name = "idProveedor")
+    int idProveedor;
+    @ColumnInfo(name = "Proveedor")
+    String Proveedor;
     @ColumnInfo(name = "idcategoria")
     int idcategoria;
     @ColumnInfo(name = "categoria")
@@ -30,17 +33,60 @@ public class ProductoEntity  implements Cloneable{
     @ColumnInfo(name = "conversion")
     double conversion;
 
-    public ProductoEntity(int numi, String cod, String producto, String desccorta, int idcategoria, String categoria, double precio, double stock, int familia, double conversion) {
+    @Ignore
+    double totalUnitario;
+    @Ignore
+    double caja;
+    public ProductoEntity(){
+
+    }
+
+    public ProductoEntity(int numi, String cod, String producto, int idProveedor, String proveedor, int idcategoria, String categoria, double precio, double stock, int familia, double conversion, double totalUnitario, double caja) {
         this.numi = numi;
         this.cod = cod;
         this.producto = producto;
-        this.desccorta = desccorta;
+        this.idProveedor = idProveedor;
+        Proveedor = proveedor;
         this.idcategoria = idcategoria;
         this.categoria = categoria;
         this.precio = precio;
         this.stock = stock;
         this.familia = familia;
         this.conversion = conversion;
+        this.totalUnitario = totalUnitario;
+        this.caja = caja;
+    }
+
+    public double getTotalUnitario() {
+        return totalUnitario;
+    }
+
+    public void setTotalUnitario(double totalUnitario) {
+        this.totalUnitario = totalUnitario;
+    }
+
+    public double getCaja() {
+        return caja;
+    }
+
+    public void setCaja(double caja) {
+        this.caja = caja;
+    }
+
+    public int getIdProveedor() {
+        return idProveedor;
+    }
+
+    public void setIdProveedor(int idProveedor) {
+        this.idProveedor = idProveedor;
+    }
+
+    public String getProveedor() {
+        return Proveedor;
+    }
+
+    public void setProveedor(String proveedor) {
+        Proveedor = proveedor;
     }
 
     public int getFamilia() {
@@ -83,13 +129,6 @@ public class ProductoEntity  implements Cloneable{
         this.producto = producto;
     }
 
-    public String getDesccorta() {
-        return desccorta;
-    }
-
-    public void setDesccorta(String desccorta) {
-        this.desccorta = desccorta;
-    }
 
     public int getIdcategoria() {
         return idcategoria;

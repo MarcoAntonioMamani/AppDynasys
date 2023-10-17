@@ -1,8 +1,6 @@
 package com.dynasys.appdisoft.Pedidos.Presentacion;
 
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
-import com.dynasys.appdisoft.Login.LoginMvp;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 
 import java.util.List;
 

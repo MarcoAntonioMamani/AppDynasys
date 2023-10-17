@@ -6,13 +6,8 @@ import android.os.AsyncTask;
 import android.os.Handler;
 
 import com.dynasys.appdisoft.Login.DB.AppDatabase;
-import com.dynasys.appdisoft.Login.DB.Dao.PedidoDao;
 import com.dynasys.appdisoft.Login.DB.Dao.VisitaDao;
-import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteRepository;
-import com.dynasys.appdisoft.SincronizarData.DB.Dao.ClientesDao;
 
 import java.util.ArrayList;
 import java.util.List;

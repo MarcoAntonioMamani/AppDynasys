@@ -8,9 +8,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 
 import java.util.List;
 

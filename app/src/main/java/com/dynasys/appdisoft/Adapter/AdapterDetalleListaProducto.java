@@ -2,20 +2,15 @@ package com.dynasys.appdisoft.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.ListaProductos.ListadoProductoMVP;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoViewEntity;
-import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoMvp;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 
 import java.util.ArrayList;
 import java.util.List;

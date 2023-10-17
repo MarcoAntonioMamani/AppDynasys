@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView android:id="@+id/card_viewCarrito"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp"
+    android:background="@color/white"
+    card_view:cardCornerRadius="4dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            >
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="4"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                >
+              <LinearLayout
+                  android:layout_width="fill_parent"
+                  android:layout_height="match_parent"
+                  >
+                  <ImageView
+                      android:layout_width="20dp"
+                      android:layout_height="20dp"
+                      android:src="@drawable/ic_producto"
+                      />
+                  <TextView
+                      android:id="@+id/id_nameProducto"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                      android:text="Aspirina de 200 gramos sds adsdfsdffs"
+                      android:textColor="@color/secondary_text"
+                      android:paddingLeft="6dp"
+                      android:textStyle="bold"
+                      android:maxLines="3"
+                      />
+
+              </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:id="@+id/id_precioProducto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:text="Bs. 500"
+
+                        android:textColor="@color/white"
+                        android:background="@drawable/animation_riple_money"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        />
+                    <TextView
+                        android:id="@+id/id_InventarioProducto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="11dp"
+                        android:text="cantUni=50 cantCaja=60"
+                        android:textColor="@color/state_paid"
+                        android:paddingLeft="8dp"
+                        android:maxLines="3"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Unidad"
+                        android:maxLines="1"
+                        android:textColor="@color/secondary_text"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        />
+
+                    <EditText
+                        android:id="@+id/id_Cantidad_Carrito"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/animation_edittext_cantidad"
+                        android:inputType="numberDecimal"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:selectAllOnFocus="true"
+
+                        android:textColor="@color/primary_text"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:gravity="center"
+                        android:hint="0" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cajas"
+                        android:textColor="@color/secondary_text"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        />
+                    <EditText
+                        android:id="@+id/id_Cantidad_Cajas"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/animation_edittext_cantidad"
+                        android:inputType="numberDecimal"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:selectAllOnFocus="true"
+
+                        android:textColor="@color/primary_text"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:gravity="center"
+                        android:hint="0" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorAccent"
+
+            >
+
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

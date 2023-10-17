@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
-import com.dynasys.appdisoft.SincronizarData.DB.ClientesListViewModel;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClientesListViewModel;
 
 public class ServiceMain extends BroadcastReceiver {
     private Context mContext;

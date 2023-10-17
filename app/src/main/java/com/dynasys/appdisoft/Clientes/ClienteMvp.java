@@ -1,7 +1,6 @@
 package com.dynasys.appdisoft.Clientes;
 
-import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
 
 public interface ClienteMvp {
     interface View {

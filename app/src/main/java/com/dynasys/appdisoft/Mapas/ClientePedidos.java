@@ -1,6 +1,6 @@
 package com.dynasys.appdisoft.Mapas;
 
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
+import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
 
 public class ClientePedidos {
 

@@ -1,6 +1,4 @@
-package com.dynasys.appdisoft.SincronizarData.Presentacion;
-
-import com.dynasys.appdisoft.Login.LoginMvp;
+package com.dynasys.appdisoft.Visitas.Create.SincronizarData.Presentacion;
 
 public interface SincronizarMvp {
     interface View {

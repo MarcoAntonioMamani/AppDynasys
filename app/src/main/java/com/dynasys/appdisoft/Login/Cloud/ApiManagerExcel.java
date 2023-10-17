@@ -2,23 +2,9 @@ package com.dynasys.appdisoft.Login.Cloud;
 
 import android.content.Context;
 
-import com.dynasys.appdisoft.Login.DB.Entity.DescuentosEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
-import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.PointEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.PrecioEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.ProductoViewEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.StockEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.ZonasEntity;
-import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.FechaCaducidad;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 
 import java.util.List;
 

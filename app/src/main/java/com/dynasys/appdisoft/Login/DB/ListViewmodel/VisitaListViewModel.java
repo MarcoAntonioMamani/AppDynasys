@@ -5,10 +5,8 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
-import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.VisitaEntity;
 import com.dynasys.appdisoft.Login.DB.Repository.VisitaRepository;
-import com.dynasys.appdisoft.SincronizarData.DB.ClienteEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

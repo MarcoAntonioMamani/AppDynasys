@@ -1,4 +1,4 @@
-package com.dynasys.appdisoft.SincronizarData.DB;
+package com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
