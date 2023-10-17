@@ -1,5 +1,6 @@
 package com.dynasys.appdisoft.Pedidos.carrito;
 
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -14,6 +15,8 @@ public interface ProductorMvp {
         void recyclerViewListClickedCategoria(android.view.View v, Categorias empresa, TextView tvCategoria) throws CloneNotSupportedException;
         void setPresenter(Presenter presenter);
         void ShowMessageResult(String message);
+        void ModifyItemCart( String value, ProductoEntity item, EditText eCantidad,EditText eCatidadCajas);
+        void ModifyItemCajaCart( String value, ProductoEntity item, EditText eCantidad,EditText eCatidadCajas);
         void MostrarDatos(List<ProductoEntity> listEmpresa);
         void ShowSyncroMgs(String message);
 
