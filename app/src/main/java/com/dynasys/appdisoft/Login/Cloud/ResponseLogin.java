@@ -17,8 +17,9 @@ public class ResponseLogin {
     int precio;
     int idConciliacion;
     String TipoNegocio;
+    String Categorias;
 
-    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria, int stock, int view_credito, int cantidad_producto, int validarZona, int precio,int idConciliacion,String TipoNegocio) {
+    public ResponseLogin(int code, String message, String token, int id, int zona, int mapa, int pedido, int update_cliente, int categoria, int stock, int view_credito, int cantidad_producto, int validarZona, int precio,int idConciliacion,String TipoNegocio,String categorias) {
         this.code = code;
         this.message = message;
         this.token = token;
@@ -35,6 +36,15 @@ public class ResponseLogin {
         this.precio = precio;
         this.idConciliacion=idConciliacion;
         this.TipoNegocio=TipoNegocio;
+        this.Categorias=categorias;
+    }
+
+    public String getCategorias() {
+        return Categorias;
+    }
+
+    public void setCategorias(String categorias) {
+        Categorias = categorias;
     }
 
     public String getTipoNegocio() {

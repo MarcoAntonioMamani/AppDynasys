@@ -44,8 +44,8 @@ public interface IUsersApi {
     @POST("/api/repartidor/visita")
     Call<ResponseLogin> InsertVisita(@Body VisitaEntity user);
 
-    @PUT("/api/repartidor/clients")
-    Call<ResponseLogin> UpdateUser(@Body ClienteEntity user);
+    @PUT("/api/repartidor/clients/{idrepartidor}")
+    Call<ResponseLogin> UpdateUser(@Body ClienteEntity user,@Path("idrepartidor") String idRepartidor);
 
     @POST("/api/repartidor/cobranza")
     Call<ResponseLogin> InsertCobranza(@Body CobranzaRequest user);

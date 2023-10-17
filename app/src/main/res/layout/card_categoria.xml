@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView android:id="@+id/card_Categorias"
+    android:layout_width="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="0dp"
+    android:layout_marginRight="4dp"
+    app:cardCornerRadius="20dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/name_categoria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Todo Brillo"
+        android:background="@drawable/animation_autocompletetextview"
+        style="@style/StyleNegocios"
+        android:textColor="@color/color_navi"
+        android:textSize="12dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+
+        />
+
+</android.support.v7.widget.CardView>

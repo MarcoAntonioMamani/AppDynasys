@@ -820,7 +820,7 @@ if (alertDialog!=null){
                         DateFormat df = new SimpleDateFormat("dMMyyyy,HH:mm:ss");
                         String code = df.format(Calendar.getInstance().getTime());
                         code=""+codigoRepartidor+","+code;
-                        cliente.setCodigogenerado(code+"P1.3");
+                        cliente.setCodigogenerado(code+"P2.1");
                         cliente.setNumi(0);
                         cliente.setFechaingreso(Calendar.getInstance().getTime());
                         cliente.setDireccion(tilDireccion.getEditText().getText().toString());

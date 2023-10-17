@@ -262,7 +262,8 @@ if (UtilShare.mActivity!=null){
 
                     final ClienteEntity cliente=listCliente.get(i);
                     ApiManager apiManager=ApiManager.getInstance(this);
-                    apiManager.UpdateUser(cliente, new Callback<ResponseLogin>() {
+                    int idRepartidor=DataPreferences.getPrefInt("idrepartidor",getApplicationContext());
+                    apiManager.UpdateUser(cliente,""+idRepartidor, new Callback<ResponseLogin>() {
                         @Override
                         public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                             ResponseLogin responseUser = response.body();

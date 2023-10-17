@@ -34,9 +34,7 @@ public class LoginPresenter implements LoginMvp.Presenter {
     private final LoginMvp.View mLoginView;
     private final Context mContext;
     private final ZonaListViewModel viewModelZonas;
-String SPREAD_SHEET_ID = "1jBtXZdoxIYJlEAnJ8YbQ3NbUmPrBFqgtSbmMHMIQMck";
-    String  sheetInJsonURL = "https://script.google.com/macros/s/AKfycbw8cnwZw4TimA5H0s7qulTNvPGGHa1XUvClsAaISCcdHzd-qXryZLHBnGo1fSydbtTelQ/exec?spreadsheetId=1EmBwkEo1hAXuJ_IjdM6Af-fCqe8cTXgwlRR6Ny3LiAI&sheet=";
-    public LoginPresenter(LoginMvp.View loginView,Context context,ZonaListViewModel zonamodel){
+ public LoginPresenter(LoginMvp.View loginView,Context context,ZonaListViewModel zonamodel){
         mLoginView = Preconditions.checkNotNull(loginView);
         viewModelZonas=zonamodel;
         mLoginView.setPresenter(this);
@@ -58,48 +56,6 @@ String SPREAD_SHEET_ID = "1jBtXZdoxIYJlEAnJ8YbQ3NbUmPrBFqgtSbmMHMIQMck";
           mLoginView.ShowMessageResult("Sin Conexión. Por favor conectarse a una red");
           return;
       }
-
-        //ApiManagerExcel.apiManager=null;
-       // ApiManagerExcel apiManager=ApiManagerExcel.getInstance(mContext);
-
-      //  String url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=39.476245,-0.349448&sensor=true";
-
-       /* String content="AKfycbw8cnwZw4TimA5H0s7qulTNvPGGHa1XUvClsAaISCcdHzd-qXryZLHBnGo1fSydbtTelQ/exec?spreadsheetId=1EmBwkEo1hAXuJ_IjdM6Af-fCqe8cTXgwlRR6Ny3LiAI&sheet=";
-        apiManager.ObtenerFechaCaducidad(content,new Callback<List<FechaCaducidad>>() {
-            @Override
-            public void onResponse(Call<List<FechaCaducidad>> call, Response<List<FechaCaducidad>> response) {
-                List<FechaCaducidad> responseUser = response.body();
-                if (response.code()==404){
-                    Login(codigo,nroDocumento);
-                    return;
-                }
-                if (response.isSuccessful() && responseUser != null) {
-
-                } else {
-                    if (responseUser!=null ){
-
-                       /* if (Calendar.getInstance().getTime().before(responseUser.get(0).getFecha())){
-                            mLoginView.ShowMessageResult("La Fecha de Uso De esta Aplicacion Ha Caducado. Contactese con su Proveedor de App");
-                        }else{
-                            Login(codigo,nroDocumento);
-                            return;
-                        }*/
-/*
-                    }else{
-                        Login(codigo,nroDocumento);
-
-                        return;
-                    }
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<FechaCaducidad>> call, Throwable t) {
-                Login(codigo,nroDocumento);
-            }
-        });*/
-
         Login(codigo,nroDocumento);
 
 

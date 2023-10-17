@@ -73,8 +73,8 @@ private static Context mcontext;
         Call<ResponseLogin> userCall = service.InsertVisita(user);
         userCall.enqueue(callback);
     }
-    public void UpdateUser(ClienteEntity user, Callback<ResponseLogin> callback) {
-        Call<ResponseLogin> userCall = service.UpdateUser(user);
+    public void UpdateUser(ClienteEntity user,String idRepartidor, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.UpdateUser(user,idRepartidor);
         userCall.enqueue(callback);
     }
 
