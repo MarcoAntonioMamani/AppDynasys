@@ -139,7 +139,7 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:paddingLeft="5dp"
-                        android:text="Ver Carrito"
+                        android:text="Ver Detalle"
                         android:textColor="@color/white"
                         style="@style/TextAppearance.AppCompat.Caption"
                         android:textStyle="bold" />

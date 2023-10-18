@@ -60,6 +60,7 @@ import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoMvp;
 import com.dynasys.appdisoft.Pedidos.CreatePedidos.CreatePedidoPresenter;
 import com.dynasys.appdisoft.Pedidos.ListPedidosFragment;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
+import com.dynasys.appdisoft.Pedidos.carrito.ListProductsFragment;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.Pdf.TemplatePDF;
@@ -103,7 +104,7 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
     private AutoCompleteTextView aProducto;
     private AlertDialog dialogs,dialogQuestion;
     private Button mbutton_update,mbutton_viewcliente;
-
+    LinearLayout btnLuri,btnUnilever,btnKCP;
     private ImageButton ObFecha;
     private ClientesListViewModel viewModelCliente;
     private ProductosListViewModel viewModelProducto;
@@ -174,6 +175,11 @@ public class ModifyPedidoFragment extends Fragment  implements CreatePedidoMvp.V
         acliente=view.findViewById(R.id.edit_view_cliente);
         aProducto=view.findViewById(R.id.edit_buscar_producto);
         detalle_List=view.findViewById(R.id.edit_view_RecPedidos);
+
+        btnLuri=view.findViewById(R.id.carrito_btn_LuriModify);
+        btnUnilever=view.findViewById(R.id.carrito_btn_UnileverModify);
+        btnKCP=view.findViewById(R.id.carrito_btn_KcpModify);
+
         listaSpinnerPrecio =(Spinner)view.findViewById(R.id.ModificaerPEdido_precioCategoria);
         name_total=view.findViewById(R.id.edit_viewdata_MontoTotal);
         name_descuento=view.findViewById(R.id.edit_view_Descuento);
@@ -223,7 +229,7 @@ if (mPedido.getOaap()!=1){
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 if (pos>=0 && listPrecio.size()>0){
                     precioSelected = listPrecio.get(pos);
-                    mCreatePedidoPresenter.CargarProducto(precioSelected.getId(),0);
+                    mCreatePedidoPresenter.CargarProducto(precioSelected.getId(),mPedido.getVentaDirecta());
                 }
             }
             public void onNothingSelected(AdapterView<?> parent) {
@@ -236,8 +242,95 @@ if (mPedido.getOaap()!=1){
 
         tvTotalPago.setKeyListener(null);
         tvTotalPago.setEnabled(false);
+        onClickVerProductos();
+        CargarDetalleCache();
         return view;
 
+    }
+    public void CargarDetalleCache(){
+
+        if (UtilShare.DetalleCarrito!=null){
+            mDetalleItem=UtilShare.DetalleCarrito;
+            if (UtilShare.ProductoSelected!=null){
+                ProductoEntity item = UtilShare.ProductoSelected;
+                int stock= DataPreferences.getPrefInt("stock",context);
+                if (stock>0){
+                    if (item.getStock()>0){
+                        DetalleEntity detalle=new DetalleEntity();
+                        detalle.setObnumi("-1");
+                        detalle.setObcprod(item.getNumi());
+                        detalle.setCadesc(item.getProveedor()+" - "+item.getProducto());
+                        detalle.setObpcant(1.0);
+                        detalle.setObpbase(item.getPrecio());
+                        detalle.setObptot(item.getPrecio());
+                        detalle.setTotal(item.getPrecio());
+                        detalle.setEstado(false);
+                        detalle.setStock(item.getStock());
+                        detalle.setFamilia(item.getFamilia());
+                        double CantCajaValue =0;
+                        if (item.getConversion()==1.0){
+
+                            CantCajaValue=1;
+                        }else{
+                            double Conversion=item.getConversion();
+                            double CantCaja= (double) (1/Conversion);
+
+
+                            CantCajaValue=CantCaja;
+                        }
+
+
+                        detalle.setCajas(CantCajaValue);
+                        detalle.setConversion(item.getConversion());
+                        mDetalleItem.add(detalle);
+                    }else{
+
+                        aProducto.setText("");
+                        ShowMessageResult("No Existe Stock para seleccionar el producto");
+                    }
+                }else{
+
+                    DetalleEntity detalle=new DetalleEntity();
+                    detalle.setObnumi("-1");
+                    detalle.setFamilia(item.getFamilia());
+                    detalle.setObcprod(item.getNumi());
+                    detalle.setCadesc(item.getProducto());
+                    detalle.setObpcant(1.0);
+                    detalle.setObpbase(item.getPrecio());
+                    detalle.setObptot(item.getPrecio());
+                    detalle.setEstado(false);
+                    detalle.setStock(0);
+
+                    mDetalleItem.add(detalle);
+
+
+
+                }
+
+            }
+            //  hideKeyboard();
+            if (lisProducto!=null){
+                productoAdapter.setLista(GetActualProducts());
+                productoAdapter.notifyDataSetChanged();
+            }
+
+            Reconstruir();
+            mscroll.fullScroll(View.FOCUS_DOWN);
+            if (UtilShare.ProductoSelected!=null){
+                ShowKeyboard();
+            }
+
+            calcularTotal();
+
+        }
+
+
+    }
+    private void ShowKeyboard(){
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
     }
     public void onClickImprimir(){
         btnImprimir.setOnClickListener(new View.OnClickListener() {
@@ -248,6 +341,44 @@ if (mPedido.getOaap()!=1){
         });
 
     }
+
+    public void onClickVerProductos(){
+        btnLuri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideKeyboard();
+
+                UtilShare.DetalleCarrito=mDetalleItem;
+                UtilShare.ProductoSelected=null;
+                Fragment frag = new ListProductsFragment(precioSelected,1,"Luri",mPedido.getVentaDirecta());
+                MainActivity fca = (MainActivity) getActivity();
+                fca.switchFragment(frag,"CREATE_PEDIDOS");
+            }
+        });
+        btnUnilever.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideKeyboard();
+                UtilShare.DetalleCarrito=mDetalleItem;
+                UtilShare.ProductoSelected=null;
+                Fragment frag = new ListProductsFragment(precioSelected,2,"Unilever",mPedido.getVentaDirecta());
+                MainActivity fca = (MainActivity) getActivity();
+                fca.switchFragment(frag,"PRODUCTOS");
+            }
+        });
+        btnKCP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideKeyboard();
+                UtilShare.DetalleCarrito=mDetalleItem;
+                UtilShare.ProductoSelected=null;
+                Fragment frag = new ListProductsFragment(precioSelected,3,"KCP",mPedido.getVentaDirecta());
+                MainActivity fca = (MainActivity) getActivity();
+                fca.switchFragment(frag,"PRODUCTOS");
+            }
+        });
+    }
+
 
     public void Imprimir(){
         String []header={"Detalle","Cant","Precio","Monto"};
@@ -1200,6 +1331,7 @@ return null;
     @Override
     public void MostrarProductos(List<ProductoEntity> productos) {
         if (productos.size()>0){
+            UtilShare.listProductoCarrito=productos;
             lisProducto = new ArrayList<>();
             lisProducto.addAll(productos);
             aProducto.setThreshold(1);
@@ -1857,6 +1989,10 @@ return null;
             TotalGeneral+=(mDetalleItem.get(i).getTotal());
         }
         name_totalDescuento.setText(""+ ShareMethods.redondearDecimales(TotalGeneral,2)+" Bs");
+
+        if (UtilShare.DetalleCarrito==null){
+            UtilShare.DetalleCarrito=mDetalleItem;
+        }
 
         calcularTotal();
 

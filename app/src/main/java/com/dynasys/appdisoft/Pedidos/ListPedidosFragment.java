@@ -254,6 +254,8 @@ public void cargarClientes(){
                         ClienteEntity cliente=obtenerCliente(pedido);
 
                         if (cliente!=null){
+                            UtilShare.DetalleCarrito=null;
+                            UtilShare.ProductoSelected=null;
                             Fragment frag = new ModifyPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
                             MainActivity fca = (MainActivity) getActivity();
                             fca.switchFragment(frag,"VIEW_PEDIDOS");
@@ -277,6 +279,8 @@ public void cargarClientes(){
                     ClienteEntity cliente=obtenerCliente(pedido);
 
                     if (cliente!=null){
+                        UtilShare.DetalleCarrito=null;
+                        UtilShare.ProductoSelected=null;
                         Fragment frag = new ModifyPedidoFragment(pedido,obtenerCliente(pedido),Tipo);
                         MainActivity fca = (MainActivity) getActivity();
                         fca.switchFragment(frag,"VIEW_PEDIDOS");

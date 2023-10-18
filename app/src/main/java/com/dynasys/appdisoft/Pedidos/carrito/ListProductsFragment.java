@@ -18,6 +18,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ import com.dynasys.appdisoft.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
+import com.pdfjet.Line;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
     private List<DetalleEntity> mDetalleItem=new ArrayList<>();
     private ProductosListViewModel viewModelProducto;
     List<Categorias> ListCategorias;
-    LinearLayout linearTotal;
+    LinearLayout linearTotal,Carrito;
     List<PedidoDetalle> listDetalle;
     TextView CantidadPedido;
     TextView TotalPedido;
@@ -116,6 +118,7 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
         recListCategoria=(RecyclerView) view.findViewById(R.id.Productos_CardCategoria);
         recListCategoria.setHasFixedSize(true);
         CantidadPedido=(TextView)view.findViewById(R.id.cantidad_order);
+        Carrito=(LinearLayout)view.findViewById(R.id.linear_list_carrito);
         TotalPedido=(TextView)view.findViewById(R.id.total_order);
         recListProductos=(RecyclerView) view.findViewById(R.id.Productos_CardOrder);
         //recListProductos.setHasFixedSize(true);
@@ -129,6 +132,14 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
         simpleSearchView = (SearchView) view.findViewById (R.id.simpleSearchCart);
         simpleSearchView.setOnQueryTextListener((SearchView.OnQueryTextListener) this);
         simpleSearchView.setIconifiedByDefault(false);
+
+        Carrito.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideKeyboard();
+                getActivity().onBackPressed();
+            }
+        });
         return view;
     }
     public void cargarProducto(){
@@ -194,7 +205,7 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
     }
 
     @Override
-    public boolean onQueryTextChange(String s) {
+    public boolean onQueryTextChange(String textContent) {
         try{
             List<ProductoEntity>  listaFiltrada=new ArrayList<>();
 
@@ -204,10 +215,13 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
                         listaFiltrada.add(listProductos.get(i).clone());
                     }
                 }
-                adapterProductos.setFilter(listaFiltrada);
+
+                List<ProductoEntity> ListaSeacrh=superFilter(listaFiltrada,textContent);
+                adapterProductos.setFilter(ListaSeacrh);
 
             }else{
-                adapterProductos.setFilter(listProductos);
+                List<ProductoEntity> ListaSeacrh=superFilter(listProductos,textContent);
+                adapterProductos.setFilter(ListaSeacrh);
             }
 
         }catch (Exception e){
@@ -220,7 +234,7 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
         try{
             texto=texto.toLowerCase();
             for (ProductoEntity b:bares){
-                String name=b.get().toLowerCase();
+                String name=b.getProducto().toLowerCase();
                 if(name.contains(texto)){
                     ListaFiltrada.add(b);
                 }
@@ -229,6 +243,66 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
 
         }
         return ListaFiltrada;
+    }
+
+    public List<ProductoEntity> superFilter(List<ProductoEntity> bares ,String texto){
+        List<ProductoEntity>ListaFiltrada=new ArrayList<>();
+        int cantidad=12;
+        int cont=0;
+        String[] word=texto.toString().toUpperCase().split(" ");
+        int cant = word.length;
+        for (ProductoEntity item: bares) {
+            String nameCliente=item.getNumi()+" "+item.getProducto().toUpperCase();
+            switch (cant){
+                case 1:
+                    if (nameCliente.trim().contains(word[0])) {
+                        ListaFiltrada.add(item);
+                        cont +=1;
+                    }
+                    break;
+                case 2:
+                    if (nameCliente.trim().contains(word[0])
+                            && nameCliente.trim().contains(word[1])) {
+                        ListaFiltrada.add(item);
+                        cont +=1;
+                    }
+                    break;
+                case 3:
+                    if (nameCliente.trim().contains(word[0])
+                            && nameCliente.trim().contains(word[1])
+                            && nameCliente.trim().contains(word[2])) {
+                        ListaFiltrada.add(item);
+                        cont +=1;
+                    }
+                    break;
+                case 4:
+
+                    if (nameCliente.trim().contains(word[0])
+                            && nameCliente.trim().contains(word[1])
+                            && nameCliente.trim().contains(word[2])
+                            && nameCliente.trim().contains(word[3])) {
+                        ListaFiltrada.add(item);
+                        cont +=1;
+                    }
+                    break;
+                case 5:
+                default:
+                    if (nameCliente.trim().contains(word[0])
+                            && nameCliente.trim().contains(word[1])
+                            && nameCliente.trim().contains(word[2])
+                            && nameCliente.trim().contains(word[3])
+                            && nameCliente.trim().contains(word[4])) {
+                        ListaFiltrada.add(item);
+                        cont +=1;
+                    }
+                    break;
+            }
+
+            if (cont==10){
+                break;
+            }
+        }
+      return ListaFiltrada;
     }
 
     @Override
@@ -263,6 +337,7 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
     public void recyclerViewListClickedProducto(View v, ProductoEntity producto) {
 
         UtilShare.ProductoSelected=producto;
+        hideKeyboard();
         getActivity().onBackPressed();
     }
 
