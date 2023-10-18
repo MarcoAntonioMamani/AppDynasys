@@ -2101,14 +2101,12 @@ return null;
     public List<ProductoEntity> GetActualProducts()  {
         List <ProductoEntity> lista=new ArrayList<>();
         for (int i = 0; i < lisProducto.size(); i++) {
-            try{
+
                 ProductoEntity item=lisProducto.get(i).clone();
                 if (!ExistsItem(item)){
                     lista.add(item);
                 }
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+
 
 
         }

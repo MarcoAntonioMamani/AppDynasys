@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             DataPreferences.putPrefInteger("Accion",0,getApplicationContext());
             String CodeCliente=DataPreferences.getPref("idCliente" ,getApplicationContext()) ;
             try {
+
                UtilShare.clienteMapa= viewModelClientes.getClientebycode(CodeCliente);
                 Fragment frag = new CreatePedidoFragment(1,0);
                 MainActivity fca = (MainActivity) this;
@@ -329,6 +330,8 @@ public class MainActivity extends AppCompatActivity {
             case 6:
                 returnToMain();
                 frag = new CreatePedidoFragment(0,0);
+                UtilShare.clienteSelected=null;
+                UtilShare.DetalleCarrito=null;
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 7:
@@ -362,6 +365,8 @@ public class MainActivity extends AppCompatActivity {
             case 11:
                 returnToMain();
                 frag = new CreatePedidoFragment(0,1);
+                UtilShare.clienteSelected=null;
+                UtilShare.DetalleCarrito=null;
                 tag = Constantes.TAG_PEDIDOS;
                 break;
             case 21:

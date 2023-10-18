@@ -11,17 +11,7 @@
         android:orientation="vertical"
         >
 
-        <SearchView
-            android:id = "@+id/simpleSearchViewProductos"
-            android:layout_width = "fill_parent"
-            android:layout_height = "wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            style="@style/StyleTitle"
-            android:queryHint = "Buscar aquí"
-            android:background="@color/blanco"
-            android:visibility="gone"
-            />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/Productos_CardCategoria"
             android:layout_width="match_parent"
@@ -32,6 +22,16 @@
             android:paddingBottom="8dp"
 
             />
+        <SearchView
+            android:id = "@+id/simpleSearchCart"
+            android:layout_width = "fill_parent"
+            android:layout_height = "wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            style="@style/StyleTitle"
+            android:queryHint = "Buscar aquí"
+            android:background="@color/blanco"
+            />
         <android.support.v7.widget.RecyclerView
             android:id="@+id/Productos_CardOrder"
             android:layout_width="match_parent"
@@ -39,7 +39,6 @@
             android:layout_gravity="center"
             android:layout_weight="5"
             android:background="@color/colorSplashText"
-
             />
         <LinearLayout
             android:id="@+id/linear_totalorder"

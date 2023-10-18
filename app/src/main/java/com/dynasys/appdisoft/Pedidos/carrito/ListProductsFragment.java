@@ -6,6 +6,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,11 +22,11 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.DB.Entity.DetalleEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoDetalle;
 import com.dynasys.appdisoft.Login.DB.Entity.PrecioCategoriaEntity;
 import com.dynasys.appdisoft.Login.DB.Entity.ProductoEntity;
-import com.dynasys.appdisoft.Login.DB.Entity.TipoNegocioEntity;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
 import com.dynasys.appdisoft.Login.ProductosListViewModel;
 import com.dynasys.appdisoft.Pedidos.ShareMethods;
@@ -38,20 +40,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import okhttp3.internal.Util;
+
 public class ListProductsFragment extends Fragment implements ProductorMvp.View, SearchView.OnQueryTextListener{
 
     private ProductorMvp.Presenter mSincronizarPresenter;
     LottieAlertDialog alertDialog;
     int VentaDirectaOPedido =0;
     Boolean BanderaCantidad=false;
+    int idCategoriaSelected=-1;
     Boolean BanderaCaja=false;
+    SearchView simpleSearchView;
     public CategoriaAdapter adapterCategoria;
     public ProductoCarritoAdapter adapterProductos;
     RecyclerView recListCategoria;
     RecyclerView recListProductos;
+    private NestedScrollView mscroll;
     Context context;
     Double mTotal=0.0;
-    SearchView simpleSearchView;
     List<ProductoEntity> listProductos;
     private List<DetalleEntity> mDetalleItem=new ArrayList<>();
     private ProductosListViewModel viewModelProducto;
@@ -74,6 +80,24 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
         this.ProveedorId=proveedorId;
         this.NombreProveedor=NombreProveedor;
         this.VentaDirectaOPedido=VentaDirectaOPedido;
+        listProductos= UtilShare.listProductoCarrito;
+        mDetalleItem=UtilShare.DetalleCarrito;
+        filtrarListProductos();
+    }
+
+    public void filtrarListProductos(){
+
+        List listFilter=new ArrayList();
+        for (int i = 0; i < listProductos.size(); i++) {
+            ProductoEntity pro=listProductos.get(i);
+            DetalleEntity de =ExisteItem(pro.getNumi());
+            if (de!=null){
+                pro.setTotalUnitario(1);
+            }else{
+                pro.setTotalUnitario(0);
+            }
+            listFilter.add(pro);
+        }
 
 
     }
@@ -94,28 +118,26 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
         CantidadPedido=(TextView)view.findViewById(R.id.cantidad_order);
         TotalPedido=(TextView)view.findViewById(R.id.total_order);
         recListProductos=(RecyclerView) view.findViewById(R.id.Productos_CardOrder);
-        recListProductos.setHasFixedSize(true);
+        //recListProductos.setHasFixedSize(true);
         linearTotal=(LinearLayout)view.findViewById(R.id.linear_totalorder);
+        idCategoriaSelected=0;
         viewModelProducto = ViewModelProviders.of(getActivity()).get(ProductosListViewModel.class);
         cargarProducto();
         SetearListCategorias();
         CargarRecyclerCategoria(ListCategorias);
-
-
+        calcularTotal();
+        simpleSearchView = (SearchView) view.findViewById (R.id.simpleSearchCart);
+        simpleSearchView.setOnQueryTextListener((SearchView.OnQueryTextListener) this);
+        simpleSearchView.setIconifiedByDefault(false);
         return view;
     }
     public void cargarProducto(){
-        try {
-        if (VentaDirectaOPedido==0){  //Quiere decir que es solo pedido normal y debe mostrar el stock general
-            listProductos= viewModelProducto.getProductoByClienteVentaDirecta(precio.getId());
-        }else{
-            listProductos= viewModelProducto.getProductoByCliente(precio.getId());
-        }
+
         if (listProductos.size()>0){
             List listP=new ArrayList();
             for (int i = 0; i < listProductos.size(); i++) {
                 if (listProductos.get(i).getIdProveedor()==ProveedorId){
-                    listP.add(listProductos.get(i));
+                    listP.add(listProductos.get(i).clone());
                 }
             }
             listProductos=listP;
@@ -123,11 +145,7 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
             CargarRecycler(listProductos);
         }
 
-        } catch (ExecutionException e) {
 
-        } catch (InterruptedException e) {
-
-        }
     }
     public void limpiarCantidad(){
 
@@ -177,7 +195,40 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
 
     @Override
     public boolean onQueryTextChange(String s) {
+        try{
+            List<ProductoEntity>  listaFiltrada=new ArrayList<>();
+
+            if (idCategoriaSelected!=0){
+                for (int i = 0; i < listProductos.size(); i++) {
+                    if (listProductos.get(i).getIdcategoria()==idCategoriaSelected&&listProductos.get(i).getIdProveedor()==ProveedorId){
+                        listaFiltrada.add(listProductos.get(i).clone());
+                    }
+                }
+                adapterProductos.setFilter(listaFiltrada);
+
+            }else{
+                adapterProductos.setFilter(listProductos);
+            }
+
+        }catch (Exception e){
+
+        }
         return false;
+    }
+    public List<ProductoEntity> filter (List<ProductoEntity> bares ,String texto){
+        List<ProductoEntity>ListaFiltrada=new ArrayList<>();
+        try{
+            texto=texto.toLowerCase();
+            for (ProductoEntity b:bares){
+                String name=b.get().toLowerCase();
+                if(name.contains(texto)){
+                    ListaFiltrada.add(b);
+                }
+            }
+        }catch (Exception e){
+
+        }
+        return ListaFiltrada;
     }
 
     @Override
@@ -187,17 +238,15 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
 
     @Override
     public void recyclerViewListClickedCategoria(View v, Categorias categoria, TextView tvCategoria) throws CloneNotSupportedException {
-
+        idCategoriaSelected=categoria.id;
         CambiarEstado(categoria);
         List<ProductoEntity>  listaFiltrada=new ArrayList<>();
 
         if (categoria.getId()!=0){
             for (int i = 0; i < listProductos.size(); i++) {
-
-                if (listProductos.get(i).getIdcategoria()==categoria.getId()){
+                if (listProductos.get(i).getIdcategoria()==categoria.getId()&&listProductos.get(i).getIdProveedor()==ProveedorId){
                     listaFiltrada.add(listProductos.get(i).clone());
                 }
-
             }
             CargarRecycler(listaFiltrada);
             //adapterProductos.setFilter(listaFiltrada);
@@ -208,33 +257,32 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
 
         }
         hideKeyboard();
-
-
-
-
-
-/*  aqui haique filtrar producto
-        List<ProductosEntity> list=new ArrayList<>();
-        if (empresa.getId()==0){
-            adapterPerfil.setFilter(mListEmpresas);
-        }else{
-            for (int i = 0; i < mListEmpresas.size(); i++) {
-                if (mListEmpresas.get(i).getCategoriaId()==empresa.getId()){
-                    list.add(mListEmpresas.get(i));
-                }
-            }
-            adapterPerfil.setFilter(list);
-        }*/
     }
+
+    @Override
+    public void recyclerViewListClickedProducto(View v, ProductoEntity producto) {
+
+        UtilShare.ProductoSelected=producto;
+        getActivity().onBackPressed();
+    }
+
     public void CargarRecycler(List<ProductoEntity> listCliente){
         if (listCliente!=null){
             adapterProductos = new ProductoCarritoAdapter(context,listCliente,this,getActivity());
-            GridLayoutManager  llm = new GridLayoutManager(getActivity(),1);
+
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+            llm.setOrientation(LinearLayoutManager.VERTICAL);
+            recListProductos.setLayoutManager(llm);
+            recListProductos.setAdapter(adapterProductos);
+           ViewCompat.setNestedScrollingEnabled(recListProductos, false);
+
+
+          /*  GridLayoutManager  llm = new GridLayoutManager(getActivity(),1);
             llm.setOrientation(GridLayoutManager .VERTICAL);
 
             recListProductos.setLayoutManager(llm);
             recListProductos.setAdapter(adapterProductos);
-
+*/
             recListProductos.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -265,7 +313,11 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
 
         for (int i = 0; i <mDetalleItem.size() ; i++) {
             DetalleEntity item=mDetalleItem.get(i);
+
             if (item.getObcprod()==ProductoId){
+                if (ProductoId==1){
+                    return item;
+                }
                 return item;
             }
 
@@ -283,31 +335,46 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
                 detalle.setObnumi("-1");
                 detalle.setObcprod(item.getNumi());
                 detalle.setCadesc(item.getProducto());
-                detalle.setObpcant(0.0);
-                detalle.setObpbase(item.getPrecio());
-                detalle.setObptot(item.getPrecio());
-                detalle.setTotal(item.getPrecio());
-                detalle.setEstado(false);
-                detalle.setStock(item.getStock());
-                detalle.setFamilia(item.getFamilia());
-                double CantCajaValue =0;
-                if (item.getConversion()==1.0){
 
-                    CantCajaValue=1;
-                }else{
-                    double Conversion=item.getConversion();
-                    double CantCaja= (double) (1/Conversion);
+                double cantidad=0.0;
+                if (isDouble(value)) {
 
-
-                    CantCajaValue=CantCaja;
+                    double ParteEnteraCaja = (double) Double.parseDouble(value);
+                    double CantUnitCaja = (double) (ParteEnteraCaja * item.getConversion());
+                    cantidad = CantUnitCaja;
                 }
 
+                if (Double.parseDouble(value)>0){
+                    detalle.setObpcant(Double.parseDouble(value));
 
-                detalle.setCajas(CantCajaValue);
-                detalle.setConversion(item.getConversion());
-                mDetalleItem.add(detalle);
+                    detalle.setObpbase(item.getPrecio());
+                    detalle.setObptot(item.getPrecio());
+                    detalle.setTotal(item.getPrecio());
+                    detalle.setEstado(false);
+                    detalle.setStock(item.getStock());
+                    detalle.setFamilia(item.getFamilia());
+                    double CantCajaValue =0;
+                    if (item.getConversion()==1.0){
+
+                        CantCajaValue=1;
+                    }else{
+                        double Conversion=item.getConversion();
+                        double CantCaja= (double) (1/Conversion);
+
+
+                        CantCajaValue=CantCaja;
+                    }
+
+
+                    detalle.setCajas(CantCajaValue);
+                    detalle.setConversion(item.getConversion());
+                    mDetalleItem.add(detalle);
+                }
+
             }
-            ModificarDetalleVentaUnitario(detalle,value,eCantidad,eCatidadCajas);
+
+            actualizarCantidad();
+            //ModificarDetalleVentaUnitario(detalle,value,eCantidad,eCatidadCajas);
         }
 
         BanderaCantidad=false;
@@ -322,33 +389,40 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
             BanderaCaja=true;
             DetalleEntity detalle=ExisteItem(item.getNumi());
             if (detalle==null){
-                detalle=new DetalleEntity();
-                detalle.setObnumi("-1");
-                detalle.setObcprod(item.getNumi());
-                detalle.setCadesc(item.getProducto());
-                detalle.setObpcant(0.0);
-                detalle.setObpbase(item.getPrecio());
-                detalle.setObptot(item.getPrecio());
-                detalle.setTotal(item.getPrecio());
-                detalle.setEstado(false);
-                detalle.setStock(item.getStock());
-                detalle.setFamilia(item.getFamilia());
-                double CantCajaValue =0;
-                if (item.getConversion()==1.0){
-
-                    CantCajaValue=1;
-                }else{
-                    double Conversion=item.getConversion();
-                    double CantCaja= (double) (1/Conversion);
-
-
-                    CantCajaValue=CantCaja;
+                double cantidad=0.0;
+                if (isDouble(value)){
+                    cantidad=Double.parseDouble(value);
                 }
 
+                if (cantidad>0){
+                    detalle=new DetalleEntity();
+                    detalle.setObnumi("-1");
+                    detalle.setObcprod(item.getNumi());
+                    detalle.setCadesc(item.getProducto());
+                    detalle.setObpcant(0.0);
+                    detalle.setObpbase(item.getPrecio());
+                    detalle.setObptot(item.getPrecio());
+                    detalle.setTotal(item.getPrecio());
+                    detalle.setEstado(false);
+                    detalle.setStock(item.getStock());
+                    detalle.setFamilia(item.getFamilia());
+                    double CantCajaValue =0;
+                    if (item.getConversion()==1.0){
 
-                detalle.setCajas(CantCajaValue);
-                detalle.setConversion(item.getConversion());
-                mDetalleItem.add(detalle);
+                        CantCajaValue=1;
+                    }else{
+                        double Conversion=item.getConversion();
+                        double CantCaja= (double) (1/Conversion);
+
+
+                        CantCajaValue=CantCaja;
+                    }
+
+
+                    detalle.setCajas(CantCajaValue);
+                    detalle.setConversion(item.getConversion());
+                    mDetalleItem.add(detalle);
+                }
             }
 
             ModificarDetalleVentaCaja(detalle,value,eCantidad,eCatidadCajas);
@@ -554,25 +628,60 @@ public class ListProductsFragment extends Fragment implements ProductorMvp.View,
             ProductoEntity pro=listProductos.get(i);
             DetalleEntity detalle=ExisteItem(pro.getNumi());
             if (detalle==null ){
+                if (listProductos.get(i).getNumi()==1){
+                    listProductos.get(i).setCaja(0);
+                    listProductos.get(i).setTotalUnitario(0);
+                }
                 listProductos.get(i).setCaja(0);
                 listProductos.get(i).setTotalUnitario(0);
 
             }else{
                 if (detalle.getObpcant()==0 ){
+                    if (listProductos.get(i).getNumi()==1){
+                        listProductos.get(i).setCaja(0);
+                        listProductos.get(i).setTotalUnitario(0);
+                    }
                     listProductos.get(i).setCaja(0);
                     listProductos.get(i).setTotalUnitario(0);
                 }
                 if (detalle.getObpcant()>0 ){
+
+                    if (listProductos.get(i).getNumi()==1){
+                        listProductos.get(i).setCaja(detalle.getCajas());
+                        listProductos.get(i).setTotalUnitario(detalle.getObpcant());
+                    }
                     listProductos.get(i).setCaja(detalle.getCajas());
                     listProductos.get(i).setTotalUnitario(detalle.getObpcant());
-                    adapterProductos.setFilter(listProductos);
-                    //adapterProductos.notifyDataSetChanged();
+
+                   // adapterProductos.notifyDataSetChanged();
                 }
             }
 
         }
+        UtilShare.listProductFiltrado.clear();
+        for (int i = 0; i < listProductos.size(); i++) {
+            UtilShare.listProductFiltrado.add(listProductos.get(i).clone());
+        }
 
+        List listaFiltrada=new ArrayList();
+        for (int i = 0; i < listProductos.size(); i++) {
 
+            if (idCategoriaSelected==0){
+                if (listProductos.get(i).getIdProveedor()==ProveedorId){
+                    listaFiltrada.add(listProductos.get(i).clone());
+                }  else{
+                    if (idCategoriaSelected==listProductos.get(i).getIdcategoria() &&listProductos.get(i).getIdProveedor()==ProveedorId){
+                        listaFiltrada.add(listProductos.get(i).clone());
+                    }
+                }
+            }
+            UtilShare.listProductFiltrado =listaFiltrada;
+            adapterProductos.setFilter(UtilShare.listProductFiltrado);
+          //  adapterProductos.notifyDataSetChanged();
+        }
+
+        //adapterProductos.setFilter(UtilShare.listProductCart);
+        //adapterProductos.notifyDataSetChanged();
     }
 
     public int obtenerPosicionItem(DetalleEntity product){

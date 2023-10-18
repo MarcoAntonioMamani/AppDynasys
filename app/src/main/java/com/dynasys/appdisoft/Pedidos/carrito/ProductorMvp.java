@@ -13,6 +13,7 @@ public interface ProductorMvp {
     interface View {
         void recyclerViewListClicked(android.view.View v, ProductoEntity empresa);
         void recyclerViewListClickedCategoria(android.view.View v, Categorias empresa, TextView tvCategoria) throws CloneNotSupportedException;
+        void recyclerViewListClickedProducto(android.view.View v, ProductoEntity producto) ;
         void setPresenter(Presenter presenter);
         void ShowMessageResult(String message);
         void ModifyItemCart( String value, ProductoEntity item, EditText eCantidad,EditText eCatidadCajas);

@@ -33,11 +33,7 @@
                   android:layout_width="fill_parent"
                   android:layout_height="match_parent"
                   >
-                  <ImageView
-                      android:layout_width="20dp"
-                      android:layout_height="20dp"
-                      android:src="@drawable/ic_producto"
-                      />
+
                   <TextView
                       android:id="@+id/id_nameProducto"
                       android:layout_width="wrap_content"
@@ -84,10 +80,11 @@
                         />
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 >
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -95,65 +92,18 @@
                     android:orientation="vertical"
                     android:layout_gravity="center"
                     android:gravity="center"
+                    android:padding="5dp"
                     >
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Unidad"
-                        android:maxLines="1"
-                        android:textColor="@color/secondary_text"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                        />
-
-                    <EditText
-                        android:id="@+id/id_Cantidad_Carrito"
+                    <Button
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/animation_edittext_cantidad"
-                        android:inputType="numberDecimal"
-                        android:layout_gravity="center"
-                        android:textStyle="bold"
-                        android:selectAllOnFocus="true"
+                        android:layout_height="50dp"
+                        android:background="@drawable/animation_riple_button"
+                        android:text="Agregar "
+                       android:textColor="@color/white"
+                        android:id="@+id/btnAgregarCarrito"
+                        >
 
-                        android:textColor="@color/primary_text"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                        android:gravity="center"
-                        android:hint="0" />
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                >
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    >
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cajas"
-                        android:textColor="@color/secondary_text"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                        />
-                    <EditText
-                        android:id="@+id/id_Cantidad_Cajas"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/animation_edittext_cantidad"
-                        android:inputType="numberDecimal"
-                        android:layout_gravity="center"
-                        android:textStyle="bold"
-                        android:selectAllOnFocus="true"
-
-                        android:textColor="@color/primary_text"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                        android:gravity="center"
-                        android:hint="0" />
+                    </Button>
                 </LinearLayout>
             </LinearLayout>
 

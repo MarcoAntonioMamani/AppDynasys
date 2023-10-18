@@ -131,7 +131,6 @@ public class DetalleAdaptader
                     viewHolder.caja.removeTextChangedListener(this);
                     mView.ModifyItemCaja(pos,s.toString(),item,tvsubtotal,tvCantidad,tvCantidadCajas);
                     viewHolder.caja.addTextChangedListener(this);
-
                 }
 
 

@@ -162,7 +162,11 @@ public class ProductoEntity  implements Cloneable{
         this.stock = stock;
     }
 
-    public ProductoEntity clone() throws CloneNotSupportedException {
-        return (ProductoEntity) super.clone();
+    public ProductoEntity clone()  {
+        try {
+            return (ProductoEntity) super.clone();
+        } catch (CloneNotSupportedException e) {
+           return null;
+        }
     }
 }

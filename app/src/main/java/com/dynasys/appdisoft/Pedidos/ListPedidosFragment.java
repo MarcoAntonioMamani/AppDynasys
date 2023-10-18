@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.dynasys.appdisoft.Adapter.AdapterPedidos;
+import com.dynasys.appdisoft.Clientes.UtilShare;
 import com.dynasys.appdisoft.Login.DB.Entity.PedidoEntity;
 import com.dynasys.appdisoft.Login.DB.ListViewmodel.PedidoListViewModel;
 import com.dynasys.appdisoft.Login.DataLocal.DataPreferences;
@@ -221,6 +222,7 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
         if (Tipo==3){
             btnAddPedido.setVisibility(View.GONE);
         }
+        UtilShare.clienteSelected=null;
         btnAddPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

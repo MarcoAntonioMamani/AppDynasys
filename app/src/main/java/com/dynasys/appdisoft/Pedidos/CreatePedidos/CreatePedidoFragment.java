@@ -82,6 +82,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -231,6 +232,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
                 if (pos>=0 && listPrecio.size()>0){
                     precioSelected = listPrecio.get(pos);
                     mCreatePedidoPresenter.CargarProducto(precioSelected.getId(),VentaDirectaOPedido);
+                    UtilShare.PrecioCategoriaSelected=precioSelected;
                 }
             }
             public void onNothingSelected(AdapterView<?> parent) {
@@ -240,13 +242,121 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         ArrayAdapter<PrecioCategoriaEntity> adapter =new ArrayAdapter<PrecioCategoriaEntity>(getContext(), android.R.layout.simple_spinner_item, listPrecio);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         listaSpinnerPrecio.setAdapter(adapter);
+
+        if (UtilShare.PrecioCategoriaSelected!=null){
+            int posicionPrecio =ObtenerPosicionPrecio(UtilShare.PrecioCategoriaSelected);
+            if (posicionPrecio>=0){
+                listaSpinnerPrecio.setSelection(posicionPrecio);
+            }
+        }
+
+        if (UtilShare.clienteSelected!=null){
+            mCliente = UtilShare .clienteSelected;
+            acliente.setText(mCliente.getNamecliente());
+        }
+        CargarDetalleCache();
         onClickVerProductos();
         return view;
+    }
+
+    public void CargarDetalleCache(){
+
+        if (UtilShare.DetalleCarrito!=null){
+            mDetalleItem=UtilShare.DetalleCarrito;
+            if (UtilShare.ProductoSelected!=null){
+                ProductoEntity item = UtilShare.ProductoSelected;
+                int stock= DataPreferences.getPrefInt("stock",context);
+                if (stock>0){
+                    if (item.getStock()>0){
+                        DetalleEntity detalle=new DetalleEntity();
+                        detalle.setObnumi("-1");
+                        detalle.setObcprod(item.getNumi());
+                        detalle.setCadesc(item.getProveedor()+" - "+item.getProducto());
+                        detalle.setObpcant(1.0);
+                        detalle.setObpbase(item.getPrecio());
+                        detalle.setObptot(item.getPrecio());
+                        detalle.setTotal(item.getPrecio());
+                        detalle.setEstado(false);
+                        detalle.setStock(item.getStock());
+                        detalle.setFamilia(item.getFamilia());
+                        double CantCajaValue =0;
+                        if (item.getConversion()==1.0){
+
+                            CantCajaValue=1;
+                        }else{
+                            double Conversion=item.getConversion();
+                            double CantCaja= (double) (1/Conversion);
+
+
+                            CantCajaValue=CantCaja;
+                        }
+
+
+                        detalle.setCajas(CantCajaValue);
+                        detalle.setConversion(item.getConversion());
+                        mDetalleItem.add(detalle);
+                    }else{
+
+                        aProducto.setText("");
+                        ShowMessageResult("No Existe Stock para seleccionar el producto");
+                    }
+                }else{
+
+                    DetalleEntity detalle=new DetalleEntity();
+                    detalle.setObnumi("-1");
+                    detalle.setFamilia(item.getFamilia());
+                    detalle.setObcprod(item.getNumi());
+                    detalle.setCadesc(item.getProducto());
+                    detalle.setObpcant(1.0);
+                    detalle.setObpbase(item.getPrecio());
+                    detalle.setObptot(item.getPrecio());
+                    detalle.setEstado(false);
+                    detalle.setStock(0);
+
+                    mDetalleItem.add(detalle);
+
+
+
+                }
+
+            }
+          //  hideKeyboard();
+            if (lisProducto!=null){
+                productoAdapter.setLista(GetActualProducts());
+                productoAdapter.notifyDataSetChanged();
+            }
+
+            Reconstruir();
+            mscroll.fullScroll(View.FOCUS_DOWN);
+            if (UtilShare.ProductoSelected!=null){
+                ShowKeyboard();
+            }
+
+            calcularTotal();
+
+
+
+        }
+
+
+    }
+    public int ObtenerPosicionPrecio(PrecioCategoriaEntity p){
+
+        for (int i = 0; i < listPrecio.size(); i++) {
+            if (listPrecio.get(i).getId()== p.getId()){
+                return i;
+            }
+        }
+        return -1;
     }
     public void onClickVerProductos(){
         btnLuri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboard();
+
+                UtilShare.DetalleCarrito=mDetalleItem;
+                UtilShare.ProductoSelected=null;
                 Fragment frag = new ListProductsFragment(precioSelected,1,"Luri",VentaDirectaOPedido);
                 MainActivity fca = (MainActivity) getActivity();
                 fca.switchFragment(frag,"CREATE_PEDIDOS");
@@ -255,6 +365,9 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         btnUnilever.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboard();
+                UtilShare.DetalleCarrito=mDetalleItem;
+                UtilShare.ProductoSelected=null;
                 Fragment frag = new ListProductsFragment(precioSelected,2,"Unilever",VentaDirectaOPedido);
                 MainActivity fca = (MainActivity) getActivity();
                 fca.switchFragment(frag,"PRODUCTOS");
@@ -263,6 +376,9 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         btnKCP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboard();
+                UtilShare.DetalleCarrito=mDetalleItem;
+                UtilShare.ProductoSelected=null;
                 Fragment frag = new ListProductsFragment(precioSelected,3,"KCP",VentaDirectaOPedido);
                 MainActivity fca = (MainActivity) getActivity();
                 fca.switchFragment(frag,"PRODUCTOS");
@@ -617,6 +733,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         if (VentaDirectaOPedido==0){  ///Si es pedido listado pedidos pendientes
             Fragment frag = new  ListPedidosFragment(1);
 
+            UtilShare.ProductoSelected=null;
 
             //fca.switchFragment(frag,"LISTAR_PEDIDOS");
             fca.CambiarFragment(frag, Constantes.TAG_PEDIDOS);
@@ -650,7 +767,8 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     if ((ClienteEntity) adapterView.getItemAtPosition(i)!=null){
                         mCliente = (ClienteEntity) adapterView.getItemAtPosition(i);
-
+                        UtilShare.clienteSelected=mCliente;
+                        hideKeyboard();
                     }
 
 
@@ -662,6 +780,7 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     @Override
     public void MostrarProductos(List<ProductoEntity> productos) {
         if (productos.size()>0){
+            UtilShare.listProductoCarrito=productos;
             lisProducto = new ArrayList<>();
             lisProducto.addAll(productos);
             aProducto.setThreshold(1);
@@ -771,6 +890,12 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
         InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         if (inputMethodManager != null) {
             inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
+        }
+    }
+    private void ShowKeyboard(){
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
     }
     public void Reconstruir(){
@@ -1215,16 +1340,10 @@ public class CreatePedidoFragment extends Fragment implements CreatePedidoMvp.Vi
     public List<ProductoEntity> GetActualProducts()  {
         List <ProductoEntity> lista=new ArrayList<>();
         for (int i = 0; i < lisProducto.size(); i++) {
-            try{
                 ProductoEntity item=lisProducto.get(i).clone();
                 if (!ExistsItem(item)){
                     lista.add(item);
                 }
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
-
-
         }
         return lista;
     }
