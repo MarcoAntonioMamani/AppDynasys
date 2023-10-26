@@ -223,6 +223,8 @@ public class ListPedidosFragment extends Fragment implements PedidosMvp.View {
             btnAddPedido.setVisibility(View.GONE);
         }
         UtilShare.clienteSelected=null;
+        UtilShare.DetalleCarrito=new ArrayList<>();
+
         btnAddPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -327,7 +329,10 @@ public ClienteEntity obtenerCliente(PedidoEntity pedido){
     return null;
 }
     @Override
-    public void MostrarPedidos(List<PedidoEntity> clientes) {
+    public void MostrarPedidos(List<PedidoEntity> clientes) throws ExecutionException, InterruptedException {
+        List<PedidoEntity> listAllPedido;
+        listAllPedido=viewModelPedidos.getMAllPedido(1);
+
         listPedidos=clientes;
         tvCantidad.setText("Cantidad: "+clientes.size());
         Double TotalEfectivo=0.0;

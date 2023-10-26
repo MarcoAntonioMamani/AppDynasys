@@ -389,8 +389,6 @@ viewModelStock.insertListStock(responseUser);
                             List<PedidoEntity> lst=new ArrayList<>();
                             for (int i = 0; i < responseUser.size(); i++) {
                                 PedidoEntity pedido = responseUser.get(i);
-                                if (pedido.getOaest()!=3){
-
                                     if (pedido.getOaest() == 1) {
                                             pedido.setOaest(2);
                                             pedido.setEstado(2);
@@ -400,10 +398,6 @@ viewModelStock.insertListStock(responseUser);
                                         lst.add(pedido);
 
                                     }
-
-
-                                }
-
                             }
                             viewModelPedidos.insertPedidosList(lst);
                             // mSincronizarview.ShowSyncroMgs("Se ha Registrado/Actualizado " + responseUser.size() + " Precios");

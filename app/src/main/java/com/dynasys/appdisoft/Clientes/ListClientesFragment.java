@@ -31,6 +31,7 @@ import com.dynasys.appdisoft.Pedidos.ShareMethods;
 import com.dynasys.appdisoft.R;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
+import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
 import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClientesListViewModel;
 
@@ -93,6 +94,11 @@ private List<ClienteEntity> lisClientes=new ArrayList<>();
         if (!ShareMethods.IsServiceRunning(getContext(), ServiceSincronizacion.class)){
             UtilShare.mActivity=getActivity();
             Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
+            getContext().startService(intent);
+        }
+        if (!ShareMethods.IsServiceRunning(getContext(), ServicesLocation.class)){
+            UtilShare.mActivity=getActivity();
+            Intent intent = new Intent(getContext(),new ServicesLocation().getClass());
             getContext().startService(intent);
         }
         return view;

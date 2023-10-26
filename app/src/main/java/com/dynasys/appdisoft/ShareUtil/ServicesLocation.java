@@ -58,18 +58,13 @@ public class ServicesLocation  extends Service implements
                     .addApi(LocationServices.API)
                     .build();
 
-            mLocationRequest.setInterval(60 * 1000);
-            mLocationRequest.setFastestInterval(60 * 1000);
+            mLocationRequest.setInterval(30 * 1000);
+            mLocationRequest.setFastestInterval(30 * 1000);
 
 
             int priority = LocationRequest.PRIORITY_HIGH_ACCURACY; //by default
-            //PRIORITY_BALANCED_POWER_ACCURACY, PRIORITY_LOW_POWER, PRIORITY_NO_POWER are the other priority modes
-
-
             mLocationRequest.setPriority(priority);
             mLocationClient.connect();
-
-            //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
             return START_STICKY;
         }
 
@@ -79,9 +74,6 @@ public class ServicesLocation  extends Service implements
             return null;
         }
 
-        /*
-         * LOCATION CALLBACKS
-         */
         @Override
         public void onConnected(Bundle dataBundle) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

@@ -503,9 +503,9 @@ if (UtilShare.mActivity!=null){
                             _DecargarPedidos(""+idRepartidor);
                             //_DecargarStocks(""+idRepartidor,0);
                             exportarClientes();
-                            exportarVisitas();
+                           // exportarVisitas();
                             UpdateClientes();
-                            UpdateVisitas();
+                          //  UpdateVisitas();
                             exportarPedidos(""+idRepartidor);
                             exportarPedidosEstados();
                             _PostInsertarCobranza();
@@ -1679,6 +1679,8 @@ if (UtilShare.mActivity!=null){
 
                                         if (mPedido.getOaap()==1){
                                             UpdateDetalleServicio(responseUser.getToken(),list,mPedido,CodeGenerado);
+                                        }else{
+                                            viewModelPedidos.updatePedido(mPedido);
                                         }
 
                                         //showSaveResultOption(1,""+mcliente.getNumi(),"");
@@ -1724,7 +1726,8 @@ if (UtilShare.mActivity!=null){
 
     public void UpdateDetalleServicio(final String Oanumi, List<DetalleEntity> list, final PedidoEntity pedido, final String CodigoGenerado){
         ApiManager apiManager=ApiManager.getInstance(mContext);
-        apiManager.UpdateDetalle(list,Oanumi, new Callback<ResponseLogin>() {
+        int idRepartidor= DataPreferences.getPrefInt("idrepartidor",this);
+        apiManager.UpdateDetalle(list,Oanumi,""+idRepartidor, new Callback<ResponseLogin>() {
             @Override
             public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                 ResponseLogin responseUser = response.body();

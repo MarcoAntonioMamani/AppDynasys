@@ -75,6 +75,8 @@ import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -907,7 +909,56 @@ return null;
             }
         },""+idRepartidor);
     }
+    public AlertDialog showDialogQuestionAnular(String Contenido, Boolean flag) {
 
+
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
+
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        View v = inflater.inflate(R.layout.dialog_question, null);
+
+        builder.setView(v);
+        TextView Content =(TextView)v.findViewById(R.id.dialog_question_content) ;
+        Button aceptar = (Button) v.findViewById(R.id.dialog_btn_ok);
+        Button cancelar = (Button) v.findViewById(R.id.dialog_btn_cancel);
+        Content.setText(Contenido);
+        aceptar.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (rCredito.isChecked()==true){
+                            if (tvTotalPago.getText().toString()==""){
+                                ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                                return;
+                            }
+                            if (ObtenerTotal()+1<Double.parseDouble(tvTotalPago.getText().toString())){
+                                ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
+                                return;
+                            }
+                        }
+                        AnularPedido=true;
+                        dialogQuestion.dismiss();
+                        showDialogs();
+                        if (isOnline()){
+                            Verificaronline();
+
+                        }else{
+                            Saveoffline();
+                        }
+                    }
+                }
+        );
+        cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogQuestion.dismiss();
+            }
+        });
+
+
+        return builder.create();
+    }
     public AlertDialog showDialogQuestion(String Contenido, Boolean flag) {
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
 
@@ -928,24 +979,11 @@ return null;
             @Override
             public void onClick(View view) {
                 dialogQuestion.dismiss();
-                if (rCredito.isChecked()==true){
-                    if (tvTotalPago.getText().toString()==""){
-                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
-                        return;
-                    }
-                    if (ObtenerTotal()<Double.parseDouble(tvTotalPago.getText().toString())){
-                        ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
-                        return;
-                    }
-                }
-                AnularPedido=true;
-                showDialogs();
-                if (isOnline()){
-                    Verificaronline();
+                dialogQuestion=showDialogQuestionAnular("Esta Seguro que quiere Anular el Pedido?",true);
+                dialogQuestion.show();
 
-                }else{
-                    Saveoffline();
-                }
+
+
             }
         });
         int categoria =DataPreferences.getPrefInt("idConciliacion",getContext());
@@ -2032,21 +2070,22 @@ return null;
 
     }
 
-    public double ObtenerTotal(){
-        double descuento=0;
+    public double ObtenerTotal() {
+        double descuento = 0;
 
-        double total=0.0;
+        double total = 0.0;
         for (int i = 0; i < mDetalleItem.size(); i++) {
-            if (mDetalleItem.get(i).getObupdate()>=0){
-                total+=mDetalleItem.get(i).getTotal();
+            if (mDetalleItem.get(i).getObupdate() >= 0) {
+                total += mDetalleItem.get(i).getTotal();
             }
+        }
+        total -= descuento;
+        if (total < 0.0) {
+            total = 0.0;
+        }
 
-        }
-        total-=descuento;
-        if (total<0.0){
-            total=0.0;
-        }
-        return total;
+        BigDecimal bd = new BigDecimal(total).setScale(2, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     public double ObtenerTotalImpresion(){

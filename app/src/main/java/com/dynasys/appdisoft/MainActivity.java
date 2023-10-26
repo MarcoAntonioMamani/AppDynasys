@@ -48,6 +48,7 @@ import com.dynasys.appdisoft.RevisarEfectivo.EfectivoFragment;
 import com.dynasys.appdisoft.RevisarProductos.ReviewProductoFragment;
 import com.dynasys.appdisoft.ShareUtil.LocationGeo;
 import com.dynasys.appdisoft.ShareUtil.ServiceSincronizacion;
+import com.dynasys.appdisoft.ShareUtil.ServicesLocation;
 import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClienteEntity;
 import com.dynasys.appdisoft.Visitas.Create.SincronizarData.DB.ClientesListViewModel;
 import com.dynasys.appdisoft.Visitas.Create.SincronizarData.SincronizarFragment;
@@ -189,10 +190,10 @@ public class MainActivity extends AppCompatActivity {
          return;
 
         }else{
-           /* if (ServicesLocation.getInstance()==null){
+           if (ServicesLocation.getInstance()==null){
                 Intent intent = new Intent(this, ServicesLocation.class);
                 startService(intent);
-            }*/
+            }
         }
         if (ServiceSincronizacion.getInstance2()==null){
             UtilShare.mActivity=this;

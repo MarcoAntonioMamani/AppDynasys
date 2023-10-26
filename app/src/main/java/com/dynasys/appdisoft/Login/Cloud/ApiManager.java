@@ -104,8 +104,8 @@ private static Context mcontext;
         userCall.enqueue(callback);
     }
 
-    public void UpdateDetalle(List<DetalleEntity> user,String oanumi, Callback<ResponseLogin> callback) {
-        Call<ResponseLogin> userCall = service.UpdateDetalle(user,oanumi);
+    public void UpdateDetalle(List<DetalleEntity> user,String oanumi,String oarepa, Callback<ResponseLogin> callback) {
+        Call<ResponseLogin> userCall = service.UpdateDetalle(user,oanumi,oarepa);
         userCall.enqueue(callback);
     }
     public void ObtenerClientes( String idRepartidor,int idZona,Callback<List<ClienteEntity>> callback) {
