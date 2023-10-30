@@ -1029,7 +1029,7 @@ return null;
                         ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
                         return;
                     }
-                    if (ObtenerTotal()<Double.parseDouble(tvTotalPago.getText().toString())){
+                    if (ObtenerTotal()+1<Double.parseDouble(tvTotalPago.getText().toString())){
                         ShowMessageResult("El Monto del Credito es mayor al Total de la Venta");
                         return;
                     }
