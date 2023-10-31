@@ -70,7 +70,7 @@ public class LoginPresenter implements LoginMvp.Presenter {
             public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                 ResponseLogin responseUser = response.body();
                 if (response.code()>=400 ){
-                    mLoginView.ShowMessageResult("No es posible conectarse con el servicio. "+ response.message());
+                    mLoginView.ShowMessageResult("Code Error = "+response.code()+" No es posible conectarse con el servicio. "+ response.message());
                     return;
                 }
                 if (response.isSuccessful() && responseUser != null) {
@@ -110,7 +110,7 @@ public class LoginPresenter implements LoginMvp.Presenter {
 
             @Override
             public void onFailure(Call<ResponseLogin> call, Throwable t) {
-                mLoginView.ShowMessageResult("No es posible conectarse con el servicio.");
+                mLoginView.ShowMessageResult("Excedio el Tiempo de Espera No es posible conectarse con el servicio.");
             }
         });
 
