@@ -190,10 +190,10 @@ public class MainActivity extends AppCompatActivity {
          return;
 
         }else{
-           if (ServicesLocation.getInstance()==null){
+          /* if (ServicesLocation.getInstance()==null){
                 Intent intent = new Intent(this, ServicesLocation.class);
                 startService(intent);
-            }
+            }*/
         }
         if (ServiceSincronizacion.getInstance2()==null){
             UtilShare.mActivity=this;

@@ -96,11 +96,11 @@ private List<ClienteEntity> lisClientes=new ArrayList<>();
             Intent intent = new Intent(getContext(),new ServiceSincronizacion(viewModel,getActivity()).getClass());
             getContext().startService(intent);
         }
-        if (!ShareMethods.IsServiceRunning(getContext(), ServicesLocation.class)){
+        /*if (!ShareMethods.IsServiceRunning(getContext(), ServicesLocation.class)){
             UtilShare.mActivity=getActivity();
             Intent intent = new Intent(getContext(),new ServicesLocation().getClass());
             getContext().startService(intent);
-        }
+        }*/
         return view;
     }
 public void _OnClickBtnAddCliente(){

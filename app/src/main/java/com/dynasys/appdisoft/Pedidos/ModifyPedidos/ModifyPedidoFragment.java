@@ -905,7 +905,7 @@ return null;
 
             @Override
             public void onFailure(Call<List<StockEntity>> call, Throwable t) {
-                Saveoffline();
+                SaveOffLineEntregar();
             }
         },""+idRepartidor);
     }
@@ -2109,7 +2109,10 @@ return null;
 
         double total=0.0;
         for (int i = 0; i < mDetalleItem.size(); i++) {
-            total+=(mDetalleItem.get(i).getObpcant()*mDetalleItem.get(i).getObpbase());
+            if (mDetalleItem.get(i).getObupdate()!=-1){
+                total+=(mDetalleItem.get(i).getObpcant()*mDetalleItem.get(i).getObpbase());
+            }
+
         }
         total-=descuento;
         if (total<0.0){
@@ -2131,7 +2134,10 @@ return null;
             detalle.setTotal(detalle.getObptot()-detalle.getDescuento());
         }
         for (int i = 0; i < mDetalleItem.size(); i++) {
-            TotalGeneral+=(mDetalleItem.get(i).getTotal());
+            if (mDetalleItem.get(i).getObupdate() !=-1){
+                TotalGeneral+=(mDetalleItem.get(i).getTotal());
+            }
+
         }
         name_totalDescuento.setText(""+ ShareMethods.redondearDecimales(TotalGeneral,2)+" Bs");
 

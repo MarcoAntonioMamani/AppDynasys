@@ -1,6 +1,8 @@
 package com.dynasys.appdisoft.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
@@ -217,12 +219,41 @@ if (HabilitadoPrecio==1){
             @Override
             public void onClick(View view) {
                 TextView img=(TextView)view;
-                DetalleEntity obj =(DetalleEntity) img.getTag();
-                int pos=ObtenerPosicionElemento(obj);
+                final DetalleEntity obj =(DetalleEntity) img.getTag();
+
+
+                final int pos=ObtenerPosicionElemento(obj);
+
+
                 if (pos>=0){
-                    items.remove(pos);
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setTitle("Eliminar elemento");
+                    builder.setMessage("¿Seguro que desea eliminar el producto => "+obj.getCadesc()+" ?");
+
+                    builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Eliminar el elemento
+                            items.remove(pos);
+                            mView.DeleteAndModifyDetailOrder(obj, pos);
+                            notifyItemRemoved(pos);
+                        }
+                    });
+
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // No hacer nada, el usuario canceló la eliminación
+                        }
+                    });
+
+                    builder.show();
+
+                  /*  items.remove(pos);
                     mView.DeleteAndModifyDetailOrder(obj,pos);
-                    notifyItemRemoved(pos);
+                    notifyItemRemoved(pos);*/
 
                 }
 
